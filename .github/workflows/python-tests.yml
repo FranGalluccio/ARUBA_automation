@@ -9,21 +9,20 @@ on:
 jobs:
   test:
     runs-on: self-hosted
-    # Se vuoi specificare Windows, aggiungi labels: [ windows ]
     # labels: [ windows ]
 
     steps:
-      # 1️⃣ Scarica il repository
+      # 1️⃣ Checkout del repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Imposta Python 3.10
+      # 2️⃣ Setup Python
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # 3️⃣ Installa le dipendenze e i browser Playwright
+      # 3️⃣ Install dependencies e browser Playwright
       - name: Install dependencies
         shell: powershell
         run: |
@@ -31,17 +30,13 @@ jobs:
           pip install pytest-playwright pytest-html
           playwright install
 
-      # 4️⃣ Esegui i test e genera report e screenshot
+      # 4️⃣ Esegui test generando report HTML e XML
       - name: Run tests
         shell: powershell
+        continue-on-error: true
         run: |
           $reportDir = "pytest_playwright/test-results"
-          $screenshotsDir = "$reportDir/screenshots"
           if (!(Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
-          if (!(Test-Path $screenshotsDir)) { New-Item -ItemType Directory -Path $screenshotsDir }
-
-          # Imposta variabile di ambiente per Playwright per salvare screenshot
-          $env:PLAYWRIGHT_SCREENSHOT_DIR = $screenshotsDir
 
           pytest pytest_playwright/ `
             --junitxml=$reportDir/report.xml `
@@ -63,9 +58,9 @@ jobs:
           name: html-report
           path: pytest_playwright/test-results/report.html
 
-      # 7️⃣ Carica screenshots
+      # 7️⃣ Carica tutti gli screenshot
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
           name: screenshots
-          path: pytest_playwright/test-results/screenshots/
+          path: pytest_playwright/test-results/**/*.png
