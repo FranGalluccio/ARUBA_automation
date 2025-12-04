@@ -9,8 +9,8 @@ on:
 jobs:
   test:
     runs-on: self-hosted
-    # Se vuoi assicurarti che sia Windows
-    # labels: [windows]
+    # Se vuoi specificare Windows, aggiungi labels: [ windows ]
+    # labels: [ windows ]
 
     steps:
       # 1️⃣ Scarica il repository
@@ -28,17 +28,31 @@ jobs:
         shell: powershell
         run: |
           pip install -r requirements.txt
-          pip install pytest-playwright
+          pip install pytest-playwright pytest-html
           playwright install
 
-      # 4️⃣ Esegui i test e genera i report nella cartella specificata
+      # 4️⃣ Esegui i test e genera report
       - name: Run tests
         shell: powershell
         run: |
-          $reportDir = "C:\Users\francesco.galluccio_\Desktop\Git_automation\pytest_playwright\pytest_playwright\test-results"
-          if (-Not (Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
-          pytest pytest_playwright/ --junitxml="$reportDir\report.xml" --html="$reportDir\report.html" --self-contained-html
+          $reportDir = "pytest_playwright/test-results"
+          if (!(Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
+          pytest pytest_playwright/ `
+            --junitxml=$reportDir/report.xml `
+            --html=$reportDir/report.html `
+            --self-contained-html `
+            --capture=tee-sys
 
-      # 5️⃣ Carica il report XML come artefatto su GitHub
+      # 5️⃣ Carica report XML
       - name: Upload JUnit XML report
         uses: actions/upload-artifact@v4
+        with:
+          name: junit-report
+          path: pytest_playwright/test-results/report.xml
+
+      # 6️⃣ Carica report HTML
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report
+          path: pytest_playwright/test-results/report.html
