@@ -22,8 +22,9 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
+        pip install pytest-playwright
         playwright install
 
     - name: Run tests
       run: |
-        pytest
+        pytest tests/
