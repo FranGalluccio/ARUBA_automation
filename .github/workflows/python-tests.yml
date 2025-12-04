@@ -1,20 +1,44 @@
-    # 5️⃣ Carica il report XML come artefatto
-    - name: Upload JUnit XML report
-      uses: actions/upload-artifact@v4   # ← versione aggiornata
-      with:
-        name: junit-report
-        path: report.xml
+name: Python Playwright Tests
 
-    # 6️⃣ Carica il report HTML come artefatto
-    - name: Upload HTML report
-      uses: actions/upload-artifact@v4   # ← versione aggiornata
-      with:
-        name: html-report
-        path: report.html
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
-    # 7️⃣ Carica gli screenshot come artefatto
-    - name: Upload screenshots
-      uses: actions/upload-artifact@v4   # ← anche qui
-      with:
-        name: screenshots
-        path: path/to/screenshot-folder/
+jobs:
+  test:
+    runs-on: self-hosted
+    # Se vuoi assicurarti che sia Windows
+    # labels: [windows]
+
+    steps:
+      # 1️⃣ Scarica il repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Imposta Python 3.10
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      # 3️⃣ Installa le dipendenze e i browser Playwright
+      - name: Install dependencies
+        shell: powershell
+        run: |
+          pip install -r requirements.txt
+          pip install pytest-playwright
+          playwright install
+
+      # 4️⃣ Esegui i test e genera i report nella cartella specificata
+      - name: Run tests
+        shell: powershell
+        run: |
+          $reportDir = "C:\Users\francesco.galluccio_\Desktop\Git_automation\pytest_playwright\pytest_playwright\test-results"
+          if (-Not (Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
+          pytest pytest_playwright/ --junitxml="$reportDir\report.xml" --html="$reportDir\report.html" --self-contained-html
+
+      # 5️⃣ Carica il report XML come artefatto su GitHub
+      - name: Upload JUnit XML report
+        uses: actions/upload-artifact@v4
