@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: self-hosted
+    # labels: [ windows ]  # se vuoi specificare ulteriormente
+
     steps:
     # 1️⃣ Scarica il repository
     - name: Checkout repository
@@ -28,8 +30,31 @@ jobs:
         pip install pytest-playwright
         playwright install
 
-    # 4️⃣ Esegui i test
+    # 4️⃣ Esegui i test e genera report e screenshot nella cartella specificata
     - name: Run tests
       shell: powershell
       run: |
-        pytest pytest_playwright/
+        $TestResults = "C:\Users\francesco.galluccio_\Desktop\Git_automation\pytest_playwright\pytest_playwright\test-results"
+        if (-Not (Test-Path $TestResults)) { New-Item -ItemType Directory -Path $TestResults | Out-Null }
+        pytest pytest_playwright/ --junitxml=$TestResults\report.xml --html=$TestResults\report.html --self-contained-html --screenshots=$TestResults\screenshots
+
+    # 5️⃣ Carica il report XML come artefatto
+    - name: Upload JUnit XML report
+      uses: actions/upload-artifact@v3
+      with:
+        name: junit-report
+        path: C:\Users\francesco.galluccio_\Desktop\Git_automation\pytest_playwright\pytest_playwright\test-results\report.xml
+
+    # 6️⃣ Carica il report HTML come artefatto
+    - name: Upload HTML report
+      uses: actions/upload-artifact@v3
+      with:
+        name: html-report
+        path: C:\Users\francesco.galluccio_\Desktop\Git_automation\pytest_playwright\pytest_playwright\test-results\report.html
+
+    # 7️⃣ Carica gli screenshot come artefatto
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v3
+      with:
+        name: screenshots
+        path: C:\Users\francesco.galluccio_\Desktop\Git_automation\pytest_playwright\pytest_playwright\test-results\screenshots\
