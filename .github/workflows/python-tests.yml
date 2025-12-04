@@ -11,20 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # 1️⃣ Scarica il repository
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    # 2️⃣ Imposta Python 3.10
     - name: Set up Python 3.10
       uses: actions/setup-python@v4
       with:
         python-version: "3.10"
 
+    # 3️⃣ Installa le dipendenze e i browser Playwright
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
         pip install pytest-playwright
         playwright install
 
+    # 4️⃣ Esegui tutti i test nella cartella pytest_playwright
     - name: Run tests
       run: |
-        pytest tests/
+        pytest pytest_playwright/
