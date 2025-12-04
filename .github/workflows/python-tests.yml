@@ -1,60 +1,20 @@
-name: Python Playwright Tests
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-jobs:
-  test:
-    runs-on: self-hosted
-    # labels: [ windows ]  # se vuoi specificare ulteriormente
-
-    steps:
-    # 1️⃣ Scarica il repository
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    # 2️⃣ Imposta Python 3.10
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
-
-    # 3️⃣ Installa le dipendenze e i browser Playwright
-    - name: Install dependencies
-      shell: powershell
-      run: |
-        pip install -r requirements.txt
-        pip install pytest-playwright
-        playwright install
-
-    # 4️⃣ Esegui i test e genera report e screenshot nella cartella specificata
-    - name: Run tests
-      shell: powershell
-      run: |
-        $TestResults = "C:\Users\francesco.galluccio_\Desktop\Git_automation\pytest_playwright\pytest_playwright\test-results"
-        if (-Not (Test-Path $TestResults)) { New-Item -ItemType Directory -Path $TestResults | Out-Null }
-        pytest pytest_playwright/ --junitxml=$TestResults\report.xml --html=$TestResults\report.html --self-contained-html --screenshots=$TestResults\screenshots
-
     # 5️⃣ Carica il report XML come artefatto
     - name: Upload JUnit XML report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4   # ← versione aggiornata
       with:
         name: junit-report
-        path: C:\Users\francesco.galluccio_\Desktop\Git_automation\pytest_playwright\pytest_playwright\test-results\report.xml
+        path: report.xml
 
     # 6️⃣ Carica il report HTML come artefatto
     - name: Upload HTML report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4   # ← versione aggiornata
       with:
         name: html-report
-        path: C:\Users\francesco.galluccio_\Desktop\Git_automation\pytest_playwright\pytest_playwright\test-results\report.html
+        path: report.html
 
     # 7️⃣ Carica gli screenshot come artefatto
     - name: Upload screenshots
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4   # ← anche qui
       with:
         name: screenshots
-        path: C:\Users\francesco.galluccio_\Desktop\Git_automation\pytest_playwright\pytest_playwright\test-results\screenshots\
+        path: path/to/screenshot-folder/
