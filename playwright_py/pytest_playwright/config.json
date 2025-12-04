@@ -1,9 +1,0 @@
-{
-    "test_folder": "pytest_playwright",
-    "report_folder": "pytest_playwright/test-results",
-    "firefox_path": "",
-    "file_allegato": "C:\\Users\\francesco.galluccio_\\Desktop\\file anteprime webmail\\manuale-utente.pdf",
-    "screenshot_folder": "pytest_playwright/screenshots",
-    "importa_messaggi": "C:\\Users\\francesco.galluccio_\\Desktop\\Test data\\messaggio importato automation playwright.eml",
-    "rubrica_import": "C:\\Users\\francesco.galluccio_\\Desktop\\Test data\\rubrica.csv"
-}
