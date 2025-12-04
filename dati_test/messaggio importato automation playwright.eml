@@ -1,0 +1,243 @@
+X-Lmtp-Aru-Notify-Rcpt: francescoconservazione@pec.it
+X-Aru-Cons: 8e56e4c9-c397-11f0-a0f5-c698ef59bb01
+Return-Path: <francescoconservazione@pec.it>
+Delivered-To: francescoconservazione@pec.it
+Received: from infra-inbox-dovecot-proxy-vvfnf ([172.16.1.164])
+	by shared-inbox-dovecot-backend-2.shared-inbox-dovecot-proxy.rem-aruba-is1.svc.cluster.local with LMTP id 2E9OFl7qGmkudgEAqeyCow
+	for <francescoconservazione@pec.it>; Mon, 17 Nov 2025 09:26:54 +0000
+Received: from pcti1im-arprx01.ad.aruba.it ([172.16.1.164])
+	by infra-inbox-dovecot-proxy-vvfnf with LMTP
+	id gNp0El7qGmkdBgEAfMxgjA
+	(envelope-from <francescoconservazione@pec.it>)
+	for <francescoconservazione@pec.it>; Mon, 17 Nov 2025 09:26:54 +0000
+Received: from localhost ([172.16.1.164])
+	by pcti1im-arprx01.ad.aruba.it with LMTP id CCtWEl7qGmlePAIAUbK/zg
+	; Mon, 17 Nov 2025 10:26:54 +0100
+Received: from 164-T917-JPEC-MX01.ad.aruba.it (localhost [127.0.0.1])
+	by 164-T917-JPEC-MX01.ad.aruba.it (Postfix) with ESMTP id 4d92SZ1mrvzKQD
+	for <francescoconservazione@pec.it>; Mon, 17 Nov 2025 10:26:54 +0100 (CET)
+Received: from 167-T917-JPEC-SH02.ad.aruba.it (unknown [172.16.1.160])
+	by mx-jpec.test.pec.aruba.it (Postfix) with ESMTP id 4d92SZ1VXpzKPM
+	for <francescoconservazione@pec.it>; Mon, 17 Nov 2025 10:26:54 +0100 (CET)
+Received: from 167-T917-JPEC-SH02.ad.aruba.it (localhost [127.0.0.1])
+	by 167-T917-JPEC-SH02.ad.aruba.it (Postfix) with ESMTP id 4d92SZ16kYz1wn
+	for <francescoconservazione@pec.it>; Mon, 17 Nov 2025 10:26:54 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by 167-T917-JPEC-SH02.ad.aruba.it (Postfix) with ESMTP id 4d92SZ0dssz1xN
+	for <francescoconservazione@pec.it>; Mon, 17 Nov 2025 10:26:54 +0100 (CET)
+Received: from pec.it (unknown [10.150.116.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp-jpec.test.pec.aruba.it (Postfix) with ESMTPSA id 4d92SY3CWgz1wn
+	for <francescoconservazione@pec.it>; Mon, 17 Nov 2025 10:26:53 +0100 (CET)
+Date: Mon, 17 Nov 2025 10:26:53 +0100 (CET)
+From: "Per conto di: francescoconservazione@pec.it" <posta-certificata@postacert.pre.demoaruba.com>
+Reply-To: francescoconservazione@pec.it
+To: francescoconservazione@pec.it
+Message-ID: <jpec1214.20251117102653.04861.26.1.1@postacert.pre.demoaruba.com>
+Subject: POSTA CERTIFICATA: messaggio importato automation playwright
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; 
+	boundary="----=_Part_58324_926486406.1763371614066"
+X-TipoRicevuta: completa
+X-Trasporto: posta-certificata
+X-Riferimento-Message-ID: <T5V68T$71E37D5E9080346734B6457517BA0401@pec.it>
+
+------=_Part_58324_926486406.1763371614066
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_58321_505519516.1763371614051"
+
+------=_Part_58321_505519516.1763371614051
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_58320_1694302768.1763371614051"
+
+------=_Part_58320_1694302768.1763371614051
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+-- Messaggio di posta certificata --
+
+Il giorno 17/11/2025 alle ore 10:26:53 (+0100) il messaggio con oggetto
+"messaggio importato automation playwright" =E8 stato inviato da "francesco=
+conservazione@pec.it" ed indirizzato a:
+- francescoconservazione@pec.it
+Il messaggio originale =E8 incluso in allegato.
+Identificativo messaggio: jpec1214.20251117102653.04861.26.1.1@postacert.pr=
+e.demoaruba.com
+
+
+
+
+
+---------------------------------------------------------------------------=
+--------------
+
+-- Certified mail message --
+
+On 17/11/2025 at 10:26:53 (+0100) the message with subject
+"messaggio importato automation playwright" was sent by "francescoconservaz=
+ione@pec.it" and addressed to:
+- francescoconservazione@pec.it
+The original message is included as an attachment.
+Message identifier: jpec1214.20251117102653.04861.26.1.1@postacert.pre.demo=
+aruba.com
+
+
+
+
+
+------=_Part_58320_1694302768.1763371614051
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<html>
+<head><title>Messaggio di posta certificata</title></head>
+<body>
+<h3>Messaggio di posta certificata</h3>
+
+Il giorno 17/11/2025 alle ore 10:26:53 (+0100) il messaggio con oggetto &qu=
+ot;messaggio importato automation playwright&quot; &egrave; stato inviato d=
+a
+&quot;francescoconservazione@pec.it&quot; ed indirizzato a:
+<ul>
+    <li>francescoconservazione@pec.it</li>
+</ul>
+Il messaggio originale &egrave; incluso in allegato.<br>
+Identificativo messaggio: jpec1214.20251117102653.04861.26.1.1@postacert.pr=
+e.demoaruba.com
+
+
+<br>
+<br>
+<hr>
+<h3>Certified mail message</h3>
+
+On 17/11/2025 at 10:26:53 (+0100) the message with subject &quot;messaggio =
+importato automation playwright&quot; was sent by
+&quot;francescoconservazione@pec.it&quot; and addressed to:
+<ul>
+    <li>francescoconservazione@pec.it</li>
+</ul>
+The original message is included as an attachment.<br>
+Message identifier: jpec1214.20251117102653.04861.26.1.1@postacert.pre.demo=
+aruba.com
+
+
+</body>
+</html>
+
+------=_Part_58320_1694302768.1763371614051--
+
+------=_Part_58321_505519516.1763371614051
+Content-Type: application/xml; name="daticert.xml"
+Content-Transfer-Encoding: base64
+Content-Disposition: inline; filename="daticert.xml"
+
+PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHBvc3RhY2VydCB0aXBvPSJw
+b3N0YS1jZXJ0aWZpY2F0YSIgZXJyb3JlPSJuZXNzdW5vIj4KICAgIDxpbnRlc3RhemlvbmU+CiAg
+ICAgICAgPG1pdHRlbnRlPmZyYW5jZXNjb2NvbnNlcnZhemlvbmVAcGVjLml0PC9taXR0ZW50ZT4K
+ICAgICAgICA8ZGVzdGluYXRhcmkgdGlwbz0iY2VydGlmaWNhdG8iPmZyYW5jZXNjb2NvbnNlcnZh
+emlvbmVAcGVjLml0PC9kZXN0aW5hdGFyaT4KICAgICAgICA8cmlzcG9zdGU+ZnJhbmNlc2NvY29u
+c2VydmF6aW9uZUBwZWMuaXQ8L3Jpc3Bvc3RlPgogICAgICAgIDxvZ2dldHRvPm1lc3NhZ2dpbyBp
+bXBvcnRhdG8gYXV0b21hdGlvbiBwbGF5d3JpZ2h0PC9vZ2dldHRvPgogICAgPC9pbnRlc3Rhemlv
+bmU+CiAgICA8ZGF0aT4KICAgICAgICA8Z2VzdG9yZS1lbWl0dGVudGU+QXJ1YmEgUGVjIFMucC5B
+LiAtIHRlc3Q8L2dlc3RvcmUtZW1pdHRlbnRlPgogICAgICAgIDxkYXRhIHpvbmE9IiswMTAwIj4K
+ICAgICAgICAgICAgPGdpb3Jubz4xNy8xMS8yMDI1PC9naW9ybm8+CiAgICAgICAgICAgIDxvcmE+
+MTA6MjY6NTM8L29yYT4KICAgICAgICA8L2RhdGE+CiAgICAgICAgPGlkZW50aWZpY2F0aXZvPmpw
+ZWMxMjE0LjIwMjUxMTE3MTAyNjUzLjA0ODYxLjI2LjEuMUBwb3N0YWNlcnQucHJlLmRlbW9hcnVi
+YS5jb208L2lkZW50aWZpY2F0aXZvPgogICAgICAgIDxtc2dpZD4mbHQ7VDVWNjhUJDcxRTM3RDVF
+OTA4MDM0NjczNEI2NDU3NTE3QkEwNDAxQHBlYy5pdCZndDs8L21zZ2lkPgogICAgICAgIDxyaWNl
+dnV0YSB0aXBvPSJjb21wbGV0YSIvPgogICAgPC9kYXRpPgo8L3Bvc3RhY2VydD4KDQo=
+------=_Part_58321_505519516.1763371614051
+Content-Type: message/rfc822; name=postacert.eml
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline; filename=postacert.eml
+
+Received: from localhost.localdomain (localhost [127.0.0.1])
+	by 167-T917-JPEC-SH02.ad.aruba.it (Postfix) with ESMTP id 4d92SY6Lltz1x7
+	for <francescoconservazione@pec.it>; Mon, 17 Nov 2025 10:26:53 +0100 (CET)
+Received: from pec.it (unknown [10.150.116.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp-jpec.test.pec.aruba.it (Postfix) with ESMTPSA id 4d92SY3CWgz1wn
+	for <francescoconservazione@pec.it>; Mon, 17 Nov 2025 10:26:53 +0100 (CET)
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+	boundary="_=__=_XaM3_.1763371613.2A.409205.42.137967.52.42.007.1750365849"
+Date: Mon, 17 Nov 2025 10:26:53 +0100
+Message-Id: <jpec1214.20251117102653.04861.26.1.1@postacert.pre.demoaruba.com>
+Subject: messaggio importato automation playwright
+X-Sensitivity: 3
+Reply-To: francescoconservazione@pec.it
+From: francescoconservazione@pec.it
+To: francescoconservazione@pec.it
+X-XaM3-API-Version: 4.2.116.2
+X-TipoRicevuta: completa
+X-type: 0
+X-XaM3-RSV: =?utf-8?b?QDEuMGcxUXg4cURBSnBJQmtFa25Laks2akt5S1U2eHcyelAzb2pLdlBN?=
+	=?utf-8?b?VElPcFJIcEZvUVdaalRMKzJXdjVvRUdTTDhYK00yb2xTQldqbmFjd0g4?=
+	=?utf-8?b?dUIzenZ4MFJKYnBMa0p3Mm5VMlNDRE10QVl1dTVvbEE1a0pRYTUvd1lZ?=
+	=?utf-8?b?a2NaTXZjelozRDNBY1hrU1MwbzlzUWdzWTRiWT0uUjdpS1lOOW5uS3lY?=
+	=?utf-8?b?ZXM3amtGOD0ueGJpNjJCVy9FdXdQV2s1bDFEUng1dz09?=
+X-SenderIP: 10.255.131.86
+X-Riferimento-Message-ID: <T5V68T$71E37D5E9080346734B6457517BA0401@pec.it>
+
+
+--_=__=_XaM3_.1763371613.2A.409205.42.137967.52.42.007.1750365849
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+
+bWVzc2FnZ2lvIGltcG9ydGF0byBjb24gcGxheXdyaWdodAoK
+
+
+--_=__=_XaM3_.1763371613.2A.409205.42.137967.52.42.007.1750365849
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: base64
+
+PGRpdiBkYXRhLWVkaXRvcj0iMSIgc3R5bGU9ImZvbnQtZmFtaWx5OiBBcmlhbDsgZm9udC1z
+aXplOiAxcmVtOyI+PHA+bWVzc2FnZ2lvIGltcG9ydGF0byBjb24gcGxheXdyaWdodDwvcD48
+L2Rpdj4=
+
+
+--_=__=_XaM3_.1763371613.2A.409205.42.137967.52.42.007.1750365849--
+
+
+------=_Part_58321_505519516.1763371614051--
+
+------=_Part_58324_926486406.1763371614066
+Content-Type: application/pkcs7-signature; name=smime.p7s
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=smime.p7s
+Content-Description: S/MIME Cryptographic Signature
+
+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
+------=_Part_58324_926486406.1763371614066--
