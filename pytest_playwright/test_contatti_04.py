@@ -50,7 +50,7 @@ def test_importa_contatti(page):
     # Screenshot finale per debug
     screenshot_path = os.path.join(
         REPORT_FOLDER,
-        f"test_contatti_import___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        f"test_contatti_04___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
 
