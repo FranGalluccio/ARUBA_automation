@@ -8,7 +8,10 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted   # usa il runner self-hosted
+    strategy:
+      matrix:
+        os: [windows, ubuntu]
 
     steps:
     # 1️⃣ Scarica il repository
@@ -23,12 +26,15 @@ jobs:
 
     # 3️⃣ Installa le dipendenze e i browser Playwright
     - name: Install dependencies
+      shell: ${{ matrix.os == 'windows' && 'pwsh' || 'bash' }}
       run: |
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest-playwright
         playwright install
 
     # 4️⃣ Esegui tutti i test nella cartella pytest_playwright
     - name: Run tests
+      shell: ${{ matrix.os == 'windows' && 'pwsh' || 'bash' }}
       run: |
         pytest pytest_playwright/
