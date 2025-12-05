@@ -12,17 +12,14 @@ jobs:
     # labels: [ windows ]
 
     steps:
-      # 1️⃣ Checkout del repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Python
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # 3️⃣ Install dependencies e browser Playwright
       - name: Install dependencies
         shell: powershell
         run: |
@@ -30,7 +27,6 @@ jobs:
           pip install pytest-playwright pytest-html
           playwright install
 
-      # 4️⃣ Esegui test generando report HTML e XML
       - name: Run tests
         shell: powershell
         continue-on-error: true
@@ -42,23 +38,22 @@ jobs:
             --junitxml=$reportDir/report.xml `
             --html=$reportDir/report.html `
             --self-contained-html `
-            --capture=tee-sys
+            --capture=tee-sys `
+            --tb=short `
+            --color=yes
 
-      # 5️⃣ Carica report XML
       - name: Upload JUnit XML report
         uses: actions/upload-artifact@v4
         with:
           name: junit-report
           path: pytest_playwright/test-results/report.xml
 
-      # 6️⃣ Carica report HTML
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
           name: html-report
           path: pytest_playwright/test-results/report.html
 
-      # 7️⃣ Carica tutti gli screenshot
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
