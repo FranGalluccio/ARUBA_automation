@@ -34,6 +34,16 @@ def test_etichetta(page):
     time.sleep(2)
     # Salva nuova etichetta
     page.get_by_role("button", name="Salva").click()
+
+    chiudi = page.locator(
+    "div.aru-tooltip.light button[title='Chiudi']"
+)
+
+    try:
+        chiudi.wait_for(state="visible", timeout=3000)
+        chiudi.click()
+    except:
+        pass
     
     # Seleziona tutti i messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()

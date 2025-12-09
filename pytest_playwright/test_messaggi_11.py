@@ -49,9 +49,11 @@ def test_messaggio_alta_priorita(page):
 
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+    
+    time.sleep(2)
 
     # Clicca sul primo record
-    page.locator('div.frame-record-desktop').first.click()
+    page.locator('div.frame-record-desktop').nth(0).click()
 
     # Aspetta che il contenuto della mail sia visibile
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
