@@ -40,6 +40,8 @@ def test_messaggio_con_allegato(page):
     
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
+    
+    time.sleep(2)
 
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
