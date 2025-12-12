@@ -18,11 +18,12 @@ if not os.path.exists(CONFIG_FILE):
 with open(CONFIG_FILE) as f:
     config = json.load(f)
 
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))  # Root del progetto Git_automation
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 REPORT_FOLDER = config.get("report_folder", os.path.join(PROJECT_ROOT, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 FIREFOX_PATH = config.get("firefox_path", "")
+HEADLESS = config.get("headless", True)
 
 # --- Lista test che richiedono allegato ---
 TEST_CON_ALLEGATO = ["test_new_message.py"]
@@ -30,19 +31,16 @@ TEST_CON_ALLEGATO = ["test_new_message.py"]
 # Processo pytest attivo
 current_process = None
 
-
 # ------------------------------------------------------
 #        FUNZIONI SUPPORTO
 # ------------------------------------------------------
 
 def generate_report_path():
-    """Crea un percorso report unico con timestamp."""
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     return os.path.join(REPORT_FOLDER, f"report_{timestamp}.html")
 
 
 def set_ui_running(running: bool):
-    """Abilita/disabilita la UI mentre i test sono in corso."""
     if running:
         status_label.config(text="🟡 Test in esecuzione...", fg="orange")
         btn_run_selected.config(state="disabled")
@@ -58,7 +56,6 @@ def set_ui_running(running: bool):
 
 
 def stop_tests():
-    """Interrompe il processo pytest in esecuzione."""
     global current_process
     if current_process and current_process.poll() is None:
         current_process.terminate()
@@ -68,17 +65,35 @@ def stop_tests():
 
 
 def run_pytest(test_file=None):
-    """Esegue pytest tramite Popen (interrompibile)."""
     global current_process
 
     report_path = generate_report_path()
-    cmd = [sys.executable, "-m", "pytest", "--html", report_path, "--self-contained-html"]
+
+    # Slow motion Playwright
+    slow_mo = config.get("slow_mo", 0)
+    if slow_mo > 0:
+        os.environ["PW_SLOW_MO"] = str(slow_mo)
+    else:
+        os.environ.pop("PW_SLOW_MO", None)
+
+    # Headless/Headed
+    env_headless = os.environ.copy()
+    env_headless["PW_HEADLESS"] = "1" if HEADLESS else "0"
+
+    # Comando pytest
+    cmd = [
+        sys.executable,
+        "-m", "pytest",
+        "--html", report_path,
+        "--self-contained-html",
+        "--ignore", os.path.join(PROJECT_ROOT, "venv1")  # Ignora virtualenv
+    ]
 
     if test_file:
         cmd.append(os.path.join(PROJECT_ROOT, test_file))
     else:
-        # Prende tutti i test nell'intero progetto
         test_files = glob.glob(os.path.join(PROJECT_ROOT, "**", "test_*.py"), recursive=True)
+        test_files = [f for f in test_files if "venv1" not in f and "__pycache__" not in f]
         if not test_files:
             messagebox.showwarning("Attenzione", f"Nessun test trovato in {PROJECT_ROOT}")
             set_ui_running(False)
@@ -86,7 +101,7 @@ def run_pytest(test_file=None):
         cmd.extend(test_files)
 
     try:
-        current_process = subprocess.Popen(cmd)
+        current_process = subprocess.Popen(cmd, env=env_headless)
         current_process.wait()
 
         if current_process.returncode == 0:
@@ -108,7 +123,6 @@ def start_test_thread(test_file=None):
 
 
 def start_test_thread_with_optional_file(test_file=None):
-    """Gestisce file picker per test che richiedono allegato."""
     if test_file in TEST_CON_ALLEGATO:
         file_path = filedialog.askopenfilename(title="Seleziona file da allegare")
         if not file_path:
@@ -122,7 +136,6 @@ def start_test_thread_with_optional_file(test_file=None):
 
 
 def open_report():
-    """Apre l'ultimo report HTML."""
     reports = [
         os.path.join(REPORT_FOLDER, f)
         for f in os.listdir(REPORT_FOLDER)
@@ -154,8 +167,8 @@ root.geometry("500x420")
 
 tk.Label(root, text="Seleziona test da eseguire:").pack(pady=10)
 
-# Lista test disponibili nel progetto
 test_files = glob.glob(os.path.join(PROJECT_ROOT, "**", "test_*.py"), recursive=True)
+test_files = [f for f in test_files if "venv1" not in f and "__pycache__" not in f]
 test_files_relative = [os.path.relpath(f, PROJECT_ROOT) for f in test_files]
 
 var_test = tk.StringVar(root)
@@ -180,7 +193,7 @@ btn_run_selected.pack(pady=10)
 btn_run_all = tk.Button(
     root,
     text="Esegui Tutta la Suite",
-    command=lambda: start_test_thread()
+    command=start_test_thread
 )
 btn_run_all.pack(pady=10)
 
