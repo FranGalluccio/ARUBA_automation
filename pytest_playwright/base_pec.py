@@ -13,7 +13,7 @@ class LoginPec:
         self.page.goto("https://webmail.test.pec.aruba.it/", timeout=30_000)
         
         username = "francescoconservazione@pec.it"
-        password = "123456Abcd."
+        password = "123456Abc!"
 
         # Compila username
         self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(username)
