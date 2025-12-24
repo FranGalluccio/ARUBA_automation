@@ -47,8 +47,14 @@ def test_creazione_invio_evento(page):
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
     time.sleep(2)
-    page.locator("#mail-1").get_by_text("francescoconservazione@pec.it").click()
-    time.sleep(2)
+    # Aspetta che almeno un record sia visibile
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+
+    # Clicca sul primo record
+    page.locator('div.frame-record-desktop').first.click()
+
+    # Aspetta che il contenuto della mail sia visibile
+    page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
     
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
