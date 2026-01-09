@@ -69,6 +69,7 @@ def test_messaggio_con_allegato_drive(page):
 
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+    time.sleep(2)
 
     # Clicca sul primo record
     page.locator('div.frame-record-desktop').first.click()
