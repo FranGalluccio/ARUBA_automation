@@ -50,7 +50,7 @@ class Helper:
         self.page = page
         LoginPec(self.page).login_pec(
             "francescoconservazione@pec.it",
-            "123456Abc!",
+            "1234567Ab!",
             "https://webmail.test.pec.aruba.it/"
         )
         # Accetta cookie
