@@ -12,8 +12,8 @@ class LoginPec:
         # Vai alla pagina di login
         self.page.goto("https://webmail.test.pec.aruba.it/", timeout=30_000)
         
-        username = "templates@pec.it"
-        password = "123456Ab."
+        username = "francescoconservazione@pec.it"
+        password = "1234567Ab!"
 
         # Compila username
         self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(username)
