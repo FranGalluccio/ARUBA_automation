@@ -32,10 +32,11 @@ def test_creazione_modifica_evento(page):
     page.get_by_role("button", name="Nuovo evento").click()
     page.get_by_placeholder("Inserisci un titolo").fill("evento test automatico")
     page.get_by_role("button", name="Salva").click()
-    page.get_by_role("row", name="evento test automatico").locator("a").click()
+    page.locator("a").filter(has_text="evento test automatico").click()
     page.get_by_role("button", name="Modifica").click()
     page.get_by_placeholder("Inserisci un titolo").click()
     page.get_by_placeholder("Inserisci un titolo").fill("evento test automatico modificato")
+    time.sleep(2)
     page.get_by_role("button", name="Salva").click()
     
         
@@ -52,6 +53,6 @@ def test_creazione_modifica_evento(page):
     time.sleep(2)
     
     # Elimina evento
-    page.get_by_role("row", name="evento test automatico").locator("a").click()
+    page.get_by_role("row", name="evento test automatico modificato").locator("a").click()
     page.get_by_role("button", name="Annulla evento").click()
     page.get_by_role("button", name="Elimina").click()
