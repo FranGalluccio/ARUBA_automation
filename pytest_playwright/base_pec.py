@@ -13,7 +13,7 @@ class LoginPec:
         self.page.goto("https://webmail.test.pec.aruba.it/", timeout=30_000)
         
         username = "francescoconservazione@pec.it"
-        password = "1234567Ab!"
+        password = "1234567Abc."
 
         # Compila username
         self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(username)
@@ -50,7 +50,7 @@ class Helper:
         self.page = page
         LoginPec(self.page).login_pec(
             "francescoconservazione@pec.it",
-            "1234567Ab!",
+            "1234567Abc.",
             "https://webmail.test.pec.aruba.it/"
         )
         # Accetta cookie
