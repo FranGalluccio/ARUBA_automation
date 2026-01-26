@@ -26,7 +26,6 @@ def test_messaggio_alta_priorita(page):
 
     Helper.crea_messaggio(
         page,
-        "francescoconservazione@pec.it",
         "Test automatico con Playwright - Messaggio alta priorità",
         "Test automatico invio messaggio PEC con Playwright"
     )

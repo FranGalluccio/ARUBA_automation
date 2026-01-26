@@ -26,7 +26,6 @@ def test_segna_come_letto_da_leggere(page):
 
     Helper.crea_messaggio(
         page,
-        "francescoconservazione@pec.it",
         "Test automatico con Playwright - Segna come letto e da leggere",
         "Test automatico invio messaggio PEC con Playwright"
     )

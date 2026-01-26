@@ -31,11 +31,11 @@ def test_messaggio_inoltrato(page):
     # Fallback stabile: seleziona SOLO il campo destinatario
     destinatario_input = page.locator("input[placeholder='Destinatari']")
     try:
-        destinatario_input.fill("francescoconservazione@pec.it")
+        destinatario_input.fill("testqaprovisioningpecfebbraio@pec.it")
     except:
         page.locator('input[aria-label="input field"]').click()
-        destinatario_input.fill("francescoconservazione@pec.it")
-    
+        destinatario_input.fill("testqaprovisioningpecfebbraio@pec.it")
+
     # Compila oggetto e corpo
     page.locator('input[aria-label="input field"]').fill("Test automatico con Playwright - Inoltro messaggio")
     page.locator("div[contenteditable='true']").fill("Corpo del messaggio inoltrato")

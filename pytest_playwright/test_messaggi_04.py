@@ -23,7 +23,6 @@ def test_messaggio_in_bozza(page):
     # Creare messaggio con allegato
     Helper.crea_messaggio(
         page,
-        "francescoconservazione@pec.it",
         "Test automatico con Playwright - Messaggio in bozza",
         "Test automatico invio messaggio PEC con Playwright"
     )
