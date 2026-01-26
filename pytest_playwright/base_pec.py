@@ -10,10 +10,10 @@ class LoginPec:
 
     def login_pec(self):
         # Vai alla pagina di login
-        self.page.goto("https://webmail.test.pec.aruba.it/", timeout=30_000)
+        self.page.goto("https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth", timeout=30_000)
         
-        username = "francescoconservazione@pec.it"
-        password = "1234567Abc."
+        username = "testqaprovisioningpecfebbraio@pec.it"
+        password = "Password2!"
 
         # Compila username
         self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(username)

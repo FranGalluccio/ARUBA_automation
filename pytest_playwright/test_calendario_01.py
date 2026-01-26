@@ -34,7 +34,7 @@ def test_creazione_evento_ricorrente(page):
     page.get_by_role("textbox", name="input date").first.click()
     page.get_by_text("Gennaio 2026").click()
     page.locator("#event-dialog").get_by_text("Gennaio").click()
-    page.locator("#event-dialog").get_by_text("24").click()
+    page.locator("#event-dialog").get_by_text("28").click()
     page.get_by_role("combobox", name="Non ripetere").click()
     page.get_by_role("button", name="Personalizza...").click()
     page.get_by_role("radio", name="Dopo").check()
