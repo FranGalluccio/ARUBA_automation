@@ -32,13 +32,13 @@ def test_creazione_invio_evento(page):
     page.locator("button").filter(has_text="Nuovo evento").click()
     page.get_by_placeholder("Inserisci un titolo").fill("evento test auto invito")
     page.get_by_role("button", name="Salva").click()
-    page.locator("a").filter(has_text="evento test auto invito").click()
+    page.locator("a").filter(has_text="evento test auto invito").first.click()
     # Modifica evento
     page.get_by_role("button", name="Modifica").click()
     page.get_by_role("textbox", name="input chosen").click()
     page.get_by_role("textbox", name="input chosen").fill("testqaprovisioningpecfebbraio@pec.it")
     time.sleep(2)
-    page.get_by_role("button", name="testqaprovisioningpecfebbraio -").click()
+    page.get_by_role("button", name="testqaprovisioningpecfebbraio -").firstclick()
     page.get_by_role("button", name="Salva").click()
     page.get_by_role("button", name="Invia", exact=True).click()
     # Vai alla posta in arrivo
