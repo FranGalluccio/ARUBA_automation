@@ -36,9 +36,9 @@ def test_creazione_invio_evento(page):
     # Modifica evento
     page.get_by_role("button", name="Modifica").click()
     page.get_by_role("textbox", name="input chosen").click()
-    page.get_by_role("textbox", name="input chosen").fill("francescoconservazione@pec.it")
+    page.get_by_role("textbox", name="input chosen").fill("testqaprovisioningpecfebbraio@pec.it")
     time.sleep(2)
-    page.get_by_role("button", name="francescoconservazione -").click()
+    page.get_by_role("button", name="testqaprovisioningpecfebbraio -").click()
     page.get_by_role("button", name="Salva").click()
     page.get_by_role("button", name="Invia", exact=True).click()
     # Vai alla posta in arrivo
