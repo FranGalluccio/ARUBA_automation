@@ -59,12 +59,13 @@ class Helper:
 
     def crea_messaggio(
     page: Page,
-    destinatario: str,
     oggetto: str,
     corpo: str,
     path_allegato: str = None  # allegato facoltativo
+
 ):
     # Nuovo messaggio
+        destinatario: str = 'testqaprovisioningpecfebbraio@pec.it'
         page.locator("button:has-text('Nuovo messaggio')").click()
         try:
             page.locator("input[placeholder='Destinatari']").fill(destinatario, timeout=2000)

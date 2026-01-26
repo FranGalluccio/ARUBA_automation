@@ -26,7 +26,6 @@ def test_messaggio_con_allegato(page):
     # Creare messaggio con allegato
     Helper.crea_messaggio(
         page,
-        "francescoconservazione@pec.it",
         "Test automatico con Playwright - Invio allegati",
         "Test automatico invio messaggio PEC con Playwright",
         file_allegato
