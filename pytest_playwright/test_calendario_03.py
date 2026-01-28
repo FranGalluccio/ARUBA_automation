@@ -23,7 +23,7 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
 def test_creazione_invio_evento(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
     
     time.sleep(2)
     

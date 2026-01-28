@@ -22,9 +22,8 @@ importa_messaggi = os.environ.get("IMPORTA_MESSAGGI", config.get("importa_messag
 
 def test_messaggio_importato(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
 
-    
     # Clicca su importa messaggi
     page.locator('button[title="Importa"]').click()
     

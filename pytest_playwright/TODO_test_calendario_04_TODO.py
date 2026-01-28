@@ -23,7 +23,7 @@ FILE_ICS = os.path.join(TEST_FOLDER, "Personale.ics")
 
 def test_import_export_calendario(page):
     # --- Login PEC ---
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
     page.wait_for_load_state("networkidle")
 
     # --- Vai al calendario ---

@@ -20,7 +20,7 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
 def test_ripristino_messaggi(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
      
     # Apri cestino
     page.locator('button[title="Cestino"]').click()

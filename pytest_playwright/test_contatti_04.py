@@ -22,7 +22,7 @@ file_rubrica = os.environ.get("RUBRICA_IMPORT", config.get("rubrica_import"))
 def test_importa_contatti(page):
     """Importa la rubrica CSV nella PEC"""
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
 
     # Apri la rubrica
     page.locator("#contacts").click()

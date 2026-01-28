@@ -22,7 +22,7 @@ importa_messaggi = os.environ.get("IMPORTA_MESSAGGI", config.get("importa_messag
 
 def test_etichetta(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
 
     # Clicca su nuova cartella
     page.locator('span[title="Nuova etichetta"]').click()

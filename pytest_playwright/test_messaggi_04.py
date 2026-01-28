@@ -18,14 +18,15 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 def test_messaggio_in_bozza(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
     
-    # Creare messaggio con allegato
     Helper.crea_messaggio(
         page,
-        "Test automatico con Playwright - Messaggio in bozza",
-        "Test automatico invio messaggio PEC con Playwright"
-    )
+        config,
+        oggetto="Test automatico con Playwright - Messaggio in bozza",
+        corpo="Test automatico invio messaggio PEC con Playwright",
+        destinatario_key="destinatario_principale"  # opzionale, default già principale
+)
     
     # Attesa per caricamento
     time.sleep(2)

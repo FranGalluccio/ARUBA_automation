@@ -22,13 +22,15 @@ importa_messaggi = os.environ.get("IMPORTA_MESSAGGI", config.get("importa_messag
 
 def test_messaggio_alta_priorita(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
 
     Helper.crea_messaggio(
         page,
-        "Test automatico con Playwright - Messaggio alta priorità",
-        "Test automatico invio messaggio PEC con Playwright"
-    )
+        config,
+        oggetto="Test automatico con Playwright - Messaggio alta priorità",  # oggetto del messaggio
+        corpo="Test automatico invio messaggio PEC con Playwright",  # corpo del messaggio
+        # destinatario_key non serve se usi il principale
+)
     
     # Clicca pulsante altro
     page.locator('aru-button:has(aru-symbol[symbol="more"])').click()

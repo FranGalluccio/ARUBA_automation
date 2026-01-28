@@ -17,7 +17,7 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 def test_messaggio_inoltrato(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
 
  # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -28,13 +28,16 @@ def test_messaggio_inoltrato(page):
     # Clicca su inoltra
     page.locator('aru-symbol[title="Inoltra"]').first.click()
     
+ # Prendi il destinatario dal config (usa la chiave principale)
+    destinatario = config["destinatari"]["destinatario_principale"]
+
     # Fallback stabile: seleziona SOLO il campo destinatario
     destinatario_input = page.locator("input[placeholder='Destinatari']")
     try:
-        destinatario_input.fill("testqaprovisioningpecfebbraio@pec.it")
+        destinatario_input.fill(destinatario)
     except:
         page.locator('input[aria-label="input field"]').click()
-        destinatario_input.fill("testqaprovisioningpecfebbraio@pec.it")
+        destinatario_input.fill(destinatario)
 
     # Compila oggetto e corpo
     page.locator('input[aria-label="input field"]').fill("Test automatico con Playwright - Inoltro messaggio")

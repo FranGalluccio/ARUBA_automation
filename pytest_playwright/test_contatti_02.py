@@ -23,7 +23,7 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
 def test_aggiungere_nuovo_gruppo(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
     
     time.sleep(2)
     # Aggiungere nuovo contatto

@@ -17,14 +17,15 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 def test_messaggio_con_allegato_drive(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
 
-    # Creare messaggio con allegato
     Helper.crea_messaggio(
         page,
-        "Test automatico con Playwright - Invio allegati drive",
-        "Test automatico invio messaggio PEC con Playwright"
-    )
+        config,
+        oggetto="Test automatico con Playwright - Invio allegati drive",
+        corpo="Test automatico invio messaggio PEC con Playwright",
+        destinatario_key="destinatario_principale"  # opzionale, default già principale
+)
     
     # Apri menu allegati
     page.locator("aru-button-menu:has(use[href*='attachments-outline'])").click()

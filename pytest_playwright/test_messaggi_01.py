@@ -21,15 +21,16 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
 def test_messaggio_con_allegato(page):
     # Login PEC
-    LoginPec(page).login_pec()
-
-    # Creare messaggio con allegato
+    LoginPec(page).login_pec(config)
+    
     Helper.crea_messaggio(
         page,
-        "Test automatico con Playwright - Invio allegati",
-        "Test automatico invio messaggio PEC con Playwright",
-        file_allegato
-    )
+        config,
+        oggetto="Test automatico con Playwright - Invio allegati",  # oggetto del messaggio
+        corpo="Test automatico invio messaggio PEC con Playwright",  # corpo del messaggio
+        path_allegato=file_allegato  # allegato opzionale
+        # destinatario_key non serve se usi il principale
+)
     
     # Trova il pulsante "Invia" e cliccalo
     page.locator('span[title="Invia"]').click()

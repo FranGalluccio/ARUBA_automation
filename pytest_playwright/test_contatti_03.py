@@ -22,7 +22,7 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
 def test_esporta_contatti(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
 
     time.sleep(2)
     # Apertura rubrica

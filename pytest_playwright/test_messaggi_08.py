@@ -20,7 +20,7 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
 def test_messaggi_preferiti_pinnati(page):
     # Login PEC
-    LoginPec(page).login_pec()
+    LoginPec(page).login_pec(config)
 
     time.sleep(2)
     # Seleziona tutti i messaggi
