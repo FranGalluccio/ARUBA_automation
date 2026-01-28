@@ -34,19 +34,22 @@ def test_creazione_invio_evento(page):
     page.get_by_role("button", name="Salva").click()
     page.locator("a").filter(has_text="evento test auto invito").first.click()
     # Modifica evento
+    time.sleep(2)
     page.get_by_role("button", name="Modifica").click()
     page.get_by_role("textbox", name="input chosen").click()
     page.get_by_role("textbox", name="input chosen").fill("testqaprovisioningpecfebbraio@pec.it")
     time.sleep(2)
-    page.get_by_role("button", name="testqaprovisioningpecfebbraio -").firstclick()
+    page.get_by_role("button").filter(has_text="testqaprovisioningpecfebbraio").first.click()
+    time.sleep(2)
     page.get_by_role("button", name="Salva").click()
+    time.sleep(2)
     page.get_by_role("button", name="Invia", exact=True).click()
     # Vai alla posta in arrivo
     page.locator("#messages").get_by_label("Messaggi").click()
     time.sleep(5)
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(2)
+    time.sleep(3)
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
 
