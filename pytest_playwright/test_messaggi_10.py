@@ -26,9 +26,11 @@ def test_segna_come_letto_da_leggere(page):
 
     Helper.crea_messaggio(
         page,
-        "Test automatico con Playwright - Segna come letto e da leggere",
-        "Test automatico invio messaggio PEC con Playwright"
-    )
+        config,
+        oggetto="Test automatico con Playwright - Segna come letto e da leggere",  # oggetto del messaggio
+        corpo="Test automatico invio messaggio PEC con Playwright",  # corpo del messaggio
+        # destinatario_key non serve se usi il principale
+)
     
     # Trova il pulsante "Invia" e cliccalo
     page.locator('span[title="Invia"]').click()
