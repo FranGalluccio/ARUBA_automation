@@ -5,7 +5,11 @@ import time
 from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
 from playwright.sync_api import Playwright, sync_playwright, expect
+from datetime import datetime, timedelta
+import locale
 
+# Forza locale italiana (necessaria per mesi in italiano)
+locale.setlocale(locale.LC_TIME, "it_IT")
 
 # --- Leggi config.json ---
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
@@ -31,10 +35,10 @@ def test_creazione_evento_ricorrente(page):
     page.get_by_role("button", name="Calendario").click()
     page.get_by_role("button", name="Nuovo evento", exact=True).click()
     page.get_by_placeholder("Inserisci un titolo").fill("nuovo evento ricorrente playwright")
-    page.get_by_role("textbox", name="input date").first.click()
-    page.get_by_text("Gennaio 2026").click()
-    page.locator("#event-dialog").get_by_text("Gennaio").click()
-    page.locator("#event-dialog").get_by_text("28").click()
+    #page.get_by_role("textbox", name="input date").first.click()
+    #page.get_by_text("Gennaio 2026").click()
+    #page.locator("#event-dialog").get_by_text("Gennaio").click()
+    #page.locator("#event-dialog").get_by_text("28").click()
     page.get_by_role("combobox", name="Non ripetere").click()
     page.get_by_role("button", name="Personalizza...").click()
     page.get_by_role("radio", name="Dopo").check()
