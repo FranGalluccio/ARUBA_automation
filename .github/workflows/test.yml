@@ -1,0 +1,97 @@
+name: PEC Webmail Tests
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ambiente:
+        description: "Ambiente da testare"
+        required: true
+        default: "test1"
+        type: choice
+        options:
+          - test1
+          - test2
+          - prod-buffetti
+          - prod-aruba
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright/python:v1.49.0-jammy
+
+    # Usa l'environment GitHub "test" o "prod" in base all'ambiente scelto.
+    # Gli secret (PEC_USERNAME, PEC_PASSWORD, PEC_DESTINATARIO_SECONDARIO) sono
+    # definiti separatamente nei due environment e vengono caricati automaticamente.
+    environment: >-
+      ${{ (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba')
+          && 'prod' || 'test' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Ricava l'URL in base all'ambiente scelto (default: test1 su push automatico)
+      - name: Imposta URL ambiente
+        id: env-config
+        run: |
+          case "${{ inputs.ambiente || 'test1' }}" in
+            test1)
+              echo "url=https://webmail.test.pec.aruba.it/" >> $GITHUB_OUTPUT
+              echo "nome=Test 1 (webmail.test.pec.aruba.it)" >> $GITHUB_OUTPUT
+              ;;
+            test2)
+              echo "url=https://webmail-test1.test.pec.aruba.it/" >> $GITHUB_OUTPUT
+              echo "nome=Test 2 (webmail-test1.test.pec.aruba.it)" >> $GITHUB_OUTPUT
+              ;;
+            prod-buffetti)
+              echo "url=https://webmail.pec.buffetti.it/" >> $GITHUB_OUTPUT
+              echo "nome=Prod Buffetti (webmail.pec.buffetti.it)" >> $GITHUB_OUTPUT
+              ;;
+            prod-aruba)
+              echo "url=https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth" >> $GITHUB_OUTPUT
+              echo "nome=Prod Aruba (login.aruba.it)" >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+      - name: Installa dipendenze
+        run: pip install -r requirements.txt
+
+      - name: Installa Playwright (Chromium)
+        run: playwright install chromium
+
+      - name: Crea config.json
+        run: |
+          cat > pytest_playwright/config.json << 'EOF'
+          {
+            "pec": {
+              "url": "${{ steps.env-config.outputs.url }}",
+              "username": "${{ secrets.PEC_USERNAME }}",
+              "password": "${{ secrets.PEC_PASSWORD }}"
+            },
+            "destinatari": {
+              "destinatario_principale": "${{ secrets.PEC_USERNAME }}",
+              "destinatario_secondario": "${{ secrets.PEC_DESTINATARIO_SECONDARIO }}"
+            },
+            "test_folder": "pytest_playwright",
+            "report_folder": "pytest_playwright/test-results",
+            "file_allegato": "dati_test/allegato-test.pdf",
+            "importa_messaggi": "dati_test/messaggio importato automation playwright.eml",
+            "rubrica_import": "dati_test/rubrica.csv",
+            "calendario_import": "dati_test/calendario-test.ics"
+          }
+          EOF
+
+      - name: Esegui test
+        run: python -m pytest pytest_playwright/ -v --browser chromium
+
+      - name: Carica artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ inputs.ambiente || 'test1' }}
+          path: |
+            report.html
+            pytest_playwright/test-results/
+          retention-days: 14
