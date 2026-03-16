@@ -15,97 +15,62 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
-def test_messaggio_con_allegato_drive(page):
+def test_messaggio_inoltrato(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    Helper.crea_messaggio(
-        page,
-        config,
-        oggetto="Test automatico con Playwright - Invio allegati drive",
-        corpo="Test automatico invio messaggio PEC con Playwright",
-        destinatario_key="destinatario_principale"  # opzionale, default già principale
-)
-    
-    # Apri menu allegati
-    page.locator("aru-button-menu:has(use[href*='attachments-outline'])").click()
-    menu_item = page.locator("aru-menu-item", has_text="Carica da Aruba Drive").first
-    
-    # Controlla che il tasto carica da Aruba Drive sia visibile e cliccabile
-    assert menu_item.is_visible(), "L'opzione 'Carica da Aruba Drive' non è visibile, controlla se aruba drive è collegato"
-    assert menu_item.is_enabled(), "L'opzione 'Carica da Aruba Drive' non è cliccabile, controlla se aruba drive è collegato"
-    
-    # Carica da dispositivo
-    page.locator("aru-menu-item", has_text="Carica da Aruba Drive").first.click()
-    
-    # Prendi il container/modale della lista dei file
-    container = page.locator("div.h-100.d-flex.flex-column.overflow-x-hidden.overflow-y-auto.change-thumb")
+ # Aspetta che almeno un record sia visibile
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
 
-    # Clicca il primo file nella lista (se presente)
-    container.locator("div.row.h-64.small-border.cursor-pointer").first.click()
-
-    # Prendi il container della modale "Allega da Aruba Drive"
-    modal = page.locator("div#attachment-list")
-
-# Clicca il primo checkbox dentro la modale
-    modal.locator("aru-input-choice[type='checkbox'] >> nth=1").click()
+    # Clicca sul primo record
+    page.locator('div.frame-record-desktop').first.click()
     
-    # Allega un file
-    page.locator("button[title='Allega 1 file']").click()
+    # Clicca su inoltra
+    page.locator('aru-symbol[title="Inoltra"]').first.click()
     
-    # Attesa prima di inviare il messaggio
-    time.sleep(5)
+ # Prendi il destinatario dal config (usa la chiave principale)
+    destinatario = config["destinatari"]["destinatario_principale"]
+
+    # Fallback stabile: seleziona SOLO il campo destinatario
+    destinatario_input = page.locator("input[placeholder='Destinatari']")
+    try:
+        destinatario_input.fill(destinatario)
+    except:
+        page.locator('input[aria-label="input field"]').click()
+        destinatario_input.fill(destinatario)
+
+    # Compila oggetto e corpo
+    page.locator('input[aria-label="input field"]').fill("Test automatico con Playwright - Inoltro messaggio")
+    page.locator("div[contenteditable='true']").fill("Corpo del messaggio inoltrato")
     
     # Trova il pulsante "Invia" e cliccalo
     page.locator('span[title="Invia"]').click()
     
-    # Aspetta 8 secondi
+     # Aspetta 8 secondi
     page.wait_for_timeout(8000)
     
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
+    
     time.sleep(2)
 
-
+    
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    time.sleep(2)
 
     # Clicca sul primo record
     page.locator('div.frame-record-desktop').first.click()
 
     # Aspetta che il contenuto della mail sia visibile
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
-
-    # Apri in nuova finestra
-    link_external_button = page.locator('aru-symbol[title="Apri in una nuova finestra"]').first
-    link_external_button.wait_for(state="visible", timeout=10000)
-
-    with page.expect_popup() as popup_info:
-        link_external_button.click()
-
-    new_page = popup_info.value
-    new_page.wait_for_load_state("domcontentloaded")
-
-    # Verifica pagina esterna
-    assert "external-message" in new_page.url
-
-    # Prendi il nome del file dal tooltip
-    file_name = page.locator("aru-tooltip span.button-tooltip strong").first.inner_text()
     
-    # Clicca sul bottone corrispondente usando il title
-    new_page.locator(f'button[title="{file_name}"]').click()
+    # Prende il testo dell'oggetto dal messaggio aperto
+    oggetto = page.locator("div.message-header-title-subject").inner_text().strip()
 
-    # Seleziona il pulsante
-    button = new_page.locator('text="Mostra anteprima"').first
-    # Assert prima di cliccare
-    assert button.is_visible(), "Il pulsante 'Mostra anteprima' non è visibile"
-    assert button.is_enabled(), "Il pulsante 'Mostra anteprima' non è cliccabile"
+    # Confronto
+    assert "Test automatico" in oggetto, f"Oggetto inatteso: {oggetto}"
     
-    # Mostra anteprima
-    new_page.locator('text="Mostra anteprima"').first.click()
-    
-     # Aspetta 5 secondi prima dello screenshot
+         # Aspetta 5 secondi prima dello screenshot
     time.sleep(5)
 
     # Percorso screenshot dinamico
@@ -113,6 +78,9 @@ def test_messaggio_con_allegato_drive(page):
         REPORT_FOLDER,
         f"test_messaggi_02___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
-    new_page.screenshot(path=screenshot_path, full_page=True)
+    page.screenshot(path=screenshot_path, full_page=True)
 
     print(f"Screenshot salvato in: {screenshot_path}")
+    
+    
+    

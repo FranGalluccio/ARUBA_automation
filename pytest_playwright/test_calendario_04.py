@@ -70,11 +70,16 @@ def test_import_export_calendario(page: Page):
     page.get_by_role("button", name="Esporta").click()
     page.get_by_role("button", name="Esporta", exact=True).click()
     
-    # --- Cleanup: elimina eventi ---
-    rows = page.get_by_role("row", name="import export calendario")
-    count = rows.count()
-
-    for i in range(count):
-        rows.nth(0).locator("a").click()
-        page.get_by_role("button", name="Annulla evento").click()
-        page.get_by_role("button", name="Elimina").click()
+    # --- Cleanup: elimina eventi importati ---
+    try:
+        event_links = page.locator('a').filter(has_text="import export calendario")
+        count = event_links.count()
+        for _ in range(count):
+            event_links.first.click()
+            time.sleep(1)
+            page.get_by_role("button", name="Annulla evento").click()
+            time.sleep(1)
+            page.get_by_role("button", name="Elimina").click()
+            time.sleep(1)
+    except Exception:
+        pass

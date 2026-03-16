@@ -20,47 +20,53 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 # --- Percorso importa messaggi ---
 importa_messaggi = os.environ.get("IMPORTA_MESSAGGI", config.get("importa_messaggi"))
 
-def test_segna_come_letto_da_leggere(page):
+def test_messaggio_alta_priorita(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
     Helper.crea_messaggio(
         page,
         config,
-        oggetto="Test automatico con Playwright - Segna come letto e da leggere",  # oggetto del messaggio
+        oggetto="Test automatico con Playwright - Messaggio alta priorità",  # oggetto del messaggio
         corpo="Test automatico invio messaggio PEC con Playwright",  # corpo del messaggio
         # destinatario_key non serve se usi il principale
 )
     
+    # Clicca pulsante altro
+    page.locator('aru-button:has(aru-symbol[symbol="more"])').click()
+
+    # Clicca alta priorità
+    page.locator('aru-button#high-priority').click()
+    
+    time.sleep(2)
     # Trova il pulsante "Invia" e cliccalo
     page.locator('span[title="Invia"]').click()
-
+    
      # Aspetta 8 secondi
     page.wait_for_timeout(8000)
     
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    
-    time.sleep(2)
-    
-    try:
-     # Segna come da leggere
-        page.locator('button:has(aru-symbol[title="Segna tutti come già letti"])').nth(0).click()
-    except:
-        page.locator('button:has(aru-symbol[title="Segna come già letti"])').nth(0).click()
 
+    # Aspetta che almeno un record sia visibile
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+    
     time.sleep(2)
+
+    # Clicca sul primo record
+    page.locator('div.frame-record-desktop').nth(0).click()
+
+    # Aspetta che il contenuto della mail sia visibile
+    page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
     
-    # Segna come da leggere
-    try:
-        page.locator('button:has(aru-symbol[title="Segna tutti come da leggere"])').nth(0).click()
-    except:
-        page.locator('button:has(aru-symbol[title="Segna come da leggere"])').nth(0).click()
-    
-    # Assert per verificare che il pulsante "Segna tutti come da leggere" sia visibile e cliccabile
-    button = page.locator('button:has(aru-symbol[title="Segna tutti come da leggere"])').nth(0)
-    assert button.is_visible(), "Il pulsante 'Segna tutti come da leggere' non è visibile"
-    assert button.is_enabled(), "Il pulsante 'Segna tutti come da leggere' non è cliccabile"
+    # Seleziona il div contenitore
+    header_info_div = page.locator('div.message-header-title-info.d-flex.flex-wrap.gap-2')
+
+    # Verifica che contenga il simbolo "important"
+    important_symbol = header_info_div.locator('aru-symbol[symbol="important"]')
+
+    # Assert che sia presente e visibile
+    expect(important_symbol).to_be_visible()      
     
     time.sleep(2)
     # Percorso screenshot dinamico
@@ -71,6 +77,3 @@ def test_segna_come_letto_da_leggere(page):
     page.screenshot(path=screenshot_path, full_page=True)
 
     print(f"Screenshot salvato in: {screenshot_path}")
-    
-    
-

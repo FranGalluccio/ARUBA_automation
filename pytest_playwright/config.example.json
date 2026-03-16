@@ -1,0 +1,17 @@
+{
+  "pec": {
+    "url": "https://webmail.test.pec.aruba.it/",
+    "username": "utente@pec.it",
+    "password": "password"
+  },
+  "destinatari": {
+    "destinatario_principale": "utente@pec.it",
+    "destinatario_secondario": "altro@pec.it"
+  },
+  "test_folder": "pytest_playwright",
+  "report_folder": "pytest_playwright/test-results",
+  "file_allegato": "dati_test/allegato-test.pdf",
+  "importa_messaggi": "dati_test/messaggio importato automation playwright.eml",
+  "rubrica_import": "dati_test/rubrica.csv",
+  "calendario_import": "dati_test/calendario-test.ics"
+}

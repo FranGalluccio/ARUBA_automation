@@ -4,6 +4,7 @@ from datetime import datetime
 import time
 from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
+from playwright.sync_api import expect
 
 # --- Leggi config.json ---
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
@@ -15,64 +16,54 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
-def test_messaggio_inoltrato(page):
+def test_messaggio_in_bozza(page):
     # Login PEC
     LoginPec(page).login_pec(config)
-
- # Aspetta che almeno un record sia visibile
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-
-    # Clicca sul primo record
-    page.locator('div.frame-record-desktop').first.click()
     
-    # Clicca su inoltra
-    page.locator('aru-symbol[title="Inoltra"]').first.click()
+    Helper.crea_messaggio(
+        page,
+        config,
+        oggetto="Test automatico con Playwright - Messaggio in bozza",
+        corpo="Test automatico invio messaggio PEC con Playwright",
+        destinatario_key="destinatario_principale"  # opzionale, default già principale
+)
     
- # Prendi il destinatario dal config (usa la chiave principale)
-    destinatario = config["destinatari"]["destinatario_principale"]
-
-    # Fallback stabile: seleziona SOLO il campo destinatario
-    destinatario_input = page.locator("input[placeholder='Destinatari']")
-    try:
-        destinatario_input.fill(destinatario)
-    except:
-        page.locator('input[aria-label="input field"]').click()
-        destinatario_input.fill(destinatario)
-
-    # Compila oggetto e corpo
-    page.locator('input[aria-label="input field"]').fill("Test automatico con Playwright - Inoltro messaggio")
-    page.locator("div[contenteditable='true']").fill("Corpo del messaggio inoltrato")
-    
-    # Trova il pulsante "Invia" e cliccalo
-    page.locator('span[title="Invia"]').click()
-    
-     # Aspetta 8 secondi
-    page.wait_for_timeout(8000)
-    
-    # Aggiorna la posta
-    page.locator('aru-symbol[title="Aggiorna"]').click()
-    
+    # Attesa per caricamento
     time.sleep(2)
+    
+    # Clicca e salva bozza
+    page.locator("#new-message\\.save-menu").click()
+    page.locator("#save-draft").click()
+    
+    # Chiudi finestra messaggio
+    page.locator('#message-dialog aru-symbol[symbol="close"]').click(force=True)
+    
+    # Gestisci popup di conferma chiusura senza salvataggio
+    page.locator('button[title="Si"]').click()
 
+    # Apri bozze
+    page.locator('button[title="Bozze"]').click()
     
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
 
     # Clicca sul primo record
     page.locator('div.frame-record-desktop').first.click()
-
-    # Aspetta che il contenuto della mail sia visibile
-    page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
     
-    # Prende il testo dell'oggetto dal messaggio aperto
-    oggetto = page.locator("div.message-header-title-subject").inner_text().strip()
-
-    # Confronto
-    assert "Test automatico" in oggetto, f"Oggetto inatteso: {oggetto}"
+    # Attesa prima di inviare il messaggio
+    time.sleep(4)
     
-         # Aspetta 5 secondi prima dello screenshot
-    time.sleep(5)
-
+    # Trova il pulsante "Invia" e cliccalo
+    page.locator('span[title="Invia"]').click()
+    
+    # Aspetta 3 secondi che il toast appaia
+    time.sleep(3)
+    
+    # Verifica toast di conferma invio
+    toast = page.locator("div.aru-toast__message").first
+    expect(toast).to_be_visible()
+    assert "Il messaggio è stato inviato" in toast.text_content()
+    
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,
@@ -81,6 +72,7 @@ def test_messaggio_inoltrato(page):
     page.screenshot(path=screenshot_path, full_page=True)
 
     print(f"Screenshot salvato in: {screenshot_path}")
+    
     
     
     

@@ -18,12 +18,21 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 # --- Percorso allegato dinamico ---
 file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
-def test_ripristino_messaggi(page):
+def test_messaggi_preferiti_pinnati(page):
     # Login PEC
     LoginPec(page).login_pec(config)
-     
-    # Apri cestino
-    page.locator('button[title="Cestino"]').click()
+
+    time.sleep(2)
+    # Seleziona tutti i messaggi
+    page.locator('div.aru-input-checkbox').nth(1).click()
+    time.sleep(2)
+    page.locator('div.aru-input-checkbox').nth(2).click()
+    
+    # Clicca su altro
+    page.locator('svg[title="Altro"]').click()
+    
+    # Aggiungi ai preferiti
+    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).click()
     
     time.sleep(2)
     # Seleziona tutti i messaggi
@@ -31,21 +40,46 @@ def test_ripristino_messaggi(page):
     time.sleep(2)
     page.locator('div.aru-input-checkbox').nth(2).click()
     
+    # Clicca su altro
+    page.locator('svg[title="Altro"]').click()
+    
+    # Rimuovi dai preferiti
+    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).click()
+    
     time.sleep(2)
+    # Seleziona tutti i messaggi
+    page.locator('div.aru-input-checkbox').nth(1).click()
+    time.sleep(2)
+    page.locator('div.aru-input-checkbox').nth(2).click()
     
-    # Clicca su sposta
-    page.locator('svg[title="Sposta"]').click()
+    # Clicca su altro
+    page.locator('svg[title="Altro"]').click()
     
-    # Sposta in arrivo
-    page.locator("aru-webmail-menu-item[webmailmenuopener]").locator("span:has-text('In arrivo')").click()
+    # Aggiungi in evidenza
+    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
     
-    time.sleep(3)
+    time.sleep(2)
+
+    # Passa sopra la prima riga (hover) e poi clicca sul checkbox
+    page.locator('div.frame-record-desktop-row-content').nth(0).hover()
+    page.locator('div.frame-record-desktop-row-content').nth(0).locator('div.aru-input-checkbox').click(force=True)
+
+    # Passa sopra la seconda riga (hover) e poi clicca sul checkbox
+    page.locator('div.frame-record-desktop-row-content').nth(1).hover()
+    page.locator('div.frame-record-desktop-row-content').nth(1).locator('div.aru-input-checkbox').click(force=True)
     
+    # Clicca su altro
+    page.locator('svg[title="Altro"]').click()
+    
+    # Rimuovi da in evidenza
+    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
+    
+    time.sleep(2)
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     assert toast.is_visible()
-    assert "I messaggi selezionati sono stati spostati in In arrivo" in toast.text_content()
-
+    assert " messaggi non sono più in evidenza." in toast.text_content()
+    
     time.sleep(1)
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(

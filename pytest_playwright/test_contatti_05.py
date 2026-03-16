@@ -1,0 +1,110 @@
+import os
+import json
+from datetime import datetime
+import time
+from playwright.sync_api import sync_playwright
+from base_pec import LoginPec, Helper
+from playwright.sync_api import expect
+
+
+# --- Leggi config.json ---
+CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+with open(CONFIG_FILE) as f:
+    config = json.load(f)
+
+# --- Cartella test e report ---
+TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__)))
+REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
+os.makedirs(REPORT_FOLDER, exist_ok=True)
+
+
+def test_modifica_contatto(page):
+    # Login PEC
+    LoginPec(page).login_pec(config)
+
+    time.sleep(2)
+    page.click("#contacts")
+    time.sleep(2)
+
+    # Crea un nuovo contatto da modificare
+    unique_email = f"testmod_{int(time.time())}@pec.it"
+    page.get_by_role("button", name="Nuovo").click()
+    page.get_by_role("button", name="Procedi").click()
+    page.get_by_placeholder("Inserisci nome").fill("Contatto")
+    page.get_by_placeholder("Inserisci cognome").fill("DaModificare")
+    page.get_by_placeholder("Inserisci email").fill(unique_email)
+    page.get_by_role("button", name="Salva").click()
+    time.sleep(3)
+
+    # Cerca il contatto appena creato
+    search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+    search.click()
+    search.fill("DaModificare")
+    time.sleep(2)
+
+    # Trova il contatto nella lista
+    row = page.locator('div.frame-record-desktop').filter(has_text="DaModificare").first
+    row.wait_for(state="visible", timeout=8000)
+
+    # Hover per far apparire il checkbox e selezionarlo
+    row.hover()
+    time.sleep(0.5)
+    row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
+    time.sleep(1)
+
+    # Cerca pulsante Modifica nella toolbar (appare quando si seleziona 1 contatto)
+    # oppure tenta doppio click sul contatto per aprire l'editor
+    modifica_clicked = False
+    try:
+        modifica_btn = page.locator('button[title="Modifica"], aru-symbol[title="Modifica"]').first
+        modifica_btn.wait_for(state="visible", timeout=3000)
+        modifica_btn.click()
+        modifica_clicked = True
+    except:
+        # Fallback: doppio click sulla riga per aprire edit
+        row.dblclick()
+
+    time.sleep(2)
+
+    # Modifica il cognome
+    cognome_input = page.get_by_placeholder("Inserisci cognome")
+    cognome_input.wait_for(state="visible", timeout=5000)
+    cognome_input.click(click_count=3)
+    cognome_input.fill("Modificato")
+
+    # Salva
+    page.get_by_role("button", name="Salva").click()
+    time.sleep(2)
+
+    # Verifica che il cognome aggiornato sia presente
+    # Pulisci la ricerca e cerca il nome modificato
+    search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+    search2.click(click_count=3)
+    search2.fill("Modificato")
+    time.sleep(2)
+
+    result = page.locator('div.frame-record-desktop').filter(has_text="Modificato").first
+    result.wait_for(state="visible", timeout=5000)
+    assert result.is_visible(), "Il contatto modificato non è visibile"
+
+    time.sleep(1)
+
+    # Screenshot
+    screenshot_path = os.path.join(
+        REPORT_FOLDER,
+        f"test_contatti_05___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
+
+    # Cleanup: elimina il contatto modificato
+    try:
+        result.hover()
+        result.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
+        time.sleep(1)
+        page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+        time.sleep(1)
+        page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
+        time.sleep(2)
+    except:
+        pass

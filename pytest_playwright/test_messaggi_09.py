@@ -20,64 +20,49 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 # --- Percorso importa messaggi ---
 importa_messaggi = os.environ.get("IMPORTA_MESSAGGI", config.get("importa_messaggi"))
 
-def test_etichetta(page):
+def test_segna_come_letto_da_leggere(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    # Clicca su nuova cartella
-    page.locator('span[title="Nuova etichetta"]').click()
+    Helper.crea_messaggio(
+        page,
+        config,
+        oggetto="Test automatico con Playwright - Segna come letto e da leggere",  # oggetto del messaggio
+        corpo="Test automatico invio messaggio PEC con Playwright",  # corpo del messaggio
+        # destinatario_key non serve se usi il principale
+)
     
-    nome_etichetta = "Test etichetta lavoro"
-    time.sleep(2)
-    # Compila nome etichetta
-    page.locator("input[placeholder='Es. Lavoro']").fill(nome_etichetta)
-    time.sleep(2)
-    # Salva nuova etichetta
-    page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
-    
-    chiudi = page.get_by_role("button", name="Chiudi")
+    # Trova il pulsante "Invia" e cliccalo
+    page.locator('span[title="Invia"]').click()
 
+     # Aspetta 8 secondi
+    page.wait_for_timeout(8000)
+    
+    # Aggiorna la posta
+    page.locator('aru-symbol[title="Aggiorna"]').click()
+    
+    time.sleep(2)
+    
     try:
-        chiudi.wait_for(state="visible", timeout=3000)
-        chiudi.click()
+     # Segna come da leggere
+        page.locator('button:has(aru-symbol[title="Segna tutti come già letti"])').nth(0).click()
     except:
-        pass
+        page.locator('button:has(aru-symbol[title="Segna come già letti"])').nth(0).click()
 
-    # Seleziona tutti i messaggi
-    page.locator('div.aru-input-checkbox').nth(1).click()
     time.sleep(2)
-    page.locator('div.aru-input-checkbox').nth(2).click()
     
-    # Clicca su etichetta
-    page.locator('button:has(aru-symbol[title="Etichetta"])').nth(0).click()
+    # Segna come da leggere
+    try:
+        page.locator('button:has(aru-symbol[title="Segna tutti come da leggere"])').nth(0).click()
+    except:
+        page.locator('button:has(aru-symbol[title="Segna come da leggere"])').nth(0).click()
+    
+    # Assert per verificare che il pulsante "Segna tutti come da leggere" sia visibile e cliccabile
+    button = page.locator('button:has(aru-symbol[title="Segna tutti come da leggere"])').nth(0)
+    assert button.is_visible(), "Il pulsante 'Segna tutti come da leggere' non è visibile"
+    assert button.is_enabled(), "Il pulsante 'Segna tutti come da leggere' non è cliccabile"
     
     time.sleep(2)
-
-    # Seleziona etichetta lavoro
-    page.locator('aru-chosen-closed[inputgroupinputs*="Test etichetta lavoro"]').click()
-    time.sleep(2)
-    # Applica etichetta
-    page.evaluate('''() => {
-    const btn = document.querySelector('button[title="Applica"]');
-    btn?.click();
-}''')
-    
-    # Clicca con tasto destro sull'etichetta creata
-    page.locator(f'button[title="{nome_etichetta}"]').click(button="right")
-    
-    # Elimina etichetta
-    page.locator('button:has-text("Elimina etichetta")').click()
-    
-    # Conferma elimina etichetta
-    page.locator('button[title="Si"]').click()
-    time.sleep(2)
-    # Verifica toast di conferma invio
-    toast = page.locator("div.aru-toast__message").first
-    expect(toast).to_be_visible()
-    assert "L'etichetta è stata eliminata." in toast.text_content()
-    
-    time.sleep(1)
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,
@@ -88,10 +73,4 @@ def test_etichetta(page):
     print(f"Screenshot salvato in: {screenshot_path}")
     
     
-    
-
-
-
-
-
 

@@ -6,6 +6,7 @@ from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
+
 # --- Leggi config.json ---
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 with open(CONFIG_FILE) as f:
@@ -16,54 +17,42 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
-def test_messaggio_in_bozza(page):
+# --- Percorso importa messaggi ---
+importa_messaggi = os.environ.get("IMPORTA_MESSAGGI", config.get("importa_messaggi"))
+
+def test_messaggio_importato(page):
     # Login PEC
     LoginPec(page).login_pec(config)
+
+    # Clicca su importa messaggi
+    page.locator('button[title="Importa"]').click()
     
-    Helper.crea_messaggio(
-        page,
-        config,
-        oggetto="Test automatico con Playwright - Messaggio in bozza",
-        corpo="Test automatico invio messaggio PEC con Playwright",
-        destinatario_key="destinatario_principale"  # opzionale, default già principale
-)
-    
-    # Attesa per caricamento
+    # Intercetta il file chooser al click del bottone "Seleziona da dispositivo"
+    with page.expect_file_chooser() as fc_info:
+        page.locator('button[title="Seleziona da dispositivo"]').click()
+
+    file_chooser = fc_info.value
+
+    # Imposta il file da caricare
+    file_chooser.set_files(importa_messaggi)
+
+    # Attendi caricamento allegato
+    page.wait_for_timeout(2)
+            
+    # Piccola attesa per sicurezza
     time.sleep(2)
     
-    # Clicca e salva bozza
-    page.locator("#new-message\\.save-menu").click()
-    page.locator("#save-draft").click()
+    # Clicca il bottone "Importa"
+    page.locator('button[title="Importa"]').nth(1).click()
     
-    # Chiudi finestra messaggio
-    page.locator('#message-dialog aru-symbol[symbol="close"]').click(force=True)
     
-    # Gestisci popup di conferma chiusura senza salvataggio
-    page.locator('button[title="Si"]').click()
-
-    # Apri bozze
-    page.locator('button[title="Bozze"]').click()
-    
-    # Aspetta che almeno un record sia visibile
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-
-    # Clicca sul primo record
-    page.locator('div.frame-record-desktop').first.click()
-    
-    # Attesa prima di inviare il messaggio
-    time.sleep(4)
-    
-    # Trova il pulsante "Invia" e cliccalo
-    page.locator('span[title="Invia"]').click()
-    
-    # Aspetta 3 secondi che il toast appaia
-    time.sleep(3)
-    
+    time.sleep(2)
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
-    assert "Il messaggio è stato inviato" in toast.text_content()
+    assert "1 nuovo messaggio da leggere" in toast.text_content()
     
+    time.sleep(1)
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,
@@ -73,6 +62,6 @@ def test_messaggio_in_bozza(page):
 
     print(f"Screenshot salvato in: {screenshot_path}")
     
-    
+
     
     

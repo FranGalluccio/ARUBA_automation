@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Virtual environments
+venv*/
+.venv/
+env/
+.env/
+
+# Build artifacts
+build/
+dist/
+*.spec
+
+# Test artifacts - ignora i contenuti ma mantieni la cartella
+pytest_playwright/test-results/*
+!pytest_playwright/test-results/.gitkeep
+report.html
+
+# Config con credenziali (usa config.example.json come template)
+pytest_playwright/config.json
+
+# Pytest cache
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Diagnostica / sviluppo
+diag_*.py
+diag_*.png
+debug_*.png

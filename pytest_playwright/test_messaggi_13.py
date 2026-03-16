@@ -18,78 +18,59 @@ REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-resu
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 
-def test_risposta_messaggio(page):
+def test_risposta_a_tutti(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    # Invia un messaggio a se stessi per avere qualcosa a cui rispondere
+    # Invia messaggio a se stessi come base per il reply all
     Helper.crea_messaggio(
         page,
         config,
-        oggetto="Test automatico con Playwright - Messaggio originale per reply",
+        oggetto="Test automatico con Playwright - Originale per reply all",
         corpo="Corpo del messaggio originale",
     )
-
-    # Trova il pulsante "Invia" e cliccalo
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta 8 secondi per la consegna
+    # Aspetta consegna
     page.wait_for_timeout(8000)
-
-    # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
-
     time.sleep(2)
 
-    # Aspetta che almeno un record sia visibile
+    # Apri primo record
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-
-    # Clicca sul primo record
     page.locator('div.frame-record-desktop').first.click()
-
-    # Aspetta che il contenuto della mail sia visibile
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
-    # Clicca su Rispondi
-    page.locator('aru-symbol[title="Rispondi"]').first.click()
+    # Clicca Rispondi a tutti
+    page.locator('aru-symbol[title="Rispondi a tutti"]').first.click()
 
-    # Aspetta che il campo corpo sia pronto (la finestra di risposta si apre)
+    # Aspetta apertura form risposta
     page.locator("div[contenteditable='true']").first.wait_for(state="visible", timeout=5000)
+    page.locator("div[contenteditable='true']").first.fill("Risposta a tutti automatica tramite Playwright")
 
-    # Scrivi il testo di risposta
-    page.locator("div[contenteditable='true']").first.fill("Risposta automatica tramite Playwright")
-
-    # Trova il pulsante "Invia" e cliccalo
+    # Invia risposta
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta 8 secondi per la consegna della risposta
+    # Aspetta consegna risposta
     page.wait_for_timeout(8000)
-
-    # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
-
     time.sleep(2)
 
-    # Aspetta che almeno un record sia visibile
+    # Apri il messaggio di risposta ricevuto
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-
-    # Clicca sul primo record (il messaggio di risposta ricevuto)
-    page.locator('div.frame-record-desktop').nth(0).click()
-
-    # Aspetta che il contenuto della mail sia visibile
+    page.locator('div.frame-record-desktop').first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
-    # Verifica che l'oggetto contenga il prefisso "Re:"
+    # Verifica prefisso "Re:" nell'oggetto
     oggetto = page.locator("div.message-header-title-subject").inner_text().strip()
-    assert "Re:" in oggetto, f"Oggetto inatteso: {oggetto}"
+    assert "Re:" in oggetto, f"Oggetto inatteso (manca 'Re:'): {oggetto}"
 
     time.sleep(2)
 
-    # Percorso screenshot dinamico
+    # Screenshot
     screenshot_path = os.path.join(
         REPORT_FOLDER,
-        f"test_messaggi_11___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        f"test_messaggi_13___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
