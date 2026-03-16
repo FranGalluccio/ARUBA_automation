@@ -22,7 +22,7 @@ def test_logout(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
 
     # Apri menu account (force=True bypassa il div che intercetta i pointer events nel web component)
     page.locator(f'button[title="{config["pec"]["username"]}"]').click(force=True)

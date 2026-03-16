@@ -37,16 +37,16 @@ def test_messaggio_importato(page):
     file_chooser.set_files(importa_messaggi)
 
     # Attendi caricamento allegato
-    page.wait_for_timeout(2)
+    page.wait_for_timeout(2000)
             
     # Piccola attesa per sicurezza
-    time.sleep(2)
+    time.sleep(1)
     
     # Clicca il bottone "Importa"
     page.locator('button[title="Importa"]').nth(1).click()
     
     
-    time.sleep(2)
+    time.sleep(1)
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()

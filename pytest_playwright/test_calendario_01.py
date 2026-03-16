@@ -29,7 +29,7 @@ def test_creazione_evento_ricorrente(page):
     # Login PEC
     LoginPec(page).login_pec(config)
     
-    time.sleep(2)
+    time.sleep(1)
     
     # Crea nuovo evento ricorrente
     page.get_by_role("button", name="Calendario").click()
@@ -42,7 +42,7 @@ def test_creazione_evento_ricorrente(page):
     page.get_by_role("combobox", name="Non ripetere").click()
     page.get_by_role("button", name="Personalizza...").click()
     page.get_by_role("radio", name="Dopo").check()
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("dialog") \
     .filter(has_text="Personalizza") \
     .filter(has=page.locator("button", has_text="Salva")) \
@@ -50,10 +50,10 @@ def test_creazione_evento_ricorrente(page):
     .get_by_role("button", name="Salva") \
     .click()
 
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("button", name="Salva").click()
     
-    time.sleep(2)
+    time.sleep(1)
     
         # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -63,7 +63,7 @@ def test_creazione_evento_ricorrente(page):
     page.screenshot(path=screenshot_path, full_page=True)
 
     print(f"Screenshot salvato in: {screenshot_path}")
-    time.sleep(2)
+    time.sleep(1)
     
     # Elimina evento ricorrente
     page.get_by_role("button", name="Eventi").click()

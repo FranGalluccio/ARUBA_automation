@@ -37,7 +37,7 @@ def test_login_credenziali_errate(page):
     # Clicca login
     page.locator("button[type='submit'], button:has-text('Login')").first.click()
 
-    time.sleep(3)
+    time.sleep(2)
 
     # Verifica che l'URL non contenga INBOX (login fallito, nessun redirect alla casella)
     assert "INBOX" not in page.url, f"Il login con credenziali errate ha avuto successo inaspettatamente. URL: {page.url}"

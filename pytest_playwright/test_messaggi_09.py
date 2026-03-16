@@ -41,7 +41,7 @@ def test_segna_come_letto_da_leggere(page):
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
     
-    time.sleep(2)
+    time.sleep(1)
     
     try:
      # Segna come da leggere
@@ -49,7 +49,7 @@ def test_segna_come_letto_da_leggere(page):
     except:
         page.locator('button:has(aru-symbol[title="Segna come già letti"])').nth(0).click()
 
-    time.sleep(2)
+    time.sleep(1)
     
     # Segna come da leggere
     try:
@@ -62,7 +62,7 @@ def test_segna_come_letto_da_leggere(page):
     assert button.is_visible(), "Il pulsante 'Segna tutti come da leggere' non è visibile"
     assert button.is_enabled(), "Il pulsante 'Segna tutti come da leggere' non è cliccabile"
     
-    time.sleep(2)
+    time.sleep(1)
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,

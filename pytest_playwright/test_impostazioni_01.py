@@ -27,7 +27,7 @@ def test_crea_firma(page):
 
     # Naviga direttamente alla pagina Firme
     page.goto(SIGNATURES_URL, timeout=20000)
-    time.sleep(3)
+    time.sleep(2)
 
     # Verifica che la pagina Firme sia caricata
     firme_header = page.locator('h1').filter(has_text="Firme").first
@@ -38,7 +38,7 @@ def test_crea_firma(page):
     create_btn = page.locator('aru-button[kind="solid"][skin="primary"]').first
     create_btn.wait_for(state="visible", timeout=5000)
     create_btn.click()
-    time.sleep(2)
+    time.sleep(1)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_impostazioni_01_form_{datetime.now():%H-%M-%S}.png"))
 
@@ -68,7 +68,7 @@ def test_crea_firma(page):
     # Salva la firma
     try:
         page.locator('button[title="Salva"], aru-button[skin="primary"]').first.click()
-        time.sleep(2)
+        time.sleep(1)
     except:
         pass
 

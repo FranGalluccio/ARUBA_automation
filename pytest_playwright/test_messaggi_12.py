@@ -33,7 +33,7 @@ def test_invio_messaggio_semplice(page):
     page.locator('span[title="Invia"]').click()
 
     # Aspetta toast di conferma
-    time.sleep(3)
+    time.sleep(2)
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
     assert "Il messaggio è stato inviato" in toast.text_content()

@@ -45,16 +45,16 @@ def test_import_export_calendario(page: Page):
     page.get_by_placeholder("Inserisci un titolo").fill("import export calendario")
     page.get_by_role("button", name="Salva").click()
     
-    time.sleep(2)
+    time.sleep(1)
 
     # --- Importa calendario (.ics) ---
     page.get_by_role("button", name="Importa").click()
-    time.sleep(2)
+    time.sleep(1)
     page.locator("#hidden_input").set_input_files(FILE_ICS)
 
     page.get_by_role("button", name="Importa", exact=True).click()
     
-    time.sleep(2)
+    time.sleep(1)
     
         # Percorso screenshot dinamico
     screenshot_path = os.path.join(

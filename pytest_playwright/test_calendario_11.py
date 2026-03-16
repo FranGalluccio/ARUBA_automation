@@ -22,9 +22,9 @@ def test_ricerca_nel_calendario(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("button", name="Calendario").click()
-    time.sleep(2)
+    time.sleep(1)
 
     titolo_evento = f"evento ricerca playwright {int(time.time())}"
 
@@ -33,7 +33,7 @@ def test_ricerca_nel_calendario(page):
     time.sleep(1)
     page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
     page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Usa la barra di ricerca del calendario
     # La ricerca è visibile come input con placeholder "Cerca nel calendario"
@@ -46,7 +46,7 @@ def test_ricerca_nel_calendario(page):
     search.click()
     search.fill(titolo_evento)
     page.keyboard.press("Enter")
-    time.sleep(3)
+    time.sleep(2)
 
     # Verifica che l'evento appaia nei risultati
     # Cerca nella vista "Eventi" che mostra una lista
@@ -61,7 +61,7 @@ def test_ricerca_nel_calendario(page):
     except:
         # Alternativa: vai nella vista "Eventi" e cerca
         page.get_by_role("button", name="Eventi").click()
-        time.sleep(2)
+        time.sleep(1)
         result2 = page.locator('a, button, [class*="event"]').filter(has_text=titolo_evento).first
         assert result2.is_visible(), f"L'evento '{titolo_evento}' non è stato trovato"
 
@@ -76,7 +76,7 @@ def test_ricerca_nel_calendario(page):
     # Cleanup: elimina l'evento
     try:
         page.get_by_role("button", name="Calendario").click()
-        time.sleep(2)
+        time.sleep(1)
         page.get_by_role("button", name="Eventi").click()
         time.sleep(1)
         ev = page.locator('a, button, [class*="event"]').filter(has_text=titolo_evento).first
@@ -86,6 +86,6 @@ def test_ricerca_nel_calendario(page):
             page.get_by_role("button", name="Annulla evento").click()
             time.sleep(1)
             page.get_by_role("button", name="Elimina").click()
-            time.sleep(2)
+            time.sleep(1)
     except:
         pass

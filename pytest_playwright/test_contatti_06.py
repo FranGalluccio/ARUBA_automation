@@ -22,9 +22,9 @@ def test_elimina_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.click("#contacts")
-    time.sleep(2)
+    time.sleep(1)
 
     # Crea un contatto da eliminare
     unique_email = f"testelimina_{int(time.time())}@pec.it"
@@ -36,13 +36,13 @@ def test_elimina_contatto(page):
     page.get_by_placeholder("Inserisci cognome").fill(cognome)
     page.get_by_placeholder("Inserisci email").fill(unique_email)
     page.get_by_role("button", name="Salva").click()
-    time.sleep(3)
+    time.sleep(2)
 
     # Cerca il contatto appena creato
     search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
     search.click()
     search.fill(cognome)
-    time.sleep(2)
+    time.sleep(1)
 
     # Seleziona il contatto tramite checkbox (stessa tecnica usata nel cleanup di test_contatti_07)
     row = page.locator('div.frame-record-desktop').filter(has_text=cognome).first
@@ -66,7 +66,7 @@ def test_elimina_contatto(page):
     confirm_btn = page.locator('.cdk-overlay-pane button:has-text("Elimina")').first
     confirm_btn.wait_for(state="visible", timeout=3000)
     confirm_btn.click()
-    time.sleep(3)
+    time.sleep(2)
 
     # Verifica che il contatto non sia più presente
     # Aspetta che eventuali backdrop spariscano
@@ -80,7 +80,7 @@ def test_elimina_contatto(page):
     search2.click(force=True)
     time.sleep(0.5)
     search2.fill(cognome)
-    time.sleep(2)
+    time.sleep(1)
 
     assert page.locator('div.frame-record-desktop').filter(has_text=cognome).count() == 0, \
         f"Il contatto '{cognome}' è ancora presente dopo l'eliminazione"

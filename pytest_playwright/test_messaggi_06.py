@@ -25,13 +25,13 @@ def test_ripristino_messaggi(page):
     # Apri cestino
     page.locator('button[title="Cestino"]').click()
     
-    time.sleep(2)
+    time.sleep(1)
     # Seleziona tutti i messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()
-    time.sleep(2)
+    time.sleep(1)
     page.locator('div.aru-input-checkbox').nth(2).click()
     
-    time.sleep(2)
+    time.sleep(1)
     
     # Clicca su sposta
     page.locator('svg[title="Sposta"]').click()
@@ -39,7 +39,7 @@ def test_ripristino_messaggi(page):
     # Sposta in arrivo
     page.locator("aru-webmail-menu-item[webmailmenuopener]").locator("span:has-text('In arrivo')").click()
     
-    time.sleep(3)
+    time.sleep(2)
     
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first

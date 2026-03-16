@@ -38,7 +38,7 @@ def test_scarica_allegato_ricevuto(page):
     # Aspetta consegna
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Apri messaggio
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)

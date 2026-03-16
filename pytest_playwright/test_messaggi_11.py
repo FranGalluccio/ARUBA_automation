@@ -39,7 +39,7 @@ def test_risposta_messaggio(page):
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
 
-    time.sleep(2)
+    time.sleep(1)
 
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -68,7 +68,7 @@ def test_risposta_messaggio(page):
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
 
-    time.sleep(2)
+    time.sleep(1)
 
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -83,7 +83,7 @@ def test_risposta_messaggio(page):
     oggetto = page.locator("div.message-header-title-subject").inner_text().strip()
     assert "Re:" in oggetto, f"Oggetto inatteso: {oggetto}"
 
-    time.sleep(2)
+    time.sleep(1)
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(

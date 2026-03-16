@@ -28,13 +28,13 @@ def test_etichetta(page):
     page.locator('span[title="Nuova etichetta"]').click()
     
     nome_etichetta = "Test etichetta lavoro"
-    time.sleep(2)
+    time.sleep(1)
     # Compila nome etichetta
     page.locator("input[placeholder='Es. Lavoro']").fill(nome_etichetta)
-    time.sleep(2)
+    time.sleep(1)
     # Salva nuova etichetta
     page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
+    time.sleep(1)
     
     chiudi = page.get_by_role("button", name="Chiudi")
 
@@ -46,17 +46,17 @@ def test_etichetta(page):
 
     # Seleziona tutti i messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()
-    time.sleep(2)
+    time.sleep(1)
     page.locator('div.aru-input-checkbox').nth(2).click()
     
     # Clicca su etichetta
     page.locator('button:has(aru-symbol[title="Etichetta"])').nth(0).click()
     
-    time.sleep(2)
+    time.sleep(1)
 
     # Seleziona etichetta lavoro
     page.locator('aru-chosen-closed[inputgroupinputs*="Test etichetta lavoro"]').click()
-    time.sleep(2)
+    time.sleep(1)
     # Applica etichetta
     page.evaluate('''() => {
     const btn = document.querySelector('button[title="Applica"]');
@@ -71,7 +71,7 @@ def test_etichetta(page):
     
     # Conferma elimina etichetta
     page.locator('button[title="Si"]').click()
-    time.sleep(2)
+    time.sleep(1)
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()

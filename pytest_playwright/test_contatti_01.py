@@ -25,13 +25,13 @@ def test_aggiungere_nuovo_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
     
-    time.sleep(2)
+    time.sleep(1)
     # Aggiungere nuovo contatto
   # email unica per ogni run
     unique_email = f"testautomatico_{__import__('time').time().__int__()}@pec.it"
 
     page.click("#contacts")
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("button", name="Nuovo").click()
     page.get_by_role("button", name="Procedi").click()
     page.get_by_placeholder("Inserisci nome").click()
@@ -42,7 +42,7 @@ def test_aggiungere_nuovo_contatto(page):
     page.get_by_placeholder("Inserisci email").fill(unique_email)
     page.get_by_role("button", name="Salva").click()
     
-    time.sleep(2)
+    time.sleep(1)
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,

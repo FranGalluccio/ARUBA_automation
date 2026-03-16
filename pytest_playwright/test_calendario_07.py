@@ -22,9 +22,9 @@ def test_naviga_periodi_calendario(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("button", name="Calendario").click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Leggi il testo dell'header corrente (mini-calendar sidebar: "Marzo 2026")
     header = page.locator('div.vanilla-calendar-header__content, [class*="calendar-header"]').first
@@ -34,7 +34,7 @@ def test_naviga_periodi_calendario(page):
 
     # Naviga al mese/periodo successivo
     page.locator('button[title="Next"]').click()
-    time.sleep(2)
+    time.sleep(1)
     header_successivo = header.inner_text().strip()
     print(f"Header dopo Next: '{header_successivo}'")
     assert header_iniziale != header_successivo, \
@@ -42,7 +42,7 @@ def test_naviga_periodi_calendario(page):
 
     # Naviga indietro
     page.locator('button[title="Prev"]').click()
-    time.sleep(2)
+    time.sleep(1)
     header_tornato = header.inner_text().strip()
     print(f"Header dopo Prev: '{header_tornato}'")
     assert header_tornato == header_iniziale, \

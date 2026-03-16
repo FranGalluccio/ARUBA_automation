@@ -29,7 +29,7 @@ def test_messaggio_in_bozza(page):
 )
     
     # Attesa per caricamento
-    time.sleep(2)
+    time.sleep(1)
     
     # Clicca e salva bozza
     page.locator("#new-message\\.save-menu").click()
@@ -57,7 +57,7 @@ def test_messaggio_in_bozza(page):
     page.locator('span[title="Invia"]').click()
     
     # Aspetta 3 secondi che il toast appaia
-    time.sleep(3)
+    time.sleep(2)
     
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first

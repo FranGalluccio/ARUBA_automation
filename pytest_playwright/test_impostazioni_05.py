@@ -26,12 +26,12 @@ def test_posta_indesiderata(page):
 
     # Vai alle impostazioni → Posta indesiderata (sotto accordion "Account e sicurezza")
     page.goto(SETTINGS_URL + "/home", timeout=20000)
-    time.sleep(2)
+    time.sleep(1)
     if not page.locator('button[title="Posta indesiderata"]').is_visible():
         page.locator('button[title="Account e sicurezza"]').click(force=True)
         time.sleep(1)
     page.locator('button[title="Posta indesiderata"]').click(force=True)
-    time.sleep(2)
+    time.sleep(1)
 
     # Verifica che la sezione sia caricata
     assert "INBOX" not in page.url or page.locator('h1, h2').filter(has_text="Posta indesiderata").count() > 0 or \
@@ -45,7 +45,7 @@ def test_posta_indesiderata(page):
         time.sleep(1)
         page.locator('input[placeholder*="email"], input[placeholder*="mittente"], input[type="email"]').first.fill(mittente_blocco)
         page.get_by_role("button", name="Salva").click()
-        time.sleep(2)
+        time.sleep(1)
 
         # Verifica che il mittente sia nella lista
         page.locator('tr, li, [class*="row"]').filter(has_text=mittente_blocco).first.wait_for(
@@ -66,6 +66,6 @@ def test_posta_indesiderata(page):
     try:
         row = page.locator('tr, li, [class*="row"]').filter(has_text=mittente_blocco).first
         row.locator('button[title="Elimina"], aru-symbol[title="Elimina"]').click()
-        time.sleep(2)
+        time.sleep(1)
     except:
         pass

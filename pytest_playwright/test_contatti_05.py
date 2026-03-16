@@ -22,9 +22,9 @@ def test_modifica_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.click("#contacts")
-    time.sleep(2)
+    time.sleep(1)
 
     # Crea un nuovo contatto da modificare
     unique_email = f"testmod_{int(time.time())}@pec.it"
@@ -34,13 +34,13 @@ def test_modifica_contatto(page):
     page.get_by_placeholder("Inserisci cognome").fill("DaModificare")
     page.get_by_placeholder("Inserisci email").fill(unique_email)
     page.get_by_role("button", name="Salva").click()
-    time.sleep(3)
+    time.sleep(2)
 
     # Cerca il contatto appena creato
     search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
     search.click()
     search.fill("DaModificare")
-    time.sleep(2)
+    time.sleep(1)
 
     # Trova il contatto nella lista
     row = page.locator('div.frame-record-desktop').filter(has_text="DaModificare").first
@@ -64,7 +64,7 @@ def test_modifica_contatto(page):
         # Fallback: doppio click sulla riga per aprire edit
         row.dblclick()
 
-    time.sleep(2)
+    time.sleep(1)
 
     # Modifica il cognome
     cognome_input = page.get_by_placeholder("Inserisci cognome")
@@ -74,14 +74,14 @@ def test_modifica_contatto(page):
 
     # Salva
     page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Verifica che il cognome aggiornato sia presente
     # Pulisci la ricerca e cerca il nome modificato
     search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
     search2.click(click_count=3)
     search2.fill("Modificato")
-    time.sleep(2)
+    time.sleep(1)
 
     result = page.locator('div.frame-record-desktop').filter(has_text="Modificato").first
     result.wait_for(state="visible", timeout=5000)
@@ -105,6 +105,6 @@ def test_modifica_contatto(page):
         page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
         time.sleep(1)
         page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
-        time.sleep(2)
+        time.sleep(1)
     except:
         pass

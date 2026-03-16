@@ -25,7 +25,7 @@ def test_creazione_calendario(page):
     # Login PEC
     LoginPec(page).login_pec(config)
     
-    time.sleep(2)
+    time.sleep(1)
     
     # Crea nuovo calendario
     page.get_by_role("button", name="Calendario").click()
@@ -35,7 +35,7 @@ def test_creazione_calendario(page):
     page.locator("aru-webmail-input-color").get_by_role("button").click()
     page.locator(".aru-webmail-color-dot").first.click()
     page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
+    time.sleep(1)
     # Verifica creazione calendario
     toast = page.locator("div.aru-toast__message").first
     assert toast.is_visible()
@@ -50,16 +50,16 @@ def test_creazione_calendario(page):
     print(f"Screenshot salvato in: {screenshot_path}")
     
     # Elimina calendario creato
-    time.sleep(3)
+    time.sleep(2)
     page.get_by_role("checkbox", name="Lavoro").click(button="right")
     page.get_by_role("menuitem", name="Elimina").click()
     page.get_by_role("button", name="Sì").click()
-    time.sleep(2)
+    time.sleep(1)
     # Verifica eliminazione calendario
     toast = page.locator("div.aru-toast__message").first
     assert toast.is_visible()
     assert "Il calendario è stato eliminato." in toast.text_content()
-    time.sleep(2)
+    time.sleep(1)
     
 
 

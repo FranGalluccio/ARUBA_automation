@@ -25,10 +25,10 @@ def test_aggiungere_nuovo_gruppo(page):
     # Login PEC
     LoginPec(page).login_pec(config)
     
-    time.sleep(2)
+    time.sleep(1)
     # Aggiungere nuovo contatto
     page.locator("#contacts").click()
-    time.sleep(2)
+    time.sleep(1)
     
     group_name = f"Test automatico gruppo {__import__('time').time().__int__()}"
 
@@ -40,7 +40,7 @@ def test_aggiungere_nuovo_gruppo(page):
     page.get_by_role("textbox", name="input search").click()
     page.get_by_role("checkbox", name="Test Automatico").first.click()
     page.get_by_role("button", name="Aggiungi contatti").click()
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("button", name="Salva").click()
 
 # usa la stessa variabile nell'assert
@@ -49,7 +49,7 @@ def test_aggiungere_nuovo_gruppo(page):
     ).to_be_visible()
 
     
-    time.sleep(2)
+    time.sleep(1)
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,

@@ -52,7 +52,7 @@ def test_messaggio_inoltrato(page):
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
     
-    time.sleep(2)
+    time.sleep(1)
 
     
     # Aspetta che almeno un record sia visibile

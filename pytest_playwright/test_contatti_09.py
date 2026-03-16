@@ -22,9 +22,9 @@ def test_scrivi_email_da_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.click("#contacts")
-    time.sleep(2)
+    time.sleep(1)
 
     # Crea un contatto con email per il test
     ts = int(time.time())
@@ -37,13 +37,13 @@ def test_scrivi_email_da_contatto(page):
     page.get_by_placeholder("Inserisci cognome").fill("Contact")
     page.get_by_placeholder("Inserisci email").fill(email_contatto)
     page.get_by_role("button", name="Salva").click()
-    time.sleep(3)
+    time.sleep(2)
 
     # Cerca il contatto
     search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
     search.click()
     search.fill(nome_test)
-    time.sleep(2)
+    time.sleep(1)
 
     row = page.locator('div.frame-record-desktop').filter(has_text=nome_test).first
     row.wait_for(state="visible", timeout=8000)
@@ -64,7 +64,7 @@ def test_scrivi_email_da_contatto(page):
     try:
         if mailto_link.count() > 0:
             mailto_link.click(force=True)
-            time.sleep(2)
+            time.sleep(1)
             email_clicked = compose_open()
     except:
         pass
@@ -74,7 +74,7 @@ def test_scrivi_email_da_contatto(page):
         for btn in action_btns:
             try:
                 btn.click(force=True)
-                time.sleep(2)
+                time.sleep(1)
                 if compose_open():
                     email_clicked = True
                     break
@@ -84,7 +84,7 @@ def test_scrivi_email_da_contatto(page):
         # Fallback: cerca pulsante con titolo
         try:
             page.locator('button[title="Scrivi email"], button[title*="email"], button[title*="mail"]').first.click(timeout=3000)
-            time.sleep(2)
+            time.sleep(1)
             email_clicked = compose_open()
         except:
             pass
@@ -96,7 +96,7 @@ def test_scrivi_email_da_contatto(page):
             row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
             time.sleep(1)
             page.locator('button[title="Scrivi email"], button[title*="Scrivi"]').first.click(timeout=3000)
-            time.sleep(2)
+            time.sleep(1)
             email_clicked = compose_open()
         except:
             pass
@@ -108,7 +108,7 @@ def test_scrivi_email_da_contatto(page):
     if not email_clicked:
         inbox_url = config["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
         page.goto(inbox_url, timeout=20000)
-        time.sleep(3)
+        time.sleep(2)
         page.locator("button:has-text('Nuovo messaggio')").first.click(force=True)
         destinatario_field = page.locator("input[placeholder='Destinatari']").first
         destinatario_field.wait_for(state="visible", timeout=10000)
@@ -138,17 +138,17 @@ def test_scrivi_email_da_contatto(page):
     # Cleanup: elimina il contatto
     try:
         page.click("#contacts")
-        time.sleep(2)
+        time.sleep(1)
         search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
         search2.click()
         search2.fill(nome_test)
-        time.sleep(2)
+        time.sleep(1)
         r = page.locator('div.frame-record-desktop').filter(has_text=nome_test).first
         r.hover()
         r.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
         time.sleep(1)
         page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
         page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
-        time.sleep(2)
+        time.sleep(1)
     except:
         pass

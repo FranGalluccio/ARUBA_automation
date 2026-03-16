@@ -25,26 +25,26 @@ def test_creazione_modifica_evento(page):
     # Login PEC
     LoginPec(page).login_pec(config)
     
-    time.sleep(2)
+    time.sleep(1)
     
     # Crea nuovo evento
     page.get_by_role("button", name="Calendario").click()
     page.get_by_role("button", name="Nuovo evento").click()
     page.get_by_placeholder("Inserisci un titolo").fill("evento test automatico")
     page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
+    time.sleep(1)
     page.locator("a").filter(has_text="evento test automatico").click()
     page.get_by_role("button", name="Modifica").click()
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_placeholder("Inserisci un titolo").click()
     time.sleep(1)
     page.get_by_placeholder("Inserisci un titolo").fill("")
     page.get_by_placeholder("Inserisci un titolo").fill("evento test automatico modificato")
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("button", name="Salva").click()
     
         
-    time.sleep(2)
+    time.sleep(1)
     
         # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -54,7 +54,7 @@ def test_creazione_modifica_evento(page):
     page.screenshot(path=screenshot_path, full_page=True)
 
     print(f"Screenshot salvato in: {screenshot_path}")
-    time.sleep(2)
+    time.sleep(1)
     
     # Elimina evento
     page.get_by_role("button", name="Eventi").click()

@@ -34,7 +34,7 @@ def test_cartella(page):
     # Clicca su salva
     page.locator('span[title="Salva"]').click()
     
-    time.sleep(2)
+    time.sleep(1)
 
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
@@ -43,7 +43,7 @@ def test_cartella(page):
     
     page.locator(f'button[title="{nome_cartella}"]').click(button="right")
     
-    time.sleep(2)
+    time.sleep(1)
     
     page.locator('button:has-text("Modifica cartella")').click()
     
@@ -54,24 +54,24 @@ def test_cartella(page):
     # Clicca su salva
     page.locator('span[title="Salva"]').click()
     
-    time.sleep(3)
+    time.sleep(2)
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
     assert "La cartella è stata modificata." in toast.text_content()
     
-    time.sleep(2) 
+    time.sleep(1) 
     # Clicca con tasto destro sulla cartella modificata
     page.locator(f'button[title="{nuovo_nome_cartella}"]').click(button="right")
     
-    time.sleep(2)
+    time.sleep(1)
     # Clicca su modifica cartella
     page.locator('button:has-text("Elimina cartella")').click()
     
     # Clicca su elimina
     page.locator('span[title="Elimina"]').click()
     
-    time.sleep(2)
+    time.sleep(1)
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()

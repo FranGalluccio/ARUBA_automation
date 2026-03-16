@@ -26,7 +26,7 @@ def test_invio_messaggio_con_cc(page):
 
     # Apri nuovo messaggio
     page.locator("button:has-text('Nuovo messaggio')").click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Compila destinatario principale
     to_input = page.locator("input[placeholder='Destinatari']").first
@@ -56,7 +56,7 @@ def test_invio_messaggio_con_cc(page):
     page.locator('span[title="Invia"]').click()
 
     # Aspetta toast di conferma
-    time.sleep(3)
+    time.sleep(2)
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
     assert "Il messaggio è stato inviato" in toast.text_content()
@@ -64,13 +64,13 @@ def test_invio_messaggio_con_cc(page):
     # Aspetta consegna e verifica il messaggio ricevuto mostra CC
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(2)
+    time.sleep(1)
 
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
     page.locator('div.frame-record-desktop').first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
-    time.sleep(2)
+    
 
     # Screenshot
     screenshot_path = os.path.join(

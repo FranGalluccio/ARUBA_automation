@@ -22,9 +22,9 @@ def test_evento_tutto_il_giorno(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("button", name="Calendario").click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Crea nuovo evento
     page.get_by_role("button", name="Nuovo evento", exact=True).click()
@@ -60,7 +60,7 @@ def test_evento_tutto_il_giorno(page):
 
     # Salva
     page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Verifica che l'evento sia presente nel calendario
     page.locator('a, [class*="event"]').filter(has_text="evento tutto il giorno playwright").first.wait_for(
@@ -84,6 +84,6 @@ def test_evento_tutto_il_giorno(page):
         page.get_by_role("button", name="Annulla evento").click()
         time.sleep(1)
         page.get_by_role("button", name="Elimina").click()
-        time.sleep(2)
+        time.sleep(1)
     except:
         pass

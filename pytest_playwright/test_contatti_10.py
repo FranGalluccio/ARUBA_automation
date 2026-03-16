@@ -22,9 +22,9 @@ def test_elimina_gruppo(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.click("#contacts")
-    time.sleep(2)
+    time.sleep(1)
 
     # Crea un gruppo da eliminare
     group_name = f"Gruppo test {int(time.time())}"
@@ -59,7 +59,7 @@ def test_elimina_gruppo(page):
         pass
 
     page.get_by_role("button", name="Salva").click()
-    time.sleep(3)
+    time.sleep(2)
 
     # Verifica che il gruppo sia stato creato nella sidebar
     group_btn = page.locator(f'button[title="{group_name}"]').first
@@ -110,7 +110,7 @@ def test_elimina_gruppo(page):
                     break
             except Exception:
                 pass
-    time.sleep(3)
+    time.sleep(2)
 
     # Verifica che il gruppo non sia più presente nella sidebar
     remaining = page.locator(f'button[title="{group_name}"]').count()

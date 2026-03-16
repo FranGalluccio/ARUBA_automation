@@ -26,13 +26,13 @@ def test_regole_messaggi(page):
 
     # Vai alle impostazioni → Regole messaggi (sotto accordion "Messaggi e scrittura")
     page.goto(SETTINGS_URL + "/home", timeout=20000)
-    time.sleep(2)
+    time.sleep(1)
     # Espandi l'accordion "Messaggi e scrittura" se necessario
     if not page.locator('button[title="Regole messaggi"]').is_visible():
         page.locator('button[title="Messaggi e scrittura"]').first.click(force=True)
-        time.sleep(2)
+        time.sleep(1)
     page.locator('button[title="Regole messaggi"]').click(force=True)
-    time.sleep(3)
+    time.sleep(2)
 
     # Verifica che la pagina Regole messaggi sia caricata
     page.locator('h1, [class*="filter"], [class*="rule"]').first.wait_for(state="visible", timeout=8000)
@@ -41,10 +41,10 @@ def test_regole_messaggi(page):
     create_btn = page.locator('aru-button[kind="solid"][skin="primary"]').first
     create_btn.wait_for(state="visible", timeout=8000)
     create_btn.click(force=True)
-    time.sleep(2)
+    time.sleep(1)
 
     # Verifica che il form di creazione regola si sia aperto
-    time.sleep(2)
+    time.sleep(1)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_impostazioni_03_form_{datetime.now():%H-%M-%S}.png"))
 
     # Il form è aperto: verifica che ci siano input o il pannello del form sia visibile
@@ -78,6 +78,6 @@ def test_regole_messaggi(page):
         row.locator('button[title="Elimina"], aru-symbol[title="Elimina"]').click()
         time.sleep(1)
         page.locator('button[title="Si"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=2000)
-        time.sleep(2)
+        time.sleep(1)
     except:
         pass

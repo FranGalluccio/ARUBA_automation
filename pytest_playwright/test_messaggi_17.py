@@ -35,7 +35,7 @@ def test_ricerca_messaggi(page):
     # Aspetta consegna
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Usa la barra di ricerca (input con classe aru-input-search__chosen__input-editable)
     search_input = page.locator('input.aru-input-search__chosen__input-editable, input[placeholder*="Cerca messaggio"]').first
@@ -45,7 +45,7 @@ def test_ricerca_messaggi(page):
     search_input.fill(oggetto_univoco)
     time.sleep(0.5)
     page.keyboard.press("Enter")
-    time.sleep(3)
+    time.sleep(2)
 
     # Verifica che almeno un risultato sia presente
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)

@@ -22,9 +22,9 @@ def test_ricerca_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.click("#contacts")
-    time.sleep(2)
+    time.sleep(1)
 
     # Crea un contatto con nome univoco per la ricerca
     nome_univoco = f"RicercaTest{int(time.time())}"
@@ -36,13 +36,13 @@ def test_ricerca_contatto(page):
     page.get_by_placeholder("Inserisci cognome").fill("Playwright")
     page.get_by_placeholder("Inserisci email").fill(unique_email)
     page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Usa la barra di ricerca
     search = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="Cerca"]').first
     search.click()
     search.fill(nome_univoco)
-    time.sleep(2)
+    time.sleep(1)
 
     # Verifica che il contatto sia visibile nei risultati
     result = page.locator('div.frame-record-desktop, [class*="contact-row"]').filter(has_text=nome_univoco).first
@@ -68,4 +68,4 @@ def test_ricerca_contatto(page):
         page.locator('button[title="Si"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=3000)
     except:
         pass
-    time.sleep(2)
+    time.sleep(1)

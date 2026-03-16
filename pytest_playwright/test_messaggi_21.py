@@ -43,7 +43,7 @@ def test_salva_e_usa_modello(page):
     page.locator("#new-message\\.save-menu").click(force=True)
     time.sleep(1)
     page.locator('button[title="Salva come modello"]').click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Chiudi il dialog del messaggio (pulsante Chiudi nella toolbar del compose)
     try:
@@ -61,7 +61,7 @@ def test_salva_e_usa_modello(page):
 
     # Apri la cartella Modelli e verifica che il modello sia presente
     page.locator('button[title="Modelli"]').click()
-    time.sleep(2)
+    time.sleep(1)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     # Verifica che il modello salvato sia visibile

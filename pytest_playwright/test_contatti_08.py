@@ -22,9 +22,9 @@ def test_contatto_preferito(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.click("#contacts")
-    time.sleep(2)
+    time.sleep(1)
 
     # Crea un contatto da usare come preferito
     ts = int(time.time())
@@ -37,13 +37,13 @@ def test_contatto_preferito(page):
     page.get_by_placeholder("Inserisci cognome").fill("Test")
     page.get_by_placeholder("Inserisci email").fill(unique_email)
     page.get_by_role("button", name="Salva").click()
-    time.sleep(3)
+    time.sleep(2)
 
     # Cerca il contatto
     search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
     search.click()
     search.fill(nome_pref)
-    time.sleep(2)
+    time.sleep(1)
 
     row = page.locator('div.frame-record-desktop').filter(has_text=nome_pref).first
     row.wait_for(state="visible", timeout=8000)
@@ -95,7 +95,7 @@ def test_contatto_preferito(page):
 
     # Verifica che il contatto sia nei preferiti (vai a "Contatti preferiti")
     page.locator('button[title="Contatti preferiti"]').first.click()
-    time.sleep(2)
+    time.sleep(1)
     # Verifica che almeno un contatto sia presente nei preferiti
     assert page.locator('div.frame-record-desktop').count() > 0, \
         "Nessun contatto trovato in Contatti preferiti"
@@ -120,17 +120,17 @@ def test_contatto_preferito(page):
     # Elimina il contatto di test
     try:
         page.locator('button[title="Tutti i contatti"]').first.click()
-        time.sleep(2)
+        time.sleep(1)
         search3 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
         search3.click()
         search3.fill(nome_pref)
-        time.sleep(2)
+        time.sleep(1)
         r = page.locator('div.frame-record-desktop').filter(has_text=nome_pref).first
         r.hover()
         r.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
         time.sleep(1)
         page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
         page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
-        time.sleep(2)
+        time.sleep(1)
     except:
         pass

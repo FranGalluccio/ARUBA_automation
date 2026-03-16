@@ -26,12 +26,12 @@ def test_impostazioni_cestino(page):
 
     # Vai alle impostazioni → Cestino (sotto accordion "Messaggi e scrittura")
     page.goto(SETTINGS_URL + "/home", timeout=20000)
-    time.sleep(2)
+    time.sleep(1)
     if not page.locator('button[title="Cestino"]').is_visible():
         page.locator('button[title="Messaggi e scrittura"]').click(force=True)
         time.sleep(1)
     page.locator('button[title="Cestino"]').click(force=True)
-    time.sleep(2)
+    time.sleep(1)
 
     # Verifica che la sezione sia caricata
     sezione_visibile = (

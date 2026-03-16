@@ -22,31 +22,31 @@ def test_cambio_vista_calendario(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("button", name="Calendario").click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Vista Giorno
     page.locator('button[title="Giorno"]').click()
-    time.sleep(2)
+    time.sleep(1)
     assert page.locator('button[title="Giorno"]').is_visible(), "Bottone 'Giorno' non visibile"
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_06_giorno_{datetime.now():%H-%M-%S}.png"))
 
     # Vista Mese
     page.locator('button[title="Mese"]').click()
-    time.sleep(2)
+    time.sleep(1)
     assert page.locator('button[title="Mese"]').is_visible(), "Bottone 'Mese' non visibile"
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_06_mese_{datetime.now():%H-%M-%S}.png"))
 
     # Vista Lista eventi
     page.locator('button[title="Eventi"]').click()
-    time.sleep(2)
+    time.sleep(1)
     assert page.locator('button[title="Eventi"]').is_visible(), "Bottone 'Eventi' non visibile"
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_06_eventi_{datetime.now():%H-%M-%S}.png"))
 
     # Torna alla vista Settimana (default)
     page.locator('button[title="Settimana"]').click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Screenshot finale
     screenshot_path = os.path.join(

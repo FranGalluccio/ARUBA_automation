@@ -41,7 +41,7 @@ def test_importa_contatti(page):
     page.get_by_role("button", name="Importa", exact=True).click()
     page.wait_for_timeout(2000)
     
-    time.sleep(2)
+    time.sleep(1)
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     assert toast.is_visible()

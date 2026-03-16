@@ -25,7 +25,7 @@ def test_creazione_invio_evento(page):
     # Login PEC
     LoginPec(page).login_pec(config)
     
-    time.sleep(2)
+    time.sleep(1)
     
     # Crea nuovo evento
     page.get_by_role("button", name="Calendario").click()
@@ -34,22 +34,22 @@ def test_creazione_invio_evento(page):
     page.get_by_role("button", name="Salva").click()
     page.locator("a").filter(has_text="evento test auto invito").first.click()
     # Modifica evento
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("button", name="Modifica").click()
-    time.sleep(2)
+    time.sleep(1)
     page.locator('input[aria-label="input chosen"]').nth(1).fill("francescoconservazione@pec.it")
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("textbox", name="input chosen").press("Enter")
-    time.sleep(3)
+    time.sleep(2)
     page.get_by_role("button", name="Salva").click()
-    time.sleep(3)
+    time.sleep(2)
     page.get_by_role("button", name="Invia").first.click()    
     # Vai alla posta in arrivo
     page.locator("#messages").get_by_label("Messaggi").click()
     time.sleep(5)
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(3)
+    time.sleep(2)
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
 
@@ -72,7 +72,7 @@ def test_creazione_invio_evento(page):
     page.get_by_role("button", name="Calendario").click()
     # Elimina evento
     page.locator("a").filter(has_text="evento test auto invito").click()
-    time.sleep(2)
+    time.sleep(1)
     page.locator("button:has(aru-symbol[symbol='dots-separator'])").first.click()
     page.get_by_role("button", name="Annulla evento").click()
     page.get_by_role("button", name="Elimina").click()

@@ -34,7 +34,7 @@ def test_risposta_a_tutti(page):
     # Aspetta consegna
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Apri primo record
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -54,7 +54,7 @@ def test_risposta_a_tutti(page):
     # Aspetta consegna risposta
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Apri il messaggio di risposta ricevuto
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -65,7 +65,7 @@ def test_risposta_a_tutti(page):
     oggetto = page.locator("div.message-header-title-subject").inner_text().strip()
     assert "Re:" in oggetto, f"Oggetto inatteso (manca 'Re:'): {oggetto}"
 
-    time.sleep(2)
+    time.sleep(1)
 
     # Screenshot
     screenshot_path = os.path.join(

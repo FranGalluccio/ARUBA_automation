@@ -38,7 +38,7 @@ def test_messaggio_alta_priorita(page):
     # Clicca alta priorità
     page.locator('aru-button#high-priority').click()
     
-    time.sleep(2)
+    time.sleep(1)
     # Trova il pulsante "Invia" e cliccalo
     page.locator('span[title="Invia"]').click()
     
@@ -51,7 +51,7 @@ def test_messaggio_alta_priorita(page):
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
     
-    time.sleep(2)
+    
 
     # Clicca sul primo record
     page.locator('div.frame-record-desktop').nth(0).click()
@@ -68,7 +68,7 @@ def test_messaggio_alta_priorita(page):
     # Assert che sia presente e visibile
     expect(important_symbol).to_be_visible()      
     
-    time.sleep(2)
+    time.sleep(1)
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,

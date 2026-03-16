@@ -32,7 +32,7 @@ def test_filtri_inbox(page):
 
     # Apri il dropdown filtro
     filter_select.click(force=True)
-    time.sleep(2)
+    time.sleep(1)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_messaggi_18_filter_open_{datetime.now():%H-%M-%S}.png"))
 
     # Cerca le opzioni del filtro (potrebbero essere in aru-menu-item o altri elementi)
@@ -75,7 +75,7 @@ def test_filtri_inbox(page):
             opts = [o for o in page.locator(sel).all() if o.is_visible()]
             if opts:
                 opts[0].click()
-                time.sleep(2)
+                time.sleep(1)
                 break
         else:
             page.keyboard.press("Escape")

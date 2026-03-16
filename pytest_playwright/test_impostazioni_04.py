@@ -26,13 +26,13 @@ def test_risposta_automatica(page):
 
     # Vai alle impostazioni → Avvisi e report (sotto accordion "Messaggi e scrittura")
     page.goto(SETTINGS_URL + "/home", timeout=20000)
-    time.sleep(2)
+    time.sleep(1)
     # Espandi l'accordion "Messaggi e scrittura" se necessario
     if not page.locator('button[title="Avvisi e report"]').is_visible():
         page.locator('button[title="Messaggi e scrittura"]').first.click(force=True)
-        time.sleep(2)
+        time.sleep(1)
     page.locator('button[title="Avvisi e report"]').click(force=True)
-    time.sleep(3)
+    time.sleep(2)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_impostazioni_04_pre_{datetime.now():%H-%M-%S}.png"))
 

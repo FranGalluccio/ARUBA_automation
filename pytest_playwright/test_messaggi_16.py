@@ -42,7 +42,7 @@ def test_copia_messaggio_in_cartella(page):
     # Naviga direttamente all'inbox per bypassare eventuali backdrop residui
     inbox_url = config["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
     page.goto(inbox_url, timeout=20000)
-    time.sleep(2)
+    time.sleep(1)
     time.sleep(1)
 
     # Invia un messaggio a se stessi
@@ -57,7 +57,7 @@ def test_copia_messaggio_in_cartella(page):
     # Aspetta consegna
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click(force=True)
-    time.sleep(2)
+    time.sleep(1)
 
     # Apri il messaggio
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -70,10 +70,10 @@ def test_copia_messaggio_in_cartella(page):
 
     # Clicca il pulsante della cartella nel dropdown (nth(1) = Content area = dropdown item)
     page.locator(f'button[title="{nome_cartella}"]').nth(1).click(force=True)
-    time.sleep(2)
+    time.sleep(1)
 
     # Verifica toast (non bloccante)
-    time.sleep(2)
+    time.sleep(1)
     try:
         toast = page.locator("div.aru-toast__message").first
         if toast.is_visible():
@@ -83,16 +83,16 @@ def test_copia_messaggio_in_cartella(page):
 
     # Verifica: il messaggio è presente nella cartella di destinazione
     page.locator(f'button[title="{nome_cartella}"]').first.click(force=True)
-    time.sleep(2)
+    time.sleep(1)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
     assert page.locator('div.frame-record-desktop').count() > 0, "La copia del messaggio non è stata trovata nella cartella"
 
     # Verifica: il messaggio è ancora presente in In arrivo (non rimosso)
     page.locator('button[title="In arrivo"]').click()
-    time.sleep(2)
+    time.sleep(1)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
 
-    time.sleep(1)
+    
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -107,4 +107,4 @@ def test_copia_messaggio_in_cartella(page):
     time.sleep(1)
     page.locator('button:has-text("Elimina cartella")').click()
     page.locator('span[title="Elimina"]').click()
-    time.sleep(2)
+    time.sleep(1)

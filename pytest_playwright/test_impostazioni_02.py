@@ -26,7 +26,7 @@ def test_riquadro_di_lettura(page):
 
     # Vai alle impostazioni → Home (dove si trova il riquadro di lettura)
     page.goto(SETTINGS_URL + "/home", timeout=20000)
-    time.sleep(2)
+    time.sleep(1)
 
     # Verifica che le 3 opzioni di riquadro siano visibili
     opzione_destra = page.locator('button, label, [class*="reading-pane"], [class*="layout"]').filter(has_text="A destra").first
@@ -39,7 +39,7 @@ def test_riquadro_di_lettura(page):
 
     # Cambia a "In basso"
     opzione_basso.click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Verifica toast o cambio visivo
     toast = page.locator("div.aru-toast__message").first
@@ -58,4 +58,4 @@ def test_riquadro_di_lettura(page):
 
     # Ripristina a "A destra"
     opzione_destra.click()
-    time.sleep(2)
+    time.sleep(1)

@@ -22,9 +22,9 @@ def test_evento_con_promemoria(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(2)
+    time.sleep(1)
     page.get_by_role("button", name="Calendario").click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Crea nuovo evento
     page.get_by_role("button", name="Nuovo evento", exact=True).click()
@@ -72,13 +72,13 @@ def test_evento_con_promemoria(page):
 
     # Ora salva l'evento (il "Salva" nel pannello laterale del form evento)
     page.get_by_role("button", name="Salva").first.click(force=True)
-    time.sleep(2)
+    time.sleep(1)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_after_event_save_{datetime.now():%H-%M-%S}.png"))
 
     # Vai alla vista "Events" per trovare l'evento più facilmente
     try:
         page.get_by_role("button", name="Eventi").click(force=True)
-        time.sleep(2)
+        time.sleep(1)
     except Exception:
         pass
 
@@ -120,6 +120,6 @@ def test_evento_con_promemoria(page):
         page.get_by_role("button", name="Annulla evento").click()
         time.sleep(1)
         page.get_by_role("button", name="Elimina").click()
-        time.sleep(2)
+        time.sleep(1)
     except:
         pass
