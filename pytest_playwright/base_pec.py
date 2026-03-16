@@ -87,8 +87,27 @@ class Helper:
         if not destinatario:
             raise ValueError(f"Destinatario non trovato in config per la chiave {destinatario_key}")
 
+    # --- Dismiss any CDK backdrop (e.g., "Adegua la tua PEC" notice) ---
+        if page.locator('.cdk-overlay-backdrop').is_visible():
+            import time as _time
+            for _ in range(3):
+                if not page.locator('.cdk-overlay-backdrop').is_visible():
+                    break
+                try:
+                    # Prova "Ricordarmelo" o "Chiudi" nell'overlay attivo
+                    btn = page.locator('button:has-text("Ricordarmelo"), button:has-text("Chiudi"), button:has-text("Non ora")').first
+                    if btn.is_visible():
+                        btn.click(force=True)
+                        _time.sleep(0.5)
+                        continue
+                    # Fallback: click l'ultimo button nell'ultimo pane
+                    page.locator('.cdk-overlay-pane').last.locator('button').last.click(force=True)
+                    _time.sleep(0.5)
+                except Exception:
+                    break
+
     # --- Nuovo messaggio ---
-        page.locator("button:has-text('Nuovo messaggio')").click()
+        page.locator("button:has-text('Nuovo messaggio')").click(force=True)
         try:
             page.locator("input[placeholder='Destinatari']").fill(destinatario, timeout=2000)
         except:
