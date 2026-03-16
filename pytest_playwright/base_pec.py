@@ -44,17 +44,32 @@ class LoginPec:
     # Verifica login riuscito (pattern URL configurabile per ambienti diversi)
         url_pattern = config["pec"].get("inbox_url_pattern", "INBOX")
         expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=20_000)
-        
+
+    # BNL: dopo il login reindirizza a /security/managedetails (pannello gestione account).
+    # Il link "Read emails" è nel dropdown del profilo utente (elemento <a> con testo email).
+        if "/security/" in self.page.url or "managedetails" in self.page.url:
+            try:
+                # Apri il dropdown cliccando il link con l'email in alto a destra (<a> non <button>)
+                self.page.locator('a:has-text("@")').last.click(timeout=5000)
+                self.page.wait_for_timeout(1000)
+                # Naviga direttamente alla webmail usando l'href del link "Read emails"
+                webmail_url = self.page.get_by_role("link", name="Read emails").first.get_attribute("href", timeout=3000)
+                if webmail_url:
+                    self.page.goto(webmail_url, timeout=30_000)
+                    self.page.wait_for_load_state("networkidle", timeout=20_000)
+            except Exception:
+                pass
+
     # Cookie (se presente)
         try:
             self.page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click()
-        except:
+        except Exception:
             pass
 
     # Chiudi modale iniziale (se presente)
         try:
             self.page.locator('button[aria-label="Chiudi"]').first.click(timeout=3000)
-        except:
+        except Exception:
             pass
 
             

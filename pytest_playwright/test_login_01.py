@@ -23,18 +23,23 @@ def test_logout(page):
 
     time.sleep(1)
 
-    # Apri menu account — usa partial match con :has-text o title*= per robustezza
+    # Apri menu account (standard Aruba: username button apre dropdown con Esci)
     username = config["pec"]["username"].strip()
     try:
-        page.locator(f'button[title="{username}"]').click(force=True)
+        page.locator(f'button[title="{username}"]').click(force=True, timeout=5000)
     except Exception:
-        # Fallback: cerca button con la @ dell'email nel title (evita CSS BADSTRING su caratteri speciali)
-        page.locator('button[title*="@"]').first.click(force=True)
+        try:
+            page.locator('button[title*="@"]').first.click(force=True, timeout=5000)
+        except Exception:
+            pass  # BNL: nessun button con email nel title — Esci via JS click
 
     time.sleep(1)
 
-    # Clicca su Esci
-    page.locator('button[title="Esci"]').click(force=True)
+    # Clicca su Esci — usa JS eval per bypassare visibilità CSS (BNL: dentro dropdown chiuso)
+    try:
+        page.locator('button[title="Esci"]').click(force=True)
+    except Exception:
+        page.locator('button[title="Esci"]').evaluate("el => el.click()")
 
     # Aspetta che la navigazione verso la pagina di login completi
     page.wait_for_url(lambda url: "INBOX" not in url, timeout=15000)
