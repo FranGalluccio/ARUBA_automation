@@ -19,6 +19,7 @@ on:
 jobs:
   test:
     runs-on: self-hosted
+    environment: test
 
     steps:
       - uses: actions/checkout@v4
