@@ -9,11 +9,13 @@ import pytest
 # ---------------------------------------------------------------------------
 _pec_url = os.environ.get("PEC_URL")
 if _pec_url:
+    _inbox_pattern = os.environ.get("PEC_INBOX_URL_PATTERN", "INBOX")
     _config = {
         "pec": {
             "url": _pec_url,
             "username": os.environ.get("PEC_USERNAME", ""),
             "password": os.environ.get("PEC_PASSWORD", ""),
+            "inbox_url_pattern": _inbox_pattern,
         },
         "destinatari": {
             "destinatario_principale": os.environ.get("PEC_USERNAME", ""),

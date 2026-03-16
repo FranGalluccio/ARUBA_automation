@@ -44,8 +44,9 @@ class LoginPec:
     # Attendi caricamento pagina
         self.page.wait_for_load_state("networkidle", timeout=20_000)
         
-    # Verifica che l'elemento di logout sia visibile per confermare il login
-        expect(self.page).to_have_url(re.compile(".*(INBOX).*"), timeout=20_000)
+    # Verifica login riuscito (pattern URL configurabile per ambienti diversi)
+        url_pattern = config["pec"].get("inbox_url_pattern", "INBOX")
+        expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=20_000)
         
     # Cookie (se presente)
         try:
