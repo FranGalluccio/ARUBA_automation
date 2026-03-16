@@ -8,7 +8,8 @@ cache:
   paths:
     - .cache/pip
 
-test-pec-webmail:
+# ─── Template riutilizzabile ────────────────────────────────────────────────
+.test-template:
   stage: test
   image: mcr.microsoft.com/playwright/python:v1.49.0-jammy
   before_script:
@@ -37,7 +38,7 @@ test-pec-webmail:
   script:
     - python -m pytest pytest_playwright/ -v --browser chromium
   after_script:
-    - echo "Test completati"
+    - echo "Test completati - ambiente ${ENV_NAME}"
   artifacts:
     when: always
     paths:
@@ -45,3 +46,60 @@ test-pec-webmail:
       - pytest_playwright/test-results/
     expire_in: 2 weeks
   timeout: 90 minutes
+
+# ─── Ambiente TEST 1 (webmail.test.pec.aruba.it) ────────────────────────────
+# Gira automaticamente su push a main
+test-env-test1:
+  extends: .test-template
+  variables:
+    ENV_NAME: "test1"
+    PEC_URL: "https://webmail.test.pec.aruba.it/"
+    PEC_USERNAME: "${TEST_PEC_USERNAME}"
+    PEC_PASSWORD: "${TEST_PEC_PASSWORD}"
+    PEC_DESTINATARIO_SECONDARIO: "${TEST_PEC_DESTINATARIO_SECONDARIO}"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: manual
+
+# ─── Ambiente TEST 2 (webmail-test1.test.pec.aruba.it) ──────────────────────
+# Solo manuale (env aggiuntivo)
+test-env-test2:
+  extends: .test-template
+  variables:
+    ENV_NAME: "test2"
+    PEC_URL: "https://webmail-test1.test.pec.aruba.it/"
+    PEC_USERNAME: "${TEST_PEC_USERNAME}"
+    PEC_PASSWORD: "${TEST_PEC_PASSWORD}"
+    PEC_DESTINATARIO_SECONDARIO: "${TEST_PEC_DESTINATARIO_SECONDARIO}"
+  rules:
+    - when: manual
+  allow_failure: true
+
+# ─── Ambiente PROD - Buffetti (webmail.pec.buffetti.it) ─────────────────────
+# Solo manuale
+test-prod-buffetti:
+  extends: .test-template
+  variables:
+    ENV_NAME: "prod-buffetti"
+    PEC_URL: "https://webmail.pec.buffetti.it/"
+    PEC_USERNAME: "${PROD_PEC_USERNAME}"
+    PEC_PASSWORD: "${PROD_PEC_PASSWORD}"
+    PEC_DESTINATARIO_SECONDARIO: "${PROD_PEC_DESTINATARIO_SECONDARIO}"
+  rules:
+    - when: manual
+  allow_failure: true
+
+# ─── Ambiente PROD - Aruba (login.aruba.it Keycloak) ────────────────────────
+# Solo manuale
+test-prod-aruba:
+  extends: .test-template
+  variables:
+    ENV_NAME: "prod-aruba"
+    PEC_URL: "https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth"
+    PEC_USERNAME: "${PROD_PEC_USERNAME}"
+    PEC_PASSWORD: "${PROD_PEC_PASSWORD}"
+    PEC_DESTINATARIO_SECONDARIO: "${PROD_PEC_DESTINATARIO_SECONDARIO}"
+  rules:
+    - when: manual
+  allow_failure: true
