@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -52,7 +51,7 @@ def test_naviga_periodi_calendario(page):
     try:
         page.locator('button[title="Oggi"]').click(force=True)
         time.sleep(1)
-    except:
+    except Exception:
         pass
 
     # Screenshot

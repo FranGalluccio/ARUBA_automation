@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -58,7 +57,7 @@ def test_ricerca_nel_calendario(page):
     try:
         result.wait_for(state="visible", timeout=8000)
         assert result.is_visible(), f"L'evento '{titolo_evento}' non è visibile"
-    except:
+    except Exception:
         # Alternativa: vai nella vista "Eventi" e cerca
         page.get_by_role("button", name="Eventi").click()
         time.sleep(1)
@@ -87,5 +86,5 @@ def test_ricerca_nel_calendario(page):
             time.sleep(1)
             page.get_by_role("button", name="Elimina").click()
             time.sleep(1)
-    except:
+    except Exception:
         pass

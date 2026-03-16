@@ -2,9 +2,8 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
-from playwright.sync_api import Playwright, sync_playwright, expect
+from playwright.sync_api import sync_playwright, expect
 
 
 # --- Leggi config.json ---
@@ -28,7 +27,7 @@ def test_aggiungere_nuovo_contatto(page):
     time.sleep(1)
     # Aggiungere nuovo contatto
   # email unica per ogni run
-    unique_email = f"testautomatico_{__import__('time').time().__int__()}@pec.it"
+    unique_email = f"testautomatico_{int(time.time())}@pec.it"
 
     page.click("#contacts")
     time.sleep(1)

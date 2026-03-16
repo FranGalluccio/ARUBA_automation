@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-from playwright.sync_api import Playwright, sync_playwright, expect
+from playwright.sync_api import sync_playwright, expect
 from base_pec import LoginPec, Helper
 import time
 

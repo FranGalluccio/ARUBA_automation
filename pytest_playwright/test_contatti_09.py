@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -66,7 +65,7 @@ def test_scrivi_email_da_contatto(page):
             mailto_link.click(force=True)
             time.sleep(1)
             email_clicked = compose_open()
-    except:
+    except Exception:
         pass
     if not email_clicked:
         # Tenta con tutti gli aru-button della riga
@@ -78,7 +77,7 @@ def test_scrivi_email_da_contatto(page):
                 if compose_open():
                     email_clicked = True
                     break
-            except:
+            except Exception:
                 pass
     if not email_clicked:
         # Fallback: cerca pulsante con titolo
@@ -86,7 +85,7 @@ def test_scrivi_email_da_contatto(page):
             page.locator('button[title="Scrivi email"], button[title*="email"], button[title*="mail"]').first.click(timeout=3000)
             time.sleep(1)
             email_clicked = compose_open()
-        except:
+        except Exception:
             pass
     if not email_clicked:
         # Ultimo fallback: seleziona contatto e cerca toolbar button
@@ -98,7 +97,7 @@ def test_scrivi_email_da_contatto(page):
             page.locator('button[title="Scrivi email"], button[title*="Scrivi"]').first.click(timeout=3000)
             time.sleep(1)
             email_clicked = compose_open()
-        except:
+        except Exception:
             pass
     # Se il dialog non è aperto, naviga a In arrivo e apri compose
     screenshot_path = os.path.join(
@@ -128,10 +127,10 @@ def test_scrivi_email_da_contatto(page):
         page.locator('button[title="Chiudi"]').last.click(force=True)
         time.sleep(1)
         page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
-    except:
+    except Exception:
         try:
             page.keyboard.press("Escape")
-        except:
+        except Exception:
             pass
     time.sleep(1)
 
@@ -150,5 +149,5 @@ def test_scrivi_email_da_contatto(page):
         page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
         page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
         time.sleep(1)
-    except:
+    except Exception:
         pass

@@ -2,10 +2,9 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
-from playwright.sync_api import Playwright, sync_playwright, expect
-from datetime import datetime, timedelta
+from playwright.sync_api import sync_playwright, expect
+from datetime import datetime
 import locale
 
 # Forza locale italiana (necessaria per mesi in italiano)

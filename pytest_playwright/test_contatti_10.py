@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -33,10 +32,10 @@ def test_elimina_gruppo(page):
     # Seleziona "Gruppo" nel dialog
     try:
         page.locator("#group").check()
-    except:
+    except Exception:
         try:
             page.locator('input[value="group"], label:has-text("Gruppo")').first.click()
-        except:
+        except Exception:
             pass
     page.get_by_role("button", name="Procedi").click()
     time.sleep(1)
@@ -55,7 +54,7 @@ def test_elimina_gruppo(page):
             cb.click()
         page.get_by_role("button", name="Aggiungi contatti").click()
         time.sleep(1)
-    except:
+    except Exception:
         pass
 
     page.get_by_role("button", name="Salva").click()
@@ -87,7 +86,7 @@ def test_elimina_gruppo(page):
                 menu_item_found = True
                 time.sleep(1)
                 break
-        except:
+        except Exception:
             pass
 
     assert menu_item_found, "Voce 'Elimina' non trovata nel menu contestuale del gruppo"

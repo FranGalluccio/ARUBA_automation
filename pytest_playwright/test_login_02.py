@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from playwright.sync_api import expect
 
 
@@ -25,7 +24,7 @@ def test_login_credenziali_errate(page):
     # Accetta cookie (se presente)
     try:
         page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=3000)
-    except:
+    except Exception:
         pass
 
     # Compila username con valore errato

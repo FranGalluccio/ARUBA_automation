@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -51,7 +50,7 @@ def test_evento_tutto_il_giorno(page):
                 allday_clicked = True
                 time.sleep(0.5)
                 break
-        except:
+        except Exception:
             pass
 
     if allday_clicked:
@@ -85,5 +84,5 @@ def test_evento_tutto_il_giorno(page):
         time.sleep(1)
         page.get_by_role("button", name="Elimina").click()
         time.sleep(1)
-    except:
+    except Exception:
         pass

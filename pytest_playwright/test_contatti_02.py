@@ -2,9 +2,8 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
-from playwright.sync_api import Playwright, sync_playwright, expect
+from playwright.sync_api import sync_playwright, expect
 
 
 # --- Leggi config.json ---
@@ -30,7 +29,7 @@ def test_aggiungere_nuovo_gruppo(page):
     page.locator("#contacts").click()
     time.sleep(1)
     
-    group_name = f"Test automatico gruppo {__import__('time').time().__int__()}"
+    group_name = f"Test automatico gruppo {int(time.time())}"
 
     page.get_by_role("button", name="Nuovo").click()
     page.locator("#group").check()

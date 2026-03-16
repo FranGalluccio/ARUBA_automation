@@ -2,9 +2,8 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
-from playwright.sync_api import Playwright, sync_playwright, expect
+from playwright.sync_api import expect
 
 
 # --- Leggi config.json ---
@@ -37,7 +36,7 @@ def test_creazione_invio_evento(page):
     time.sleep(1)
     page.get_by_role("button", name="Modifica").click()
     time.sleep(1)
-    page.locator('input[aria-label="input chosen"]').nth(1).fill("francescoconservazione@pec.it")
+    page.locator('input[aria-label="input chosen"]').nth(1).fill(config["destinatari"]["destinatario_principale"])
     time.sleep(1)
     page.get_by_role("textbox", name="input chosen").press("Enter")
     time.sleep(2)

@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -36,7 +35,7 @@ def test_salva_e_usa_modello(page):
     try:
         page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=2000)
         time.sleep(1)
-    except:
+    except Exception:
         pass
 
     # Salva come modello usando il menu a tendina accanto al pulsante Invia
@@ -49,14 +48,14 @@ def test_salva_e_usa_modello(page):
     try:
         page.locator('button[title="Chiudi"]').last.click(force=True)
         time.sleep(1)
-    except:
+    except Exception:
         pass
 
     # Se compare dialog di conferma chiusura, conferma
     try:
         page.locator('button[title="Si"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=2000)
         time.sleep(1)
-    except:
+    except Exception:
         pass
 
     # Apri la cartella Modelli e verifica che il modello sia presente

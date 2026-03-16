@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -41,7 +40,7 @@ def test_etichetta(page):
     try:
         chiudi.wait_for(state="visible", timeout=3000)
         chiudi.click()
-    except:
+    except Exception:
         pass
 
     # Seleziona tutti i messaggi

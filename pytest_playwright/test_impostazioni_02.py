@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -45,7 +44,7 @@ def test_riquadro_di_lettura(page):
     toast = page.locator("div.aru-toast__message").first
     try:
         expect(toast).to_be_visible(timeout=3000)
-    except:
+    except Exception:
         pass
 
     # Screenshot con riquadro "In basso"

@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -79,5 +78,5 @@ def test_regole_messaggi(page):
         time.sleep(1)
         page.locator('button[title="Si"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=2000)
         time.sleep(1)
-    except:
+    except Exception:
         pass

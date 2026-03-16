@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -67,5 +66,5 @@ def test_posta_indesiderata(page):
         row = page.locator('tr, li, [class*="row"]').filter(has_text=mittente_blocco).first
         row.locator('button[title="Elimina"], aru-symbol[title="Elimina"]').click()
         time.sleep(1)
-    except:
+    except Exception:
         pass

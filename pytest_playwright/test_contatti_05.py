@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -60,7 +59,7 @@ def test_modifica_contatto(page):
         modifica_btn.wait_for(state="visible", timeout=3000)
         modifica_btn.click()
         modifica_clicked = True
-    except:
+    except Exception:
         # Fallback: doppio click sulla riga per aprire edit
         row.dblclick()
 
@@ -106,5 +105,5 @@ def test_modifica_contatto(page):
         time.sleep(1)
         page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
         time.sleep(1)
-    except:
+    except Exception:
         pass

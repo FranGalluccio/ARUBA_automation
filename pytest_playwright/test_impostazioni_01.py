@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -50,7 +49,7 @@ def test_crea_firma(page):
     try:
         nome_input.wait_for(state="visible", timeout=3000)
         nome_input.fill(nome_firma)
-    except:
+    except Exception:
         # Prova con il primo input disponibile
         inputs = [i for i in page.locator("input").all() if i.is_visible()]
         if inputs:
@@ -62,14 +61,14 @@ def test_crea_firma(page):
         editor.wait_for(state="visible", timeout=3000)
         editor.click()
         editor.fill("Firma automatica test Playwright")
-    except:
+    except Exception:
         pass
 
     # Salva la firma
     try:
         page.locator('button[title="Salva"], aru-button[skin="primary"]').first.click()
         time.sleep(1)
-    except:
+    except Exception:
         pass
 
     # Screenshot

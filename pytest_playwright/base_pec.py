@@ -1,11 +1,8 @@
-from logging import config
 import os
 import time
 import re
-from playwright.sync_api import Page
-from playwright.sync_api import expect
-import pytest
 import json
+from playwright.sync_api import Page, expect
 
 
 # --- Leggi config.json ---

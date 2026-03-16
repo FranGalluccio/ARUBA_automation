@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -46,7 +45,7 @@ def test_segna_come_letto_da_leggere(page):
     try:
      # Segna come da leggere
         page.locator('button:has(aru-symbol[title="Segna tutti come già letti"])').nth(0).click()
-    except:
+    except Exception:
         page.locator('button:has(aru-symbol[title="Segna come già letti"])').nth(0).click()
 
     time.sleep(1)
@@ -54,7 +53,7 @@ def test_segna_come_letto_da_leggere(page):
     # Segna come da leggere
     try:
         page.locator('button:has(aru-symbol[title="Segna tutti come da leggere"])').nth(0).click()
-    except:
+    except Exception:
         page.locator('button:has(aru-symbol[title="Segna come da leggere"])').nth(0).click()
     
     # Assert per verificare che il pulsante "Segna tutti come da leggere" sia visibile e cliccabile

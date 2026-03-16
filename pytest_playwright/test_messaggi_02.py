@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
 
 # --- Leggi config.json ---
@@ -35,7 +34,7 @@ def test_messaggio_inoltrato(page):
     destinatario_input = page.locator("input[placeholder='Destinatari']")
     try:
         destinatario_input.fill(destinatario)
-    except:
+    except Exception:
         page.locator('input[aria-label="input field"]').click()
         destinatario_input.fill(destinatario)
 

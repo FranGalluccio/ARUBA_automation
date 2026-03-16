@@ -2,7 +2,6 @@ import os
 import json
 from datetime import datetime
 import time
-from playwright.sync_api import sync_playwright
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -62,7 +61,7 @@ def test_contatto_preferito(page):
             star_area.click(force=True)
             favorite_added = True
             time.sleep(1)
-    except:
+    except Exception:
         pass
 
     if not favorite_added:
@@ -78,7 +77,7 @@ def test_contatto_preferito(page):
         try:
             page.locator('button[title="Aggiungi ai preferiti"], button[title*="preferit"]').first.click(timeout=3000)
             favorite_added = True
-        except:
+        except Exception:
             pass
 
     assert favorite_added, "Impossibile trovare il pulsante Aggiungi ai preferiti"
@@ -114,7 +113,7 @@ def test_contatto_preferito(page):
             if action_btns2:
                 action_btns2[0].click(force=True)
         time.sleep(1)
-    except:
+    except Exception:
         pass
 
     # Elimina il contatto di test
@@ -132,5 +131,5 @@ def test_contatto_preferito(page):
         page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
         page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
         time.sleep(1)
-    except:
+    except Exception:
         pass
