@@ -34,10 +34,9 @@ def test_creazione_calendario(page):
     page.locator("aru-webmail-input-color").get_by_role("button").click()
     page.locator(".aru-webmail-color-dot").first.click()
     page.get_by_role("button", name="Salva").click()
-    time.sleep(1)
-    # Verifica creazione calendario
+    # Verifica creazione calendario — aspetta la toast (scompare rapidamente)
     toast = page.locator("div.aru-toast__message").first
-    assert toast.is_visible()
+    toast.wait_for(state="visible", timeout=8000)
     assert "Il calendario è stato creato." in toast.text_content()
 
     # Percorso screenshot dinamico
@@ -53,10 +52,9 @@ def test_creazione_calendario(page):
     page.get_by_role("checkbox", name="Lavoro").click(button="right")
     page.get_by_role("menuitem", name="Elimina").click()
     page.get_by_role("button", name="Sì").click()
-    time.sleep(1)
     # Verifica eliminazione calendario
     toast = page.locator("div.aru-toast__message").first
-    assert toast.is_visible()
+    toast.wait_for(state="visible", timeout=8000)
     assert "Il calendario è stato eliminato." in toast.text_content()
     time.sleep(1)
     

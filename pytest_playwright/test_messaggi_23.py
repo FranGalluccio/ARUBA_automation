@@ -31,8 +31,10 @@ def test_ricevuta_accettazione(page):
     )
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta elaborazione PEC (la RA arriva entro pochi secondi)
-    page.wait_for_timeout(20000)
+    # Vai alla inbox e aggiorna (la RA arriva entro pochi secondi)
+    page.wait_for_timeout(5000)
+    page.locator("#messages").get_by_label("Messaggi").first.click()
+    page.wait_for_timeout(15000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
     page.wait_for_timeout(3000)
 

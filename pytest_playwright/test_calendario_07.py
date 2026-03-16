@@ -25,8 +25,8 @@ def test_naviga_periodi_calendario(page):
     page.get_by_role("button", name="Calendario").click()
     time.sleep(1)
 
-    # Leggi il testo dell'header corrente (mini-calendar sidebar: "Marzo 2026")
-    header = page.locator('div.vanilla-calendar-header__content, [class*="calendar-header"]').first
+    # Leggi il testo dell'header corrente dal mini-calendar sidebar ("Marzo 2026")
+    header = page.locator('div.vanilla-calendar-header__content').first
     header.wait_for(state="visible", timeout=5000)
     header_iniziale = header.inner_text().strip()
     print(f"Header iniziale: '{header_iniziale}'")

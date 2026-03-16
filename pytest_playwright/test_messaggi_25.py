@@ -24,10 +24,8 @@ def test_invio_allegati_multipli(page):
     ts = int(time.time())
     oggetto = f"Test allegati multipli {ts}"
 
-    # Recupera percorso allegato dal config
-    file_allegato = config.get("file_allegato", "dati_test/allegato-test.pdf")
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    path_allegato = os.path.join(base_dir, file_allegato)
+    # Percorso allegato relativo alla CWD (root del progetto), come in tutti gli altri test
+    path_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato", "dati_test/allegato-test.pdf"))
 
     # Dismiss any CDK backdrop
     if page.locator('.cdk-overlay-backdrop').is_visible():

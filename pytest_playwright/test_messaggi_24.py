@@ -31,8 +31,10 @@ def test_ricevuta_consegna(page):
     )
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta elaborazione PEC (la RD richiede più tempo della RA)
-    page.wait_for_timeout(30000)
+    # Vai alla inbox e aggiorna (la RD richiede più tempo della RA)
+    page.wait_for_timeout(5000)
+    page.locator("#messages").get_by_label("Messaggi").first.click()
+    page.wait_for_timeout(25000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
     page.wait_for_timeout(3000)
 

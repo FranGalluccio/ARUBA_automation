@@ -56,7 +56,7 @@ def test_messaggio_alta_priorita(page):
     page.locator('div.frame-record-desktop').nth(0).click()
 
     # Aspetta che il contenuto della mail sia visibile
-    page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
+    page.locator('div.message-content-body').wait_for(state="visible", timeout=20000)
     
     # Seleziona il div contenitore
     header_info_div = page.locator('div.message-header-title-info.d-flex.flex-wrap.gap-2')

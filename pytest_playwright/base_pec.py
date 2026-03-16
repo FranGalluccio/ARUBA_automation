@@ -86,7 +86,7 @@ class Helper:
             raise ValueError(f"Destinatario non trovato in config per la chiave {destinatario_key}")
 
     # --- Dismiss any CDK backdrop (e.g., "Adegua la tua PEC" notice) ---
-        if page.locator('.cdk-overlay-backdrop').is_visible():
+        if page.locator('.cdk-overlay-backdrop').first.is_visible():
             import time as _time
             for _ in range(3):
                 if not page.locator('.cdk-overlay-backdrop').is_visible():

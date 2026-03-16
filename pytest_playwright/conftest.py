@@ -13,14 +13,14 @@ if _pec_url:
     _inbox_pattern = os.environ.get("PEC_INBOX_URL_PATTERN", "INBOX")
     _config = {
         "pec": {
-            "url": _pec_url,
-            "username": os.environ.get("PEC_USERNAME", ""),
-            "password": os.environ.get("PEC_PASSWORD", ""),
-            "inbox_url_pattern": _inbox_pattern,
+            "url": _pec_url.strip(),
+            "username": os.environ.get("PEC_USERNAME", "").strip(),
+            "password": os.environ.get("PEC_PASSWORD", "").strip(),
+            "inbox_url_pattern": _inbox_pattern.strip(),
         },
         "destinatari": {
-            "destinatario_principale": os.environ.get("PEC_USERNAME", ""),
-            "destinatario_secondario": os.environ.get("PEC_DESTINATARIO_SECONDARIO", ""),
+            "destinatario_principale": os.environ.get("PEC_USERNAME", "").strip(),
+            "destinatario_secondario": os.environ.get("PEC_DESTINATARIO_SECONDARIO", "").strip(),
         },
         "test_folder": "pytest_playwright",
         "report_folder": "pytest_playwright/test-results",

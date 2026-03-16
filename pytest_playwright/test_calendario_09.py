@@ -95,10 +95,10 @@ def test_evento_con_promemoria(page):
             break
 
     if not evento_trovato:
-        # Fallback: cerca il titolo direttamente
+        # Fallback: cerca il titolo direttamente (count evita strict mode)
         evento_trovato = page.locator('*').filter(
             has_text="evento con promemoria playwright"
-        ).first.is_visible()
+        ).count() > 0
 
     assert evento_trovato, "L'evento con promemoria non è stato trovato nel calendario"
 

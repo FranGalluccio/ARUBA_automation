@@ -23,8 +23,13 @@ def test_logout(page):
 
     time.sleep(1)
 
-    # Apri menu account (force=True bypassa il div che intercetta i pointer events nel web component)
-    page.locator(f'button[title="{config["pec"]["username"]}"]').click(force=True)
+    # Apri menu account — usa partial match con :has-text o title*= per robustezza
+    username = config["pec"]["username"].strip()
+    try:
+        page.locator(f'button[title="{username}"]').click(force=True)
+    except Exception:
+        # Fallback: cerca button con la @ dell'email nel title (evita CSS BADSTRING su caratteri speciali)
+        page.locator('button[title*="@"]').first.click(force=True)
 
     time.sleep(1)
 
