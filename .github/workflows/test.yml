@@ -18,9 +18,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright/python:v1.49.0-jammy
+    runs-on: self-hosted
 
     # Usa l'environment GitHub "test" o "prod" in base all'ambiente scelto.
     # Gli secret (PEC_USERNAME, PEC_PASSWORD, PEC_DESTINATARIO_SECONDARIO) sono
@@ -35,55 +33,50 @@ jobs:
       # Ricava l'URL in base all'ambiente scelto (default: test1 su push automatico)
       - name: Imposta URL ambiente
         id: env-config
+        shell: bash
         run: |
           case "${{ inputs.ambiente || 'test1' }}" in
-            test1)
-              echo "url=https://webmail.test.pec.aruba.it/" >> $GITHUB_OUTPUT
-              echo "nome=Test 1 (webmail.test.pec.aruba.it)" >> $GITHUB_OUTPUT
-              ;;
-            test2)
-              echo "url=https://webmail-test1.test.pec.aruba.it/" >> $GITHUB_OUTPUT
-              echo "nome=Test 2 (webmail-test1.test.pec.aruba.it)" >> $GITHUB_OUTPUT
-              ;;
-            prod-buffetti)
-              echo "url=https://webmail.pec.buffetti.it/" >> $GITHUB_OUTPUT
-              echo "nome=Prod Buffetti (webmail.pec.buffetti.it)" >> $GITHUB_OUTPUT
-              ;;
-            prod-aruba)
-              echo "url=https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth" >> $GITHUB_OUTPUT
-              echo "nome=Prod Aruba (login.aruba.it)" >> $GITHUB_OUTPUT
-              ;;
+            test1)        echo "url=https://webmail.test.pec.aruba.it/" >> "$GITHUB_OUTPUT" ;;
+            test2)        echo "url=https://webmail-test1.test.pec.aruba.it/" >> "$GITHUB_OUTPUT" ;;
+            prod-buffetti) echo "url=https://webmail.pec.buffetti.it/" >> "$GITHUB_OUTPUT" ;;
+            prod-aruba)   echo "url=https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth" >> "$GITHUB_OUTPUT" ;;
           esac
 
       - name: Installa dipendenze
+        shell: bash
         run: pip install -r requirements.txt
 
       - name: Installa Playwright (Chromium)
+        shell: bash
         run: playwright install chromium
 
+      # PowerShell per creare il JSON (più sicuro su Windows)
       - name: Crea config.json
+        shell: pwsh
         run: |
-          cat > pytest_playwright/config.json << 'EOF'
-          {
-            "pec": {
-              "url": "${{ steps.env-config.outputs.url }}",
-              "username": "${{ secrets.PEC_USERNAME }}",
-              "password": "${{ secrets.PEC_PASSWORD }}"
-            },
-            "destinatari": {
-              "destinatario_principale": "${{ secrets.PEC_USERNAME }}",
-              "destinatario_secondario": "${{ secrets.PEC_DESTINATARIO_SECONDARIO }}"
-            },
-            "test_folder": "pytest_playwright",
-            "report_folder": "pytest_playwright/test-results",
-            "file_allegato": "dati_test/allegato-test.pdf",
-            "importa_messaggi": "dati_test/messaggio importato automation playwright.eml",
-            "rubrica_import": "dati_test/rubrica.csv",
-            "calendario_import": "dati_test/calendario-test.ics"
+          $config = [ordered]@{
+            pec = [ordered]@{
+              url      = "${{ steps.env-config.outputs.url }}"
+              username = "${{ secrets.PEC_USERNAME }}"
+              password = "${{ secrets.PEC_PASSWORD }}"
+            }
+            destinatari = [ordered]@{
+              destinatario_principale  = "${{ secrets.PEC_USERNAME }}"
+              destinatario_secondario  = "${{ secrets.PEC_DESTINATARIO_SECONDARIO }}"
+            }
+            test_folder        = "pytest_playwright"
+            report_folder      = "pytest_playwright/test-results"
+            file_allegato      = "dati_test/allegato-test.pdf"
+            importa_messaggi   = "dati_test/messaggio importato automation playwright.eml"
+            rubrica_import     = "dati_test/rubrica.csv"
+            calendario_import  = "dati_test/calendario-test.ics"
           }
-          EOF
+          $config | ConvertTo-Json -Depth 3 | Set-Content -Path "pytest_playwright/config.json" -Encoding UTF8
+          Write-Host "config.json creato:"
+          Get-Content "pytest_playwright/config.json"
 
       - name: Esegui test
+        shell: bash
         run: python -m pytest pytest_playwright/ -v --browser chromium
 
       - name: Carica artifacts
