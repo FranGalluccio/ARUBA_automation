@@ -5,31 +5,52 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      ambiente:
+        description: "Ambiente da testare"
+        required: true
+        default: "test1"
+        type: choice
+        options:
+          - test1
+          - test2
+          - prod-buffetti
+          - prod-aruba
 
 jobs:
   test:
     runs-on: self-hosted
-    # labels: [ windows ]
+    environment: test
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
       - name: Install dependencies
         shell: powershell
         run: |
           pip install -r requirements.txt
-          pip install pytest-playwright pytest-html
-          playwright install
+          playwright install chromium
 
       - name: Run tests
         shell: powershell
         continue-on-error: true
+        env:
+          PEC_URL: >-
+            ${{ inputs.ambiente == 'test2'         && 'https://webmail-test1.test.pec.aruba.it/'
+             || inputs.ambiente == 'prod-buffetti' && 'https://webmail.pec.buffetti.it/'
+             || inputs.ambiente == 'prod-aruba'    && 'https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth'
+             || 'https://webmail.test.pec.aruba.it/' }}
+          PEC_USERNAME: >-
+            ${{ (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba')
+                && secrets.PROD_PEC_USERNAME || secrets.TEST_PEC_USERNAME }}
+          PEC_PASSWORD: >-
+            ${{ (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba')
+                && secrets.PROD_PEC_PASSWORD || secrets.TEST_PEC_PASSWORD }}
+          PEC_DESTINATARIO_SECONDARIO: >-
+            ${{ (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba')
+                && secrets.PROD_PEC_DESTINATARIO_SECONDARIO || secrets.TEST_PEC_DESTINATARIO_SECONDARIO }}
         run: |
           $reportDir = "pytest_playwright/test-results"
           if (!(Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
@@ -40,7 +61,8 @@ jobs:
             --self-contained-html `
             --capture=tee-sys `
             --tb=short `
-            --color=yes
+            --color=yes `
+            --browser chromium
 
       - name: Upload JUnit XML report
         uses: actions/upload-artifact@v4
