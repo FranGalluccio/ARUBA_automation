@@ -23,75 +23,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Imposta URL ambiente
-        id: env-config
-        shell: pwsh
-        run: |
-          $amb = "${{ inputs.ambiente }}"
-          if (-not $amb) { $amb = "test1" }
-
-          switch ($amb) {
-            "test1"         { $url = "https://webmail.test.pec.aruba.it/" }
-            "test2"         { $url = "https://webmail-test1.test.pec.aruba.it/" }
-            "prod-buffetti" { $url = "https://webmail.pec.buffetti.it/" }
-            "prod-aruba"    { $url = "https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth" }
-          }
-
-          $isProd = $amb -in @("prod-buffetti", "prod-aruba")
-          "url=$url"       | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          "is_prod=$isProd" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          Write-Host "Ambiente: $amb | URL: $url | Prod: $isProd"
-
-      - name: Crea config.json
-        shell: pwsh
-        env:
-          TEST_USERNAME: ${{ secrets.TEST_PEC_USERNAME }}
-          TEST_PASSWORD: ${{ secrets.TEST_PEC_PASSWORD }}
-          TEST_DEST_SEC: ${{ secrets.TEST_PEC_DESTINATARIO_SECONDARIO }}
-          PROD_USERNAME: ${{ secrets.PROD_PEC_USERNAME }}
-          PROD_PASSWORD: ${{ secrets.PROD_PEC_PASSWORD }}
-          PROD_DEST_SEC: ${{ secrets.PROD_PEC_DESTINATARIO_SECONDARIO }}
-        run: |
-          $isProd = "${{ steps.env-config.outputs.is_prod }}" -eq "True"
-          $username = if ($isProd) { $env:PROD_USERNAME } else { $env:TEST_USERNAME }
-          $password = if ($isProd) { $env:PROD_PASSWORD } else { $env:TEST_PASSWORD }
-          $destSec  = if ($isProd) { $env:PROD_DEST_SEC  } else { $env:TEST_DEST_SEC  }
-
-          $config = [ordered]@{
-            pec = [ordered]@{
-              url      = "${{ steps.env-config.outputs.url }}"
-              username = $username
-              password = $password
-            }
-            destinatari = [ordered]@{
-              destinatario_principale = $username
-              destinatario_secondario = $destSec
-            }
-            test_folder       = "pytest_playwright"
-            report_folder     = "pytest_playwright/test-results"
-            file_allegato     = "dati_test/allegato-test.pdf"
-            importa_messaggi  = "dati_test/messaggio importato automation playwright.eml"
-            rubrica_import    = "dati_test/rubrica.csv"
-            calendario_import = "dati_test/calendario-test.ics"
-          }
-
-          $outPath = Join-Path $env:GITHUB_WORKSPACE "pytest_playwright\config.json"
-          $config | ConvertTo-Json -Depth 3 | Set-Content -Path $outPath -Encoding UTF8
-          Write-Host "config.json creato in: $outPath"
-          Write-Host "URL: ${{ steps.env-config.outputs.url }}"
-          Write-Host "Username: $username"
-
       - name: Installa dipendenze
-        shell: pwsh
         run: pip install -r requirements.txt
 
       - name: Installa Playwright (Chromium)
-        shell: pwsh
         run: playwright install chromium
 
       - name: Esegui test
-        shell: pwsh
         run: python -m pytest pytest_playwright/ -v --browser chromium
+        env:
+          PEC_URL: >-
+            ${{ inputs.ambiente == 'test2'         && 'https://webmail-test1.test.pec.aruba.it/'
+             || inputs.ambiente == 'prod-buffetti' && 'https://webmail.pec.buffetti.it/'
+             || inputs.ambiente == 'prod-aruba'    && 'https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth'
+             || 'https://webmail.test.pec.aruba.it/' }}
+          PEC_USERNAME: >-
+            ${{ (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba')
+                && secrets.PROD_PEC_USERNAME || secrets.TEST_PEC_USERNAME }}
+          PEC_PASSWORD: >-
+            ${{ (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba')
+                && secrets.PROD_PEC_PASSWORD || secrets.TEST_PEC_PASSWORD }}
+          PEC_DESTINATARIO_SECONDARIO: >-
+            ${{ (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba')
+                && secrets.PROD_PEC_DESTINATARIO_SECONDARIO || secrets.TEST_PEC_DESTINATARIO_SECONDARIO }}
 
       - name: Carica artifacts
         if: always()
