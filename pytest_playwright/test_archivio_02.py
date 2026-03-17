@@ -20,15 +20,11 @@ ARCHIVE_SETTINGS_URL = config["pec"]["url"].rstrip("/") + "/new/settings/archive
 def _click_waffle_menu(page):
     """Apre il menu a 9 punti (waffle / servizi) nell'header."""
     waffle_selectors = [
+        'aru-button:has(aru-symbol[symbol="services2"])',
+        'button:has(aru-symbol[symbol="services2"])',
         'button[aria-label="Servizi"]',
-        '[aria-label="Servizi"]',
-        'button[aria-label*="Servi"]',
         'button[title="Servizi"]',
-        '[title="Servizi"]',
-        # Fallback: il bottone nella top-nav che contiene aru-symbol con icona griglia
-        'aru-button:has(aru-symbol[href*="grid"])',
-        'aru-button:has(aru-symbol[href*="apps"])',
-        'aru-button:has(aru-symbol[href*="services"])',
+        '[aria-label="Servizi"]',
     ]
     for sel in waffle_selectors:
         try:
@@ -101,11 +97,15 @@ def test_archivio_messaggio_inviato(page):
     print(f"Messaggio inviato con oggetto: {oggetto_univoco}")
 
     # Aspetta che il messaggio venga ricevuto e archiviato (l'archivio può avere latenza)
-    time.sleep(10)
+    time.sleep(30)
 
-    # --- Step 3: apri sezione Archivio dalla waffle menu ---
+    # --- Step 3: apri sezione Archivio (mailbox, non impostazioni) ---
+    # Torna a INBOX per avere il nav pulito
     page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
-    page.wait_for_load_state("networkidle", timeout=15000)
+    try:
+        page.wait_for_load_state("networkidle", timeout=15000)
+    except Exception:
+        pass
     time.sleep(2)
 
     # Dismetti eventuale overlay
@@ -114,49 +114,94 @@ def test_archivio_messaggio_inviato(page):
     except Exception:
         pass
 
+    # Apri Archivio: prima prova il link diretto nel top-nav,
+    # poi waffle menu (stesso tab, NON nuova tab)
+    archivio_page = page  # di default lavoriamo sulla stessa pagina
+
     archivio_opened = False
 
-    # Prova waffle menu
+    # Apri waffle menu (symbol="services2"), poi clicca Archivio (diventa visibile dopo apertura)
     if _click_waffle_menu(page):
+        time.sleep(2)  # attendi apertura pannello waffle
+        try:
+            archivio_btn = page.locator(
+                'aru-button[title="Archivio"], button[title="Archivio"]'
+            ).first
+            archivio_btn.wait_for(state="visible", timeout=5000)
+            archivio_btn.click()
+            try:
+                page.wait_for_load_state("networkidle", timeout=15000)
+            except Exception:
+                pass
+            time.sleep(3)
+            archivio_opened = True
+        except Exception as e:
+            print(f"Click Archivio da waffle fallito: {e}")
+
+    assert archivio_opened, "Impossibile aprire la sezione Archivio dal waffle menu"
+
+    archivio_page.screenshot(path=os.path.join(
+        REPORT_FOLDER, f"test_archivio_02_archivio_{datetime.now():%H-%M-%S}.png"
+    ))
+
+    # --- Step 4: cerca il messaggio nella barra di ricerca dell'archivio ---
+    # Dismetti eventuale overlay/cookie
+    try:
+        archivio_page.locator('button:has-text("Accetta tutti"), button:has-text("Ricordarmelo"), button[aria-label="Chiudi"]').first.click(timeout=2000)
+    except Exception:
+        pass
+
+    search_box = archivio_page.locator('input[placeholder="Cerca messaggio..."]').first
+    search_box.wait_for(state="visible", timeout=15000)
+    search_box.click()
+    time.sleep(1)
+    search_box.fill(oggetto_univoco)
+    time.sleep(1)
+    # Prova a cliccare il filtro "Oggetto" per restringere la ricerca
+    try:
+        archivio_page.locator('button:has-text("Oggetto"), [role="button"]:has-text("Oggetto")').first.click(timeout=2000)
+        time.sleep(0.5)
+    except Exception:
+        pass
+    # Clicca "Cerca" se disponibile, altrimenti premi Enter
+    try:
+        archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
+    except Exception:
+        archivio_page.keyboard.press("Enter")
+    time.sleep(5)
+
+    archivio_page.screenshot(path=os.path.join(
+        REPORT_FOLDER, f"test_archivio_02_ricerca_{datetime.now():%H-%M-%S}.png"
+    ))
+
+    # --- Step 5: verifica presenza del messaggio ---
+    def _messaggio_trovato():
+        return (
+            archivio_page.get_by_text(oggetto_univoco, exact=False).count() > 0
+            or oggetto_univoco in archivio_page.content()
+        )
+
+    found = _messaggio_trovato()
+    if not found:
+        # Latenza archivio: riprova dopo 20s cercando di nuovo
+        time.sleep(20)
+        search_box.click()
+        time.sleep(1)
+        search_box.fill("")
+        search_box.fill(oggetto_univoco)
         time.sleep(1)
         try:
-            archivio_item = page.locator(
-                'button:has-text("Archivio"), a:has-text("Archivio"), '
-                'aru-menu-item:has-text("Archivio"), [role="menuitem"]:has-text("Archivio")'
-            ).first
-            if archivio_item.is_visible():
-                # Potrebbe aprire in nuova tab
-                with page.context.expect_page(timeout=5000) as new_page_info:
-                    archivio_item.click()
-                archivio_page = new_page_info.value
-                archivio_page.wait_for_load_state("networkidle", timeout=15000)
-                time.sleep(3)
-                archivio_opened = True
-                archivio_page.screenshot(path=os.path.join(
-                    REPORT_FOLDER, f"test_archivio_02_archivio_{datetime.now():%H-%M-%S}.png"
-                ))
-                # Cerca il messaggio nell'archivio
-                try:
-                    archivio_page.get_by_text(oggetto_univoco, exact=False).first.wait_for(
-                        state="visible", timeout=15000
-                    )
-                    assert archivio_page.get_by_text(oggetto_univoco, exact=False).count() > 0, \
-                        f"Messaggio '{oggetto_univoco}' non trovato nell'archivio"
-                    print(f"Messaggio trovato in Archivio: {oggetto_univoco}")
-                except Exception as e:
-                    print(f"Nota: messaggio non ancora visibile in archivio (possibile latenza): {e}")
-                archivio_page.close()
-        except Exception as e:
-            print(f"Apertura Archivio da waffle non riuscita: {e}")
+            archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
+        except Exception:
+            archivio_page.keyboard.press("Enter")
+        time.sleep(5)
+        found = _messaggio_trovato()
 
-    # Fallback: apri da settings e verifica accesso
-    if not archivio_opened:
-        page.goto(ARCHIVE_SETTINGS_URL, timeout=20000)
-        page.wait_for_load_state("networkidle", timeout=15000)
-        time.sleep(2)
-        h1 = page.locator("h1").filter(has_text="Archivio").first
-        assert h1.is_visible(), "Sezione Archivio non accessibile"
-        print("Archivio accessibile via settings (waffle menu non riuscito)")
+    assert found, (
+        f"Messaggio '{oggetto_univoco}' non trovato nell'Archivio. "
+        "Verificare che la configurazione 'Archivia tutti' sia attiva e che il messaggio sia stato recapitato."
+    )
+    print(f"Messaggio trovato in Archivio: {oggetto_univoco}")
 
     # Screenshot finale
     screenshot_path = os.path.join(
