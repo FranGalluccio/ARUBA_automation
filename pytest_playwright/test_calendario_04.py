@@ -84,16 +84,22 @@ def test_import_export_calendario(page: Page):
         except Exception:
             pass  # Esporta non disponibile in questa vista — test comunque valido per import
     
-    # --- Cleanup: elimina eventi importati ---
+    # --- Cleanup: elimina eventi (eseguito anche in caso di fallimento) ---
     try:
-        event_links = page.locator('a').filter(has_text="import export calendario")
-        count = event_links.count()
-        for _ in range(count):
-            event_links.first.click()
-            time.sleep(1)
-            page.get_by_role("button", name="Annulla evento").click()
-            time.sleep(1)
-            page.get_by_role("button", name="Elimina").click()
-            time.sleep(1)
+        page.get_by_role("button", name="Calendario").click()
+        time.sleep(1)
+        page.get_by_role("button", name="Eventi").click()
+        time.sleep(1)
+        for titolo in ["import export calendario"]:
+            while True:
+                ev = page.locator('a, [class*="event"]').filter(has_text=titolo).first
+                if ev.count() == 0:
+                    break
+                ev.click()
+                time.sleep(1)
+                page.get_by_role("button", name="Annulla evento").click()
+                time.sleep(1)
+                page.get_by_role("button", name="Elimina").click()
+                time.sleep(1)
     except Exception:
         pass

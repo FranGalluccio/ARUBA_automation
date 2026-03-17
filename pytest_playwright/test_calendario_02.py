@@ -41,22 +41,30 @@ def test_creazione_modifica_evento(page):
     page.get_by_placeholder("Inserisci un titolo").fill("evento test automatico modificato")
     time.sleep(1)
     page.get_by_role("button", name="Salva").click()
-    
-        
-    time.sleep(1)
-    
-        # Percorso screenshot dinamico
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_calendario_02___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
 
-    print(f"Screenshot salvato in: {screenshot_path}")
-    time.sleep(1)
-    
-    # Elimina evento
-    page.get_by_role("button", name="Eventi").click()
-    page.get_by_role("button", name="evento test automatico modificato").first.click()
-    page.get_by_role("button", name="Annulla evento").click()
-    page.get_by_role("button", name="Elimina").click()
+    try:
+        time.sleep(1)
+        screenshot_path = os.path.join(
+            REPORT_FOLDER,
+            f"test_calendario_02___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        )
+        page.screenshot(path=screenshot_path, full_page=True)
+        print(f"Screenshot salvato in: {screenshot_path}")
+        time.sleep(1)
+    finally:
+        # Cleanup: elimina evento (eseguito anche in caso di fallimento)
+        try:
+            page.get_by_role("button", name="Eventi").click()
+            time.sleep(1)
+            # Elimina versione modificata se esiste, altrimenti quella originale
+            for titolo in ["evento test automatico modificato", "evento test automatico"]:
+                ev = page.locator('a, [class*="event"]').filter(has_text=titolo).filter(has_not_text="modificato" if titolo == "evento test automatico" else "").first
+                if ev.count() > 0:
+                    ev.click()
+                    time.sleep(1)
+                    page.get_by_role("button", name="Annulla evento").click()
+                    time.sleep(1)
+                    page.get_by_role("button", name="Elimina").click()
+                    time.sleep(1)
+        except Exception:
+            pass

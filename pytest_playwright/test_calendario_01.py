@@ -51,23 +51,28 @@ def test_creazione_evento_ricorrente(page):
 
     time.sleep(1)
     page.get_by_role("button", name="Salva").click()
-    
-    time.sleep(1)
-    
-        # Percorso screenshot dinamico
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_calendario_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
 
-    print(f"Screenshot salvato in: {screenshot_path}")
-    time.sleep(1)
-    
-    # Elimina evento ricorrente
-    page.get_by_role("button", name="Eventi").click()
-    page.get_by_role("button", name="nuovo evento ricorrente playwright").first.click()
-    page.get_by_role("button", name="Annulla evento").click()
-    page.get_by_role("radio", name="Tutti gli eventi").check()
-    page.get_by_role("button", name="Ok").click()
-    page.get_by_role("button", name="Elimina").click()
+    try:
+        time.sleep(1)
+        screenshot_path = os.path.join(
+            REPORT_FOLDER,
+            f"test_calendario_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        )
+        page.screenshot(path=screenshot_path, full_page=True)
+        print(f"Screenshot salvato in: {screenshot_path}")
+        time.sleep(1)
+    finally:
+        # Cleanup: elimina evento ricorrente (eseguito anche in caso di fallimento)
+        try:
+            page.get_by_role("button", name="Eventi").click()
+            time.sleep(1)
+            page.get_by_role("button", name="nuovo evento ricorrente playwright").first.click()
+            time.sleep(1)
+            page.get_by_role("button", name="Annulla evento").click()
+            time.sleep(1)
+            page.get_by_role("radio", name="Tutti gli eventi").check()
+            page.get_by_role("button", name="Ok").click()
+            time.sleep(1)
+            page.get_by_role("button", name="Elimina").click()
+        except Exception:
+            pass

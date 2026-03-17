@@ -64,14 +64,22 @@ def test_creazione_invio_evento(page):
         f"test_calendario_03___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
-    
-    # Vai al calendario
-    page.get_by_role("button", name="Calendario").click()
-    # Elimina evento
-    page.locator("a").filter(has_text="evento test auto invito").click()
-    time.sleep(1)
-    page.locator("button:has(aru-symbol[symbol='dots-separator'])").first.click()
-    page.get_by_role("button", name="Annulla evento").click()
-    page.get_by_role("button", name="Elimina").click()
+
+    # Cleanup: elimina evento (eseguito anche in caso di fallimento)
+    try:
+        page.get_by_role("button", name="Calendario").click()
+        time.sleep(1)
+        page.get_by_role("button", name="Eventi").click()
+        time.sleep(1)
+        ev = page.locator('a, [class*="event"]').filter(has_text="evento test auto invito").first
+        if ev.count() > 0:
+            ev.click()
+            time.sleep(1)
+            page.locator("button:has(aru-symbol[symbol='dots-separator'])").first.click()
+            time.sleep(1)
+            page.get_by_role("button", name="Annulla evento").click()
+            time.sleep(1)
+            page.get_by_role("button", name="Elimina").click()
+    except Exception:
+        pass
