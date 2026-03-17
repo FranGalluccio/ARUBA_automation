@@ -49,15 +49,20 @@ def test_evento_con_promemoria(page):
     print(f"aru-input-select after adding promemoria: {count_after}")
     assert count_after > 0, "Nessun elemento di promemoria trovato"
 
+    # Inserisci l'email nel campo "Invia email a"
+    try:
+        page.locator('input[placeholder="Indirizzo email"]').first.fill(config["pec"]["username"])
+        time.sleep(0.5)
+    except Exception:
+        pass
+
     # Salva il promemoria nella dialog - usa l'ultimo pane (topmost overlay)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_before_dialog_save_{datetime.now():%H-%M-%S}.png"))
-    # Il form evento è nel primo pane, la dialog promemoria è nell'ultimo
     dialog_salva = page.locator('.cdk-overlay-pane').last.locator('button:has-text("Salva")').first
     try:
         dialog_salva.wait_for(state="visible", timeout=5000)
         dialog_salva.click()
     except Exception:
-        # Fallback: cerca il button "Salva" all'interno del dialog specifico
         page.locator('button:has-text("Salva")').last.click(force=True)
     time.sleep(1)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_after_dialog_save_{datetime.now():%H-%M-%S}.png"))
@@ -77,28 +82,12 @@ def test_evento_con_promemoria(page):
     # Vai alla vista "Events" per trovare l'evento più facilmente
     try:
         page.get_by_role("button", name="Eventi").click(force=True)
-        time.sleep(1)
+        time.sleep(3)
     except Exception:
         pass
 
-    # Verifica che l'evento sia presente - cerca in più modi
-    evento_trovato = False
-    for sel in [
-        'a[class*="event"]',
-        '[class*="event-item"]',
-        '[class*="calendar-event"]',
-        'div[class*="event"]',
-        'span[class*="event"]',
-    ]:
-        if page.locator(sel).filter(has_text="evento con promemoria playwright").count() > 0:
-            evento_trovato = True
-            break
-
-    if not evento_trovato:
-        # Fallback: cerca il titolo direttamente (count evita strict mode)
-        evento_trovato = page.locator('*').filter(
-            has_text="evento con promemoria playwright"
-        ).count() > 0
+    # Verifica che l'evento sia presente
+    evento_trovato = page.get_by_text("evento con promemoria playwright", exact=False).count() > 0
 
     assert evento_trovato, "L'evento con promemoria non è stato trovato nel calendario"
 
