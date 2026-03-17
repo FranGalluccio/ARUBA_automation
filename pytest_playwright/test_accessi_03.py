@@ -85,6 +85,8 @@ def test_form_supervisore360(page):
 
     # --- Cerca pulsante per aggiungere nuova delega ---
     aggiungi_selectors = [
+        'button:has-text("Delega supervisore")',
+        'aru-button:has-text("Delega supervisore")',
         'button:has-text("Aggiungi")',
         'aru-button:has-text("Aggiungi")',
         'button:has-text("Nuova delega")',
