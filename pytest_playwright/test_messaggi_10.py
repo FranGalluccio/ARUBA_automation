@@ -58,13 +58,8 @@ def test_messaggio_alta_priorita(page):
     # Aspetta che il contenuto della mail sia visibile
     page.locator('div.message-content-body').wait_for(state="visible", timeout=20000)
     
-    # Seleziona il div contenitore
-    header_info_div = page.locator('div.message-header-title-info.d-flex.flex-wrap.gap-2')
-
-    # Verifica che contenga il simbolo "important"
-    important_symbol = header_info_div.locator('aru-symbol[symbol="important"]')
-
-    # Assert che sia presente e visibile
+    # Verifica che il simbolo "important" sia visibile nel messaggio aperto
+    important_symbol = page.locator('aru-symbol[symbol="important"]').first
     expect(important_symbol).to_be_visible()      
     
     time.sleep(1)

@@ -49,7 +49,7 @@ def test_creazione_calendario(page):
     
     # Elimina calendario creato
     time.sleep(2)
-    page.get_by_role("checkbox", name="Lavoro").click(button="right")
+    page.get_by_role("checkbox", name="Lavoro").first.click(button="right")
     page.get_by_role("menuitem", name="Elimina").click()
     page.get_by_role("button", name="Sì").click()
     # Verifica eliminazione calendario

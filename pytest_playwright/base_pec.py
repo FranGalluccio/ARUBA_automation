@@ -23,8 +23,15 @@ class LoginPec:
         self.page = page
 
     def login_pec(self, config):
-    # Vai alla pagina di login
-        self.page.goto(config["pec"]["url"], timeout=30_000)
+    # Vai alla pagina di login (retry su errori di rete transitori)
+        for _attempt in range(3):
+            try:
+                self.page.goto(config["pec"]["url"], timeout=60_000)
+                break
+            except Exception:
+                if _attempt == 2:
+                    raise
+                self.page.wait_for_timeout(5000)
 
         username = config["pec"]["username"]
         password = config["pec"]["password"]

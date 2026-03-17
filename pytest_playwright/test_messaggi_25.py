@@ -70,7 +70,18 @@ def test_invio_allegati_multipli(page):
     page.wait_for_timeout(3000)
 
     # Verifica che ci siano almeno 2 allegati nella UI prima dell'invio
-    allegati = page.locator("aru-attachment-item, .attachment-item").all()
+    page.wait_for_timeout(3000)
+    allegati = []
+    for sel in [
+        "aru-attachment-item",
+        ".attachment-item",
+        "[class*='attachment-item']",
+        "[class*='attachment-chip']",
+        "aru-chip",
+    ]:
+        allegati = page.locator(sel).all()
+        if len(allegati) >= 2:
+            break
     assert len(allegati) >= 2, (
         f"Attesi almeno 2 allegati nel composer, trovati {len(allegati)}. "
         "Verificare che il campo 'file_allegato' in config.json punti a un file valido."

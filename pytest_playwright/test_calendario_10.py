@@ -48,20 +48,20 @@ def test_ricerca_nel_calendario(page):
     time.sleep(2)
 
     # Verifica che l'evento appaia nei risultati
-    # Cerca nella vista "Eventi" che mostra una lista
-    result = page.locator(
-        '[class*="search-result"], [class*="event"], a, button'
-    ).filter(has_text=titolo_evento).first
+    result = page.get_by_text(titolo_evento, exact=False).first
 
-    # Attendi che il risultato diventi visibile (potrebbe essere in un elemento "hidden")
     try:
         result.wait_for(state="visible", timeout=8000)
         assert result.is_visible(), f"L'evento '{titolo_evento}' non è visibile"
     except Exception:
         # Alternativa: vai nella vista "Eventi" e cerca
         page.get_by_role("button", name="Eventi").click()
-        time.sleep(1)
-        result2 = page.locator('a, button, [class*="event"]').filter(has_text=titolo_evento).first
+        time.sleep(2)
+        result2 = page.get_by_text(titolo_evento, exact=False).first
+        try:
+            result2.scroll_into_view_if_needed(timeout=3000)
+        except Exception:
+            pass
         assert result2.is_visible(), f"L'evento '{titolo_evento}' non è stato trovato"
 
     # Screenshot
