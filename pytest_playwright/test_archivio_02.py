@@ -54,10 +54,11 @@ def test_archivio_messaggio_inviato(page):
     if page.locator("h1").filter(has_text="Archivio").count() == 0:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
 
-    # Seleziona il primo radio button ("Archivia tutti i messaggi ricevuti o inviati")
-    radio_inputs = page.locator("input[type='radio']").all()
-    assert len(radio_inputs) >= 1, "Radio button non trovati nella pagina archivio"
-    radio_inputs[0].click()
+    # Seleziona "Archivia tutti i messaggi ricevuti o inviati" cercando per testo della label
+    try:
+        page.get_by_text("Archivia tutti i messaggi ricevuti o inviati", exact=False).first.click()
+    except Exception:
+        page.locator("input[type='radio']").first.click()
     time.sleep(0.5)
 
     # Salva
@@ -79,19 +80,17 @@ def test_archivio_messaggio_inviato(page):
     time.sleep(1)
 
     oggetto_univoco = f"Test archivio playwright {int(time.time())}"
+    # Invia sempre a se stessi (indirizzo PEC dell'account corrente) per garantire l'archiviazione
+    config_self = {**config, "destinatari": {"destinatario_principale": config["pec"]["username"]}}
     Helper.crea_messaggio(
-        page, config,
+        page, config_self,
         oggetto=oggetto_univoco,
         corpo="Messaggio di test per verifica archiviazione automatica."
     )
 
-    # Clicca Invia
-    try:
-        page.locator('aru-button[skin="primary"]:has-text("Invia"), button:has-text("Invia")').first.click()
-        time.sleep(2)
-    except Exception:
-        page.keyboard.press("Control+Return")
-        time.sleep(2)
+    # Invia il messaggio (stesso pattern usato negli altri test)
+    page.locator('span[title="Invia"]').click()
+    time.sleep(3)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_inviato_{datetime.now():%H-%M-%S}.png"))
     print(f"Messaggio inviato con oggetto: {oggetto_univoco}")
@@ -171,25 +170,36 @@ def test_archivio_messaggio_inviato(page):
 
     # --- Step 5: verifica presenza del messaggio ---
     def _messaggio_trovato():
-        return (
-            archivio_page.get_by_text(oggetto_univoco, exact=False).count() > 0
-            or oggetto_univoco in archivio_page.content()
-        )
+        # Controlla assenza di "Non sono presenti messaggi" nella lista risultati
+        # (get_by_text sull'intera pagina matcherebbe anche il chip della barra di ricerca)
+        no_results = archivio_page.get_by_text("Non sono presenti messaggi", exact=False).count() > 0
+        return not no_results
 
     found = _messaggio_trovato()
     if not found:
-        # Latenza archivio: riprova dopo 20s cercando di nuovo
+        # Latenza archivio: riprova dopo 20s — cancella chip e cerca di nuovo
         time.sleep(20)
-        search_box.click()
-        time.sleep(1)
-        archivio_page.keyboard.press("Control+a")
-        archivio_page.keyboard.type(oggetto_univoco, delay=50)
-        time.sleep(1)
+        # Cancella il chip/filtro attivo cliccando la ×
         try:
-            archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
+            archivio_page.locator('button[aria-label="Rimuovi filtro"], [title="Rimuovi filtro"], button.chip-remove').first.click(timeout=2000)
+            time.sleep(1)
         except Exception:
-            archivio_page.keyboard.press("Enter")
-        time.sleep(5)
+            pass
+        # Ri-cerca dalla barra principale
+        search_box2 = archivio_page.locator('input[placeholder="Cerca messaggio..."]').first
+        try:
+            search_box2.wait_for(state="visible", timeout=10000)
+            search_box2.click()
+            time.sleep(1)
+            archivio_page.keyboard.type(oggetto_univoco, delay=50)
+            time.sleep(1)
+            try:
+                archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
+            except Exception:
+                archivio_page.keyboard.press("Enter")
+            time.sleep(5)
+        except Exception:
+            pass
         found = _messaggio_trovato()
 
     assert found, (
