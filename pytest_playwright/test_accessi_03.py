@@ -63,7 +63,9 @@ def test_form_supervisore360(page):
         page.locator('[aria-label*="Supervisore"]').count() > 0
     )
     if not supervisore_in_overview:
-        pytest.skip("Feature 'Supervisore360' non disponibile in questo ambiente")
+        if "bnl" in page.url.lower():
+            pytest.skip("Feature 'Supervisore360' non disponibile su BNL")
+        assert False, "Supervisore360 non trovato nella pagina 'Accessi altri account'"
 
     # --- Naviga a Supervisore360 ---
     supervisore_nav = page.locator('[title*="Supervisore"], [aria-label*="Supervisore"]').first
@@ -71,7 +73,9 @@ def test_form_supervisore360(page):
         supervisore_nav.click(force=True)
         time.sleep(2)
     else:
-        pytest.skip("Nessun percorso verso Supervisore360 trovato")
+        if "bnl" in page.url.lower():
+            pytest.skip("Nessun percorso verso Supervisore360 su BNL")
+        assert False, "Nessun percorso verso Supervisore360 trovato"
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_accessi_03_supervisore_{datetime.now():%H-%M-%S}.png"))
 
