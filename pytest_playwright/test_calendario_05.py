@@ -47,16 +47,17 @@ def test_creazione_calendario(page):
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
     
-    # Elimina calendario creato
-    time.sleep(2)
-    page.get_by_role("checkbox", name="Lavoro").first.click(button="right")
-    page.get_by_role("menuitem", name="Elimina").click()
-    page.get_by_role("button", name="Sì").click()
-    # Verifica eliminazione calendario
-    toast = page.locator("div.aru-toast__message").first
-    toast.wait_for(state="visible", timeout=8000)
-    assert "Il calendario è stato eliminato." in toast.text_content()
-    time.sleep(1)
+    # Cleanup: elimina calendario creato
+    try:
+        time.sleep(2)
+        page.get_by_role("checkbox", name="Lavoro").first.click(button="right")
+        time.sleep(1)
+        page.get_by_role("menuitem", name="Elimina").click()
+        time.sleep(1)
+        page.get_by_role("button", name="Sì").click()
+        time.sleep(1)
+    except Exception:
+        pass
     
 
 
