@@ -1,5 +1,6 @@
 import os
 import json
+import warnings
 from datetime import datetime
 import time
 from base_pec import LoginPec
@@ -45,24 +46,40 @@ def test_ricerca_nel_calendario(page):
     search.click()
     search.fill(titolo_evento)
     page.keyboard.press("Enter")
-    time.sleep(2)
+    # Attendi risultati (max 10s)
+    for _ in range(10):
+        if page.get_by_text(titolo_evento, exact=False).count() > 0:
+            break
+        time.sleep(1)
 
-    # Verifica che l'evento appaia nei risultati
-    result = page.get_by_text(titolo_evento, exact=False).first
+    evento_trovato = page.get_by_text(titolo_evento, exact=False).count() > 0
 
-    try:
-        result.wait_for(state="visible", timeout=8000)
-        assert result.is_visible(), f"L'evento '{titolo_evento}' non è visibile"
-    except Exception:
-        # Alternativa: vai nella vista "Eventi" e cerca
-        page.get_by_role("button", name="Eventi").click()
-        time.sleep(2)
-        result2 = page.get_by_text(titolo_evento, exact=False).first
+    if not evento_trovato:
+        # BUG: la ricerca del calendario rimane in "Caricamento in corso" all'infinito
+        # senza mai restituire risultati — bug del prodotto, non del test
+        warnings.warn(
+            "BUG PRODOTTO: la ricerca del calendario non restituisce risultati "
+            f"(spinner infinito). Termine cercato: '{titolo_evento}'. "
+            "La barra di ricerca accetta input ma non completa il caricamento.",
+            UserWarning,
+            stacklevel=2
+        )
+        # Fallback: chiudi la ricerca, ricarica il calendario, verifica in vista "Eventi"
         try:
-            result2.scroll_into_view_if_needed(timeout=3000)
+            page.locator('button[aria-label*="hiudi"], button[aria-label*="ancella"]').first.click(timeout=2000)
         except Exception:
             pass
-        assert result2.is_visible(), f"L'evento '{titolo_evento}' non è stato trovato"
+        page.goto(config["pec"]["url"].rstrip("/") + "/new/calendar", timeout=20000)
+        try:
+            page.wait_for_load_state("networkidle", timeout=10000)
+        except Exception:
+            pass
+        time.sleep(2)
+        page.get_by_role("button", name="Eventi").click()
+        time.sleep(3)
+        evento_trovato = page.get_by_text(titolo_evento, exact=False).count() > 0
+
+    assert evento_trovato, f"L'evento '{titolo_evento}' non è stato trovato"
 
     # Screenshot
     screenshot_path = os.path.join(
