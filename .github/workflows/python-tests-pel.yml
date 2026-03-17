@@ -18,6 +18,7 @@ on:
         type: choice
         options:
           - test-pel
+          - prod-pel
 
 jobs:
   test:
@@ -31,10 +32,13 @@ jobs:
       - name: Mostra ambiente selezionato
         shell: powershell
         run: |
+          $amb = "${{ inputs.ambiente }}"
+          if (-not $amb) { $amb = "test-pel (default - push automatico)" }
+          $url = if ("${{ inputs.ambiente }}" -eq "prod-pel") { "https://webmaildomini.aruba.it/" } else { "https://webmaildominitest.aruba.it/" }
           Write-Host "========================================" -ForegroundColor Cyan
           Write-Host "  SUITE: PEL" -ForegroundColor Yellow
-          Write-Host "  AMBIENTE: ${{ inputs.ambiente || 'test-pel (push automatico)' }}" -ForegroundColor Yellow
-          Write-Host "  URL: https://webmaildominitest.aruba.it/" -ForegroundColor Yellow
+          Write-Host "  AMBIENTE: $amb" -ForegroundColor Yellow
+          Write-Host "  URL: $url" -ForegroundColor Yellow
           Write-Host "========================================" -ForegroundColor Cyan
 
       - name: Install dependencies
@@ -47,11 +51,23 @@ jobs:
         shell: powershell
         continue-on-error: true
         env:
-          PEL_URL: "https://webmaildominitest.aruba.it/new/auth/login"
+          PEL_URL: >-
+            ${{ inputs.ambiente == 'prod-pel'
+             && 'https://webmaildomini.aruba.it/new/auth/login'
+             || 'https://webmaildominitest.aruba.it/new/auth/login' }}
           PEL_INBOX_URL_PATTERN: "INBOX"
-          PEL_USERNAME: ${{ secrets.PEL_USERNAME }}
-          PEL_PASSWORD: ${{ secrets.PEL_PASSWORD }}
-          PEL_DESTINATARIO_SECONDARIO: ${{ secrets.PEL_DESTINATARIO_SECONDARIO }}
+          PEL_USERNAME: >-
+            ${{ inputs.ambiente == 'prod-pel'
+             && secrets.PROD_PEL_USERNAME
+             || secrets.TEST_PEL_USERNAME }}
+          PEL_PASSWORD: >-
+            ${{ inputs.ambiente == 'prod-pel'
+             && secrets.PROD_PEL_PASSWORD
+             || secrets.TEST_PEL_PASSWORD }}
+          PEL_DESTINATARIO_SECONDARIO: >-
+            ${{ inputs.ambiente == 'prod-pel'
+             && secrets.PROD_PEL_DESTINATARIO_SECONDARIO
+             || secrets.TEST_PEL_DESTINATARIO_SECONDARIO }}
         run: |
           $reportDir = "pytest_pel/test-results"
           if (!(Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
