@@ -55,28 +55,23 @@ def test_form_supervisore360(page):
     time.sleep(2)
 
     # --- Verifica che Supervisore360 sia presente nella panoramica ---
+    time.sleep(3)
     supervisore_in_overview = (
         page.get_by_text("Supervisore360", exact=False).count() > 0 or
-        page.locator('button[title="Supervisore360"]').is_visible()
+        page.get_by_text("Supervisore 360", exact=False).count() > 0 or
+        page.locator('[title*="Supervisore"]').count() > 0 or
+        page.locator('[aria-label*="Supervisore"]').count() > 0
     )
     if not supervisore_in_overview:
         pytest.skip("Feature 'Supervisore360' non disponibile in questo ambiente")
 
     # --- Naviga a Supervisore360 ---
-    supervisore_nav = page.locator('button[title="Supervisore360"]').first
-    if supervisore_nav.is_visible():
+    supervisore_nav = page.locator('[title*="Supervisore"], [aria-label*="Supervisore"]').first
+    if supervisore_nav.count() > 0:
         supervisore_nav.click(force=True)
         time.sleep(2)
     else:
-        # Cerca il bottone Gestisci specifico per Supervisore360
-        sup_gestisci = page.locator(
-            'button[title*="Supervisore"], aru-button:has-text("Gestisci")'
-        ).filter(has_text="Supervisore").first
-        if sup_gestisci.is_visible():
-            sup_gestisci.click(force=True)
-            time.sleep(2)
-        else:
-            pytest.skip("Nessun percorso verso Supervisore360 trovato")
+        pytest.skip("Nessun percorso verso Supervisore360 trovato")
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_accessi_03_supervisore_{datetime.now():%H-%M-%S}.png"))
 
