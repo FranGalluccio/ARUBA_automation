@@ -96,8 +96,8 @@ def test_archivio_messaggio_inviato(page):
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_inviato_{datetime.now():%H-%M-%S}.png"))
     print(f"Messaggio inviato con oggetto: {oggetto_univoco}")
 
-    # Aspetta che il messaggio venga ricevuto e archiviato (l'archivio può avere latenza)
-    time.sleep(30)
+    # Breve attesa per il recapito del messaggio
+    time.sleep(10)
 
     # --- Step 3: apri sezione Archivio (mailbox, non impostazioni) ---
     # Torna a INBOX per avere il nav pulito
@@ -157,13 +157,7 @@ def test_archivio_messaggio_inviato(page):
     time.sleep(1)
     search_box.fill(oggetto_univoco)
     time.sleep(1)
-    # Prova a cliccare il filtro "Oggetto" per restringere la ricerca
-    try:
-        archivio_page.locator('button:has-text("Oggetto"), [role="button"]:has-text("Oggetto")').first.click(timeout=2000)
-        time.sleep(0.5)
-    except Exception:
-        pass
-    # Clicca "Cerca" se disponibile, altrimenti premi Enter
+    # Clicca "Cerca" per eseguire la ricerca (NON cambiare filtri: i chip possono svuotare il campo)
     try:
         archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
     except Exception:
