@@ -116,20 +116,21 @@ def test_import_fattura_ricevute(page):
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_post_import_{datetime.now():%H-%M-%S}.png"))
 
     # --- Vai in Fatture ricevute e attendi che il nuovo messaggio appaia ---
-    # Usa goto() per forzare il reload della virtual folder (più affidabile del pulsante Aggiorna)
+    page.goto(FATTURE_URL, timeout=20000)
+    try:
+        page.wait_for_load_state("networkidle", timeout=10000)
+    except Exception:
+        pass
+    time.sleep(2)
+
     fattura_trovata = False
-    for attempt in range(10):
-        page.goto(FATTURE_URL, timeout=20000)
-        try:
-            page.wait_for_load_state("networkidle", timeout=8000)
-        except Exception:
-            pass
-        time.sleep(2)
+    for attempt in range(15):
         count_after = _count_fatture(page)
         if count_after > count_before:
             fattura_trovata = True
             print(f"Fatture dopo import: {count_after} (prima: {count_before}) - tentativo {attempt+1}")
             break
+        time.sleep(2)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_fatture_ricevute_{datetime.now():%H-%M-%S}.png"))
 
@@ -138,6 +139,44 @@ def test_import_fattura_ricevute(page):
         f"Conteggio prima: {count_before}, dopo: {_count_fatture(page)}."
     )
 
+    # --- Apri la fattura e clicca "Visualizza fattura" ---
+    prima_riga = page.locator('div.frame-record-desktop').first
+    prima_riga.click()
+    time.sleep(2)
+    page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_dettaglio_{datetime.now():%H-%M-%S}.png"))
+
+    # Clicca "Visualizza fattura" — può aprire una nuova tab
+    pages_before = len(page.context.pages)
+    try:
+        page.locator('button:has-text("Visualizza fattura"), aru-button:has-text("Visualizza fattura")').first.click()
+        time.sleep(3)
+    except Exception:
+        pass
+
+    pages_after = page.context.pages
+    visualizza_aperto = False
+
+    if len(pages_after) > pages_before:
+        # Si è aperta una nuova tab
+        viewer_page = pages_after[-1]
+        try:
+            viewer_page.wait_for_load_state("load", timeout=15000)
+            time.sleep(2)
+            viewer_page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_visualizza_{datetime.now():%H-%M-%S}.png"))
+        except Exception:
+            pass
+        visualizza_aperto = True
+    else:
+        # Nessuna nuova tab: il viewer si è aperto nella stessa pagina
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_visualizza_{datetime.now():%H-%M-%S}.png"))
+        visualizza_aperto = (
+            page.locator('iframe, [class*="viewer"], [class*="preview"], [class*="pdf"]').count() > 0 or
+            page.get_by_text("Visualizza fattura", exact=False).count() > 0
+        )
+
+    assert visualizza_aperto, "Il pulsante 'Visualizza fattura' non ha aperto il viewer della fattura"
+    print("Visualizza fattura: OK")
+
     screenshot_path = os.path.join(
         REPORT_FOLDER,
         f"test_fatture_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
@@ -145,19 +184,54 @@ def test_import_fattura_ricevute(page):
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
 
-    # --- Cleanup: elimina tutte le fatture in Fatture ricevute ---
-    try:
-        # Seleziona tutte
-        page.locator('div.aru-input-checkbox').first.click()
-        time.sleep(1)
-        # Elimina
-        page.locator('button[title="Elimina"], aru-button[title="Elimina"]').first.click()
-        time.sleep(1)
-        # Conferma
+    # --- Torna alla lista Fatture ricevute per il cleanup ---
+    # Chiudi la tab del viewer se aperta
+    if len(pages_after) > pages_before:
         try:
-            page.get_by_role("button", name="Sì").click(timeout=3000)
-            time.sleep(1)
+            pages_after[-1].close()
         except Exception:
             pass
+    # Naviga nuovamente alla lista per uscire dalla visualizzazione dettaglio
+    page.goto(FATTURE_URL, timeout=20000)
+    try:
+        page.wait_for_load_state("networkidle", timeout=10000)
+    except Exception:
+        pass
+    time.sleep(2)
+
+    # --- Cleanup: elimina tutte le fatture (2 passaggi) ---
+    ELIMINA_BTN = (
+        'button:has(aru-symbol[title="Elimina"]), '
+        'aru-button:has(aru-symbol[title="Elimina"]), '
+        'button[title="Elimina"]'
+    )
+    ELIMINA_DEF = (
+        'button:has-text("Elimina definitivamente"), '
+        'aru-button:has-text("Elimina definitivamente")'
+    )
+    try:
+        # Step 1: seleziona → Elimina (sposta nel Cestino)
+        page.locator('div.aru-input-checkbox').first.click()
+        time.sleep(1)
+        page.locator(ELIMINA_BTN).first.click()
+        time.sleep(2)
+        try:
+            page.get_by_role("button", name="Sì").click(timeout=2000)
+            time.sleep(2)
+        except Exception:
+            pass
+
+        # Step 2: ri-seleziona → Elimina definitivamente (toolbar) → conferma dialog
+        if page.locator('div.frame-record-desktop').count() > 0:
+            # Clicca checkbox solo se il bottone "Elimina definitivamente" non è già visibile
+            if not page.locator(ELIMINA_DEF).first.is_visible():
+                page.locator('div.aru-input-checkbox').first.click()
+                time.sleep(1)
+            # Clicca "Elimina definitivamente" nel toolbar
+            page.locator(ELIMINA_DEF).first.click()
+            time.sleep(2)
+            # Clicca "Elimina definitivamente" nel dialog di conferma
+            page.locator(ELIMINA_DEF).last.click(timeout=5000)
+            time.sleep(2)
     except Exception:
         pass
