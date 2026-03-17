@@ -41,3 +41,6 @@ Thumbs.db
 diag_*.py
 diag_*.png
 debug_*.png
+
+# Claude Code
+.claude/
