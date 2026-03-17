@@ -155,9 +155,10 @@ def test_archivio_messaggio_inviato(page):
     search_box.wait_for(state="visible", timeout=15000)
     search_box.click()
     time.sleep(1)
-    search_box.fill(oggetto_univoco)
+    # Usa keyboard.type per digitare carattere per carattere (fill fallisce sul shadow DOM)
+    archivio_page.keyboard.type(oggetto_univoco, delay=50)
     time.sleep(1)
-    # Clicca "Cerca" per eseguire la ricerca (NON cambiare filtri: i chip possono svuotare il campo)
+    # Clicca "Cerca" per eseguire la ricerca
     try:
         archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
     except Exception:
@@ -181,8 +182,8 @@ def test_archivio_messaggio_inviato(page):
         time.sleep(20)
         search_box.click()
         time.sleep(1)
-        search_box.fill("")
-        search_box.fill(oggetto_univoco)
+        archivio_page.keyboard.press("Control+a")
+        archivio_page.keyboard.type(oggetto_univoco, delay=50)
         time.sleep(1)
         try:
             archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
