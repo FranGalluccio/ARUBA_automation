@@ -40,6 +40,12 @@ def test_ricevuta_accettazione(page):
     page.locator('aru-symbol[title="Aggiorna"]').click()
     page.wait_for_timeout(3000)
 
+    # Mostra le ricevute (sono nascoste per default)
+    mostra_btn = page.locator('button:has-text("Mostra ricevute"), aru-button:has-text("Mostra ricevute")').first
+    if mostra_btn.is_visible():
+        mostra_btn.click()
+        page.wait_for_timeout(2000)
+
     # Cerca la RA nell'inbox: contiene "accettazione" nel testo del messaggio
     frames = page.locator('div.frame-record-desktop').all()
     found_ra = False
@@ -51,6 +57,12 @@ def test_ricevuta_accettazione(page):
                 break
         except Exception:
             pass
+
+    # Nascondi nuovamente le ricevute per non interferire con i test successivi
+    nascondi_btn = page.locator('button:has-text("Nascondi ricevute"), aru-button:has-text("Nascondi ricevute")').first
+    if nascondi_btn.is_visible():
+        nascondi_btn.click()
+        page.wait_for_timeout(1000)
 
     screenshot_path = os.path.join(
         REPORT_FOLDER, f"test_messaggi_23___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
