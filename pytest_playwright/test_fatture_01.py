@@ -13,19 +13,25 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
-# Percorso file fattura di test (relativo alla CWD = root del repo)
+# File con X-Fattura-PA: Yes (da sdi20@pec.fatturapa.it)
 FILE_FATTURA = os.environ.get(
     "FILE_FATTURA",
-    config.get("file_fattura", "dati_test/fattura-test.eml")
+    config.get("file_fattura", "dati_test/fattura-reale-02.eml")
 )
+
+FATTURE_URL = config["pec"]["url"].rstrip("/") + "/new/messages/ArubaVrtSearch/Fatturazione%20Elettronica"
+
+
+def _count_fatture(page):
+    """Conta le righe visibili in Fatture ricevute."""
+    return page.locator('div.frame-record-desktop').count()
 
 
 def test_import_fattura_ricevute(page):
-    """Importa un file .eml di fattura elettronica tramite 'Gestione messaggi → Importa'
-    e verifica che il messaggio importato sia visibile nella cartella 'Fatture ricevute'.
+    """Importa un file .eml di fattura elettronica (X-Fattura-PA: Yes) tramite
+    'Gestione messaggi → Importa' e verifica che appaia in 'Fatture ricevute'.
     Skip se la feature non è disponibile nell'ambiente."""
 
-    # Verifica esistenza file di test
     assert os.path.exists(FILE_FATTURA), \
         f"File fattura di test non trovato: {FILE_FATTURA}"
 
@@ -41,21 +47,19 @@ def test_import_fattura_ricevute(page):
     if not fatture_btn.is_visible():
         pytest.skip("Feature 'Fatture ricevute' non disponibile in questo ambiente")
 
-    # --- Naviga in Fatture ricevute ---
-    fatture_btn.click(force=True)
+    # --- Naviga in Fatture ricevute e conta messaggi prima dell'import ---
+    page.goto(FATTURE_URL, timeout=20000)
     try:
         page.wait_for_load_state("networkidle", timeout=10000)
     except Exception:
         pass
     time.sleep(2)
 
-    assert "Fatturazione%20Elettronica" in page.url or "fattur" in page.url.lower(), \
-        f"URL Fatture ricevute non corretto: {page.url}"
-
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_pre_{datetime.now():%H-%M-%S}.png"))
+    count_before = _count_fatture(page)
+    print(f"Fatture prima dell'import: {count_before}")
 
     # --- Torna in INBOX per aprire Gestione messaggi → Importa ---
-    # Il bottone Importa non è accessibile dalla virtual folder Fatture ricevute
     page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
     try:
         page.wait_for_load_state("networkidle", timeout=10000)
@@ -63,7 +67,7 @@ def test_import_fattura_ricevute(page):
         pass
     time.sleep(1)
 
-    # Espandi il sottomenu "Gestione messaggi" se collassato
+    # Espandi "Gestione messaggi" se collassato
     try:
         gm_btn = page.locator('button[title="Gestione messaggi"]').first
         gm_btn.wait_for(state="visible", timeout=5000)
@@ -72,13 +76,12 @@ def test_import_fattura_ricevute(page):
     except Exception:
         pass
 
-    # Verifica se il bottone Importa è diventato visibile
+    # Clicca "Importa"
     importa_btn = page.locator('button[title="Importa"]').first
     try:
         importa_btn.wait_for(state="visible", timeout=4000)
         importa_btn.click()
     except Exception:
-        # Fallback: dispatch_event bypassa la visibility ma funziona con shadow DOM
         try:
             importa_btn.wait_for(state="attached", timeout=4000)
             importa_btn.dispatch_event("click")
@@ -88,14 +91,10 @@ def test_import_fattura_ricevute(page):
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_import_dialog_{datetime.now():%H-%M-%S}.png"))
 
-    # Verifica che il dialog di import si sia aperto
-    dialog_text = page.get_by_text("Seleziona i messaggi da importare", exact=False).first
+    # Verifica che il dialog si sia aperto
     try:
-        dialog_text.wait_for(state="visible", timeout=5000)
+        page.get_by_text("Seleziona i messaggi da importare", exact=False).first.wait_for(state="visible", timeout=5000)
     except Exception:
-        # Fallback: il dialog potrebbe avere testo diverso
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_dialog_fallback_{datetime.now():%H-%M-%S}.png"))
-        # Cerca qualsiasi dialog/modal aperto
         assert page.locator('.cdk-overlay-pane, [role="dialog"], aru-dialog').count() > 0 or \
                page.locator('#hidden_input').count() > 0, \
                "Dialog di importazione non si è aperto"
@@ -107,7 +106,7 @@ def test_import_fattura_ricevute(page):
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_file_selezionato_{datetime.now():%H-%M-%S}.png"))
 
-    # Clicca "Importa" nel dialog
+    # Clicca "Importa" nel dialog per avviare l'upload
     try:
         page.locator('aru-button:has-text("Importa"), button:has-text("Importa")').last.click()
         time.sleep(3)
@@ -116,37 +115,49 @@ def test_import_fattura_ricevute(page):
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_post_import_{datetime.now():%H-%M-%S}.png"))
 
-    # --- Verifica che il messaggio sia visibile in INBOX dove è stato importato ---
-    # (Il dialog importa in "In arrivo" per default; "Fatture ricevute" è una cartella
-    #  virtuale SDI che non riceve messaggi importati manualmente.)
-    page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
-    try:
-        page.wait_for_load_state("networkidle", timeout=10000)
-    except Exception:
-        pass
-    time.sleep(2)
-    try:
-        page.locator('aru-symbol[title="Aggiorna"]').click()
+    # --- Vai in Fatture ricevute e attendi che il nuovo messaggio appaia ---
+    # Usa goto() per forzare il reload della virtual folder (più affidabile del pulsante Aggiorna)
+    fattura_trovata = False
+    for attempt in range(10):
+        page.goto(FATTURE_URL, timeout=20000)
+        try:
+            page.wait_for_load_state("networkidle", timeout=8000)
+        except Exception:
+            pass
         time.sleep(2)
-    except Exception:
-        pass
+        count_after = _count_fatture(page)
+        if count_after > count_before:
+            fattura_trovata = True
+            print(f"Fatture dopo import: {count_after} (prima: {count_before}) - tentativo {attempt+1}")
+            break
 
-    # Cerca per testo univoco dell'EML (oggetto o identificativo XML)
-    messaggio_importato = (
-        page.get_by_text("IT01234567890_00001.xml", exact=False).count() > 0 or
-        page.get_by_text("Notifica di consegna", exact=False).count() > 0 or
-        page.get_by_text("sdi01@pec.fatturapa.it", exact=False).count() > 0
+    page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_fatture_ricevute_{datetime.now():%H-%M-%S}.png"))
+
+    assert fattura_trovata, (
+        f"Nessuna nuova fattura in 'Fatture ricevute' dopo l'import di '{os.path.basename(FILE_FATTURA)}'. "
+        f"Conteggio prima: {count_before}, dopo: {_count_fatture(page)}."
     )
 
-    assert messaggio_importato, \
-        "Il messaggio EML importato non è visibile in INBOX dopo l'import tramite 'Gestione messaggi → Importa'"
-
-    print(f"Messaggio importato trovato in INBOX: IT01234567890_00001.xml")
-
-    # Screenshot finale
     screenshot_path = os.path.join(
         REPORT_FOLDER,
         f"test_fatture_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+
+    # --- Cleanup: elimina tutte le fatture in Fatture ricevute ---
+    try:
+        # Seleziona tutte
+        page.locator('div.aru-input-checkbox').first.click()
+        time.sleep(1)
+        # Elimina
+        page.locator('button[title="Elimina"], aru-button[title="Elimina"]').first.click()
+        time.sleep(1)
+        # Conferma
+        try:
+            page.get_by_role("button", name="Sì").click(timeout=3000)
+            time.sleep(1)
+        except Exception:
+            pass
+    except Exception:
+        pass

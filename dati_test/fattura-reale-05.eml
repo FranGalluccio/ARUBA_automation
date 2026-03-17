@@ -1,0 +1,454 @@
+Return-Path: <testsdi1@postacert.pre.demoaruba.com>
+Delivered-To: tommaso2806@pec.it
+Received: from smtpecn (localhost [127.0.0.1])
+	by smtpecn (lmtpd) with LMTP id 31403.002;
+	Thu,  2 Aug 2018 15:23:33 +0200 (CEST)
+Received: from localhost.localdomain (unknown [95.110.221.56])	(using
+ TLSv1 with cipher AES256-SHA (256/256 bits))	(No client certificate
+ requested)	by smtps.pec.aruba.it (Postfix) with ESMTPSA id 7291F1A8D45	for
+ <tommaso2806@pec.it>; Thu,  2 Aug 2018 15:23:33 +0200 (CEST)
+Subject: POSTA CERTIFICATA: Invio FILE 400012
+X-Riferimento-Message-ID: <2145970759.35.1533216213492@localhost.localdomain>
+X-Fattura-PA: Yes
+Date: Thu, 2 Aug 2018 15:23:33 +0200
+Message-ID: <opec288.20180802152333.05585.01.1.1@pec.aruba.it>
+Reply-To: testsdi1@postacert.pre.demoaruba.com
+To: tommaso2806@pec.it
+X-Trasporto: posta-certificata
+From: "Per conto di: testsdi1@postacert.pre.demoaruba.com" <posta-certificata@pec.aruba.it>
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg=sha1; boundary="----FB945CD461DF1D9DCD0364F57506FC3B"
+
+This is an S/MIME signed message
+
+------FB945CD461DF1D9DCD0364F57506FC3B
+Content-Type: multipart/mixed; boundary="----------=_1533216213-5585-2"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+
+------------=_1533216213-5585-2
+Content-Type: multipart/alternative; boundary="----------=_1533216213-5585-3"
+Content-Transfer-Encoding: binary
+
+------------=_1533216213-5585-3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+--Questo =E8 un Messaggio di Posta Certificata--
+
+Il giorno 02/08/2018 alle ore 15:23:33 (+0200) il messaggio con Oggetto
+"Invio FILE 400012" =E8 stato inviato dal mittente "testsdi1@postacert.pre.=
+demoaruba.com"
+e indirizzato a:
+tommaso2806@pec.it
+Il messaggio originale =E8 incluso in allegato, per aprirlo cliccare sul fi=
+le "postacert.eml" (nella webmail o in alcuni client di posta l'allegato po=
+trebbe avere come nome l'oggetto del messaggio originale).
+L'allegato daticert.xml contiene informazioni di servizio sulla trasmissione
+L'identificativo univoco di questo messaggio =E8: opec288.20180802152333.05=
+585.01.1.1@pec.aruba.it
+
+------------=_1533216213-5585-3
+Content-Type: text/html; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head><title>Messaggio di posta certificata</title></head>
+<body>
+<h3>Messaggio di posta certificata</h3>
+<hr><br>
+Il giorno 02/08/2018 alle ore 15:23:33 (+0200) il messaggio<br>
+&quot;Invio FILE 400012&quot; &egrave; stato inviato da &quot;testsdi1@post=
+acert.pre.demoaruba.com&quot;<br>
+indirizzato a:<br>
+tommaso2806@pec.it<br>
+
+Il messaggio originale &egrave; incluso in allegato.<br>
+Identificativo messaggio: opec288.20180802152333.05585.01.1.1@pec.aruba.it<=
+br>
+</body>
+</html>
+
+------------=_1533216213-5585-3--
+
+------------=_1533216213-5585-2
+Content-Type: application/xml; name="daticert.xml"
+Content-Disposition: inline; filename="daticert.xml"
+Content-Transfer-Encoding: base64
+
+PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHBvc3Rh
+Y2VydCB0aXBvPSJwb3N0YS1jZXJ0aWZpY2F0YSIgZXJyb3JlPSJuZXNzdW5v
+Ij4KICAgIDxpbnRlc3RhemlvbmU+CiAgICAgICAgPG1pdHRlbnRlPnRlc3Rz
+ZGkxQHBvc3RhY2VydC5wcmUuZGVtb2FydWJhLmNvbTwvbWl0dGVudGU+CiAg
+ICAgICAgPGRlc3RpbmF0YXJpIHRpcG89ImNlcnRpZmljYXRvIj50b21tYXNv
+MjgwNkBwZWMuaXQ8L2Rlc3RpbmF0YXJpPgogICAgICAgIDxyaXNwb3N0ZT50
+ZXN0c2RpMUBwb3N0YWNlcnQucHJlLmRlbW9hcnViYS5jb208L3Jpc3Bvc3Rl
+PgogICAgICAgIDxvZ2dldHRvPkludmlvIEZJTEUgNDAwMDEyPC9vZ2dldHRv
+PgogICAgPC9pbnRlc3RhemlvbmU+CiAgICA8ZGF0aT4KICAgICAgICA8Z2Vz
+dG9yZS1lbWl0dGVudGU+QVJVQkEgUEVDIFMucC5BLjwvZ2VzdG9yZS1lbWl0
+dGVudGU+CiAgICAgICAgPGRhdGEgem9uYT0iKzAyMDAiPgogICAgICAgICAg
+ICA8Z2lvcm5vPjAyLzA4LzIwMTg8L2dpb3Jubz4KICAgICAgICAgICAgPG9y
+YT4xNToyMzozMzwvb3JhPgogICAgICAgIDwvZGF0YT4KICAgICAgICA8aWRl
+bnRpZmljYXRpdm8+b3BlYzI4OC4yMDE4MDgwMjE1MjMzMy4wNTU4NS4wMS4x
+LjFAcGVjLmFydWJhLml0PC9pZGVudGlmaWNhdGl2bz4KICAgICAgICA8bXNn
+aWQ+Jmx0OzIxNDU5NzA3NTkuMzUuMTUzMzIxNjIxMzQ5MkBsb2NhbGhvc3Qu
+bG9jYWxkb21haW4mZ3Q7PC9tc2dpZD4KICAgICAgICA8cmljZXZ1dGEgdGlw
+bz0iY29tcGxldGEiIC8+CiAgICA8L2RhdGk+CjwvcG9zdGFjZXJ0Pgo=
+
+------------=_1533216213-5585-2
+Content-Type: message/rfc822; name="postacert.eml"
+Content-Disposition: inline; filename="postacert.eml"
+Content-Transfer-Encoding: 7bit
+
+Received: from localhost.localdomain (unknown [95.110.221.56])
+	(using TLSv1 with cipher AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtps.pec.aruba.it (Postfix) with ESMTPSA id 7291F1A8D45
+	for <tommaso2806@pec.it>; Thu,  2 Aug 2018 15:23:33 +0200 (CEST)
+Date: Thu, 2 Aug 2018 15:23:33 +0200 (CEST)
+From: testsdi1@postacert.pre.demoaruba.com
+To: tommaso2806@pec.it
+Subject: Invio FILE 400012
+MIME-Version: 1.0
+Content-Type: multipart/mixed; 
+	boundary="----=_Part_34_905735620.1533216213414"
+Message-ID: <opec288.20180802152333.05585.01.1.1@pec.aruba.it>
+X-Riferimento-Message-ID: <2145970759.35.1533216213492@localhost.localdomain>
+
+------=_Part_34_905735620.1533216213414
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Invio file IT01234567890_FPR12.xml, con identificativo 400012, destinato al=
+l'ufficio con CodiceDestinatario ABC1234. In allegato il file contenente la=
+ fattura ed il file contenente i metadati.
+
+Informazioni dettagliate sulla 'Notifica di esito committente', che =C3=A8 =
+possibile predisporre per comunicare al fornitore l'accettazione o il rifiu=
+to delle fatture contenute nel file allegato, sono disponibili al seguente =
+link: http://www.fatturapa.gov.it/export/fatturazione/it/c-23.htm
+
+Per qualsiasi necessita' di chiarimenti non rispondere a questa mail, ma ut=
+ilizzare i tradizionali canali di assistenza presenti sul sito www.fatturap=
+a.gov.it.
+
+Il nuovo indirizzo da utilizzare per inviare le prossime fatture al Sistema=
+  di Interscambio, fino ad un eventuale nuovo avviso, e' sdi17@pec.fatturap=
+a.it. L'utilizzo di un indirizzo diverso non garantisce il buon esito del r=
+ecapito al destinatario.
+
+
+
+If you need any clarification do not reply to this email, but use tradition=
+ al support channels on the site www.fatturapa.gov.it.
+
+Send file IT01234567890_FPR12.xml, with ID 400012, addressed to the office =
+with CodiceDestinatario ABC1234. The file containing the invoice and the fi=
+le containing the metadata are attached.
+Detailed information on the Notification of Outcome the client, that you ca=
+n arrange to tell the supplier the acceptance or rejection of the bills con=
+tained in the attached file, are available at the following link: http://ww=
+w.fatturapa.gov.it/export/fatturazione/en/c-23.htm
+
+If you want to send other files to the Exchange System, please use the addr=
+ess: sdi17@pec.fatturapa.it. Using a different address does not guarantee d=
+elivery.
+
+------=_Part_34_905735620.1533216213414
+Content-Type: application/octet-stream; name=IT01234567890_FPR12_MT_001.xml
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename=IT01234567890_FPR12_MT_001.xml
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:MetadatiInvioFile xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" versione="1.0">
+    <IdentificativoSdI>400012</IdentificativoSdI>
+    <NomeFile>IT01234567890_FPR12.xml</NomeFile>
+    <CodiceDestinatario>ABC1234</CodiceDestinatario>
+    <Formato>FPR12</Formato>
+    <TentativiInvio>1</TentativiInvio>
+    <MessageId>800012</MessageId>
+</ns3:MetadatiInvioFile>
+
+------=_Part_34_905735620.1533216213414
+Content-Type: application/octet-stream; name=IT01234567890_FPR12.xml
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename=IT01234567890_FPR12.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<p:FatturaElettronica xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+  <FatturaElettronicaHeader>
+    <DatiTrasmissione>
+      <IdTrasmittente>
+        <IdPaese>IT</IdPaese>
+        <IdCodice>01234567890</IdCodice>
+      </IdTrasmittente>
+      <ProgressivoInvio>00001</ProgressivoInvio>
+      <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+      <CodiceDestinatario>ABC1234</CodiceDestinatario>
+      <ContattiTrasmittente></ContattiTrasmittente>
+    </DatiTrasmissione>
+    <CedentePrestatore>
+      <DatiAnagrafici>
+        <IdFiscaleIVA>
+          <IdPaese>IT</IdPaese>
+          <IdCodice>01234567890</IdCodice>
+        </IdFiscaleIVA>
+        <Anagrafica>
+          <Denominazione>SOCIETA' ALPHA SRL</Denominazione>
+        </Anagrafica>
+        <RegimeFiscale>RF01</RegimeFiscale>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>VIALE ROMA 543</Indirizzo>
+        <CAP>07100</CAP>
+        <Comune>SASSARI</Comune>
+        <Provincia>SS</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+    </CedentePrestatore>
+    <CessionarioCommittente>
+      <DatiAnagrafici>
+        <CodiceFiscale>09876543210</CodiceFiscale>
+        <Anagrafica>
+          <Denominazione>BETA GAMMA</Denominazione>
+        </Anagrafica>
+      </DatiAnagrafici>
+      <Sede>
+        <Indirizzo>VIA TORINO 38-B</Indirizzo>
+        <CAP>00145</CAP>
+        <Comune>ROMA</Comune>
+        <Provincia>RM</Provincia>
+        <Nazione>IT</Nazione>
+      </Sede>
+    </CessionarioCommittente>
+  </FatturaElettronicaHeader>
+  <FatturaElettronicaBody>
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD01</TipoDocumento>
+        <Divisa>EUR</Divisa>
+        <Data>2014-12-18</Data>
+        <Numero>123</Numero>
+        <Causale>LA FATTURA FA RIFERIMENTO AD UNA OPERAZIONE AAAA BBBBBBBBBBBBBBBBBB CCC DDDDDDDDDDDDDDD E FFFFFFFFFFFFFFFFFFFF GGGGGGGGGG HHHHHHH II LLLLLLLLLLLLLLLLL MMM NNNNN OO PPPPPPPPPPP QQQQ RRRR SSSSSSSSSSSSSS</Causale>
+        <Causale>SEGUE DESCRIZIONE CAUSALE NEL CASO IN CUI NON SIANO STATI SUFFICIENTI 200 CARATTERI AAAAAAAAAAA BBBBBBBBBBBBBBBBB</Causale>
+      </DatiGeneraliDocumento>
+      <DatiOrdineAcquisto>
+        <RiferimentoNumeroLinea>1</RiferimentoNumeroLinea>
+        <IdDocumento>66685</IdDocumento>
+        <NumItem>1</NumItem>
+      </DatiOrdineAcquisto>
+      <DatiTrasporto>
+	<DatiAnagraficiVettore>				
+	  <IdFiscaleIVA>
+	    <IdPaese>IT</IdPaese>
+	    <IdCodice>24681012141</IdCodice>
+	  </IdFiscaleIVA>
+    	  <Anagrafica>
+	    <Denominazione>Trasporto spa</Denominazione>
+	  </Anagrafica>
+	</DatiAnagraficiVettore>
+	<DataOraConsegna>2012-10-22T16:46:12.000+02:00</DataOraConsegna>
+      </DatiTrasporto>
+    </DatiGenerali>
+    <DatiBeniServizi>
+      <DettaglioLinee>
+        <NumeroLinea>1</NumeroLinea>
+        <Descrizione>LA DESCRIZIONE DELLA FORNITURA PUO' SUPERARE I CENTO CARATTERI CHE RAPPRESENTAVANO IL PRECEDENTE LIMITE DIMENSIONALE. TALE LIMITE NELLA NUOVA VERSIONE E' STATO PORTATO A MILLE CARATTERI</Descrizione>
+        <Quantita>5.00</Quantita>
+        <PrezzoUnitario>1.00</PrezzoUnitario>
+        <PrezzoTotale>5.00</PrezzoTotale>
+        <AliquotaIVA>22.00</AliquotaIVA>
+      </DettaglioLinee>
+      <DettaglioLinee>
+        <NumeroLinea>2</NumeroLinea>
+        <Descrizione>FORNITURE VARIE PER UFFICIO</Descrizione>
+        <Quantita>10.00</Quantita>
+        <PrezzoUnitario>2.00</PrezzoUnitario>
+        <PrezzoTotale>20.00</PrezzoTotale>
+        <AliquotaIVA>22.00</AliquotaIVA>
+      </DettaglioLinee>
+      <DatiRiepilogo>
+        <AliquotaIVA>22.00</AliquotaIVA>
+        <ImponibileImporto>27.00</ImponibileImporto>
+        <Imposta>5.95</Imposta>
+        <EsigibilitaIVA>I</EsigibilitaIVA>
+      </DatiRiepilogo>
+    </DatiBeniServizi>
+    <DatiPagamento>
+      <CondizioniPagamento>TP01</CondizioniPagamento>
+      <DettaglioPagamento>
+        <ModalitaPagamento>MP01</ModalitaPagamento>
+        <DataScadenzaPagamento>2015-01-30</DataScadenzaPagamento>
+        <ImportoPagamento>32.95</ImportoPagamento>
+      </DettaglioPagamento>
+    </DatiPagamento>
+  </FatturaElettronicaBody>
+  <FatturaElettronicaBody>
+    <DatiGenerali>
+      <DatiGeneraliDocumento>
+        <TipoDocumento>TD01</TipoDocumento>
+        <Divisa>EUR</Divisa>
+        <Data>2014-12-20</Data>
+        <Numero>456</Numero>
+        <Causale>LA FATTURA FA RIFERIMENTO AD UNA OPERAZIONE AAAA BBBBBBBBBBBBBBBBBB CCC DDDDDDDDDDDDDDD E FFFFFFFFFFFFFFFFFFFF GGGGGGGGGG HHHHHHH II LLLLLLLLLLLLLLLLL MMM NNNNN OO PPPPPPPPPPP QQQQ RRRR SSSSSSSSSSSSSS</Causale>
+        <Causale>SEGUE DESCRIZIONE CAUSALE NEL CASO IN CUI NON SIANO STATI SUFFICIENTI 200 CARATTERI AAAAAAAAAAA BBBBBBBBBBBBBBBBB</Causale>
+      </DatiGeneraliDocumento>
+      <DatiOrdineAcquisto>
+        <RiferimentoNumeroLinea>1</RiferimentoNumeroLinea>
+        <IdDocumento>66685</IdDocumento>
+        <NumItem>1</NumItem>
+      </DatiOrdineAcquisto>
+    </DatiGenerali>
+    <DatiBeniServizi>
+      <DettaglioLinee>
+        <NumeroLinea>1</NumeroLinea>
+        <Descrizione>PRESTAZIONE DEL SEGUENTE SERVIZIO PROFESSIONALE: LA DESCRIZIONE DELLA PRESTAZIONE PUO' SUPERARE I CENTO CARATTERI CHE RAPPRESENTAVANO IL PRECEDENTE LIMITE DIMENSIONALE. TALE LIMITE NELLA NUOVA VERSIONE E' STATO PORTATO A MILLE CARATTERI</Descrizione>
+        <PrezzoUnitario>2000.00</PrezzoUnitario>
+        <PrezzoTotale>2000.00</PrezzoTotale>
+        <AliquotaIVA>22.00</AliquotaIVA>
+      </DettaglioLinee>
+      <DatiRiepilogo>
+        <AliquotaIVA>22.00</AliquotaIVA>
+        <ImponibileImporto>2000.00</ImponibileImporto>
+        <Imposta>440.00</Imposta>
+        <EsigibilitaIVA>I</EsigibilitaIVA>
+      </DatiRiepilogo>
+    </DatiBeniServizi>
+    <DatiPagamento>
+      <CondizioniPagamento>TP01</CondizioniPagamento>
+      <DettaglioPagamento>
+        <ModalitaPagamento>MP19</ModalitaPagamento>
+        <DataScadenzaPagamento>2015-01-28</DataScadenzaPagamento>
+        <ImportoPagamento>2440.00</ImportoPagamento>
+      </DettaglioPagamento>
+    </DatiPagamento>
+  </FatturaElettronicaBody><ds:Signature Id="Signer-T-1531935396049">
+<ds:SignedInfo>
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2006/12/xml-c14n11#WithComments"></ds:CanonicalizationMethod>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></ds:SignatureMethod>
+<ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#SignedProperties-Signer-T-1531935396049">
+<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>
+<ds:DigestValue>G0ODsLCHrUOJCWghqG1XyxxF8e1KMvWRkNkUYEqgC9I=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference URI="">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2002/06/xmldsig-filter2">
+<dsig-xpath:XPath xmlns:dsig-xpath="http://www.w3.org/2002/06/xmldsig-filter2" Filter="subtract">/descendant::ds:Signature</dsig-xpath:XPath>
+</ds:Transform>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>
+<ds:DigestValue>Me2TNUhxG3rNBpxpMk9isL1lW9qgKpLIqx2sBXINMT4=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference URI="#KeyInfo-Signer-T-1531935396049">
+<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>
+<ds:DigestValue>X46dlPeR7iA6Pw2aecOcofrf5cvaSlOTJFGgRD3FV40=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue>
+e7oACggHW+RbjEs0MCTZz6qzOKL41054vbMWsBp7Q1Nc97sum8UA40CccgT00yfGGvYahJZMMiDK
+u7uxMbFcnZ0EL/Q959tZP8/kTgyLxjq05orZHEq0oJt6T8ST66Ca/fZ2n/91Y8Zb7gFQbcLm/rbz
+MsomsjVpRWo66gDsqXAF68nQFr3vAaQZqLoW0SDorOn6pMYyEGEiPuvUaYmRZqXsuKqv6TI3GrJ6
+zU1fYr+PNZH/3KxfvuN6pbhd2+BIyNpW/pEFxECEBFugL5a+bJi1yTGYy/E85OGyX7/dm7jZVGAF
+DxvqO+5BJ4UIZGCEOBMa3TG32ectPcZxMaNO3Q==
+</ds:SignatureValue>
+<ds:KeyInfo Id="KeyInfo-Signer-T-1531935396049">
+<ds:X509Data>
+<ds:X509Certificate>
+MIIF3zCCBMegAwIBAgIQaImkDfEG3NCuNTWD0WXaVTANBgkqhkiG9w0BAQsFADBsMQswCQYDVQQG
+EwJJVDEYMBYGA1UECgwPQXJ1YmFQRUMgUy5wLkEuMSEwHwYDVQQLDBhDZXJ0aWZpY2F0aW9uIEF1
+dGhvcml0eUMxIDAeBgNVBAMMF0FydWJhUEVDIFMucC5BLiBORyBDQSAzMB4XDTE4MDYxNTAwMDAw
+MFoXDTIxMDYxNDIzNTk1OVowgbsxCzAJBgNVBAYTAklUMSkwJwYDVQQKDCBBcnViYSBUZXN0L1NM
+VkRWRDg4RTE5RTQ2M0QvbnVsbDEZMBcGA1UEAwwQU2lsdmVzdHJpIERhdmlkZTEfMB0GA1UEBRMW
+VElOSVQtU0xWRFZEODhFMTlFNDYzRDEPMA0GA1UEKgwGRGF2aWRlMRIwEAYDVQQEDAlTaWx2ZXN0
+cmkxETAPBgNVBC4TCDE4NTQ0OTgwMQ0wCwYDVQQMDARUZXN0MIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEApmjDlQnpqFfoId9RTfVC75QUlX9mHDBIekxsvTYcOwhxNb3xCM82zl9FqwF9
+cmSoDI0FdwQQO7fBReRllQh61dBFQ3oIgJd1CaR/IZitEAFABGnpWKJyZV6xWby2kOCVw5QOU1BZ
+QHNY2K6DHC4tQrfKr7wAyc85JParrCO6DctO4VeIHMF0zs1dmDK7SkG5fx1D5OMLnrCLdJxUfMM6
+T3M3CPL90f0rMkSzhTkjzJVYlJBPkFZSkkWeKF+3i5zeJVBac7RzXGvMhBJ4ubg6qN1nr5mtijmY
+VQ1PiRe0GFdZFuF6Ti4qzjD0gKByA8y1fc7Qwd8F+kVs5eVojKkK2wIDAQABo4ICKzCCAicwDgYD
+VR0PAQH/BAQDAgZAMB0GA1UdDgQWBBRc1CLlaT/EYkEdeGRNLMr4R5J5GzBYBgNVHSAEUTBPMDwG
+CysGAQQBgegtAQEOMC0wKwYIKwYBBQUHAgEWH2h0dHBzOi8vY2EuYXJ1YmFwZWMuaXQvY3BzLmh0
+bWwwgQ4GDCsGAQQBgegtAQELATBYBgNVHR8EUTBPME2gS6BJhkdodHRwOi8vY3JsLmFydWJhcGVj
+Lml0L0FydWJhUEVDU3BBQ2VydGlmaWNhdGlvbkF1dGhvcml0eUMvTGF0ZXN0Q1JMLmNybDCBvwYI
+KwYBBQUHAQMEgbIwga8wCAYGBACORgEBMAsGBgQAjkYBAwIBFDAIBgYEAI5GAQQwgYsGBgQAjkYB
+BTCBgDA+FjhodHRwczovL3d3dy5wZWMuaXQvcmVwb3NpdG9yeS9hcnViYXBlYy1xdWFsaWYtcGRz
+LWVuLnBkZhMCZW4wPhY4aHR0cHM6Ly93d3cucGVjLml0L3JlcG9zaXRvcnkvYXJ1YmFwZWMtcXVh
+bGlmLXBkcy1pdC5wZGYTAml0MCoGA1UdEQQjMCGBH2RhdmlkZS5zaWx2ZXN0cmlAc3RhZmYuYXJ1
+YmEuaXQwHwYDVR0jBBgwFoAU8MBFsbY1tOpfKfqDA0rcL/WzfegwMwYIKwYBBQUHAQEEJzAlMCMG
+CCsGAQUFBzABhhdodHRwOi8vb2NzcC5hcnViYXBlYy5pdDANBgkqhkiG9w0BAQsFAAOCAQEAFtgN
+QFQwVfYtAvYlggYvp7cGzjoNqGvP0izbnClutZNlro0iFFNbgA6bp4oH5RvH1D94ljUiWQ7HoX7g
+G5x1Wbld3wWTWiBVu3KuZlTRK4ewididl2lmaZWuOuiX85xvJRvMc1l4TDYb2eMGPOnrwiMTnIlq
+tq6XCya0mKObL+jHvHh55YSBt9sI3/YRxMqh2t+pKtdNCs505bbub4Dqf7j6u6Ei9LaTuyHCcZrg
+avNb9XaQptzP/wFmy4hbW9dB2URkFaml2+srN2YhH0gO3MYVC2IKh/j3i69NIGPS+vhoBg4TT8Xy
+CyM0a+lx8pfHkNT21MaaOtHY3oW3UGRs/A==
+</ds:X509Certificate>
+</ds:X509Data>
+</ds:KeyInfo>
+<ds:Object>
+	<xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#Signer-T-1531935396049" xsi:schemaLocation="http://uri.etsi.org/01903/v1.3.2# http://uri.etsi.org/01903/v1.3.2/XAdES.xsd">
+		<xades:SignedProperties Id="SignedProperties-Signer-T-1531935396049">
+				<xades:SignedSignatureProperties>
+					<xades:SigningTime>2018-07-18T19:36:36+02:00</xades:SigningTime>
+					<xades:SigningCertificate>
+						<xades:Cert>
+							<xades:CertDigest>
+								<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>
+								<ds:DigestValue>KQi/bwtr6kBzaLON1tfQelPUmuKZ63XFEPP2nXmMD5c=</ds:DigestValue>
+							</xades:CertDigest>
+							<xades:IssuerSerial>
+								<ds:X509IssuerName>CN=ArubaPEC S.p.A. NG CA 3, OU=Certification AuthorityC, O=ArubaPEC S.p.A., C=IT</ds:X509IssuerName>
+								<ds:X509SerialNumber>138954383650985817418454374699430697557</ds:X509SerialNumber>
+							</xades:IssuerSerial>
+						</xades:Cert>
+					</xades:SigningCertificate>
+				</xades:SignedSignatureProperties>
+			</xades:SignedProperties>
+	</xades:QualifyingProperties>
+</ds:Object>
+</ds:Signature>
+</p:FatturaElettronica>
+------=_Part_34_905735620.1533216213414--
+
+------------=_1533216213-5585-2--
+
+------FB945CD461DF1D9DCD0364F57506FC3B
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIFxgYJKoZIhvcNAQcCoIIFtzCCBbMCAQExCzAJBgUrDgMCGgUAMAsGCSqGSIb3
+DQEHAaCCA5cwggOTMIIC/KADAgECAgkA3V3NaWf4Kg0wDQYJKoZIhvcNAQEEBQAw
+gY4xCzAJBgNVBAYTAklUMQ8wDQYDVQQIEwZBcmV6em8xCzAJBgNVBAcTAkFSMSAw
+HgYDVQQKExdBUlVCQSBQRUMgUy5wLkEuIC0gdGVzdDEMMAoGA1UECxMDUEVDMTEw
+LwYJKoZIhvcNAQkBFiJwb3N0YS1jZXJ0aWZpY2F0YUBwZWN0ZXN0LmFydWJhLml0
+MB4XDTEwMDMwMzE3MjIxNloXDTEzMDMwMjE3MjIxNlowgY4xCzAJBgNVBAYTAklU
+MQ8wDQYDVQQIEwZBcmV6em8xCzAJBgNVBAcTAkFSMSAwHgYDVQQKExdBUlVCQSBQ
+RUMgUy5wLkEuIC0gdGVzdDEMMAoGA1UECxMDUEVDMTEwLwYJKoZIhvcNAQkBFiJw
+b3N0YS1jZXJ0aWZpY2F0YUBwZWN0ZXN0LmFydWJhLml0MIGfMA0GCSqGSIb3DQEB
+AQUAA4GNADCBiQKBgQDRoX2tZHBlx2CUCtrvMYMKhr36pfLSEOl0Nv5X9oyVVipU
+SNVWCJU1kJqBzBykEad2/SmJrVeAMQdzIBPwOibux6+oCiqhn6NwseBjdlzrgFlu
+0JChbkpMhMTLcVyctZvd+gamfEMXrwnbERZnBny7zmoxBd4zsCZ7LEJtTAc9wwID
+AQABo4H2MIHzMB0GA1UdDgQWBBQtLZnt02ySQEKNAhZ9XrIFxBVjtDCBwwYDVR0j
+BIG7MIG4gBQtLZnt02ySQEKNAhZ9XrIFxBVjtKGBlKSBkTCBjjELMAkGA1UEBhMC
+SVQxDzANBgNVBAgTBkFyZXp6bzELMAkGA1UEBxMCQVIxIDAeBgNVBAoTF0FSVUJB
+IFBFQyBTLnAuQS4gLSB0ZXN0MQwwCgYDVQQLEwNQRUMxMTAvBgkqhkiG9w0BCQEW
+InBvc3RhLWNlcnRpZmljYXRhQHBlY3Rlc3QuYXJ1YmEuaXSCCQDdXc1pZ/gqDTAM
+BgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBAUAA4GBALqjoKvokPV/+wiOFm8lbU2Q
+BfRie1jDut8NQyTkHyBpAI62G6+dkfT2cGrrASNpLi+WnivkNHSGelgZGkbEI0I6
+RdpnJtO51ul55ATPUD/mumNdA/m202aPudFe3FumQcdjBKhTOPjJrftdXFwxEtEC
+YQ1OHc3yyV8z8TWleoGbMYIB9zCCAfMCAQEwgZwwgY4xCzAJBgNVBAYTAklUMQ8w
+DQYDVQQIEwZBcmV6em8xCzAJBgNVBAcTAkFSMSAwHgYDVQQKExdBUlVCQSBQRUMg
+Uy5wLkEuIC0gdGVzdDEMMAoGA1UECxMDUEVDMTEwLwYJKoZIhvcNAQkBFiJwb3N0
+YS1jZXJ0aWZpY2F0YUBwZWN0ZXN0LmFydWJhLml0AgkA3V3NaWf4Kg0wCQYFKw4D
+AhoFAKCBsTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
+Fw0xODA4MDIxMzIzMzNaMCMGCSqGSIb3DQEJBDEWBBRTF21tLFdUVRR8BXbGdL2N
+FMtnDDBSBgkqhkiG9w0BCQ8xRTBDMAoGCCqGSIb3DQMHMA4GCCqGSIb3DQMCAgIA
+gDANBggqhkiG9w0DAgIBQDAHBgUrDgMCBzANBggqhkiG9w0DAgIBKDANBgkqhkiG
+9w0BAQEFAASBgHKciUIpDs3/lRSqndRZbr0WrzNwIotzqCrsjH+LzNw0DudSgA7d
+2IoNCOqDEEGskeCK0jLBC/zl8+OyhLgIVrq0pdcU3SSxq/INIyXwHBivhm23kz64
+QC4+5lMr8WDia5p01VLE6g41q+kX9Ftst3LU4RT2rn2XGNIwfIC+3DyC
+
+------FB945CD461DF1D9DCD0364F57506FC3B--
+
