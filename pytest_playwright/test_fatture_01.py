@@ -54,10 +54,6 @@ def test_import_fattura_ricevute(page):
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_pre_{datetime.now():%H-%M-%S}.png"))
 
-    # --- Conta messaggi prima dell'import ---
-    msg_rows_before = page.locator('[class*="message-row"], aru-message-row, tr[class*="row"]').count()
-    print(f"Messaggi prima dell'import: {msg_rows_before}")
-
     # --- Torna in INBOX per aprire Gestione messaggi → Importa ---
     # Il bottone Importa non è accessibile dalla virtual folder Fatture ricevute
     page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
@@ -120,33 +116,32 @@ def test_import_fattura_ricevute(page):
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_post_import_{datetime.now():%H-%M-%S}.png"))
 
-    # --- Verifica che la fattura sia visibile in Fatture ricevute ---
-    # Rimani sulla pagina o torna a Fatture ricevute
-    if "Fatturazione%20Elettronica" not in page.url:
-        fatture_btn2 = page.locator('button[title="Fatture ricevute"]').first
-        if fatture_btn2.is_visible():
-            fatture_btn2.click(force=True)
-            try:
-                page.wait_for_load_state("networkidle", timeout=8000)
-            except Exception:
-                pass
-            time.sleep(2)
+    # --- Verifica che il messaggio sia visibile in INBOX dove è stato importato ---
+    # (Il dialog importa in "In arrivo" per default; "Fatture ricevute" è una cartella
+    #  virtuale SDI che non riceve messaggi importati manualmente.)
+    page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
+    try:
+        page.wait_for_load_state("networkidle", timeout=10000)
+    except Exception:
+        pass
+    time.sleep(2)
+    try:
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        time.sleep(2)
+    except Exception:
+        pass
 
-    # Cerca il messaggio importato (mittente SDI o oggetto)
-    sdi_text_present = (
-        page.get_by_text("sdi", exact=False).count() > 0 or
-        page.get_by_text("fattura", exact=False).count() > 0 or
-        page.get_by_text("IT01234567890", exact=False).count() > 0 or
-        page.get_by_text("Notifica di consegna", exact=False).count() > 0
+    # Cerca per testo univoco dell'EML (oggetto o identificativo XML)
+    messaggio_importato = (
+        page.get_by_text("IT01234567890_00001.xml", exact=False).count() > 0 or
+        page.get_by_text("Notifica di consegna", exact=False).count() > 0 or
+        page.get_by_text("sdi01@pec.fatturapa.it", exact=False).count() > 0
     )
 
-    # In alternativa, verifica che ci sia almeno un messaggio in più rispetto a prima
-    msg_rows_after = page.locator('[class*="message-row"], aru-message-row, tr[class*="row"]').count()
+    assert messaggio_importato, \
+        "Il messaggio EML importato non è visibile in INBOX dopo l'import tramite 'Gestione messaggi → Importa'"
 
-    assert sdi_text_present or msg_rows_after > msg_rows_before, \
-        "La fattura importata non risulta visibile nella cartella Fatture ricevute"
-
-    print(f"Messaggi dopo import: {msg_rows_after} (prima: {msg_rows_before})")
+    print(f"Messaggio importato trovato in INBOX: IT01234567890_00001.xml")
 
     # Screenshot finale
     screenshot_path = os.path.join(
