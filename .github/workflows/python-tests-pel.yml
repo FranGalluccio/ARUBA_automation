@@ -1,0 +1,92 @@
+name: Python Playwright Tests - PEL
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "pytest_pel/**"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "pytest_pel/**"
+  workflow_dispatch:
+    inputs:
+      ambiente:
+        description: "Ambiente da testare"
+        required: true
+        default: "test-pel"
+        type: choice
+        options:
+          - test-pel
+
+jobs:
+  test:
+    runs-on: self-hosted
+    environment: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Mostra ambiente selezionato
+        shell: powershell
+        run: |
+          Write-Host "========================================" -ForegroundColor Cyan
+          Write-Host "  SUITE: PEL" -ForegroundColor Yellow
+          Write-Host "  AMBIENTE: ${{ inputs.ambiente || 'test-pel (push automatico)' }}" -ForegroundColor Yellow
+          Write-Host "  URL: https://webmaildominitest.aruba.it/" -ForegroundColor Yellow
+          Write-Host "========================================" -ForegroundColor Cyan
+
+      - name: Install dependencies
+        shell: powershell
+        run: |
+          py -m pip install -r requirements.txt
+          py -m playwright install chromium
+
+      - name: Run tests
+        shell: powershell
+        continue-on-error: true
+        env:
+          PEL_URL: "https://webmaildominitest.aruba.it/new/auth/login"
+          PEL_INBOX_URL_PATTERN: "INBOX"
+          PEL_USERNAME: ${{ secrets.PEL_USERNAME }}
+          PEL_PASSWORD: ${{ secrets.PEL_PASSWORD }}
+          PEL_DESTINATARIO_SECONDARIO: ${{ secrets.PEL_DESTINATARIO_SECONDARIO }}
+        run: |
+          $reportDir = "pytest_pel/test-results"
+          if (!(Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
+
+          py -m pytest pytest_pel/ `
+            --junitxml=$reportDir/report.xml `
+            --html=$reportDir/report.html `
+            --self-contained-html `
+            --capture=tee-sys `
+            --tb=short `
+            --color=yes `
+            --browser chromium
+
+      - name: Upload JUnit XML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-report-pel
+          path: pytest_pel/test-results/report.xml
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report-pel
+          path: pytest_pel/test-results/report.html
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-pel
+          path: pytest_pel/test-results/**/*.png
+
+      - name: Upload failure diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failures-pel
+          path: pytest_pel/test-results/failures/
+          if-no-files-found: ignore

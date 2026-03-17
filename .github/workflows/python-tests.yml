@@ -3,8 +3,12 @@ name: Python Playwright Tests
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - "pytest_playwright/**"
   pull_request:
     branches: [ "main" ]
+    paths:
+      - "pytest_playwright/**"
   workflow_dispatch:
     inputs:
       ambiente:

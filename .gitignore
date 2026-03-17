@@ -19,10 +19,13 @@ dist/
 # Test artifacts - ignora i contenuti ma mantieni la cartella
 pytest_playwright/test-results/*
 !pytest_playwright/test-results/.gitkeep
+pytest_pel/test-results/*
+!pytest_pel/test-results/.gitkeep
 report.html
 
 # Config con credenziali (usa config.example.json come template)
 pytest_playwright/config.json
+pytest_pel/config.json
 
 # Pytest cache
 .pytest_cache/
