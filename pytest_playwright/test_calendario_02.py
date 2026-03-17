@@ -32,7 +32,7 @@ def test_creazione_modifica_evento(page):
     page.get_by_placeholder("Inserisci un titolo").fill("evento test automatico")
     page.get_by_role("button", name="Salva").click()
     time.sleep(1)
-    page.locator("a").filter(has_text="evento test automatico").click()
+    page.locator("a").filter(has_text="evento test automatico").filter(has_not_text="modificato").first.click()
     page.get_by_role("button", name="Modifica").click()
     time.sleep(1)
     page.get_by_placeholder("Inserisci un titolo").click()
