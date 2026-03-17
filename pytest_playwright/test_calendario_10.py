@@ -33,7 +33,7 @@ def test_ricerca_nel_calendario(page):
     time.sleep(1)
     page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
     page.get_by_role("button", name="Salva").click()
-    time.sleep(1)
+    time.sleep(5)
 
     # Usa la barra di ricerca del calendario
     # La ricerca è visibile come input con placeholder "Cerca nel calendario"

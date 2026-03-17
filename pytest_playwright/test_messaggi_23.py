@@ -40,29 +40,29 @@ def test_ricevuta_accettazione(page):
     page.locator('aru-symbol[title="Aggiorna"]').click()
     page.wait_for_timeout(3000)
 
-    # Mostra le ricevute (sono nascoste per default)
-    mostra_btn = page.locator('button:has-text("Mostra ricevute"), aru-button:has-text("Mostra ricevute")').first
-    if mostra_btn.is_visible():
-        mostra_btn.click()
-        page.wait_for_timeout(2000)
+    # Mostra le ricevute se il banner è presente (in alcuni ambienti sono nascoste per default)
+    try:
+        mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
+        if mostra_btn.is_visible():
+            mostra_btn.click()
+            page.wait_for_timeout(2000)
+    except Exception:
+        pass
 
-    # Cerca la RA nell'inbox: contiene "accettazione" nel testo del messaggio
-    frames = page.locator('div.frame-record-desktop').all()
-    found_ra = False
-    for frame in frames:
-        try:
-            text = frame.inner_text().lower()
-            if "accettazione" in text:
-                found_ra = True
-                break
-        except Exception:
-            pass
+    # Cerca la RA tramite l'icona aru-symbol con title="Ricevuta di accettazione"
+    # e filtra per il soggetto univoco del messaggio inviato (stessa stringa nel frame)
+    found_ra = page.locator(
+        'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di accettazione"])'
+    ).filter(has_text=oggetto).count() > 0
 
     # Nascondi nuovamente le ricevute per non interferire con i test successivi
-    nascondi_btn = page.locator('button:has-text("Nascondi ricevute"), aru-button:has-text("Nascondi ricevute")').first
-    if nascondi_btn.is_visible():
-        nascondi_btn.click()
-        page.wait_for_timeout(1000)
+    try:
+        nascondi_btn = page.locator('button:has-text("Nascondi ricevute")').first
+        if nascondi_btn.is_visible():
+            nascondi_btn.click()
+            page.wait_for_timeout(1000)
+    except Exception:
+        pass
 
     screenshot_path = os.path.join(
         REPORT_FOLDER, f"test_messaggi_23___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
