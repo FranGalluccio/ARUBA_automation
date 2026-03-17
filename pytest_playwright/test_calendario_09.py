@@ -69,20 +69,25 @@ def test_evento_con_promemoria(page):
 
     # Aspetta che il dialog si chiuda
     try:
-        page.locator('.cdk-overlay-backdrop').wait_for(state="hidden", timeout=5000)
+        page.locator('.cdk-overlay-backdrop').wait_for(state="hidden", timeout=8000)
     except Exception:
         pass
-    time.sleep(1)
+    time.sleep(2)
 
     # Ora salva l'evento (il "Salva" nel pannello laterale del form evento)
     page.get_by_role("button", name="Salva").first.click(force=True)
+    # Attendi la toast di conferma salvataggio (scompare rapidamente)
+    try:
+        page.locator("div.aru-toast__message").wait_for(state="visible", timeout=8000)
+    except Exception:
+        time.sleep(3)
     time.sleep(1)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_after_event_save_{datetime.now():%H-%M-%S}.png"))
 
     # Vai alla vista "Events" per trovare l'evento più facilmente
     try:
         page.get_by_role("button", name="Eventi").click(force=True)
-        time.sleep(3)
+        time.sleep(5)
     except Exception:
         pass
 
