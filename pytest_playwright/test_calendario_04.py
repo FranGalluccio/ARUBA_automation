@@ -49,13 +49,25 @@ def test_import_export_calendario(page: Page):
         time.sleep(1)
 
         # --- Importa calendario (.ics) ---
-        page.get_by_role("button", name="Importa").click()
+        page.get_by_role("button", name="Importa").first.click()
         time.sleep(1)
         page.locator("#hidden_input").set_input_files(FILE_ICS)
-
-        page.get_by_role("button", name="Importa", exact=True).click()
-
         time.sleep(1)
+
+        # Conferma import: prende l'ultimo "Importa" visibile (quello nel dialog, non la sidebar)
+        try:
+            all_importa = page.get_by_role("button", name="Importa").all()
+            for btn in reversed(all_importa):
+                try:
+                    if btn.is_visible():
+                        btn.click()
+                        break
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
+        time.sleep(2)
 
         # Percorso screenshot dinamico
         screenshot_path = os.path.join(
@@ -68,17 +80,20 @@ def test_import_export_calendario(page: Page):
 
         # --- Esporta calendario ---
         export_triggered = False
+        # Step 1: apri dialog esporta
+        page.get_by_role("button", name="Esporta").first.click(timeout=5000)
+        time.sleep(1)
+        # Step 2: conferma esporta nel dialog (se c'è) oppure il download parte già
         try:
             with page.expect_download(timeout=8000) as download_info:
-                page.get_by_role("button", name="Esporta").first.click(timeout=5000)
                 try:
-                    page.get_by_role("button", name="Esporta", exact=True).first.click(timeout=3000)
+                    page.get_by_role("button", name="Esporta").last.click(timeout=3000)
                 except Exception:
                     pass
-            download_info.value  # raises if no download occurred
+            download_info.value
             export_triggered = True
         except Exception:
-            # Fallback: click destro sul calendario in sidebar per aprire menu contestuale
+            # Fallback: click destro sul calendario in sidebar
             try:
                 with page.expect_download(timeout=8000) as download_info2:
                     page.locator('[aria-label="Personale"], [title="Personale"], input[type="checkbox"]').first.click(button="right")
