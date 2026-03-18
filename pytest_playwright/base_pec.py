@@ -82,18 +82,6 @@ class LoginPec:
             
 class Helper:
 
-    def setup_method(self, method, page: Page):
-        """Setup comune: login e accettazione cookie"""
-        self.page = page
-        LoginPec(self.page).login_pec(
-            "francescoconservazione@pec.it",
-            "1234567Abc.",
-            "https://webmail.test.pec.aruba.it/"
-        )
-        # Accetta cookie
-        self.page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click()
-        
-
     def crea_messaggio(
         page: Page,
         config: dict,
