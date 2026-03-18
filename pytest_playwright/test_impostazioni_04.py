@@ -35,10 +35,13 @@ def test_risposta_automatica(page):
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_impostazioni_04_pre_{datetime.now():%H-%M-%S}.png"))
 
-    # Verifica che la pagina Avvisi e report sia caricata
-    page.locator('h1, aru-tab-group, aru-table, [class*="alert"], [class*="notification"]').first.wait_for(state="visible", timeout=8000)
-    assert page.locator('h1, aru-tab-group, aru-table, [class*="alert"], [class*="notification"]').first.is_visible(), \
-        "La pagina Avvisi e report non si è caricata"
+    # Verifica che la pagina Avvisi e report sia caricata controllando elementi specifici di questa sezione
+    page.locator('aru-tab-group, aru-table').first.wait_for(state="visible", timeout=8000)
+    avvisi_loaded = (
+        page.get_by_role("heading", name="Avvisi e report").count() > 0 or
+        page.locator('aru-tab-group, aru-table').first.is_visible()
+    )
+    assert avvisi_loaded, "La pagina Avvisi e report non si è caricata"
 
     # Screenshot
     screenshot_path = os.path.join(

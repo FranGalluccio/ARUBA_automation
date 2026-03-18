@@ -70,14 +70,30 @@ def test_filtri_inbox(page):
         assert filter_select.is_visible(), "Il componente filtro messaggi non è visibile"
     else:
         # Clicca la prima opzione
+        clicked_option_text = None
         for sel in ['aru-menu-item', '[role="option"]']:
             opts = [o for o in page.locator(sel).all() if o.is_visible()]
             if opts:
+                clicked_option_text = opts[0].inner_text().strip()
                 opts[0].click()
                 time.sleep(1)
                 break
         else:
             page.keyboard.press("Escape")
+
+        # Verifica che il filtro sia stato applicato: il dropdown deve essersi chiuso
+        # e il testo selezionato deve comparire nel componente filtro oppure la lista risulta aggiornata
+        if clicked_option_text:
+            dropdown_closed = page.locator('aru-menu-item:visible, [role="option"]:visible').count() == 0
+            filter_label_visible = (
+                filter_select.inner_text().strip() != "" or
+                page.locator(
+                    f'[class*="filter"][class*="active"], [class*="selected-filter"]'
+                ).count() > 0
+            )
+            assert dropdown_closed or filter_label_visible, (
+                f"Il filtro '{clicked_option_text}' non sembra essere stato applicato"
+            )
 
     time.sleep(1)
 

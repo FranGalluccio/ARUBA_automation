@@ -99,26 +99,13 @@ def test_scrivi_email_da_contatto(page):
             email_clicked = compose_open()
         except Exception:
             pass
-    # Se il dialog non è aperto, naviga a In arrivo e apri compose
     screenshot_path = os.path.join(
         REPORT_FOLDER,
         f"test_contatti_09___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
-    if not email_clicked:
-        inbox_url = config["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
-        page.goto(inbox_url, timeout=20000)
-        time.sleep(2)
-        page.locator("button:has-text('Nuovo messaggio')").first.click(force=True)
-        destinatario_field = page.locator("input[placeholder='Destinatari']").first
-        destinatario_field.wait_for(state="visible", timeout=10000)
-        destinatario_field.fill(email_contatto)
-        email_clicked = True
-        page.screenshot(path=screenshot_path, full_page=True)
-        print(f"Screenshot salvato in: {screenshot_path}")
-    else:
-        time.sleep(1)
-        page.screenshot(path=screenshot_path, full_page=True)
-        print(f"Screenshot salvato in: {screenshot_path}")
+    time.sleep(1)
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
 
     assert email_clicked, "Impossibile aprire la finestra di composizione email dal contatto"
 

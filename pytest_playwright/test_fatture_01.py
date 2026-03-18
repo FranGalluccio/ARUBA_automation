@@ -147,34 +147,26 @@ def test_import_fattura_ricevute(page):
 
     # Clicca "Visualizza fattura" — può aprire una nuova tab
     pages_before = len(page.context.pages)
-    try:
-        page.locator('button:has-text("Visualizza fattura"), aru-button:has-text("Visualizza fattura")').first.click()
-        time.sleep(3)
-    except Exception:
-        pass
+    page.locator('button:has-text("Visualizza fattura"), aru-button:has-text("Visualizza fattura")').first.click()
+    time.sleep(3)
 
     pages_after = page.context.pages
-    visualizza_aperto = False
 
     if len(pages_after) > pages_before:
-        # Si è aperta una nuova tab
         viewer_page = pages_after[-1]
         try:
             viewer_page.wait_for_load_state("load", timeout=15000)
             time.sleep(2)
-            viewer_page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_visualizza_{datetime.now():%H-%M-%S}.png"))
         except Exception:
             pass
-        visualizza_aperto = True
+        viewer_url = viewer_page.url
+        assert viewer_url and viewer_url not in ("about:blank", ""), \
+            f"La nuova tab aperta da 'Visualizza fattura' è vuota (url: {viewer_url})"
+        viewer_page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_visualizza_{datetime.now():%H-%M-%S}.png"))
     else:
-        # Nessuna nuova tab: il viewer si è aperto nella stessa pagina
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_visualizza_{datetime.now():%H-%M-%S}.png"))
-        visualizza_aperto = (
-            page.locator('iframe, [class*="viewer"], [class*="preview"], [class*="pdf"]').count() > 0 or
-            page.get_by_text("Visualizza fattura", exact=False).count() > 0
-        )
-
-    assert visualizza_aperto, "Il pulsante 'Visualizza fattura' non ha aperto il viewer della fattura"
+        assert page.locator('iframe, [class*="viewer"], [class*="preview"], [class*="pdf"]').count() > 0, \
+            "Visualizza fattura non ha aperto una nuova tab né un viewer nella pagina"
     print("Visualizza fattura: OK")
 
     screenshot_path = os.path.join(

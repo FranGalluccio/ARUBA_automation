@@ -63,9 +63,9 @@ def test_salva_e_usa_modello(page):
     time.sleep(1)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
-    # Verifica che il modello salvato sia visibile
-    count = page.locator('div.frame-record-desktop').count()
-    assert count > 0, "Nessun modello trovato nella cartella Modelli"
+    # Verifica che il modello salvato con il nome univoco sia visibile nella lista
+    modello_row = page.locator('div.frame-record-desktop').filter(has_text=oggetto_modello).first
+    assert modello_row.is_visible(), f"Il modello '{oggetto_modello}' non è visibile nella cartella Modelli"
 
     # Screenshot
     screenshot_path = os.path.join(

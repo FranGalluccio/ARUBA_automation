@@ -74,10 +74,20 @@ def test_messaggi_preferiti_pinnati(page):
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
     
     time.sleep(1)
-    # Verifica toast di conferma invio
+    # Verifica toast di conferma che i messaggi non sono più in evidenza
     toast = page.locator("div.aru-toast__message").first
-    assert toast.is_visible()
-    assert " messaggi non sono più in evidenza." in toast.text_content()
+    assert toast.is_visible(), "Nessun toast di conferma per la rimozione da 'In evidenza'"
+    assert " messaggi non sono più in evidenza." in toast.text_content(), \
+        f"Toast non contiene il testo atteso: '{toast.text_content()}'"
+    # Verifica che i messaggi non abbiano più la classe/attributo di evidenza
+    highlighted = page.locator(
+        'div.frame-record-desktop[class*="highlight"], '
+        'div.frame-record-desktop[class*="evidenza"], '
+        'div.frame-record-desktop[class*="flagged"]'
+    ).count()
+    assert highlighted == 0, (
+        f"Trovati {highlighted} messaggi ancora marcati come 'in evidenza' dopo la rimozione"
+    )
     
     time.sleep(1)
     # Percorso screenshot dinamico

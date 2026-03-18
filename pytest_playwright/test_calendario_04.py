@@ -67,22 +67,37 @@ def test_import_export_calendario(page: Page):
 
 
     # --- Esporta calendario ---
-    # Prova il button diretto nel toolbar, altrimenti cerca nel menu contestuale del calendario
+    export_triggered = False
     try:
-        page.get_by_role("button", name="Esporta").first.click(timeout=5000)
-        try:
-            page.get_by_role("button", name="Esporta", exact=True).first.click(timeout=3000)
-        except Exception:
-            pass
+        with page.expect_download(timeout=8000) as download_info:
+            page.get_by_role("button", name="Esporta").first.click(timeout=5000)
+            try:
+                page.get_by_role("button", name="Esporta", exact=True).first.click(timeout=3000)
+            except Exception:
+                pass
+        download_info.value  # raises if no download occurred
+        export_triggered = True
     except Exception:
         # Fallback: click destro sul calendario in sidebar per aprire menu contestuale
         try:
-            page.locator('[aria-label="Personale"], [title="Personale"], input[type="checkbox"]').first.click(button="right")
-            time.sleep(1)
-            page.get_by_role("menuitem", name="Esporta").click()
-            time.sleep(1)
+            with page.expect_download(timeout=8000) as download_info2:
+                page.locator('[aria-label="Personale"], [title="Personale"], input[type="checkbox"]').first.click(button="right")
+                time.sleep(1)
+                page.get_by_role("menuitem", name="Esporta").click()
+                time.sleep(1)
+            download_info2.value
+            export_triggered = True
         except Exception:
-            pass  # Esporta non disponibile in questa vista — test comunque valido per import
+            pass
+
+    # Check for success toast if no download was detected
+    if not export_triggered:
+        toast_visible = page.locator(
+            'div.aru-toast__message, [class*="toast"], [class*="success"]'
+        ).count() > 0
+        assert toast_visible, (
+            "L'esportazione del calendario non ha prodotto né un download né un toast di conferma"
+        )
     
     # --- Cleanup: elimina eventi (eseguito anche in caso di fallimento) ---
     try:

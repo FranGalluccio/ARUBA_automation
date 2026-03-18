@@ -56,10 +56,17 @@ def test_segna_come_letto_da_leggere(page):
     except Exception:
         page.locator('button:has(aru-symbol[title="Segna come da leggere"])').nth(0).click()
     
-    # Assert per verificare che il pulsante "Segna tutti come da leggere" sia visibile e cliccabile
-    button = page.locator('button:has(aru-symbol[title="Segna tutti come da leggere"])').nth(0)
-    assert button.is_visible(), "Il pulsante 'Segna tutti come da leggere' non è visibile"
-    assert button.is_enabled(), "Il pulsante 'Segna tutti come da leggere' non è cliccabile"
+    # Verifica che l'azione "Segna tutti come da leggere" abbia avuto effetto:
+    # ci devono essere messaggi non letti (badge/indicatore unread) nella inbox
+    time.sleep(1)
+    unread_count = page.locator(
+        '[class*="unread"], [class*="not-read"], aru-badge, '
+        'div.frame-record-desktop[class*="unread"], '
+        'div.frame-record-desktop-row-content[class*="unread"]'
+    ).count()
+    assert unread_count > 0, (
+        "Dopo 'Segna tutti come da leggere' non sono stati trovati messaggi non letti nella inbox"
+    )
     
     time.sleep(1)
     # Percorso screenshot dinamico

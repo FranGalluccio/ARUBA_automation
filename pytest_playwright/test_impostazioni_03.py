@@ -46,9 +46,12 @@ def test_regole_messaggi(page):
     time.sleep(1)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_impostazioni_03_form_{datetime.now():%H-%M-%S}.png"))
 
-    # Il form è aperto: verifica che ci siano input o il pannello del form sia visibile
+    # Il form è aperto: verifica che siano presenti label o placeholder specifici del form regola
     form_visible = (
-        page.locator('input, aru-input-select, [class*="form"], [class*="rule"]').count() > 0
+        page.locator('[placeholder*="Nome regola"], [placeholder*="regola"], [label*="Nome regola"]').count() > 0 or
+        page.get_by_text("Nome regola", exact=False).count() > 0 or
+        page.get_by_text("Condizioni", exact=False).count() > 0 or
+        page.get_by_text("Azioni", exact=False).count() > 0
     )
     assert form_visible, "Il form di creazione regola non si è aperto"
 
