@@ -92,12 +92,11 @@ def test_contatto_preferito(page):
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
 
-    # Verifica che il contatto sia nei preferiti (vai a "Contatti preferiti")
+    # Verifica che il contatto specifico sia visibile in "Contatti preferiti"
     page.locator('button[title="Contatti preferiti"]').first.click()
     time.sleep(1)
-    # Verifica che almeno un contatto sia presente nei preferiti
-    assert page.locator('div.frame-record-desktop').count() > 0, \
-        "Nessun contatto trovato in Contatti preferiti"
+    assert page.locator('div.frame-record-desktop').filter(has_text=nome_pref).count() > 0, \
+        f"Il contatto '{nome_pref}' non trovato in Contatti preferiti dopo averlo aggiunto"
 
     # Cleanup: rimuovi dai preferiti
     try:

@@ -20,12 +20,42 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 def test_ripristino_messaggi(page):
     # Login PEC
     LoginPec(page).login_pec(config)
-     
+
+    # Invia 2 messaggi a se stesso per garantire che il Cestino abbia elementi
+    for i in range(2):
+        Helper.crea_messaggio(
+            page, config,
+            oggetto=f"Test ripristino {int(time.time())}_{i}",
+            corpo="Test automatico ripristino messaggi",
+        )
+        page.locator('span[title="Invia"]').click()
+        page.wait_for_timeout(3000)
+
+    # Sposta i messaggi nel Cestino (seleziona i 2 appena inviati)
+    page.locator('aru-symbol[title="Aggiorna"]').click()
+    time.sleep(2)
+    page.locator('div.aru-input-checkbox').nth(1).click()
+    time.sleep(1)
+    page.locator('div.aru-input-checkbox').nth(2).click()
+    time.sleep(1)
+    page.locator(
+        'button:has(aru-symbol[title="Elimina"]), aru-button:has(aru-symbol[title="Elimina"])'
+    ).first.click()
+    time.sleep(1)
+    try:
+        page.get_by_role("button", name="Sì").click(timeout=2000)
+        time.sleep(2)
+    except Exception:
+        pass
+
     # Apri cestino
     page.locator('button[title="Cestino"]').click()
-    
-    time.sleep(1)
-    # Seleziona tutti i messaggi
+    time.sleep(2)
+
+    count = page.locator('div.frame-record-desktop').count()
+    assert count >= 2, f"Cestino ha solo {count} messaggi — impossibile testare il ripristino"
+
+    # Seleziona i primi 2 messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()
     time.sleep(1)
     page.locator('div.aru-input-checkbox').nth(2).click()

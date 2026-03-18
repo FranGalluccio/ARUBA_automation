@@ -21,8 +21,22 @@ def test_messaggi_preferiti_pinnati(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
-    # Seleziona tutti i messaggi
+    # Garantisce almeno 2 messaggi in inbox
+    for i in range(2):
+        Helper.crea_messaggio(
+            page, config,
+            oggetto=f"Test preferiti {int(time.time())}_{i}",
+            corpo="Test automatico preferiti e pinnati",
+        )
+        page.locator('span[title="Invia"]').click()
+        page.wait_for_timeout(4000)
+    page.locator('aru-symbol[title="Aggiorna"]').click()
+    time.sleep(2)
+
+    count = page.locator('div.frame-record-desktop').count()
+    assert count >= 2, f"Inbox ha solo {count} messaggi — impossibile testare preferiti/pinnati"
+
+    # Seleziona i primi 2 messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()
     time.sleep(1)
     page.locator('div.aru-input-checkbox').nth(2).click()

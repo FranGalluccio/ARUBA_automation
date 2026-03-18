@@ -74,3 +74,19 @@ def test_salva_e_usa_modello(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+
+    # Cleanup: elimina il modello salvato
+    try:
+        modello_row.click()
+        time.sleep(1)
+        page.locator(
+            'button:has(aru-symbol[title="Elimina"]), aru-button:has(aru-symbol[title="Elimina"]), button[title="Elimina"]'
+        ).first.click()
+        time.sleep(1)
+        try:
+            page.get_by_role("button", name="Sì").first.click(timeout=2000)
+            time.sleep(1)
+        except Exception:
+            pass
+    except Exception:
+        pass

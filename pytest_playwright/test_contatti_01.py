@@ -40,15 +40,31 @@ def test_aggiungere_nuovo_contatto(page):
     page.get_by_placeholder("Inserisci email").click()
     page.get_by_placeholder("Inserisci email").fill(unique_email)
     page.get_by_role("button", name="Salva").click()
-    
+    time.sleep(2)
+
+    # Verifica che il contatto sia stato creato (cerca per email univoca)
+    search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+    search.click()
+    search.fill(unique_email)
     time.sleep(1)
+    row = page.locator('div.frame-record-desktop').filter(has_text="Test").first
+    assert row.is_visible(), f"Contatto con email '{unique_email}' non trovato dopo il salvataggio"
+
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,
         f"test_contatti_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
 
-    
+    # Cleanup: elimina il contatto creato
+    try:
+        row.hover()
+        row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
+        time.sleep(1)
+        page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+        page.get_by_role("button", name="Sì").first.click(timeout=2000)
+        time.sleep(1)
+    except Exception:
+        pass

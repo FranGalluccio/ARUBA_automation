@@ -64,7 +64,6 @@ def test_form_multiutente_pec(page):
             pytest.skip("Nessun percorso verso Multiutente PEC trovato")
         gestisci_btn.click(force=True)
 
-    multiutente_nav.click(force=True)
     time.sleep(2)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_accessi_02_multiutente_{datetime.now():%H-%M-%S}.png"))
