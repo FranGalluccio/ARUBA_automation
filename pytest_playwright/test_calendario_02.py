@@ -23,22 +23,26 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 def test_creazione_modifica_evento(page):
     # Login PEC
     LoginPec(page).login_pec(config)
-    
+
+    ts = int(time.time())
+    titolo_base = f"evento test automatico {ts}"
+    titolo_modificato = f"evento test automatico modificato {ts}"
+
     time.sleep(1)
-    
+
     # Crea nuovo evento
     page.get_by_role("button", name="Calendario").click()
     page.get_by_role("button", name="Nuovo evento").click()
-    page.get_by_placeholder("Inserisci un titolo").fill("evento test automatico")
+    page.get_by_placeholder("Inserisci un titolo").fill(titolo_base)
     page.get_by_role("button", name="Salva").click()
     time.sleep(1)
-    page.locator("a").filter(has_text="evento test automatico").filter(has_not_text="modificato").first.click()
+    page.locator("a").filter(has_text=titolo_base).filter(has_not_text="modificato").first.click()
     page.get_by_role("button", name="Modifica").click()
     time.sleep(1)
     page.get_by_placeholder("Inserisci un titolo").click()
     time.sleep(1)
     page.get_by_placeholder("Inserisci un titolo").fill("")
-    page.get_by_placeholder("Inserisci un titolo").fill("evento test automatico modificato")
+    page.get_by_placeholder("Inserisci un titolo").fill(titolo_modificato)
     time.sleep(1)
     page.get_by_role("button", name="Salva").click()
 
@@ -56,11 +60,11 @@ def test_creazione_modifica_evento(page):
         try:
             page.get_by_role("button", name="Calendario").click()
             time.sleep(1)
-            page.get_by_role("button", name="Eventi").click()
+            page.get_by_role("button", name="Eventi").click(force=True)
             time.sleep(2)
-            for titolo in ["evento test automatico modificato", "evento test automatico"]:
+            for titolo in [titolo_modificato, titolo_base]:
                 while True:
-                    ev = page.locator('a, [class*="event"]').filter(has_text=titolo).first
+                    ev = page.get_by_text(titolo, exact=False).first
                     if ev.count() == 0:
                         break
                     ev.click()

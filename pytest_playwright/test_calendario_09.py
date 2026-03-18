@@ -21,6 +21,9 @@ def test_evento_con_promemoria(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
+    ts = int(time.time())
+    titolo_evento = f"evento con promemoria playwright {ts}"
+
     try:
         time.sleep(1)
         page.get_by_role("button", name="Calendario").click()
@@ -29,7 +32,7 @@ def test_evento_con_promemoria(page):
         # Crea nuovo evento
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
         time.sleep(1)
-        page.get_by_placeholder("Inserisci un titolo").fill("evento con promemoria playwright")
+        page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
 
         # Aggiungi promemoria - apre un dialog con "Salva" e "Annulla"
         page.locator('button[title="Aggiungi promemoria"]').click()
@@ -95,9 +98,9 @@ def test_evento_con_promemoria(page):
             pass
 
         # Verifica che l'evento sia presente
-        evento_trovato = page.get_by_text("evento con promemoria playwright", exact=False).count() > 0
+        evento_trovato = page.get_by_text(titolo_evento, exact=False).count() > 0
 
-        assert evento_trovato, "L'evento con promemoria non è stato trovato nel calendario"
+        assert evento_trovato, f"L'evento con promemoria '{titolo_evento}' non è stato trovato nel calendario"
 
         # Screenshot
         screenshot_path = os.path.join(
@@ -112,10 +115,10 @@ def test_evento_con_promemoria(page):
         try:
             page.get_by_role("button", name="Calendario").click()
             time.sleep(1)
-            page.get_by_role("button", name="Eventi").click()
+            page.get_by_role("button", name="Eventi").click(force=True)
             time.sleep(2)
             while True:
-                ev = page.locator('a, [class*="event"]').filter(has_text="evento con promemoria playwright").first
+                ev = page.get_by_text(titolo_evento, exact=False).first
                 if ev.count() == 0:
                     break
                 ev.click()

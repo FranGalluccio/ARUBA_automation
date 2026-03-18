@@ -14,9 +14,10 @@ REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-resu
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 # File con X-Fattura-PA: Yes (da sdi20@pec.fatturapa.it)
+_project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILE_FATTURA = os.environ.get(
     "FILE_FATTURA",
-    config.get("file_fattura", "dati_test/fattura-reale-02.eml")
+    os.path.join(_project_root, config.get("file_fattura", "dati_test/fattura-reale-02.eml"))
 )
 
 FATTURE_URL = config["pec"]["url"].rstrip("/") + "/new/messages/ArubaVrtSearch/Fatturazione%20Elettronica"

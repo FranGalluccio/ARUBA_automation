@@ -21,6 +21,9 @@ def test_evento_tutto_il_giorno(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
+    ts = int(time.time())
+    titolo_evento = f"evento tutto il giorno playwright {ts}"
+
     try:
         time.sleep(1)
         page.get_by_role("button", name="Calendario").click()
@@ -29,7 +32,7 @@ def test_evento_tutto_il_giorno(page):
         # Crea nuovo evento
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
         time.sleep(1)
-        page.get_by_placeholder("Inserisci un titolo").fill("evento tutto il giorno playwright")
+        page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
 
         # Attiva flag "Giornata intera" - può essere checkbox, label o toggle
         allday_clicked = False
@@ -63,7 +66,7 @@ def test_evento_tutto_il_giorno(page):
         time.sleep(1)
 
         # Verifica che l'evento sia presente nel calendario
-        page.locator('a, [class*="event"]').filter(has_text="evento tutto il giorno playwright").first.wait_for(
+        page.locator('a, [class*="event"]').filter(has_text=titolo_evento).first.wait_for(
             state="visible", timeout=8000
         )
 
@@ -80,10 +83,10 @@ def test_evento_tutto_il_giorno(page):
         try:
             page.get_by_role("button", name="Calendario").click()
             time.sleep(1)
-            page.get_by_role("button", name="Eventi").click()
+            page.get_by_role("button", name="Eventi").click(force=True)
             time.sleep(2)
             while True:
-                ev = page.locator('a, [class*="event"]').filter(has_text="evento tutto il giorno playwright").first
+                ev = page.get_by_text(titolo_evento, exact=False).first
                 if ev.count() == 0:
                     break
                 ev.click()

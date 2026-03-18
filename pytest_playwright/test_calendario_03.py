@@ -24,15 +24,18 @@ def test_creazione_invio_evento(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
+    ts = int(time.time())
+    titolo_evento = f"evento test auto invito {ts}"
+
     try:
         time.sleep(1)
 
         # Crea nuovo evento
         page.get_by_role("button", name="Calendario").click()
         page.locator("button").filter(has_text="Nuovo evento").click()
-        page.get_by_placeholder("Inserisci un titolo").fill("evento test auto invito")
+        page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
         page.get_by_role("button", name="Salva").click()
-        page.locator("a").filter(has_text="evento test auto invito").first.click()
+        page.locator("a").filter(has_text=titolo_evento).first.click()
         # Modifica evento
         time.sleep(1)
         page.get_by_role("button", name="Modifica").click()
@@ -72,10 +75,10 @@ def test_creazione_invio_evento(page):
         try:
             page.get_by_role("button", name="Calendario").click()
             time.sleep(1)
-            page.get_by_role("button", name="Eventi").click()
+            page.get_by_role("button", name="Eventi").click(force=True)
             time.sleep(2)
             while True:
-                ev = page.locator('a, [class*="event"]').filter(has_text="evento test auto invito").first
+                ev = page.get_by_text(titolo_evento, exact=False).first
                 if ev.count() == 0:
                     break
                 ev.click()

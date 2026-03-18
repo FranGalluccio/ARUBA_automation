@@ -27,13 +27,16 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 def test_creazione_evento_ricorrente(page):
     # Login PEC
     LoginPec(page).login_pec(config)
-    
+
+    ts = int(time.time())
+    titolo_evento = f"nuovo evento ricorrente playwright {ts}"
+
     time.sleep(1)
-    
+
     # Crea nuovo evento ricorrente
     page.get_by_role("button", name="Calendario").click()
     page.get_by_role("button", name="Nuovo evento", exact=True).click()
-    page.get_by_placeholder("Inserisci un titolo").fill("nuovo evento ricorrente playwright")
+    page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
     #page.get_by_role("textbox", name="input date").first.click()
     #page.get_by_text("Gennaio 2026").click()
     #page.locator("#event-dialog").get_by_text("Gennaio").click()
@@ -69,7 +72,7 @@ def test_creazione_evento_ricorrente(page):
             page.get_by_role("button", name="Eventi").click(force=True)
             time.sleep(2)
             while True:
-                ev = page.locator('a, [class*="event"]').filter(has_text="nuovo evento ricorrente playwright").first
+                ev = page.get_by_text(titolo_evento, exact=False).first
                 if ev.count() == 0:
                     break
                 ev.click()
@@ -94,7 +97,6 @@ def test_creazione_evento_ricorrente(page):
                     time.sleep(2)
                 except Exception:
                     pass
-                # Chiudi pannello residuo e torna alla lista eventi
                 try:
                     page.keyboard.press("Escape")
                     time.sleep(0.5)
