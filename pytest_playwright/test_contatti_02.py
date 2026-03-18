@@ -58,4 +58,21 @@ def test_aggiungere_nuovo_gruppo(page):
 
     print(f"Screenshot salvato in: {screenshot_path}")
 
-    
+    # Cleanup: elimina il gruppo creato
+    try:
+        group_btn = page.locator(f'button[title="{group_name}"]').first
+        group_btn.click(button="right")
+        time.sleep(1)
+        for sel in ['button:has-text("Elimina gruppo")', 'button:has-text("Elimina")', '[role="menuitem"]:has-text("Elimina")']:
+            item = page.locator(sel).first
+            if item.is_visible():
+                item.click()
+                time.sleep(1)
+                break
+        try:
+            page.get_by_role("button", name="Sì").click(timeout=2000)
+            time.sleep(1)
+        except Exception:
+            pass
+    except Exception:
+        pass
