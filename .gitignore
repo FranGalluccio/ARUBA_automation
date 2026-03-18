@@ -49,3 +49,6 @@ debug_*.png
 
 # Claude Code
 .claude/
+
+# Documenti locali
+*.xlsx
