@@ -65,8 +65,6 @@ def test_creazione_modifica_evento(page):
                         break
                     ev.click()
                     time.sleep(1)
-                    page.get_by_role("button", name="Annulla evento").first.click()
-                    time.sleep(1)
                     page.get_by_role("button", name="Elimina").first.click()
                     time.sleep(2)
         except Exception:

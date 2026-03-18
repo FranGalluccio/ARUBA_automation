@@ -36,85 +36,83 @@ def test_import_export_calendario(page: Page):
     LoginPec(page).login_pec(config)
     page.wait_for_load_state("networkidle")
 
-    # --- Vai al calendario ---
-    page.get_by_role("button", name="Calendario").click()
-    page.wait_for_load_state("networkidle")
-
-    # --- Crea nuovo evento ---
-    page.get_by_role("button", name="Nuovo evento").click()
-    page.get_by_placeholder("Inserisci un titolo").fill("import export calendario")
-    page.get_by_role("button", name="Salva").click()
-    
-    time.sleep(1)
-
-    # --- Importa calendario (.ics) ---
-    page.get_by_role("button", name="Importa").click()
-    time.sleep(1)
-    page.locator("#hidden_input").set_input_files(FILE_ICS)
-
-    page.get_by_role("button", name="Importa", exact=True).click()
-    
-    time.sleep(1)
-    
-        # Percorso screenshot dinamico
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_calendario_04___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-
-    print(f"Screenshot salvato in: {screenshot_path}")
-
-
-    # --- Esporta calendario ---
-    export_triggered = False
     try:
-        with page.expect_download(timeout=8000) as download_info:
-            page.get_by_role("button", name="Esporta").first.click(timeout=5000)
-            try:
-                page.get_by_role("button", name="Esporta", exact=True).first.click(timeout=3000)
-            except Exception:
-                pass
-        download_info.value  # raises if no download occurred
-        export_triggered = True
-    except Exception:
-        # Fallback: click destro sul calendario in sidebar per aprire menu contestuale
+        # --- Vai al calendario ---
+        page.get_by_role("button", name="Calendario").click()
+        page.wait_for_load_state("networkidle")
+
+        # --- Crea nuovo evento ---
+        page.get_by_role("button", name="Nuovo evento").click()
+        page.get_by_placeholder("Inserisci un titolo").fill("import export calendario")
+        page.get_by_role("button", name="Salva").click()
+
+        time.sleep(1)
+
+        # --- Importa calendario (.ics) ---
+        page.get_by_role("button", name="Importa").click()
+        time.sleep(1)
+        page.locator("#hidden_input").set_input_files(FILE_ICS)
+
+        page.get_by_role("button", name="Importa", exact=True).click()
+
+        time.sleep(1)
+
+        # Percorso screenshot dinamico
+        screenshot_path = os.path.join(
+            REPORT_FOLDER,
+            f"test_calendario_04___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        )
+        page.screenshot(path=screenshot_path, full_page=True)
+
+        print(f"Screenshot salvato in: {screenshot_path}")
+
+        # --- Esporta calendario ---
+        export_triggered = False
         try:
-            with page.expect_download(timeout=8000) as download_info2:
-                page.locator('[aria-label="Personale"], [title="Personale"], input[type="checkbox"]').first.click(button="right")
-                time.sleep(1)
-                page.get_by_role("menuitem", name="Esporta").click()
-                time.sleep(1)
-            download_info2.value
+            with page.expect_download(timeout=8000) as download_info:
+                page.get_by_role("button", name="Esporta").first.click(timeout=5000)
+                try:
+                    page.get_by_role("button", name="Esporta", exact=True).first.click(timeout=3000)
+                except Exception:
+                    pass
+            download_info.value  # raises if no download occurred
             export_triggered = True
         except Exception:
-            pass
+            # Fallback: click destro sul calendario in sidebar per aprire menu contestuale
+            try:
+                with page.expect_download(timeout=8000) as download_info2:
+                    page.locator('[aria-label="Personale"], [title="Personale"], input[type="checkbox"]').first.click(button="right")
+                    time.sleep(1)
+                    page.get_by_role("menuitem", name="Esporta").click()
+                    time.sleep(1)
+                download_info2.value
+                export_triggered = True
+            except Exception:
+                pass
 
-    # Check for success toast if no download was detected
-    if not export_triggered:
-        toast_visible = page.locator(
-            'div.aru-toast__message, [class*="toast"], [class*="success"]'
-        ).count() > 0
-        assert toast_visible, (
-            "L'esportazione del calendario non ha prodotto né un download né un toast di conferma"
-        )
-    
-    # --- Cleanup: elimina eventi (eseguito anche in caso di fallimento) ---
-    try:
-        page.get_by_role("button", name="Calendario").click()
-        time.sleep(1)
-        page.get_by_role("button", name="Eventi").click()
-        time.sleep(1)
-        for titolo in ["import export calendario"]:
+        # Check for success toast if no download was detected
+        if not export_triggered:
+            toast_visible = page.locator(
+                'div.aru-toast__message, [class*="toast"], [class*="success"]'
+            ).count() > 0
+            assert toast_visible, (
+                "L'esportazione del calendario non ha prodotto né un download né un toast di conferma"
+            )
+
+    finally:
+        # --- Cleanup: elimina eventi (eseguito anche in caso di fallimento) ---
+        try:
+            page.get_by_role("button", name="Calendario").click()
+            time.sleep(1)
+            page.get_by_role("button", name="Eventi").click()
+            time.sleep(2)
             while True:
-                ev = page.locator('a, [class*="event"]').filter(has_text=titolo).first
+                ev = page.locator('a, [class*="event"]').filter(has_text="import export calendario").first
                 if ev.count() == 0:
                     break
                 ev.click()
                 time.sleep(1)
-                page.get_by_role("button", name="Annulla evento").click()
-                time.sleep(1)
-                page.get_by_role("button", name="Elimina").click()
+                page.get_by_role("button", name="Elimina").first.click()
                 time.sleep(2)
-    except Exception:
-        pass
+        except Exception:
+            pass

@@ -21,6 +21,8 @@ pytest_playwright/test-results/*
 !pytest_playwright/test-results/.gitkeep
 pytest_pel/test-results/*
 !pytest_pel/test-results/.gitkeep
+# Cartella nidificata creata quando si lancia pytest dalla sottocartella
+pytest_playwright/pytest_playwright/
 report.html
 
 # Config con credenziali (usa config.example.json come template)

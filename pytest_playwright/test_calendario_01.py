@@ -74,7 +74,7 @@ def test_creazione_evento_ricorrente(page):
                     break
                 ev.click()
                 time.sleep(1)
-                page.get_by_role("button", name="Annulla evento").first.click()
+                page.get_by_role("button", name="Elimina").first.click()
                 time.sleep(1)
                 try:
                     page.get_by_role("radio", name="Tutti gli eventi").check(timeout=2000)
@@ -82,7 +82,6 @@ def test_creazione_evento_ricorrente(page):
                     time.sleep(1)
                 except Exception:
                     pass
-                page.get_by_role("button", name="Elimina").first.click()
                 time.sleep(2)
         except Exception:
             pass

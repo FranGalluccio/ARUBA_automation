@@ -23,64 +23,70 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 def test_creazione_invio_evento(page):
     # Login PEC
     LoginPec(page).login_pec(config)
-    
-    time.sleep(1)
-    
-    # Crea nuovo evento
-    page.get_by_role("button", name="Calendario").click()
-    page.locator("button").filter(has_text="Nuovo evento").click()
-    page.get_by_placeholder("Inserisci un titolo").fill("evento test auto invito")
-    page.get_by_role("button", name="Salva").click()
-    page.locator("a").filter(has_text="evento test auto invito").first.click()
-    # Modifica evento
-    time.sleep(1)
-    page.get_by_role("button", name="Modifica").click()
-    time.sleep(1)
-    page.locator('input[aria-label="input chosen"]').nth(1).fill(config["destinatari"]["destinatario_principale"])
-    time.sleep(1)
-    page.get_by_role("textbox", name="input chosen").press("Enter")
-    time.sleep(2)
-    page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
-    page.get_by_role("button", name="Invia").first.click()    
-    # Vai alla posta in arrivo
-    page.locator("#messages").get_by_label("Messaggi").click()
-    time.sleep(5)
-    # Aggiorna la posta
-    page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(2)
-    # Aspetta che almeno un record sia visibile
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
 
-    # Clicca sul primo record
-    page.locator('div.frame-record-desktop').first.click()
-
-    # Aspetta che il contenuto della mail sia visibile
-    page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
-    
-    # Percorso screenshot dinamico
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_calendario_03___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")
-
-    # Cleanup: elimina evento (eseguito anche in caso di fallimento)
     try:
-        page.get_by_role("button", name="Calendario").click()
         time.sleep(1)
-        page.get_by_role("button", name="Eventi").click()
+
+        # Crea nuovo evento
+        page.get_by_role("button", name="Calendario").click()
+        page.locator("button").filter(has_text="Nuovo evento").click()
+        page.get_by_placeholder("Inserisci un titolo").fill("evento test auto invito")
+        page.get_by_role("button", name="Salva").click()
+        page.locator("a").filter(has_text="evento test auto invito").first.click()
+        # Modifica evento
+        time.sleep(1)
+        page.get_by_role("button", name="Modifica").click()
+        time.sleep(1)
+        page.locator('input[aria-label="input chosen"]').nth(1).fill(config["destinatari"]["destinatario_principale"])
+        time.sleep(1)
+        page.get_by_role("textbox", name="input chosen").press("Enter")
         time.sleep(2)
-        while True:
-            ev = page.locator('a, [class*="event"]').filter(has_text="evento test auto invito").first
-            if ev.count() == 0:
-                break
-            ev.click()
+        page.get_by_role("button", name="Salva").click()
+        time.sleep(2)
+        page.get_by_role("button", name="Invia").first.click()
+        # Vai alla posta in arrivo
+        page.locator("#messages").get_by_label("Messaggi").click()
+        time.sleep(5)
+        # Aggiorna la posta
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        time.sleep(2)
+        # Aspetta che almeno un record sia visibile
+        page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+
+        # Clicca sul primo record
+        page.locator('div.frame-record-desktop').first.click()
+
+        # Aspetta che il contenuto della mail sia visibile
+        page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
+
+        # Percorso screenshot dinamico
+        screenshot_path = os.path.join(
+            REPORT_FOLDER,
+            f"test_calendario_03___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        )
+        page.screenshot(path=screenshot_path, full_page=True)
+        print(f"Screenshot salvato in: {screenshot_path}")
+
+    finally:
+        # Cleanup: elimina evento (eseguito anche in caso di fallimento)
+        try:
+            page.get_by_role("button", name="Calendario").click()
             time.sleep(1)
-            page.get_by_role("button", name="Annulla evento").first.click()
-            time.sleep(1)
-            page.get_by_role("button", name="Elimina").first.click()
+            page.get_by_role("button", name="Eventi").click()
             time.sleep(2)
-    except Exception:
-        pass
+            while True:
+                ev = page.locator('a, [class*="event"]').filter(has_text="evento test auto invito").first
+                if ev.count() == 0:
+                    break
+                ev.click()
+                time.sleep(1)
+                # Per eventi con invitati esiste "Annulla evento", altrimenti usa "Elimina"
+                try:
+                    page.get_by_role("button", name="Annulla evento").first.click(timeout=2000)
+                    time.sleep(1)
+                except Exception:
+                    pass
+                page.get_by_role("button", name="Elimina").first.click()
+                time.sleep(2)
+        except Exception:
+            pass
