@@ -60,66 +60,99 @@ def test_elimina_gruppo(page):
     page.get_by_role("button", name="Salva").click()
     time.sleep(2)
 
-    # Verifica che il gruppo sia stato creato nella sidebar
-    group_btn = page.locator(f'button[title="{group_name}"]').first
-    group_btn.wait_for(state="visible", timeout=8000)
-    assert group_btn.is_visible(), f"Il gruppo '{group_name}' non è visibile nella sidebar"
-
-    # Tasto destro sul gruppo per il menu contestuale
-    group_btn.click(button="right")
-    time.sleep(1)
-    page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_contatti_10_menu_{datetime.now():%H-%M-%S}.png"))
-
-    # Cerca voci del menu contestuale
-    menu_item_found = False
-    for selector in [
-        'aru-menu-item:has-text("Elimina")',
-        'button:has-text("Elimina gruppo")',
-        'button:has-text("Elimina")',
-        '[role="menuitem"]:has-text("Elimina")',
-        'li:has-text("Elimina")',
-    ]:
-        try:
-            item = page.locator(selector).first
-            if item.is_visible():
-                item.click()
-                menu_item_found = True
-                time.sleep(1)
-                break
-        except Exception:
-            pass
-
-    assert menu_item_found, "Voce 'Elimina' non trovata nel menu contestuale del gruppo"
-
-    # Conferma eliminazione - la dialog mostra "Elimina" come pulsante di conferma nel CDK overlay
-    time.sleep(1)
     try:
-        confirm_btn = page.locator('.cdk-overlay-pane button:has-text("Elimina")').first
-        confirm_btn.wait_for(state="visible", timeout=3000)
-        confirm_btn.click()
-    except Exception:
-        # Fallback: prova altri selettori
-        for confirm_sel in [
-            'button[title="Si"]', 'button:has-text("Sì")', 'button:has-text("Si")',
+        # Verifica che il gruppo sia stato creato nella sidebar
+        group_btn = page.locator(f'button[title="{group_name}"]').first
+        group_btn.wait_for(state="visible", timeout=8000)
+        assert group_btn.is_visible(), f"Il gruppo '{group_name}' non è visibile nella sidebar"
+
+        # Tasto destro sul gruppo per il menu contestuale
+        group_btn.click(button="right")
+        time.sleep(1)
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_contatti_10_menu_{datetime.now():%H-%M-%S}.png"))
+
+        # Cerca voci del menu contestuale
+        menu_item_found = False
+        for selector in [
+            'aru-menu-item:has-text("Elimina")',
+            'button:has-text("Elimina gruppo")',
+            'button:has-text("Elimina")',
+            '[role="menuitem"]:has-text("Elimina")',
+            'li:has-text("Elimina")',
         ]:
             try:
-                btn = page.locator(confirm_sel).first
-                if btn.is_visible():
-                    btn.click()
+                item = page.locator(selector).first
+                if item.is_visible():
+                    item.click()
+                    menu_item_found = True
+                    time.sleep(1)
                     break
             except Exception:
                 pass
-    time.sleep(2)
 
-    # Verifica che il gruppo non sia più presente nella sidebar
-    remaining = page.locator(f'button[title="{group_name}"]').count()
-    assert remaining == 0, \
-        f"Il gruppo '{group_name}' è ancora presente dopo l'eliminazione"
+        assert menu_item_found, "Voce 'Elimina' non trovata nel menu contestuale del gruppo"
 
-    # Screenshot
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_contatti_10___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")
+        # Conferma eliminazione
+        time.sleep(1)
+        try:
+            confirm_btn = page.locator('.cdk-overlay-pane button:has-text("Elimina")').first
+            confirm_btn.wait_for(state="visible", timeout=3000)
+            confirm_btn.click()
+        except Exception:
+            for confirm_sel in [
+                'button[title="Si"]', 'button:has-text("Sì")', 'button:has-text("Si")',
+            ]:
+                try:
+                    btn = page.locator(confirm_sel).first
+                    if btn.is_visible():
+                        btn.click()
+                        break
+                except Exception:
+                    pass
+        time.sleep(2)
+
+        # Verifica che il gruppo non sia più presente nella sidebar
+        remaining = page.locator(f'button[title="{group_name}"]').count()
+        assert remaining == 0, \
+            f"Il gruppo '{group_name}' è ancora presente dopo l'eliminazione"
+
+        # Screenshot
+        screenshot_path = os.path.join(
+            REPORT_FOLDER,
+            f"test_contatti_10___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        )
+        page.screenshot(path=screenshot_path, full_page=True)
+        print(f"Screenshot salvato in: {screenshot_path}")
+
+    finally:
+        # Cleanup: elimina il gruppo se ancora presente (es. test fallito prima della cancellazione)
+        try:
+            group_btn = page.locator(f'button[title="{group_name}"]').first
+            if group_btn.count() > 0:
+                group_btn.click(button="right")
+                time.sleep(1)
+                for sel in [
+                    'aru-menu-item:has-text("Elimina")',
+                    'button:has-text("Elimina gruppo")',
+                    'button:has-text("Elimina")',
+                    '[role="menuitem"]:has-text("Elimina")',
+                ]:
+                    item = page.locator(sel).first
+                    if item.is_visible():
+                        item.click()
+                        time.sleep(1)
+                        break
+                for confirm_sel in [
+                    '.cdk-overlay-pane button:has-text("Elimina")',
+                    'button[title="Si"]', 'button:has-text("Sì")',
+                ]:
+                    try:
+                        btn = page.locator(confirm_sel).first
+                        if btn.is_visible():
+                            btn.click()
+                            break
+                    except Exception:
+                        pass
+                time.sleep(1)
+        except Exception:
+            pass
