@@ -23,21 +23,33 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 def test_aggiungere_nuovo_gruppo(page):
     # Login PEC
     LoginPec(page).login_pec(config)
-    
+
     time.sleep(1)
-    # Aggiungere nuovo contatto
     page.locator("#contacts").click()
     time.sleep(1)
-    
-    group_name = f"Test automatico gruppo {int(time.time())}"
 
+    ts = int(time.time())
+    group_name = f"Test automatico gruppo {ts}"
+    contact_name = f"GruppoContact{ts}"
+
+    # Crea un contatto temporaneo da aggiungere al gruppo
+    page.get_by_role("button", name="Nuovo").click()
+    page.get_by_role("button", name="Procedi").click()
+    page.get_by_placeholder("Inserisci nome").fill(contact_name)
+    page.get_by_placeholder("Inserisci email").fill(f"gruppocontact_{ts}@pec.it")
+    page.get_by_role("button", name="Salva").click()
+    time.sleep(2)
+
+    # Crea il gruppo
     page.get_by_role("button", name="Nuovo").click()
     page.locator("#group").check()
     page.get_by_role("button", name="Procedi").click()
     page.get_by_role("textbox", name="input field").click()
     page.get_by_role("textbox", name="input field").fill(group_name)
     page.get_by_role("textbox", name="input search").click()
-    page.get_by_role("checkbox", name="Test Automatico").first.click()
+    page.get_by_role("textbox", name="input search").fill(contact_name)
+    time.sleep(1)
+    page.get_by_role("checkbox", name=contact_name).first.click()
     page.get_by_role("button", name="Aggiungi contatti").click()
     time.sleep(1)
     page.get_by_role("button", name="Salva").click()
@@ -74,5 +86,21 @@ def test_aggiungere_nuovo_gruppo(page):
             time.sleep(1)
         except Exception:
             pass
+    except Exception:
+        pass
+
+    # Cleanup: elimina il contatto temporaneo
+    try:
+        search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search.click()
+        search.fill(contact_name)
+        time.sleep(1)
+        row = page.locator('div.frame-record-desktop').filter(has_text=contact_name).first
+        row.hover()
+        row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
+        time.sleep(1)
+        page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+        page.get_by_role("button", name="Sì").first.click(timeout=2000)
+        time.sleep(1)
     except Exception:
         pass
