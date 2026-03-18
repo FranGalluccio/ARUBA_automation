@@ -53,7 +53,15 @@ def test_scrivi_email_da_contatto(page):
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_contatti_09_hover_{datetime.now():%H-%M-%S}.png"))
 
     def compose_open():
-        return page.locator("input[placeholder='Destinatari']").first.is_visible()
+        # Chiudi eventuali dialog "Crea contatto" aperti accidentalmente
+        try:
+            crea_dialog = page.locator('text="Crea contatto, gruppo, rubrica"').first
+            if crea_dialog.is_visible():
+                page.keyboard.press("Escape")
+                time.sleep(0.5)
+        except Exception:
+            pass
+        return page.locator('span[title="Invia"]').count() > 0
 
     # Tenta di aprire "Scrivi email" dal contatto
     email_clicked = False
