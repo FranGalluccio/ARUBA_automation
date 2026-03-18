@@ -74,23 +74,33 @@ def test_creazione_evento_ricorrente(page):
                     break
                 ev.click()
                 time.sleep(2)
-                # Elimina: prova prima selettore CSS (più affidabile per aru-symbol)
+                # 1. Annulla evento
                 try:
-                    page.locator('button:has(aru-symbol[title="Elimina"]), button[title="Elimina"], aru-button[title="Elimina"]').first.click(timeout=3000)
-                except Exception:
-                    page.get_by_role("button", name="Elimina").first.click()
-                time.sleep(1)
-                # Dialog scope evento ricorrente: seleziona ultimo radio (Tutti gli eventi) e conferma
-                try:
-                    page.locator('input[type="radio"]').last.check(force=True, timeout=2000)
-                    page.get_by_role("button", name="Ok").click(timeout=2000)
+                    page.get_by_role("button", name="Annulla evento").first.click(timeout=3000)
                     time.sleep(1)
                 except Exception:
-                    try:
-                        page.get_by_role("button", name="Sì").first.click(timeout=2000)
-                        time.sleep(1)
-                    except Exception:
-                        pass
+                    pass
+                # 2. Dialog ricorrente: seleziona "Tutti gli eventi" → Ok
+                try:
+                    page.get_by_role("radio", name="Tutti gli eventi").check(timeout=2000)
+                    time.sleep(0.5)
+                    page.get_by_role("button", name="Ok").first.click(timeout=2000)
+                    time.sleep(1)
+                except Exception:
+                    pass
+                # 3. Dialog conferma: Elimina
+                try:
+                    page.get_by_role("button", name="Elimina").first.click(timeout=3000)
+                    time.sleep(2)
+                except Exception:
+                    pass
+                # Chiudi pannello residuo e torna alla lista eventi
+                try:
+                    page.keyboard.press("Escape")
+                    time.sleep(0.5)
+                except Exception:
+                    pass
+                page.get_by_role("button", name="Eventi").click(force=True)
                 time.sleep(2)
         except Exception:
             pass

@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Test//Test//EN
+BEGIN:VEVENT
+UID:import-export-calendario-playwright@test
+DTSTART:20260101T100000Z
+DTEND:20260101T110000Z
+SUMMARY:import export calendario
+DESCRIPTION:Evento di test per import/export calendario
+END:VEVENT
+END:VCALENDAR

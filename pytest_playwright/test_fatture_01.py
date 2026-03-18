@@ -111,7 +111,7 @@ def test_import_fattura_ricevute(page):
     time.sleep(1)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_before_confirm_{datetime.now():%H-%M-%S}.png"))
     try:
-        all_importa = page.get_by_role("button", name="Importa").all()
+        all_importa = page.get_by_role("button", name="Importa", exact=True).all()
         clicked = False
         for btn in reversed(all_importa):
             try:
