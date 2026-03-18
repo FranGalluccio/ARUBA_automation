@@ -16,6 +16,8 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
+TEST_EMAIL_DOMAIN = config.get("test_email_domain", "pec.it")
+
 
 def test_contatto_preferito(page):
     # Login PEC
@@ -27,7 +29,7 @@ def test_contatto_preferito(page):
 
     ts = int(time.time())
     nome_pref = f"Preferito{ts}"
-    unique_email = f"pref_{ts}@pec.it"
+    unique_email = f"pref_{ts}@{TEST_EMAIL_DOMAIN}"
 
     try:
         page.get_by_role("button", name="Nuovo").click()

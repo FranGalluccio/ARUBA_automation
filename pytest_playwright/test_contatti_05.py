@@ -16,6 +16,8 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
+TEST_EMAIL_DOMAIN = config.get("test_email_domain", "pec.it")
+
 
 def test_modifica_contatto(page):
     # Login PEC
@@ -26,7 +28,7 @@ def test_modifica_contatto(page):
     time.sleep(1)
 
     # Crea un nuovo contatto da modificare
-    unique_email = f"testmod_{int(time.time())}@pec.it"
+    unique_email = f"testmod_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
     page.get_by_role("button", name="Nuovo").click()
     page.get_by_role("button", name="Procedi").click()
     page.get_by_placeholder("Inserisci nome").fill("Contatto")

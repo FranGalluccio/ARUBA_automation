@@ -16,6 +16,8 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
+TEST_EMAIL_DOMAIN = config.get("test_email_domain", "pec.it")
+
 
 def test_ricerca_contatto(page):
     # Login PEC
@@ -27,7 +29,7 @@ def test_ricerca_contatto(page):
 
     # Crea un contatto con nome univoco per la ricerca
     nome_univoco = f"RicercaTest{int(time.time())}"
-    unique_email = f"ricerca_{int(time.time())}@pec.it"
+    unique_email = f"ricerca_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
 
     page.get_by_role("button", name="Nuovo").click()
     page.get_by_role("button", name="Procedi").click()

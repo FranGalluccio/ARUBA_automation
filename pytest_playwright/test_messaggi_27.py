@@ -16,6 +16,8 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
+TEST_EXTERNAL_EMAIL = config.get("test_external_email", "test@gmail.com")
+
 
 def test_anomalia_invio_non_pec(page):
     """Verifica che l'invio a un indirizzo non-PEC generi una ricevuta di anomalia."""
@@ -43,10 +45,10 @@ def test_anomalia_invio_non_pec(page):
     # Apri nuovo messaggio con destinatario non-PEC
     page.locator("button:has-text('Nuovo messaggio')").click(force=True)
     try:
-        page.locator("input[placeholder='Destinatari']").fill("test@gmail.com", timeout=2000)
+        page.locator("input[placeholder='Destinatari']").fill(TEST_EXTERNAL_EMAIL, timeout=2000)
     except Exception:
         page.locator('input[aria-label="input field"]').click()
-        page.locator("input[placeholder='Destinatari']").fill("test@gmail.com")
+        page.locator("input[placeholder='Destinatari']").fill(TEST_EXTERNAL_EMAIL)
 
     page.locator('input[aria-label="input field"]').fill(oggetto)
     page.locator("div[contenteditable='true']").fill("Test automatico anomalia PEC - destinatario non-PEC")

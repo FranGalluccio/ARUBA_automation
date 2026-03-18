@@ -15,6 +15,9 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
+TEST_NONEXISTENT_EMAIL = config.get("test_nonexistent_email", "utente_inesistente@pec.it")
+TEST_INVALID_PASSWORD = config.get("test_invalid_password", "PasswordErrata123!")
+
 
 def test_login_credenziali_errate(page):
     # Vai alla pagina di login
@@ -28,10 +31,10 @@ def test_login_credenziali_errate(page):
         pass
 
     # Compila username con valore errato
-    page.locator("input[name='username'], input#username, input[type='email']").first.fill("utente_inesistente@pec.it")
+    page.locator("input[name='username'], input#username, input[type='email']").first.fill(TEST_NONEXISTENT_EMAIL)
 
     # Compila password con valore errato
-    page.locator("input[name='password'], input#password, input[type='password']").first.fill("PasswordErrata123!")
+    page.locator("input[name='password'], input#password, input[type='password']").first.fill(TEST_INVALID_PASSWORD)
 
     # Clicca login
     page.locator("button[type='submit'], button:has-text('Login')").first.click()

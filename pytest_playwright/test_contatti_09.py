@@ -16,6 +16,8 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
+TEST_EMAIL_DOMAIN = config.get("test_email_domain", "pec.it")
+
 
 def test_scrivi_email_da_contatto(page):
     # Login PEC
@@ -27,7 +29,7 @@ def test_scrivi_email_da_contatto(page):
 
     ts = int(time.time())
     nome_test = f"EmailTest{ts}"
-    email_contatto = f"emailtest_{ts}@pec.it"
+    email_contatto = f"emailtest_{ts}@{TEST_EMAIL_DOMAIN}"
 
     try:
         # Crea un contatto con email per il test

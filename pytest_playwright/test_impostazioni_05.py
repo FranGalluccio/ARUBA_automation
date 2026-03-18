@@ -17,6 +17,7 @@ REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-resu
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 SETTINGS_URL = config["pec"]["url"].rstrip("/") + "/new/settings"
+TEST_SPAM_EMAIL = config.get("test_spam_email", "spamtest@example.com")
 
 
 def test_posta_indesiderata(page):
@@ -38,7 +39,7 @@ def test_posta_indesiderata(page):
            "La sezione Posta indesiderata non si è caricata correttamente"
 
     # Aggiunge un mittente alla lista di blocco
-    mittente_blocco = "spamtest@example.com"
+    mittente_blocco = TEST_SPAM_EMAIL
     try:
         page.get_by_role("button", name="Aggiungi").click()
         time.sleep(1)

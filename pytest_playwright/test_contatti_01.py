@@ -19,6 +19,8 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 # --- Percorso allegato dinamico ---
 file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
+TEST_EMAIL_DOMAIN = config.get("test_email_domain", "pec.it")
+
 
 def test_aggiungere_nuovo_contatto(page):
     # Login PEC
@@ -27,7 +29,7 @@ def test_aggiungere_nuovo_contatto(page):
     time.sleep(1)
     # Aggiungere nuovo contatto
   # email unica per ogni run
-    unique_email = f"testautomatico_{int(time.time())}@pec.it"
+    unique_email = f"testautomatico_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
 
     page.click("#contacts")
     time.sleep(1)

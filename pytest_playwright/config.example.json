@@ -13,5 +13,10 @@
   "file_allegato": "dati_test/allegato-test.pdf",
   "importa_messaggi": "dati_test/messaggio importato automation playwright.eml",
   "rubrica_import": "dati_test/rubrica.csv",
-  "calendario_import": "dati_test/calendario-test.ics"
+  "calendario_import": "dati_test/calendario-test.ics",
+  "test_email_domain": "pec.it",
+  "test_nonexistent_email": "utente_inesistente@pec.it",
+  "test_invalid_password": "PasswordErrata123!",
+  "test_spam_email": "spamtest@example.com",
+  "test_external_email": "test@gmail.com"
 }

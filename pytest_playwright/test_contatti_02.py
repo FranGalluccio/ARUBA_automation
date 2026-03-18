@@ -19,6 +19,8 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 # --- Percorso allegato dinamico ---
 file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
+TEST_EMAIL_DOMAIN = config.get("test_email_domain", "pec.it")
+
 
 def test_aggiungere_nuovo_gruppo(page):
     # Login PEC
@@ -37,7 +39,7 @@ def test_aggiungere_nuovo_gruppo(page):
         page.get_by_role("button", name="Nuovo").click()
         page.get_by_role("button", name="Procedi").click()
         page.get_by_placeholder("Inserisci nome").fill(contact_name)
-        page.get_by_placeholder("Inserisci email").fill(f"gruppocontact_{ts}@pec.it")
+        page.get_by_placeholder("Inserisci email").fill(f"gruppocontact_{ts}@{TEST_EMAIL_DOMAIN}")
         page.get_by_role("button", name="Salva").click()
         time.sleep(2)
 
