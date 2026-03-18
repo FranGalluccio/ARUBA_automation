@@ -115,6 +115,6 @@ def test_import_export_calendario(page: Page):
                 page.get_by_role("button", name="Annulla evento").click()
                 time.sleep(1)
                 page.get_by_role("button", name="Elimina").click()
-                time.sleep(1)
+                time.sleep(2)
     except Exception:
         pass

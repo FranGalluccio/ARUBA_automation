@@ -64,15 +64,25 @@ def test_creazione_evento_ricorrente(page):
     finally:
         # Cleanup: elimina evento ricorrente (eseguito anche in caso di fallimento)
         try:
-            page.get_by_role("button", name="Eventi").click()
+            page.get_by_role("button", name="Calendario").click()
             time.sleep(1)
-            page.get_by_role("button", name="nuovo evento ricorrente playwright").first.click()
-            time.sleep(1)
-            page.get_by_role("button", name="Annulla evento").click()
-            time.sleep(1)
-            page.get_by_role("radio", name="Tutti gli eventi").check()
-            page.get_by_role("button", name="Ok").click()
-            time.sleep(1)
-            page.get_by_role("button", name="Elimina").click()
+            page.get_by_role("button", name="Eventi").click(force=True)
+            time.sleep(2)
+            while True:
+                ev = page.locator('a, [class*="event"]').filter(has_text="nuovo evento ricorrente playwright").first
+                if ev.count() == 0:
+                    break
+                ev.click()
+                time.sleep(1)
+                page.get_by_role("button", name="Annulla evento").first.click()
+                time.sleep(1)
+                try:
+                    page.get_by_role("radio", name="Tutti gli eventi").check(timeout=2000)
+                    page.get_by_role("button", name="Ok").click()
+                    time.sleep(1)
+                except Exception:
+                    pass
+                page.get_by_role("button", name="Elimina").first.click()
+                time.sleep(2)
         except Exception:
             pass

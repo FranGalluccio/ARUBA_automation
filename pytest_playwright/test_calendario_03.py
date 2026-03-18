@@ -71,15 +71,16 @@ def test_creazione_invio_evento(page):
         page.get_by_role("button", name="Calendario").click()
         time.sleep(1)
         page.get_by_role("button", name="Eventi").click()
-        time.sleep(1)
-        ev = page.locator('a, [class*="event"]').filter(has_text="evento test auto invito").first
-        if ev.count() > 0:
+        time.sleep(2)
+        while True:
+            ev = page.locator('a, [class*="event"]').filter(has_text="evento test auto invito").first
+            if ev.count() == 0:
+                break
             ev.click()
             time.sleep(1)
-            page.locator("button:has(aru-symbol[symbol='dots-separator'])").first.click()
+            page.get_by_role("button", name="Annulla evento").first.click()
             time.sleep(1)
-            page.get_by_role("button", name="Annulla evento").click()
-            time.sleep(1)
-            page.get_by_role("button", name="Elimina").click()
+            page.get_by_role("button", name="Elimina").first.click()
+            time.sleep(2)
     except Exception:
         pass

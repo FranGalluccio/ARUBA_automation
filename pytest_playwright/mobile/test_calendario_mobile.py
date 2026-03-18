@@ -74,15 +74,17 @@ def test_crea_elimina_evento_mobile(page):
         nav.nav_tab("calendario")
         time.sleep(1)
         page.get_by_role("button", name="Eventi").click(timeout=3000)
-        time.sleep(1)
-        ev = page.locator('a, [class*="event"]').filter(has_text=titolo).first
-        if ev.count() > 0:
+        time.sleep(2)
+        while True:
+            ev = page.locator('a, [class*="event"]').filter(has_text=titolo).first
+            if ev.count() == 0:
+                break
             ev.click()
             time.sleep(1)
-            page.get_by_role("button", name="Annulla evento").click()
+            page.get_by_role("button", name="Annulla evento").first.click()
             time.sleep(1)
-            page.get_by_role("button", name="Elimina").click()
-            time.sleep(1)
+            page.get_by_role("button", name="Elimina").first.click()
+            time.sleep(2)
     except Exception:
         pass
 

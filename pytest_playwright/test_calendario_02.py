@@ -54,17 +54,20 @@ def test_creazione_modifica_evento(page):
     finally:
         # Cleanup: elimina evento (eseguito anche in caso di fallimento)
         try:
-            page.get_by_role("button", name="Eventi").click()
+            page.get_by_role("button", name="Calendario").click()
             time.sleep(1)
-            # Elimina versione modificata se esiste, altrimenti quella originale
+            page.get_by_role("button", name="Eventi").click()
+            time.sleep(2)
             for titolo in ["evento test automatico modificato", "evento test automatico"]:
-                ev = page.locator('a, [class*="event"]').filter(has_text=titolo).filter(has_not_text="modificato" if titolo == "evento test automatico" else "").first
-                if ev.count() > 0:
+                while True:
+                    ev = page.locator('a, [class*="event"]').filter(has_text=titolo).first
+                    if ev.count() == 0:
+                        break
                     ev.click()
                     time.sleep(1)
-                    page.get_by_role("button", name="Annulla evento").click()
+                    page.get_by_role("button", name="Annulla evento").first.click()
                     time.sleep(1)
-                    page.get_by_role("button", name="Elimina").click()
-                    time.sleep(1)
+                    page.get_by_role("button", name="Elimina").first.click()
+                    time.sleep(2)
         except Exception:
             pass

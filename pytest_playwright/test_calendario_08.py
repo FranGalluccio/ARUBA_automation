@@ -76,13 +76,19 @@ def test_evento_tutto_il_giorno(page):
 
     # Cleanup: elimina l'evento
     try:
+        page.get_by_role("button", name="Calendario").click()
+        time.sleep(1)
         page.get_by_role("button", name="Eventi").click()
-        time.sleep(1)
-        page.locator('a, [class*="event"]').filter(has_text="evento tutto il giorno playwright").first.click()
-        time.sleep(1)
-        page.get_by_role("button", name="Annulla evento").click()
-        time.sleep(1)
-        page.get_by_role("button", name="Elimina").click()
-        time.sleep(1)
+        time.sleep(2)
+        while True:
+            ev = page.locator('a, [class*="event"]').filter(has_text="evento tutto il giorno playwright").first
+            if ev.count() == 0:
+                break
+            ev.click()
+            time.sleep(1)
+            page.get_by_role("button", name="Annulla evento").first.click()
+            time.sleep(1)
+            page.get_by_role("button", name="Elimina").first.click()
+            time.sleep(2)
     except Exception:
         pass
