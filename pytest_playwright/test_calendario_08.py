@@ -87,8 +87,11 @@ def test_evento_tutto_il_giorno(page):
                 if ev.count() == 0:
                     break
                 ev.click()
-                time.sleep(1)
-                page.get_by_role("button", name="Elimina").first.click()
+                time.sleep(2)
+                try:
+                    page.locator('button:has(aru-symbol[title="Elimina"]), button[title="Elimina"], aru-button[title="Elimina"]').first.click(timeout=3000)
+                except Exception:
+                    page.get_by_role("button", name="Elimina").first.click()
                 time.sleep(1)
                 try:
                     page.get_by_role("button", name="Sì").first.click(timeout=2000)

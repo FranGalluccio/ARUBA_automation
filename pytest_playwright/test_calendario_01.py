@@ -73,15 +73,24 @@ def test_creazione_evento_ricorrente(page):
                 if ev.count() == 0:
                     break
                 ev.click()
-                time.sleep(1)
-                page.get_by_role("button", name="Elimina").first.click()
-                time.sleep(1)
+                time.sleep(2)
+                # Elimina: prova prima selettore CSS (più affidabile per aru-symbol)
                 try:
-                    page.get_by_role("radio", name="Tutti gli eventi").check(timeout=2000)
-                    page.get_by_role("button", name="Ok").click()
+                    page.locator('button:has(aru-symbol[title="Elimina"]), button[title="Elimina"], aru-button[title="Elimina"]').first.click(timeout=3000)
+                except Exception:
+                    page.get_by_role("button", name="Elimina").first.click()
+                time.sleep(1)
+                # Dialog scope evento ricorrente: seleziona ultimo radio (Tutti gli eventi) e conferma
+                try:
+                    page.locator('input[type="radio"]').last.check(force=True, timeout=2000)
+                    page.get_by_role("button", name="Ok").click(timeout=2000)
                     time.sleep(1)
                 except Exception:
-                    pass
+                    try:
+                        page.get_by_role("button", name="Sì").first.click(timeout=2000)
+                        time.sleep(1)
+                    except Exception:
+                        pass
                 time.sleep(2)
         except Exception:
             pass
