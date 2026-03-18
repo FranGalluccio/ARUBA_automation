@@ -43,8 +43,12 @@ def test_risposta_messaggio(page):
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
 
-    # Clicca sul primo record
-    page.locator('div.frame-record-desktop').first.click()
+    # Cerca il messaggio inviato per soggetto (non il primo in assoluto)
+    oggetto_originale = "Test automatico con Playwright - Messaggio originale per reply"
+    msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto_originale).first
+    if msg.count() == 0:
+        msg = page.locator('div.frame-record-desktop').first
+    msg.click()
 
     # Aspetta che il contenuto della mail sia visibile
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
@@ -72,8 +76,11 @@ def test_risposta_messaggio(page):
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
 
-    # Clicca sul primo record (il messaggio di risposta ricevuto)
-    page.locator('div.frame-record-desktop').nth(0).click()
+    # Cerca il messaggio di risposta per prefisso "Re:"
+    reply_msg = page.locator('div.frame-record-desktop').filter(has_text="Re:").first
+    if reply_msg.count() == 0:
+        reply_msg = page.locator('div.frame-record-desktop').first
+    reply_msg.click()
 
     # Aspetta che il contenuto della mail sia visibile
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)

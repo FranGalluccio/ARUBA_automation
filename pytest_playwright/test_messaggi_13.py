@@ -35,9 +35,13 @@ def test_risposta_a_tutti(page):
     page.locator('aru-symbol[title="Aggiorna"]').click()
     time.sleep(1)
 
-    # Apri primo record
+    # Cerca il messaggio inviato per soggetto
+    oggetto_originale = "Test automatico con Playwright - Originale per reply all"
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    page.locator('div.frame-record-desktop').first.click()
+    msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto_originale).first
+    if msg.count() == 0:
+        msg = page.locator('div.frame-record-desktop').first
+    msg.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Clicca Rispondi a tutti
@@ -55,9 +59,12 @@ def test_risposta_a_tutti(page):
     page.locator('aru-symbol[title="Aggiorna"]').click()
     time.sleep(1)
 
-    # Apri il messaggio di risposta ricevuto
+    # Cerca il messaggio di risposta per prefisso "Re:"
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    page.locator('div.frame-record-desktop').first.click()
+    reply_msg = page.locator('div.frame-record-desktop').filter(has_text="Re:").first
+    if reply_msg.count() == 0:
+        reply_msg = page.locator('div.frame-record-desktop').first
+    reply_msg.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Verifica prefisso "Re:" nell'oggetto

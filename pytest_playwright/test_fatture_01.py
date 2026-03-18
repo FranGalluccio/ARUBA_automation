@@ -106,27 +106,30 @@ def test_import_fattura_ricevute(page):
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_file_selezionato_{datetime.now():%H-%M-%S}.png"))
 
-    # Clicca "Importa" nel dialog per avviare l'upload
-    # Cerca il bottone "Importa" dentro il dialog overlay (non il bottone sidebar)
-    importa_confirm = page.locator(
-        '.cdk-overlay-pane aru-button:has-text("Importa"), '
-        '.cdk-overlay-pane button:has-text("Importa"), '
-        'aru-dialog aru-button:has-text("Importa"), '
-        'aru-dialog button:has-text("Importa")'
-    ).first
+    # Clicca "Importa" nel dialog per avviare l'upload (non il bottone sidebar già cliccato)
+    # get_by_role pierces shadow DOM; prendiamo l'ultimo bottone "Importa" visibile
+    time.sleep(1)
+    page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_before_confirm_{datetime.now():%H-%M-%S}.png"))
     try:
-        importa_confirm.wait_for(state="visible", timeout=5000)
-        importa_confirm.click()
-    except Exception:
-        # Fallback: prendi l'ultimo "Importa" visibile nella pagina
-        btns = page.locator('aru-button:has-text("Importa"), button:has-text("Importa")').all()
-        for btn in reversed(btns):
+        all_importa = page.get_by_role("button", name="Importa").all()
+        clicked = False
+        for btn in reversed(all_importa):
             try:
                 if btn.is_visible():
                     btn.click()
+                    clicked = True
                     break
             except Exception:
                 pass
+        if not clicked:
+            # Fallback JS: clicca l'ultimo bottone Importa nel DOM
+            page.evaluate("""() => {
+                const btns = [...document.querySelectorAll('button, aru-button')];
+                const importa = btns.filter(b => b.textContent.trim().includes('Importa'));
+                if (importa.length > 0) importa[importa.length - 1].click();
+            }""")
+    except Exception:
+        pass
     time.sleep(5)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_post_import_{datetime.now():%H-%M-%S}.png"))

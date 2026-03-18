@@ -104,6 +104,12 @@ def test_ricerca_nel_calendario(page):
                 ev.click()
                 time.sleep(1)
                 page.get_by_role("button", name="Elimina").first.click()
-                time.sleep(2)
+                time.sleep(1)
+                try:
+                    page.get_by_role("button", name="Sì").first.click(timeout=2000)
+                    time.sleep(1)
+                except Exception:
+                    pass
+                time.sleep(1)
         except Exception:
             pass

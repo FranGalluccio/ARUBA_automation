@@ -40,38 +40,43 @@ def test_messaggi_preferiti_pinnati(page):
     page.locator('div.aru-input-checkbox').nth(1).click()
     time.sleep(1)
     page.locator('div.aru-input-checkbox').nth(2).click()
-    
+    time.sleep(1)
+
     # Clicca su altro
     page.locator('svg[title="Altro"]').click()
-    
+    time.sleep(1)
+
     # Aggiungi ai preferiti
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).click()
-    
-    time.sleep(1)
-    # Seleziona tutti i messaggi
+    time.sleep(2)
+
+    # Seleziona i primi 2 messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()
     time.sleep(1)
     page.locator('div.aru-input-checkbox').nth(2).click()
-    
+    time.sleep(1)
+
     # Clicca su altro
     page.locator('svg[title="Altro"]').click()
-    
+    time.sleep(1)
+
     # Rimuovi dai preferiti
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).click()
-    
-    time.sleep(1)
-    # Seleziona tutti i messaggi
+    time.sleep(2)
+
+    # Seleziona i primi 2 messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()
     time.sleep(1)
     page.locator('div.aru-input-checkbox').nth(2).click()
-    
+    time.sleep(1)
+
     # Clicca su altro
     page.locator('svg[title="Altro"]').click()
-    
+    time.sleep(1)
+
     # Aggiungi in evidenza
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
-    
-    time.sleep(1)
+    time.sleep(2)
 
     # Passa sopra la prima riga (hover) e poi clicca sul checkbox
     page.locator('div.frame-record-desktop-row-content').nth(0).hover()

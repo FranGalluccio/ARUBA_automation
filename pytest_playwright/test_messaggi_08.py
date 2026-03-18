@@ -43,10 +43,14 @@ def test_etichetta(page):
     except Exception:
         pass
 
-    # Seleziona tutti i messaggi
-    page.locator('div.aru-input-checkbox').nth(1).click()
+    # Seleziona i messaggi (hover per renderli visibili)
+    page.locator('div.frame-record-desktop').nth(0).hover()
+    time.sleep(0.5)
+    page.locator('div.aru-input-checkbox').nth(1).click(force=True)
     time.sleep(1)
-    page.locator('div.aru-input-checkbox').nth(2).click()
+    page.locator('div.frame-record-desktop').nth(1).hover()
+    time.sleep(0.5)
+    page.locator('div.aru-input-checkbox').nth(2).click(force=True)
     
     # Clicca su etichetta
     page.locator('button:has(aru-symbol[title="Etichetta"])').nth(0).click()
