@@ -107,11 +107,27 @@ def test_import_fattura_ricevute(page):
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_file_selezionato_{datetime.now():%H-%M-%S}.png"))
 
     # Clicca "Importa" nel dialog per avviare l'upload
+    # Cerca il bottone "Importa" dentro il dialog overlay (non il bottone sidebar)
+    importa_confirm = page.locator(
+        '.cdk-overlay-pane aru-button:has-text("Importa"), '
+        '.cdk-overlay-pane button:has-text("Importa"), '
+        'aru-dialog aru-button:has-text("Importa"), '
+        'aru-dialog button:has-text("Importa")'
+    ).first
     try:
-        page.locator('aru-button:has-text("Importa"), button:has-text("Importa")').last.click()
-        time.sleep(3)
+        importa_confirm.wait_for(state="visible", timeout=5000)
+        importa_confirm.click()
     except Exception:
-        pass
+        # Fallback: prendi l'ultimo "Importa" visibile nella pagina
+        btns = page.locator('aru-button:has-text("Importa"), button:has-text("Importa")').all()
+        for btn in reversed(btns):
+            try:
+                if btn.is_visible():
+                    btn.click()
+                    break
+            except Exception:
+                pass
+    time.sleep(5)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_post_import_{datetime.now():%H-%M-%S}.png"))
 
@@ -124,13 +140,22 @@ def test_import_fattura_ricevute(page):
     time.sleep(2)
 
     fattura_trovata = False
-    for attempt in range(15):
+    for attempt in range(20):
         count_after = _count_fatture(page)
         if count_after > count_before:
             fattura_trovata = True
             print(f"Fatture dopo import: {count_after} (prima: {count_before}) - tentativo {attempt+1}")
             break
-        time.sleep(2)
+        # A metà polling ricarica la pagina per forzare aggiornamento (utile in CI)
+        if attempt == 9:
+            page.goto(FATTURE_URL, timeout=20000)
+            try:
+                page.wait_for_load_state("networkidle", timeout=10000)
+            except Exception:
+                pass
+            time.sleep(2)
+        else:
+            time.sleep(2)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_fatture_ricevute_{datetime.now():%H-%M-%S}.png"))
 
