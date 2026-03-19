@@ -60,30 +60,39 @@ def test_import_export_calendario(page: Page):
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_post_import_{datetime.now():%H-%M-%S}.png"))
 
         # --- Esporta calendario ---
-        # Esporta direttamente wrappando il click in expect_download
+        # Click "Esporta" nella sidebar → apre dialog "Esporta calendario"
         export_triggered = False
+        page.get_by_role("button", name="Esporta").first.click(timeout=5000)
+        time.sleep(1)
+
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_export_dialog_{datetime.now():%H-%M-%S}.png"))
+
+        # Imposta periodo breve: solo il mese corrente
+        try:
+            oggi = datetime.now()
+            inizio = oggi.replace(day=1).strftime("%d/%m/%Y")
+            fine = oggi.strftime("%d/%m/%Y")
+            date_input = page.locator('.cdk-overlay-pane input[type="text"], .cdk-overlay-pane input').first
+            date_input.triple_click()
+            date_input.fill(f"{inizio} - {fine}")
+            time.sleep(0.5)
+        except Exception:
+            pass
+
+        # Caso 1: dialog aperto → clicca "Esporta" nel dialog per avviare il download
         try:
             with page.expect_download(timeout=10000) as download_info:
-                page.get_by_role("button", name="Esporta").first.click(timeout=5000)
+                page.locator('.cdk-overlay-pane button:has-text("Esporta")').first.click(timeout=5000)
             download_info.value
             export_triggered = True
         except Exception:
             pass
 
-        # Se non ha scaricato direttamente, forse c'è un dialog di conferma
+        # Caso 2: download già partito senza dialog (fallback)
         if not export_triggered:
-            page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_export_dialog_{datetime.now():%H-%M-%S}.png"))
             try:
-                with page.expect_download(timeout=10000) as download_info2:
-                    # Prova a cliccare "Esporta" o "Conferma" nel dialog
-                    try:
-                        page.evaluate("""() => {
-                            const btns = [...document.querySelectorAll('button')];
-                            const btn = btns.find(b => b.textContent.trim() === 'Esporta');
-                            if (btn) btn.click();
-                        }""")
-                    except Exception:
-                        pass
+                with page.expect_download(timeout=5000) as download_info2:
+                    page.keyboard.press("Escape")
                 download_info2.value
                 export_triggered = True
             except Exception:
@@ -107,7 +116,7 @@ def test_import_export_calendario(page: Page):
             page.get_by_role("button", name="Eventi").click()
             time.sleep(2)
             for _ in range(5):
-                ev = page.locator('a, [class*="event"]').filter(has_text="import export calendario").first
+                ev = page.locator('a, [class*="event"]').filter(has_text="test").first
                 if ev.count() == 0:
                     break
                 ev.click()
