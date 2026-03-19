@@ -25,7 +25,7 @@ on:
 
 jobs:
   test:
-    runs-on: [self-hosted, michela]
+    runs-on: self-hosted
     environment: test
 
     steps:
