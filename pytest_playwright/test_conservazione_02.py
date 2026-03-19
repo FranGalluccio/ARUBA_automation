@@ -62,14 +62,14 @@ def test_conservazione_waffle_menu(page):
         # Fallback: button[title="Conservazione"] è nel DOM ma hidden (dropdown chiuso)
         # Usa dispatch_event per forzare il click senza verificare la visibilità
         page.goto(SETTINGS_URL, timeout=20000)
-        page.wait_for_load_state("networkidle", timeout=15000)
+        page.wait_for_load_state("load", timeout=15000)
         time.sleep(1)
         try:
             conservazione_btn = page.locator('button[title="Conservazione"]').first
             conservazione_btn.wait_for(state="attached", timeout=5000)
             conservazione_btn.dispatch_event("click")
             try:
-                page.wait_for_load_state("networkidle", timeout=10000)
+                page.wait_for_load_state("load", timeout=10000)
             except Exception:
                 pass
             time.sleep(2)
@@ -105,7 +105,7 @@ def test_conservazione_waffle_menu(page):
             with page.context.expect_page(timeout=5000) as new_page_info:
                 conservazione_item.click()
             conservazione_page = new_page_info.value
-            conservazione_page.wait_for_load_state("networkidle", timeout=15000)
+            conservazione_page.wait_for_load_state("load", timeout=15000)
             time.sleep(2)
             content = conservazione_page.content().lower()
             assert "conservazione" in content or "conservation" in content, \

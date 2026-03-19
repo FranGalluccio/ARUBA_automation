@@ -22,7 +22,7 @@ TEST_INVALID_PASSWORD = config.get("test_invalid_password", "PasswordErrata123!"
 def test_login_credenziali_errate(page):
     # Vai alla pagina di login
     page.goto(config["pec"]["url"], timeout=30_000)
-    page.wait_for_load_state("networkidle")
+    page.wait_for_load_state("load")
 
     # Accetta cookie (se presente)
     try:

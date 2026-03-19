@@ -49,7 +49,7 @@ def test_archivio_messaggio_inviato(page):
     # (button[title="Archivio"] è sempre hidden; la feature è confermata
     #  dal caricamento dell'h1 sulla pagina di configurazione)
     page.goto(ARCHIVE_SETTINGS_URL, timeout=20000)
-    page.wait_for_load_state("networkidle", timeout=15000)
+    page.wait_for_load_state("load", timeout=15000)
     time.sleep(2)
     if page.locator("h1").filter(has_text="Archivio").count() == 0:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
@@ -74,7 +74,7 @@ def test_archivio_messaggio_inviato(page):
     # --- Step 2: torna a INBOX prima di creare il messaggio ---
     page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
     try:
-        page.wait_for_load_state("networkidle", timeout=10000)
+        page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
     time.sleep(1)
@@ -102,7 +102,7 @@ def test_archivio_messaggio_inviato(page):
     # Torna a INBOX per avere il nav pulito
     page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
     try:
-        page.wait_for_load_state("networkidle", timeout=15000)
+        page.wait_for_load_state("load", timeout=15000)
     except Exception:
         pass
     time.sleep(2)
@@ -129,7 +129,7 @@ def test_archivio_messaggio_inviato(page):
             archivio_btn.wait_for(state="visible", timeout=5000)
             archivio_btn.click()
             try:
-                page.wait_for_load_state("networkidle", timeout=15000)
+                page.wait_for_load_state("load", timeout=15000)
             except Exception:
                 pass
             time.sleep(3)

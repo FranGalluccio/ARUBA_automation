@@ -52,7 +52,7 @@ def test_navigazione_impostazioni_mobile(page):
         settings_url = config["pec"]["url"].rstrip("/") + "/new/settings/home"
         page.goto(settings_url, timeout=20000)
         try:
-            page.wait_for_load_state("networkidle", timeout=10000)
+            page.wait_for_load_state("load", timeout=10000)
         except Exception:
             pass
         time.sleep(1)
@@ -88,7 +88,7 @@ def test_accesso_sezione_impostazioni_mobile(page):
     settings_url = config["pec"]["url"].rstrip("/") + "/new/settings/home"
     page.goto(settings_url, timeout=20000)
     try:
-        page.wait_for_load_state("networkidle", timeout=10000)
+        page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
     time.sleep(2)

@@ -43,7 +43,7 @@ def test_logout(page):
 
     # Aspetta che la navigazione verso la pagina di login completi
     page.wait_for_url(lambda url: "INBOX" not in url, timeout=15000)
-    page.wait_for_load_state("networkidle", timeout=15000)
+    page.wait_for_load_state("load", timeout=15000)
 
     # Verifica che l'URL non contenga più INBOX (siamo usciti dalla casella)
     assert "INBOX" not in page.url, f"Il logout non ha reindirizzato alla pagina di login. URL attuale: {page.url}"

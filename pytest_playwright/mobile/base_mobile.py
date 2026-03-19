@@ -119,7 +119,7 @@ class LoginPecMobile:
             "button[type='submit'], button:has-text('Login'), button:has-text('Accedi')"
         ).first.click()
 
-        self.page.wait_for_load_state("networkidle", timeout=20_000)
+        self.page.wait_for_load_state("load", timeout=20_000)
 
         url_pattern = cfg["pec"].get("inbox_url_pattern", "INBOX")
         expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=20_000)

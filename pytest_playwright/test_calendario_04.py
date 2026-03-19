@@ -24,12 +24,12 @@ assert os.path.exists(FILE_ICS), f"File ICS non trovato: {FILE_ICS}"
 def test_import_export_calendario(page: Page):
     # --- Login PEC ---
     LoginPec(page).login_pec(config)
-    page.wait_for_load_state("networkidle")
+    page.wait_for_load_state("load")
 
     try:
         # --- Vai al calendario ---
         page.get_by_role("button", name="Calendario").click()
-        page.wait_for_load_state("networkidle")
+        page.wait_for_load_state("load")
         time.sleep(1)
 
         # --- Importa calendario (.ics) ---

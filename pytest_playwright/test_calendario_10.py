@@ -72,7 +72,7 @@ def test_ricerca_nel_calendario(page):
                 pass
             page.goto(config["pec"]["url"].rstrip("/") + "/new/calendar", timeout=20000)
             try:
-                page.wait_for_load_state("networkidle", timeout=10000)
+                page.wait_for_load_state("load", timeout=10000)
             except Exception:
                 pass
             time.sleep(2)

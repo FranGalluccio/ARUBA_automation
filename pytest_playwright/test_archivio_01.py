@@ -27,7 +27,7 @@ def test_configurazione_archivio(page):
     # (il button[title="Archivio"] esiste nel DOM ma è sempre hidden:
     #  la feature è verificata controllando che la pagina si carichi con l'h1 atteso)
     page.goto(ARCHIVE_URL, timeout=20000)
-    page.wait_for_load_state("networkidle", timeout=15000)
+    page.wait_for_load_state("load", timeout=15000)
     time.sleep(2)
     if page.locator("h1").filter(has_text="Archivio").count() == 0:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
@@ -116,7 +116,7 @@ def test_configurazione_archivio(page):
 
     # --- Ricarica e verifica persist ---
     page.reload()
-    page.wait_for_load_state("networkidle", timeout=15000)
+    page.wait_for_load_state("load", timeout=15000)
     time.sleep(2)
 
     # Verifica che la pagina sia ancora quella giusta

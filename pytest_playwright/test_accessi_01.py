@@ -32,7 +32,7 @@ def test_panoramica_accessi_altri_account(page):
 
     # --- Verifica disponibilità feature ---
     page.goto(SETTINGS_URL, timeout=20000)
-    page.wait_for_load_state("networkidle", timeout=15000)
+    page.wait_for_load_state("load", timeout=15000)
     time.sleep(1)
 
     try:
@@ -49,7 +49,7 @@ def test_panoramica_accessi_altri_account(page):
     # --- Naviga alla panoramica ---
     accessi_btn.click(force=True)
     try:
-        page.wait_for_load_state("networkidle", timeout=10000)
+        page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
     time.sleep(2)

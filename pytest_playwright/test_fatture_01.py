@@ -51,7 +51,7 @@ def test_import_fattura_ricevute(page):
     # --- Naviga in Fatture ricevute e conta messaggi prima dell'import ---
     page.goto(FATTURE_URL, timeout=20000)
     try:
-        page.wait_for_load_state("networkidle", timeout=10000)
+        page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
     time.sleep(2)
@@ -63,7 +63,7 @@ def test_import_fattura_ricevute(page):
     # --- Torna in INBOX per aprire Gestione messaggi → Importa ---
     page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
     try:
-        page.wait_for_load_state("networkidle", timeout=10000)
+        page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
     time.sleep(1)
@@ -138,7 +138,7 @@ def test_import_fattura_ricevute(page):
     # --- Vai in Fatture ricevute e attendi che il nuovo messaggio appaia ---
     page.goto(FATTURE_URL, timeout=20000)
     try:
-        page.wait_for_load_state("networkidle", timeout=10000)
+        page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
     time.sleep(2)
@@ -154,7 +154,7 @@ def test_import_fattura_ricevute(page):
         if attempt == 9:
             page.goto(FATTURE_URL, timeout=20000)
             try:
-                page.wait_for_load_state("networkidle", timeout=10000)
+                page.wait_for_load_state("load", timeout=10000)
             except Exception:
                 pass
             time.sleep(2)
@@ -215,7 +215,7 @@ def test_import_fattura_ricevute(page):
     # Naviga nuovamente alla lista per uscire dalla visualizzazione dettaglio
     page.goto(FATTURE_URL, timeout=20000)
     try:
-        page.wait_for_load_state("networkidle", timeout=10000)
+        page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
     time.sleep(2)

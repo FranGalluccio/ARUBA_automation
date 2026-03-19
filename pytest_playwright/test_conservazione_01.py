@@ -38,7 +38,7 @@ def test_cartella_da_conservare(page):
     # --- Clicca "Da conservare" nella sidebar ---
     btn_conservazione.click(force=True)
     try:
-        page.wait_for_load_state("networkidle", timeout=10000)
+        page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
     time.sleep(2)

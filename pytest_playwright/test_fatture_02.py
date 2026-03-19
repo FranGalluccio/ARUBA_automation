@@ -31,7 +31,7 @@ def test_leggi_fatture_settings(page):
 
     # --- Verifica disponibilità feature (check da settings home) ---
     page.goto(SETTINGS_URL, timeout=20000)
-    page.wait_for_load_state("networkidle", timeout=15000)
+    page.wait_for_load_state("load", timeout=15000)
     time.sleep(1)
 
     # Espandi accordion "Account e sicurezza" se necessario
@@ -49,7 +49,7 @@ def test_leggi_fatture_settings(page):
     # --- Naviga alla pagina Leggi fatture ---
     leggi_fatture_btn.click(force=True)
     try:
-        page.wait_for_load_state("networkidle", timeout=10000)
+        page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
     time.sleep(2)
