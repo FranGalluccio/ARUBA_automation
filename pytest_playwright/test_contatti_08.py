@@ -54,32 +54,9 @@ def test_contatto_preferito(page):
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_contatti_08_hover_{datetime.now():%H-%M-%S}.png"))
 
         # Clicca il pulsante stella/preferiti
-        favorite_added = False
-        star_area = row.locator('[class*="star"], [class*="favorite"], [class*="preferit"]').first
-        try:
-            if star_area.count() > 0:
-                star_area.click(force=True)
-                favorite_added = True
-                time.sleep(1)
-        except Exception:
-            pass
-
-        if not favorite_added:
-            action_btns = row.locator('webmail-actions-buttons aru-button').all()
-            if action_btns:
-                action_btns[0].click(force=True)
-                favorite_added = True
-                time.sleep(1)
-
-        if not favorite_added:
-            try:
-                page.locator('button[title="Aggiungi ai preferiti"], button[title*="preferit"]').first.click(timeout=3000)
-                favorite_added = True
-            except Exception:
-                pass
-
-        assert favorite_added, "Impossibile trovare il pulsante Aggiungi ai preferiti"
-
+        star_btn = row.locator('button:has(aru-symbol[symbol="star-regular-big"])').first
+        star_btn.wait_for(state="visible", timeout=5000)
+        star_btn.click(force=True)
         time.sleep(2)
 
         # Screenshot
@@ -101,19 +78,21 @@ def test_contatto_preferito(page):
             f"Il contatto '{nome_pref}' non trovato in Contatti preferiti dopo averlo aggiunto"
 
     finally:
-        # Cleanup: rimuovi dai preferiti
+        # Cleanup: rimuovi dai preferiti (torna a tutti i contatti prima)
         try:
+            page.locator('button[title="Tutti i contatti"]').first.click()
+            time.sleep(1)
+            search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+            search2.click()
+            search2.fill(nome_pref)
+            time.sleep(1)
             pref_row = page.locator('div.frame-record-desktop').filter(has_text=nome_pref).first
             if pref_row.count() > 0:
                 pref_row.hover()
                 time.sleep(0.5)
-                star_area2 = pref_row.locator('[class*="star"], [class*="favorite"], [class*="preferit"]').first
-                if star_area2.count() > 0:
-                    star_area2.click(force=True)
-                else:
-                    action_btns2 = pref_row.locator('webmail-actions-buttons aru-button').all()
-                    if action_btns2:
-                        action_btns2[0].click(force=True)
+                star_btn2 = pref_row.locator('button:has(aru-symbol[symbol="star-regular-big"])').first
+                if star_btn2.count() > 0:
+                    star_btn2.click(force=True)
                 time.sleep(1)
         except Exception:
             pass

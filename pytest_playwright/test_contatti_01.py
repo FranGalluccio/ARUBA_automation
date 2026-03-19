@@ -25,48 +25,55 @@ TEST_EMAIL_DOMAIN = config.get("test_email_domain", "pec.it")
 def test_aggiungere_nuovo_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
-    
+
     time.sleep(1)
-    # Aggiungere nuovo contatto
-  # email unica per ogni run
     unique_email = f"testautomatico_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
 
     page.click("#contacts")
     time.sleep(1)
-    page.get_by_role("button", name="Nuovo").click()
-    page.get_by_role("button", name="Procedi").click()
-    page.get_by_placeholder("Inserisci nome").click()
-    page.get_by_placeholder("Inserisci nome").fill("Test")
-    page.get_by_placeholder("Inserisci cognome").click()
-    page.get_by_placeholder("Inserisci cognome").fill("Automatico")
-    page.get_by_placeholder("Inserisci email").click()
-    page.get_by_placeholder("Inserisci email").fill(unique_email)
-    page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
 
-    # Verifica che il contatto sia stato creato (cerca per email univoca)
-    search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
-    search.click()
-    search.fill(unique_email)
-    time.sleep(1)
-    row = page.locator('div.frame-record-desktop').filter(has_text="Test").first
-    assert row.is_visible(), f"Contatto con email '{unique_email}' non trovato dopo il salvataggio"
-
-    # Percorso screenshot dinamico
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_contatti_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")
-
-    # Cleanup: elimina il contatto creato
     try:
-        row.hover()
-        row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
+        page.get_by_role("button", name="Nuovo").click()
+        page.get_by_role("button", name="Procedi").click()
+        page.get_by_placeholder("Inserisci nome").click()
+        page.get_by_placeholder("Inserisci nome").fill("Test")
+        page.get_by_placeholder("Inserisci cognome").click()
+        page.get_by_placeholder("Inserisci cognome").fill("Automatico")
+        page.get_by_placeholder("Inserisci email").click()
+        page.get_by_placeholder("Inserisci email").fill(unique_email)
+        page.get_by_role("button", name="Salva").click()
+        time.sleep(2)
+
+        # Verifica che il contatto sia stato creato (cerca per email univoca)
+        search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search.click()
+        search.fill(unique_email)
         time.sleep(1)
-        page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-        page.get_by_role("button", name="Sì").first.click(timeout=2000)
-        time.sleep(1)
-    except Exception:
-        pass
+        row = page.locator('div.frame-record-desktop').filter(has_text="Test").first
+        assert row.is_visible(), f"Contatto con email '{unique_email}' non trovato dopo il salvataggio"
+
+        # Percorso screenshot dinamico
+        screenshot_path = os.path.join(
+            REPORT_FOLDER,
+            f"test_contatti_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        )
+        page.screenshot(path=screenshot_path, full_page=True)
+        print(f"Screenshot salvato in: {screenshot_path}")
+
+    finally:
+        # Cleanup: elimina il contatto creato
+        try:
+            search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+            search2.click()
+            search2.fill(unique_email)
+            time.sleep(1)
+            row2 = page.locator('div.frame-record-desktop').filter(has_text="Test").first
+            if row2.count() > 0:
+                row2.hover()
+                row2.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
+                time.sleep(1)
+                page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+                page.get_by_role("button", name="Sì").first.click(timeout=2000)
+                time.sleep(1)
+        except Exception:
+            pass

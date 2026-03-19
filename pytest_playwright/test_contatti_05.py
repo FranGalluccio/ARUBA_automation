@@ -29,83 +29,89 @@ def test_modifica_contatto(page):
 
     # Crea un nuovo contatto da modificare
     unique_email = f"testmod_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
-    page.get_by_role("button", name="Nuovo").click()
-    page.get_by_role("button", name="Procedi").click()
-    page.get_by_placeholder("Inserisci nome").fill("Contatto")
-    page.get_by_placeholder("Inserisci cognome").fill("DaModificare")
-    page.get_by_placeholder("Inserisci email").fill(unique_email)
-    page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
 
-    # Cerca il contatto appena creato
-    search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
-    search.click()
-    search.fill("DaModificare")
-    time.sleep(1)
-
-    # Trova il contatto nella lista
-    row = page.locator('div.frame-record-desktop').filter(has_text="DaModificare").first
-    row.wait_for(state="visible", timeout=8000)
-
-    # Hover per far apparire il checkbox e selezionarlo
-    row.hover()
-    time.sleep(0.5)
-    row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-    time.sleep(1)
-
-    # Cerca pulsante Modifica nella toolbar (appare quando si seleziona 1 contatto)
-    # oppure tenta doppio click sul contatto per aprire l'editor
-    modifica_clicked = False
     try:
-        modifica_btn = page.locator('button[title="Modifica"], aru-symbol[title="Modifica"]').first
-        modifica_btn.wait_for(state="visible", timeout=3000)
-        modifica_btn.click()
-        modifica_clicked = True
-    except Exception:
-        # Fallback: doppio click sulla riga per aprire edit
-        row.dblclick()
+        page.get_by_role("button", name="Nuovo").click()
+        page.get_by_role("button", name="Procedi").click()
+        page.get_by_placeholder("Inserisci nome").fill("Contatto")
+        page.get_by_placeholder("Inserisci cognome").fill("DaModificare")
+        page.get_by_placeholder("Inserisci email").fill(unique_email)
+        page.get_by_role("button", name="Salva").click()
+        time.sleep(2)
 
-    time.sleep(1)
-
-    # Modifica il cognome
-    cognome_input = page.get_by_placeholder("Inserisci cognome")
-    cognome_input.wait_for(state="visible", timeout=5000)
-    cognome_input.click(click_count=3)
-    cognome_input.fill("Modificato")
-
-    # Salva
-    page.get_by_role("button", name="Salva").click()
-    time.sleep(1)
-
-    # Verifica che il cognome aggiornato sia presente
-    # Pulisci la ricerca e cerca il nome modificato
-    search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
-    search2.click(click_count=3)
-    search2.fill("Modificato")
-    time.sleep(1)
-
-    result = page.locator('div.frame-record-desktop').filter(has_text="Modificato").first
-    result.wait_for(state="visible", timeout=5000)
-    assert result.is_visible(), "Il contatto modificato non è visibile"
-
-    time.sleep(1)
-
-    # Screenshot
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_contatti_05___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")
-
-    # Cleanup: elimina il contatto modificato
-    try:
-        result.hover()
-        result.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
+        # Cerca il contatto appena creato
+        search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search.click()
+        search.fill("DaModificare")
         time.sleep(1)
-        page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+
+        # Trova il contatto nella lista
+        row = page.locator('div.frame-record-desktop').filter(has_text="DaModificare").first
+        row.wait_for(state="visible", timeout=8000)
+
+        # Hover per far apparire il checkbox e selezionarlo
+        row.hover()
+        time.sleep(0.5)
+        row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
         time.sleep(1)
-        page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
+
+        # Cerca pulsante Modifica nella toolbar (appare quando si seleziona 1 contatto)
+        # oppure tenta doppio click sul contatto per aprire l'editor
+        try:
+            modifica_btn = page.locator('button[title="Modifica"], aru-symbol[title="Modifica"]').first
+            modifica_btn.wait_for(state="visible", timeout=3000)
+            modifica_btn.click()
+        except Exception:
+            # Fallback: doppio click sulla riga per aprire edit
+            row.dblclick()
+
         time.sleep(1)
-    except Exception:
-        pass
+
+        # Modifica il cognome
+        cognome_input = page.get_by_placeholder("Inserisci cognome")
+        cognome_input.wait_for(state="visible", timeout=5000)
+        cognome_input.click(click_count=3)
+        cognome_input.fill("Modificato")
+
+        # Salva
+        page.get_by_role("button", name="Salva").click()
+        time.sleep(1)
+
+        # Verifica che il cognome aggiornato sia presente
+        search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search2.click(click_count=3)
+        search2.fill("Modificato")
+        time.sleep(1)
+
+        result = page.locator('div.frame-record-desktop').filter(has_text="Modificato").first
+        result.wait_for(state="visible", timeout=5000)
+        assert result.is_visible(), "Il contatto modificato non è visibile"
+
+        time.sleep(1)
+
+        # Screenshot
+        screenshot_path = os.path.join(
+            REPORT_FOLDER,
+            f"test_contatti_05___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        )
+        page.screenshot(path=screenshot_path, full_page=True)
+        print(f"Screenshot salvato in: {screenshot_path}")
+
+    finally:
+        # Cleanup: elimina il contatto
+        try:
+            search3 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+            search3.click(click_count=3)
+            search3.fill(unique_email)
+            time.sleep(1)
+            r = page.locator('div.frame-record-desktop').first
+            if r.count() > 0:
+                r.hover()
+                r.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
+                time.sleep(1)
+                page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+                time.sleep(1)
+                page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
+                time.sleep(1)
+        except Exception:
+            pass
