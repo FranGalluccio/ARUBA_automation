@@ -25,7 +25,7 @@ if _pec_url:
         "test_folder": "pytest_playwright",
         "report_folder": "pytest_playwright/test-results",
         "file_allegato": "dati_test/allegato-test.pdf",
-        "file_fattura": "dati_test/fattura-test.eml",
+        "file_fattura": "dati_test/fattura-reale-02.eml",
         "importa_messaggi": "dati_test/messaggio importato automation playwright.eml",
         "rubrica_import": "dati_test/rubrica.csv",
         "calendario_import": "dati_test/calendario-test.ics",
