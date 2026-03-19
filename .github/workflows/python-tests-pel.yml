@@ -42,8 +42,8 @@ jobs:
       - name: Install dependencies
         shell: powershell
         run: |
-          py -m pip install -r requirements.txt
-          py -m playwright install chromium
+          python -m pip install -r requirements.txt
+          python -m playwright install chromium
 
       - name: Run tests
         shell: powershell
@@ -66,7 +66,7 @@ jobs:
           $reportDir = "pytest_pel/test-results"
           if (!(Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
 
-          py -m pytest pytest_pel/ `
+          python -m pytest pytest_pel/ `
             --junitxml=$reportDir/report.xml `
             --html=$reportDir/report.html `
             --self-contained-html `
