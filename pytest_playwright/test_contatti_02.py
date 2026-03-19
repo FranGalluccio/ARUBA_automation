@@ -103,21 +103,20 @@ def test_aggiungere_nuovo_gruppo(page):
         except Exception:
             pass
 
-        # Cleanup: elimina il contatto temporaneo
+        # Cleanup: seleziona tutti i contatti ed elimina
         try:
             page.locator("#contacts").click()
             time.sleep(1)
-            search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
-            search.click()
-            search.fill(contact_name)
+            page.locator('button[title="Tutti i contatti"]').first.click()
             time.sleep(1)
-            row = page.locator('div.frame-record-desktop').filter(has_text=contact_name).first
-            if row.count() > 0:
-                row.hover()
-                row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-                time.sleep(1)
-                page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-                page.get_by_role("button", name="Sì").first.click(timeout=2000)
-                time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
+            time.sleep(0.5)
+            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+            time.sleep(0.5)
+            try:
+                page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
+            except Exception:
+                page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
+            time.sleep(1)
         except Exception:
             pass

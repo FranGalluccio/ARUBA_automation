@@ -98,20 +98,17 @@ def test_modifica_contatto(page):
         print(f"Screenshot salvato in: {screenshot_path}")
 
     finally:
-        # Cleanup: elimina il contatto
+        # Cleanup: seleziona tutti i contatti ed elimina
         try:
-            search3 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
-            search3.click(click_count=3)
-            search3.fill(unique_email)
+            page.click("#contacts")
             time.sleep(1)
-            r = page.locator('div.frame-record-desktop').first
-            if r.count() > 0:
-                r.hover()
-                r.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-                time.sleep(1)
-                page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-                time.sleep(1)
-                page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
-                time.sleep(1)
+            page.locator('button[title="Tutti i contatti"]').first.click()
+            time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
+            time.sleep(0.5)
+            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+            time.sleep(0.5)
+            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
+            time.sleep(1)
         except Exception:
             pass

@@ -78,40 +78,17 @@ def test_contatto_preferito(page):
             f"Il contatto '{nome_pref}' non trovato in Contatti preferiti dopo averlo aggiunto"
 
     finally:
-        # Cleanup: rimuovi dai preferiti (torna a tutti i contatti prima)
+        # Cleanup: seleziona tutti i contatti ed elimina
         try:
+            page.click("#contacts")
+            time.sleep(1)
             page.locator('button[title="Tutti i contatti"]').first.click()
             time.sleep(1)
-            search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
-            search2.click()
-            search2.fill(nome_pref)
+            page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
+            time.sleep(0.5)
+            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+            time.sleep(0.5)
+            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
             time.sleep(1)
-            pref_row = page.locator('div.frame-record-desktop').filter(has_text=nome_pref).first
-            if pref_row.count() > 0:
-                pref_row.hover()
-                time.sleep(0.5)
-                star_btn2 = pref_row.locator('button:has(aru-symbol[symbol="star-regular-big"])').first
-                if star_btn2.count() > 0:
-                    star_btn2.click(force=True)
-                time.sleep(1)
-        except Exception:
-            pass
-
-        # Elimina il contatto di test
-        try:
-            page.locator('button[title="Tutti i contatti"]').first.click()
-            time.sleep(1)
-            search3 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
-            search3.click()
-            search3.fill(nome_pref)
-            time.sleep(1)
-            r = page.locator('div.frame-record-desktop').filter(has_text=nome_pref).first
-            if r.count() > 0:
-                r.hover()
-                r.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-                time.sleep(1)
-                page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-                page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
-                time.sleep(1)
         except Exception:
             pass

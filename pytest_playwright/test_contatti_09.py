@@ -128,21 +128,17 @@ def test_scrivi_email_da_contatto(page):
         time.sleep(1)
 
     finally:
-        # Cleanup: elimina il contatto (eseguito anche in caso di fallimento)
+        # Cleanup: seleziona tutti i contatti ed elimina
         try:
             page.click("#contacts")
             time.sleep(1)
-            search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
-            search2.click()
-            search2.fill(nome_test)
+            page.locator('button[title="Tutti i contatti"]').first.click()
             time.sleep(1)
-            r = page.locator('div.frame-record-desktop').filter(has_text=nome_test).first
-            if r.count() > 0:
-                r.hover()
-                r.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-                time.sleep(1)
-                page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-                page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
-                time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
+            time.sleep(0.5)
+            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+            time.sleep(0.5)
+            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
+            time.sleep(1)
         except Exception:
             pass

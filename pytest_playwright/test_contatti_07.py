@@ -62,22 +62,17 @@ def test_ricerca_contatto(page):
         print(f"Screenshot salvato in: {screenshot_path}")
 
     finally:
-        # Cleanup: cancella il contatto creato
+        # Cleanup: seleziona tutti i contatti ed elimina
         try:
-            search2 = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="Cerca"]').first
-            search2.click(click_count=3)
-            search2.fill(nome_univoco)
+            page.click("#contacts")
             time.sleep(1)
-            r = page.locator('div.frame-record-desktop, [class*="contact-row"]').filter(has_text=nome_univoco).first
-            if r.count() > 0:
-                r.hover()
-                r.locator('div.aru-input-checkbox, input[type="checkbox"]').first.click(force=True)
-                time.sleep(1)
-                page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-                try:
-                    page.locator('button[title="Si"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=3000)
-                except Exception:
-                    pass
-                time.sleep(1)
+            page.locator('button[title="Tutti i contatti"]').first.click()
+            time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
+            time.sleep(0.5)
+            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+            time.sleep(0.5)
+            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
+            time.sleep(1)
         except Exception:
             pass

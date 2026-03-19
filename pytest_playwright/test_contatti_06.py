@@ -31,65 +31,77 @@ def test_elimina_contatto(page):
     unique_email = f"testelimina_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
     cognome = f"DaEliminare{int(time.time())}"
 
-    page.get_by_role("button", name="Nuovo").click()
-    page.get_by_role("button", name="Procedi").click()
-    page.get_by_placeholder("Inserisci nome").fill("Contatto")
-    page.get_by_placeholder("Inserisci cognome").fill(cognome)
-    page.get_by_placeholder("Inserisci email").fill(unique_email)
-    page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
-
-    # Cerca il contatto appena creato
-    search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
-    search.click()
-    search.fill(cognome)
-    time.sleep(1)
-
-    # Seleziona il contatto tramite checkbox (stessa tecnica usata nel cleanup di test_contatti_07)
-    row = page.locator('div.frame-record-desktop').filter(has_text=cognome).first
-    row.wait_for(state="visible", timeout=5000)
-
-    row.hover()
-    time.sleep(0.5)
-    row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-    time.sleep(1)
-
-    # Clicca Elimina dalla toolbar
-    elimina_btn = page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first
-    elimina_btn.wait_for(state="visible", timeout=5000)
-    elimina_btn.click()
-    time.sleep(1)
-
-    # Screenshot per diagnostica
-    page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_contatti_06_del_{datetime.now():%H-%M-%S}.png"))
-
-    # Conferma nella dialog "Elimina contatti" → clicca il pulsante "Elimina" nel CDK overlay pane
-    confirm_btn = page.locator('.cdk-overlay-pane button:has-text("Elimina")').first
-    confirm_btn.wait_for(state="visible", timeout=3000)
-    confirm_btn.click()
-    time.sleep(2)
-
-    # Verifica che il contatto non sia più presente
-    # Aspetta che eventuali backdrop spariscano
     try:
-        page.locator('.cdk-overlay-backdrop').wait_for(state="hidden", timeout=3000)
-    except Exception:
-        pass
-    time.sleep(1)
-    # Pulisci la ricerca e ricerca di nuovo
-    search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
-    search2.click(force=True)
-    time.sleep(0.5)
-    search2.fill(cognome)
-    time.sleep(1)
+        page.get_by_role("button", name="Nuovo").click()
+        page.get_by_role("button", name="Procedi").click()
+        page.get_by_placeholder("Inserisci nome").fill("Contatto")
+        page.get_by_placeholder("Inserisci cognome").fill(cognome)
+        page.get_by_placeholder("Inserisci email").fill(unique_email)
+        page.get_by_role("button", name="Salva").click()
+        time.sleep(2)
 
-    assert page.locator('div.frame-record-desktop').filter(has_text=cognome).count() == 0, \
-        f"Il contatto '{cognome}' è ancora presente dopo l'eliminazione"
+        # Cerca il contatto appena creato
+        search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search.click()
+        search.fill(cognome)
+        time.sleep(1)
 
-    # Screenshot
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_contatti_06___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")
+        row = page.locator('div.frame-record-desktop').filter(has_text=cognome).first
+        row.wait_for(state="visible", timeout=5000)
+
+        row.hover()
+        time.sleep(0.5)
+        row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
+        time.sleep(1)
+
+        # Clicca Elimina dalla toolbar
+        elimina_btn = page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first
+        elimina_btn.wait_for(state="visible", timeout=5000)
+        elimina_btn.click()
+        time.sleep(1)
+
+        # Screenshot per diagnostica
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_contatti_06_del_{datetime.now():%H-%M-%S}.png"))
+
+        # Conferma nella dialog
+        page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
+        time.sleep(2)
+
+        # Verifica che il contatto non sia più presente
+        try:
+            page.locator('.cdk-overlay-backdrop').wait_for(state="hidden", timeout=3000)
+        except Exception:
+            pass
+        time.sleep(1)
+        search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search2.click(force=True)
+        time.sleep(0.5)
+        search2.fill(cognome)
+        time.sleep(1)
+
+        assert page.locator('div.frame-record-desktop').filter(has_text=cognome).count() == 0, \
+            f"Il contatto '{cognome}' è ancora presente dopo l'eliminazione"
+
+        # Screenshot
+        screenshot_path = os.path.join(
+            REPORT_FOLDER,
+            f"test_contatti_06___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        )
+        page.screenshot(path=screenshot_path, full_page=True)
+        print(f"Screenshot salvato in: {screenshot_path}")
+
+    finally:
+        # Cleanup: seleziona tutti i contatti ed elimina (safety net)
+        try:
+            page.click("#contacts")
+            time.sleep(1)
+            page.locator('button[title="Tutti i contatti"]').first.click()
+            time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
+            time.sleep(0.5)
+            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+            time.sleep(0.5)
+            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
+            time.sleep(1)
+        except Exception:
+            pass
