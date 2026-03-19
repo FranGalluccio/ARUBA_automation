@@ -97,7 +97,7 @@ def test_ricerca_nel_calendario(page):
             time.sleep(1)
             page.get_by_role("button", name="Eventi").click()
             time.sleep(2)
-            while True:
+            for _ in range(5):
                 ev = page.locator('a, [class*="event"]').filter(has_text=titolo_evento).first
                 if ev.count() == 0:
                     break

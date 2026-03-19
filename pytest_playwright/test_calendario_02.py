@@ -63,7 +63,7 @@ def test_creazione_modifica_evento(page):
             page.get_by_role("button", name="Eventi").click(force=True)
             time.sleep(2)
             for titolo in [titolo_modificato, titolo_base]:
-                while True:
+                for _ in range(5):
                     ev = page.get_by_text(titolo, exact=False).first
                     if ev.count() == 0:
                         break

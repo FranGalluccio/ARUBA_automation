@@ -117,7 +117,7 @@ def test_evento_con_promemoria(page):
             time.sleep(1)
             page.get_by_role("button", name="Eventi").click(force=True)
             time.sleep(2)
-            while True:
+            for _ in range(5):
                 ev = page.get_by_text(titolo_evento, exact=False).first
                 if ev.count() == 0:
                     break

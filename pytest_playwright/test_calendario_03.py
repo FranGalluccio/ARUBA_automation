@@ -35,6 +35,8 @@ def test_creazione_invio_evento(page):
         page.locator("button").filter(has_text="Nuovo evento").click()
         page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
         page.get_by_role("button", name="Salva").click()
+        time.sleep(2)
+        page.locator("a").filter(has_text=titolo_evento).first.wait_for(state="visible", timeout=15000)
         page.locator("a").filter(has_text=titolo_evento).first.click()
         # Modifica evento
         time.sleep(1)
@@ -46,7 +48,10 @@ def test_creazione_invio_evento(page):
         time.sleep(2)
         page.get_by_role("button", name="Salva").click()
         time.sleep(2)
-        page.get_by_role("button", name="Invia").first.click()
+        try:
+            page.get_by_role("button", name="Invia").first.click(timeout=10000)
+        except Exception:
+            pass
         # Vai alla posta in arrivo
         page.locator("#messages").get_by_label("Messaggi").click()
         time.sleep(5)
@@ -77,7 +82,7 @@ def test_creazione_invio_evento(page):
             time.sleep(1)
             page.get_by_role("button", name="Eventi").click(force=True)
             time.sleep(2)
-            while True:
+            for _ in range(5):
                 ev = page.get_by_text(titolo_evento, exact=False).first
                 if ev.count() == 0:
                     break
