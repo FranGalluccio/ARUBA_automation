@@ -25,10 +25,10 @@ on:
       runner:
         description: "Runner da usare"
         required: true
-        default: "self-hosted"
+        default: "LAPTOP-7AQM6PC9"
         type: choice
         options:
-          - self-hosted
+          - LAPTOP-7AQM6PC9
           - michela
 
 jobs:
