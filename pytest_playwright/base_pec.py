@@ -46,7 +46,7 @@ class LoginPec:
         self.page.locator("button[type='submit'], button:has-text('Login')").first.click()
 
     # Attendi caricamento pagina
-        self.page.wait_for_load_state("networkidle", timeout=20_000)
+        self.page.wait_for_load_state("load", timeout=20_000)
         
     # Verifica login riuscito (pattern URL configurabile per ambienti diversi)
         url_pattern = config["pec"].get("inbox_url_pattern", "INBOX")
@@ -63,7 +63,7 @@ class LoginPec:
                 webmail_url = self.page.get_by_role("link", name="Read emails").first.get_attribute("href", timeout=3000)
                 if webmail_url:
                     self.page.goto(webmail_url, timeout=30_000)
-                    self.page.wait_for_load_state("networkidle", timeout=20_000)
+                    self.page.wait_for_load_state("load", timeout=20_000)
             except Exception:
                 pass
 
