@@ -76,7 +76,7 @@ def test_creazione_invio_evento(page):
         print(f"Screenshot salvato in: {screenshot_path}")
 
     finally:
-        # Cleanup: elimina evento (eseguito anche in caso di fallimento)
+        # Cleanup: annulla evento con invitati tramite 3 puntini → Annulla evento
         try:
             page.get_by_role("button", name="Calendario").click()
             time.sleep(1)
@@ -88,11 +88,19 @@ def test_creazione_invio_evento(page):
                     break
                 ev.click()
                 time.sleep(2)
+                # Clicca i 3 puntini nell'header del popup evento
                 try:
-                    page.get_by_role("button", name="Annulla evento").first.click(timeout=3000)
+                    page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
                     time.sleep(1)
                 except Exception:
                     pass
+                # Clicca "Annulla evento" dal menu a tendina
+                try:
+                    page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
+                    time.sleep(1)
+                except Exception:
+                    pass
+                # Eventuale conferma
                 try:
                     page.get_by_role("button", name="Elimina").first.click(timeout=3000)
                     time.sleep(2)

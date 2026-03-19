@@ -124,7 +124,12 @@ def test_evento_con_promemoria(page):
                 ev.click()
                 time.sleep(2)
                 try:
-                    page.get_by_role("button", name="Annulla evento").first.click(timeout=3000)
+                    page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
+                    time.sleep(1)
+                except Exception:
+                    pass
+                try:
+                    page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
                     time.sleep(1)
                 except Exception:
                     pass

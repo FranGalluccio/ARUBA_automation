@@ -113,7 +113,20 @@ def test_import_export_calendario(page: Page):
                 ev.click()
                 time.sleep(2)
                 try:
-                    page.get_by_role("button", name="Annulla evento").first.click(timeout=3000)
+                    page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
+                    time.sleep(1)
+                except Exception:
+                    pass
+                try:
+                    page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
+                    time.sleep(1)
+                except Exception:
+                    pass
+                # Step extra per eventi ricorrenti: Tutti gli eventi → Ok
+                try:
+                    page.get_by_role("radio", name="Tutti gli eventi").check(timeout=2000)
+                    time.sleep(0.5)
+                    page.get_by_role("button", name="Ok").first.click(timeout=2000)
                     time.sleep(1)
                 except Exception:
                     pass

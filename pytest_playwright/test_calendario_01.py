@@ -77,13 +77,19 @@ def test_creazione_evento_ricorrente(page):
                     break
                 ev.click()
                 time.sleep(2)
-                # 1. Annulla evento
+                # 1. Apri menu 3 puntini
                 try:
-                    page.get_by_role("button", name="Annulla evento").first.click(timeout=3000)
+                    page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
                     time.sleep(1)
                 except Exception:
                     pass
-                # 2. Dialog ricorrente: seleziona "Tutti gli eventi" → Ok
+                # 2. Annulla evento dal menu
+                try:
+                    page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
+                    time.sleep(1)
+                except Exception:
+                    pass
+                # 3. Dialog ricorrente: seleziona "Tutti gli eventi" → Ok
                 try:
                     page.get_by_role("radio", name="Tutti gli eventi").check(timeout=2000)
                     time.sleep(0.5)
