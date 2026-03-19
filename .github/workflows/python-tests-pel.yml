@@ -19,10 +19,18 @@ on:
         options:
           - test-domini
           - prod-domini
+      runner:
+        description: "Runner da usare"
+        required: true
+        default: "LAPTOP-7AQM6PC9"
+        type: choice
+        options:
+          - LAPTOP-7AQM6PC9
+          - michela
 
 jobs:
   test:
-    runs-on: self-hosted
+    runs-on: ${{ inputs.runner || 'self-hosted' }}
     environment: test
 
     steps:
