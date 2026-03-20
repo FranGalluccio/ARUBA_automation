@@ -50,7 +50,9 @@ def test_archivio_messaggio_inviato(page):
     #  dal caricamento dell'h1 sulla pagina di configurazione)
     page.goto(ARCHIVE_SETTINGS_URL, timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
-    if page.locator("h1").filter(has_text="Archivio").count() == 0:
+    try:
+        page.locator("h1").filter(has_text="Archivio").wait_for(state="visible", timeout=10000)
+    except Exception:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
 
     # Seleziona "Archivia tutti i messaggi ricevuti o inviati" cercando per testo della label
