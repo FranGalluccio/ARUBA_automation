@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -39,26 +39,24 @@ def test_segna_come_letto_da_leggere(page):
     
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    
-    time.sleep(1)
-    
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+
     try:
-     # Segna come da leggere
+     # Segna come già letti
         page.locator('button:has(aru-symbol[title="Segna tutti come già letti"])').nth(0).click()
     except Exception:
-        page.locator('button:has(aru-symbol[title="Segna come già letti"])').nth(0).click()
+        page.locator('button:has(aru-symbol[title="Segna tutti come già letti"])').nth(0).click()
 
-    time.sleep(1)
-    
     # Segna come da leggere
+    page.wait_for_timeout(1000)
     try:
         page.locator('button:has(aru-symbol[title="Segna tutti come da leggere"])').nth(0).click()
     except Exception:
-        page.locator('button:has(aru-symbol[title="Segna come da leggere"])').nth(0).click()
-    
+        page.locator('button:has(aru-symbol[title="Segna tutti come da leggere"])').nth(0).click()
+
     # Verifica che l'azione "Segna tutti come da leggere" abbia avuto effetto:
     # ci devono essere messaggi non letti (badge/indicatore unread) nella inbox
-    time.sleep(1)
+    page.wait_for_timeout(1000)
     unread_count = page.locator(
         '[class*="unread"], [class*="not-read"], aru-badge, '
         'div.frame-record-desktop[class*="unread"], '
@@ -67,8 +65,7 @@ def test_segna_come_letto_da_leggere(page):
     assert unread_count > 0, (
         "Dopo 'Segna tutti come da leggere' non sono stati trovati messaggi non letti nella inbox"
     )
-    
-    time.sleep(1)
+
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,

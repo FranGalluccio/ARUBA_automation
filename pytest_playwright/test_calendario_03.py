@@ -28,36 +28,32 @@ def test_creazione_invio_evento(page):
     titolo_evento = f"evento test auto invito {ts}"
 
     try:
-        time.sleep(1)
-
         # Crea nuovo evento
         page.get_by_role("button", name="Calendario").click()
         page.locator("button").filter(has_text="Nuovo evento").click()
+        page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
         page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
         page.get_by_role("button", name="Salva").click()
-        time.sleep(2)
         page.locator("a").filter(has_text=titolo_evento).first.wait_for(state="visible", timeout=15000)
         page.locator("a").filter(has_text=titolo_evento).first.click()
         # Modifica evento
-        time.sleep(1)
+        page.get_by_role("button", name="Modifica").wait_for(state="visible", timeout=5000)
         page.get_by_role("button", name="Modifica").click()
-        time.sleep(1)
+        page.locator('input[aria-label="input chosen"]').nth(1).wait_for(state="visible", timeout=5000)
         page.locator('input[aria-label="input chosen"]').nth(1).fill(config["destinatari"]["destinatario_principale"])
-        time.sleep(1)
         page.get_by_role("textbox", name="input chosen").press("Enter")
-        time.sleep(2)
+        page.wait_for_timeout(1000)
         page.get_by_role("button", name="Salva").click()
-        time.sleep(2)
+        page.wait_for_timeout(1000)
         try:
             page.get_by_role("button", name="Invia").first.click(timeout=10000)
         except Exception:
             pass
         # Vai alla posta in arrivo
         page.locator("#messages").get_by_label("Messaggi").click()
-        time.sleep(5)
+        page.wait_for_timeout(5000)
         # Aggiorna la posta
         page.locator('aru-symbol[title="Aggiorna"]').click()
-        time.sleep(2)
         # Aspetta che almeno un record sia visibile
         page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
 
@@ -79,39 +75,45 @@ def test_creazione_invio_evento(page):
         # Cleanup: annulla evento con invitati tramite 3 puntini → Annulla evento
         try:
             page.get_by_role("button", name="Calendario").click()
-            time.sleep(1)
+            page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
             page.get_by_role("button", name="Eventi").click(force=True)
-            time.sleep(2)
+            page.wait_for_timeout(1500)
             for _ in range(20):
                 ev = page.get_by_text("evento test auto invito", exact=False).first
                 if ev.count() == 0:
                     break
                 ev.click()
-                time.sleep(2)
+                page.wait_for_timeout(1500)
                 # Clicca i 3 puntini nell'header del popup evento
                 try:
                     page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 # Clicca "Annulla evento" dal menu a tendina
                 try:
                     page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 # Eventuale conferma
                 try:
                     page.get_by_role("button", name="Elimina").first.click(timeout=3000)
-                    time.sleep(2)
+                    page.wait_for_timeout(1500)
+                    try:
+                        toast = page.locator("div.aru-toast__message").first
+                        if toast.is_visible():
+                            print(f"Toast eliminazione: {toast.text_content()}")
+                    except Exception:
+                        pass
                 except Exception:
                     pass
                 try:
                     page.keyboard.press("Escape")
-                    time.sleep(0.5)
+                    page.wait_for_timeout(300)
                 except Exception:
                     pass
                 page.get_by_role("button", name="Eventi").click(force=True)
-                time.sleep(2)
+                page.wait_for_timeout(1500)
         except Exception:
             pass

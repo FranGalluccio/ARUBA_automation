@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -25,7 +25,6 @@ def test_invio_messaggio_con_cc(page):
 
     # Apri nuovo messaggio
     page.locator("button:has-text('Nuovo messaggio')").click()
-    time.sleep(1)
 
     # Compila destinatario principale
     to_input = page.locator("input[placeholder='Destinatari']").first
@@ -33,11 +32,10 @@ def test_invio_messaggio_con_cc(page):
     to_input.fill(destinatario)
     # Press Enter/Tab per confermare il destinatario come chip
     to_input.press("Enter")
-    time.sleep(0.5)
 
     # Aggiungi CC (dopo click sul bottone CC, appare un nuovo input Destinatari)
     page.locator('button[title="CC"]').click()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
     cc_destinatario = config["destinatari"].get("destinatario_secondario", destinatario)
     # Ora ci sono 2 input Destinatari, il secondo è il CC
     cc_inputs = page.locator("input[placeholder='Destinatari']").all()
@@ -55,7 +53,6 @@ def test_invio_messaggio_con_cc(page):
     page.locator('span[title="Invia"]').click()
 
     # Aspetta toast di conferma
-    time.sleep(2)
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
     assert "Il messaggio è stato inviato" in toast.text_content()
@@ -63,7 +60,6 @@ def test_invio_messaggio_con_cc(page):
     # Aspetta consegna e verifica il messaggio ricevuto mostra CC
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(1)
 
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
     page.locator('div.frame-record-desktop').first.click()

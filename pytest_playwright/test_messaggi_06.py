@@ -33,49 +33,45 @@ def test_ripristino_messaggi(page):
 
     # Sposta i messaggi nel Cestino (seleziona i 2 appena inviati)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(2)
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
     page.locator('div.aru-input-checkbox').nth(1).click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
     page.locator('div.aru-input-checkbox').nth(2).click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
     page.locator(
         'button:has(aru-symbol[title="Elimina"]), aru-button:has(aru-symbol[title="Elimina"])'
     ).first.click()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
     try:
         page.get_by_role("button", name="Sì").click(timeout=2000)
-        time.sleep(2)
+        page.wait_for_timeout(1000)
     except Exception:
         pass
 
     # Apri cestino
     page.locator('button[title="Cestino"]').click()
-    time.sleep(2)
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     count = page.locator('div.frame-record-desktop').count()
     assert count >= 2, f"Cestino ha solo {count} messaggi — impossibile testare il ripristino"
 
     # Seleziona i primi 2 messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
     page.locator('div.aru-input-checkbox').nth(2).click()
-    
-    time.sleep(1)
-    
+    page.wait_for_timeout(500)
+
     # Clicca su sposta
     page.locator('svg[title="Sposta"]').click()
-    
+
     # Sposta in arrivo
     page.locator("aru-webmail-menu-item[webmailmenuopener]").locator("span:has-text('In arrivo')").click()
-    
-    time.sleep(2)
-    
-    # Verifica toast di conferma invio
-    toast = page.locator("div.aru-toast__message").first
-    assert toast.is_visible()
+
+    # Verifica toast di conferma ripristino
+    toast = page.locator("div.aru-toast__message").filter(has_text="I messaggi selezionati sono stati spostati in In arrivo").first
+    toast.wait_for(state="visible", timeout=8000)
     assert "I messaggi selezionati sono stati spostati in In arrivo" in toast.text_content()
 
-    time.sleep(1)
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,

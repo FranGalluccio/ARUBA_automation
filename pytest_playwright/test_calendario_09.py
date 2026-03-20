@@ -25,18 +25,16 @@ def test_evento_con_promemoria(page):
     titolo_evento = f"evento con promemoria playwright {ts}"
 
     try:
-        time.sleep(1)
         page.get_by_role("button", name="Calendario").click()
-        time.sleep(1)
 
         # Crea nuovo evento
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
-        time.sleep(1)
+        page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
         page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
 
         # Aggiungi promemoria - apre un dialog con "Salva" e "Annulla"
         page.locator('button[title="Aggiungi promemoria"]').click()
-        time.sleep(1)
+        page.wait_for_timeout(500)
 
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_reminder_{datetime.now():%H-%M-%S}.png"))
 
@@ -56,7 +54,7 @@ def test_evento_con_promemoria(page):
         # Inserisci l'email nel campo "Invia email a"
         try:
             page.locator('input[placeholder="Indirizzo email"]').first.fill(config["pec"]["username"])
-            time.sleep(0.5)
+            page.wait_for_timeout(300)
         except Exception:
             pass
 
@@ -68,7 +66,7 @@ def test_evento_con_promemoria(page):
             dialog_salva.click()
         except Exception:
             page.locator('button:has-text("Salva")').last.click(force=True)
-        time.sleep(1)
+        page.wait_for_timeout(500)
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_after_dialog_save_{datetime.now():%H-%M-%S}.png"))
 
         # Aspetta che il dialog si chiuda
@@ -76,7 +74,7 @@ def test_evento_con_promemoria(page):
             page.locator('.cdk-overlay-backdrop').wait_for(state="hidden", timeout=8000)
         except Exception:
             pass
-        time.sleep(2)
+        page.wait_for_timeout(1000)
 
         # Ora salva l'evento (il "Salva" nel pannello laterale del form evento)
         page.get_by_role("button", name="Salva").first.click(force=True)
@@ -84,16 +82,16 @@ def test_evento_con_promemoria(page):
         try:
             page.locator("div.aru-toast__message").wait_for(state="visible", timeout=10000)
         except Exception:
-            time.sleep(5)
-        time.sleep(3)
+            page.wait_for_timeout(5000)
+        page.wait_for_timeout(3000)
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_after_event_save_{datetime.now():%H-%M-%S}.png"))
 
         # Vai alla vista "Events" per trovare l'evento più facilmente
         try:
             page.get_by_role("button", name="Calendario").click()
-            time.sleep(1)
+            page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
             page.get_by_role("button", name="Eventi").click(force=True)
-            time.sleep(8)
+            page.wait_for_timeout(8000)
         except Exception:
             pass
 
@@ -114,36 +112,42 @@ def test_evento_con_promemoria(page):
         # Cleanup: elimina l'evento (eseguito anche in caso di fallimento)
         try:
             page.get_by_role("button", name="Calendario").click()
-            time.sleep(1)
+            page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
             page.get_by_role("button", name="Eventi").click(force=True)
-            time.sleep(2)
+            page.wait_for_timeout(1500)
             for _ in range(20):
                 ev = page.get_by_text("evento con promemoria playwright", exact=False).first
                 if ev.count() == 0:
                     break
                 ev.click()
-                time.sleep(2)
+                page.wait_for_timeout(1500)
                 try:
                     page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 try:
                     page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 try:
                     page.get_by_role("button", name="Elimina").first.click(timeout=3000)
-                    time.sleep(2)
+                    page.wait_for_timeout(1500)
+                    try:
+                        toast = page.locator("div.aru-toast__message").first
+                        if toast.is_visible():
+                            print(f"Toast eliminazione: {toast.text_content()}")
+                    except Exception:
+                        pass
                 except Exception:
                     pass
                 try:
                     page.keyboard.press("Escape")
-                    time.sleep(0.5)
+                    page.wait_for_timeout(300)
                 except Exception:
                     pass
                 page.get_by_role("button", name="Eventi").click(force=True)
-                time.sleep(2)
+                page.wait_for_timeout(1500)
         except Exception:
             pass

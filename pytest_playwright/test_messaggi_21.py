@@ -34,33 +34,31 @@ def test_salva_e_usa_modello(page):
     # Accetta eventuali cookie che potrebbero bloccare i click
     try:
         page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=2000)
-        time.sleep(1)
     except Exception:
         pass
 
     # Salva come modello usando il menu a tendina accanto al pulsante Invia
     page.locator("#new-message\\.save-menu").click(force=True)
-    time.sleep(1)
+    page.locator('button[title="Salva come modello"]').wait_for(state="visible", timeout=5000)
     page.locator('button[title="Salva come modello"]').click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
 
     # Chiudi il dialog del messaggio (pulsante Chiudi nella toolbar del compose)
     try:
         page.locator('button[title="Chiudi"]').last.click(force=True)
-        time.sleep(1)
+        page.wait_for_timeout(500)
     except Exception:
         pass
 
     # Se compare dialog di conferma chiusura, conferma
     try:
         page.locator('button[title="Si"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=2000)
-        time.sleep(1)
+        page.wait_for_timeout(500)
     except Exception:
         pass
 
     # Apri la cartella Modelli e verifica che il modello sia presente
     page.locator('button[title="Modelli"]').click()
-    time.sleep(1)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     # Verifica che il modello salvato con il nome univoco sia visibile nella lista
@@ -78,14 +76,14 @@ def test_salva_e_usa_modello(page):
     # Cleanup: elimina il modello salvato
     try:
         modello_row.click()
-        time.sleep(1)
+        page.wait_for_timeout(500)
         page.locator(
             'button:has(aru-symbol[title="Elimina"]), aru-button:has(aru-symbol[title="Elimina"]), button[title="Elimina"]'
         ).first.click()
-        time.sleep(1)
+        page.wait_for_timeout(500)
         try:
             page.get_by_role("button", name="Sì").first.click(timeout=2000)
-            time.sleep(1)
+            page.wait_for_timeout(500)
         except Exception:
             pass
     except Exception:

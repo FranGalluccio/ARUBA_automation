@@ -25,13 +25,11 @@ def test_evento_tutto_il_giorno(page):
     titolo_evento = f"evento tutto il giorno playwright {ts}"
 
     try:
-        time.sleep(1)
         page.get_by_role("button", name="Calendario").click()
-        time.sleep(1)
 
         # Crea nuovo evento
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
-        time.sleep(1)
+        page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
         page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
 
         # Attiva flag "Giornata intera" - può essere checkbox, label o toggle
@@ -52,7 +50,7 @@ def test_evento_tutto_il_giorno(page):
                 if el.count() > 0:
                     el.click(force=True)
                     allday_clicked = True
-                    time.sleep(0.5)
+                    page.wait_for_timeout(300)
                     break
             except Exception:
                 pass
@@ -63,7 +61,6 @@ def test_evento_tutto_il_giorno(page):
 
         # Salva
         page.get_by_role("button", name="Salva").click()
-        time.sleep(1)
 
         # Verifica che l'evento sia presente nel calendario
         page.locator('a, [class*="event"]').filter(has_text=titolo_evento).first.wait_for(
@@ -82,36 +79,42 @@ def test_evento_tutto_il_giorno(page):
         # Cleanup: elimina l'evento (eseguito anche in caso di fallimento)
         try:
             page.get_by_role("button", name="Calendario").click()
-            time.sleep(1)
+            page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
             page.get_by_role("button", name="Eventi").click(force=True)
-            time.sleep(2)
+            page.wait_for_timeout(1500)
             for _ in range(20):
                 ev = page.get_by_text("evento tutto il giorno playwright", exact=False).first
                 if ev.count() == 0:
                     break
                 ev.click()
-                time.sleep(2)
+                page.wait_for_timeout(1500)
                 try:
                     page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 try:
                     page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 try:
                     page.get_by_role("button", name="Elimina").first.click(timeout=3000)
-                    time.sleep(2)
+                    page.wait_for_timeout(1500)
+                    try:
+                        toast = page.locator("div.aru-toast__message").first
+                        if toast.is_visible():
+                            print(f"Toast eliminazione: {toast.text_content()}")
+                    except Exception:
+                        pass
                 except Exception:
                     pass
                 try:
                     page.keyboard.press("Escape")
-                    time.sleep(0.5)
+                    page.wait_for_timeout(300)
                 except Exception:
                     pass
                 page.get_by_role("button", name="Eventi").click(force=True)
-                time.sleep(2)
+                page.wait_for_timeout(1500)
         except Exception:
             pass

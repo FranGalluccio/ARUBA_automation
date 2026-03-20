@@ -2,7 +2,6 @@ import os
 import json
 from playwright.sync_api import Page
 from base_pec import LoginPec
-import time
 from datetime import datetime
 
 
@@ -30,13 +29,11 @@ def test_import_export_calendario(page: Page):
         # --- Vai al calendario ---
         page.get_by_role("button", name="Calendario").click()
         page.wait_for_load_state("load")
-        time.sleep(1)
 
         # --- Importa calendario (.ics) ---
         page.get_by_role("button", name="Importa").first.click()
-        time.sleep(1)
+        page.locator("#hidden_input").wait_for(state="attached", timeout=5000)
         page.locator("#hidden_input").set_input_files(FILE_ICS)
-        time.sleep(1)
 
         # Conferma import: click JS sul bottone "Importa" nel dialog (testo esatto)
         page.evaluate("""() => {
@@ -44,17 +41,17 @@ def test_import_export_calendario(page: Page):
             const btn = btns.find(b => b.textContent.trim() === 'Importa');
             if (btn) btn.click();
         }""")
-        time.sleep(3)
+        page.wait_for_timeout(3000)
 
         # Chiudi dialog se ancora aperto
         if page.locator('.cdk-overlay-pane').count() > 0:
             try:
                 page.locator('button').filter(has_text="Annulla").last.click(timeout=2000)
-                time.sleep(1)
+                page.wait_for_timeout(500)
             except Exception:
                 pass
 
-        time.sleep(1)
+        page.wait_for_timeout(1000)
 
         # Screenshot dopo import
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_post_import_{datetime.now():%H-%M-%S}.png"))
@@ -62,8 +59,9 @@ def test_import_export_calendario(page: Page):
         # --- Esporta calendario ---
         # Click "Esporta" nella sidebar → apre dialog "Esporta calendario"
         export_triggered = False
+        page.get_by_role("button", name="Esporta").first.wait_for(state="visible", timeout=8000)
         page.get_by_role("button", name="Esporta").first.click(timeout=5000)
-        time.sleep(1)
+        page.wait_for_timeout(500)
 
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_export_dialog_{datetime.now():%H-%M-%S}.png"))
 
@@ -75,7 +73,7 @@ def test_import_export_calendario(page: Page):
             date_input = page.locator('.cdk-overlay-pane input[type="text"], .cdk-overlay-pane input').first
             date_input.triple_click()
             date_input.fill(f"{inizio} - {fine}")
-            time.sleep(0.5)
+            page.wait_for_timeout(300)
         except Exception:
             pass
 
@@ -112,44 +110,50 @@ def test_import_export_calendario(page: Page):
         # --- Cleanup: elimina eventi importati (eseguito anche in caso di fallimento) ---
         try:
             page.get_by_role("button", name="Calendario").click()
-            time.sleep(1)
+            page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
             page.get_by_role("button", name="Eventi").click()
-            time.sleep(2)
+            page.wait_for_timeout(1500)
             for _ in range(20):
                 ev = page.locator('a, [class*="event"]').filter(has_text="test").first
                 if ev.count() == 0:
                     break
                 ev.click()
-                time.sleep(2)
+                page.wait_for_timeout(1500)
                 try:
                     page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 try:
                     page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 # Step extra per eventi ricorrenti: Tutti gli eventi → Ok
                 try:
                     page.get_by_role("radio", name="Tutti gli eventi").check(timeout=2000)
-                    time.sleep(0.5)
+                    page.wait_for_timeout(300)
                     page.get_by_role("button", name="Ok").first.click(timeout=2000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 try:
                     page.get_by_role("button", name="Elimina").first.click(timeout=3000)
-                    time.sleep(2)
+                    page.wait_for_timeout(1500)
+                    try:
+                        toast = page.locator("div.aru-toast__message").first
+                        if toast.is_visible():
+                            print(f"Toast eliminazione: {toast.text_content()}")
+                    except Exception:
+                        pass
                 except Exception:
                     pass
                 try:
                     page.keyboard.press("Escape")
-                    time.sleep(0.5)
+                    page.wait_for_timeout(300)
                 except Exception:
                     pass
                 page.get_by_role("button", name="Eventi").click(force=True)
-                time.sleep(2)
+                page.wait_for_timeout(1500)
         except Exception:
             pass

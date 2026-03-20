@@ -1,7 +1,6 @@
 import os
 import json
 from datetime import datetime
-import time
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -21,9 +20,7 @@ def test_naviga_periodi_calendario(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
     page.get_by_role("button", name="Calendario").click()
-    time.sleep(1)
 
     # Leggi il testo dell'header corrente dal mini-calendar sidebar ("Marzo 2026")
     header = page.locator('div.vanilla-calendar-header__content').first
@@ -33,7 +30,7 @@ def test_naviga_periodi_calendario(page):
 
     # Naviga al mese/periodo successivo
     page.locator('button[title="Next"]').click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
     header_successivo = header.inner_text().strip()
     print(f"Header dopo Next: '{header_successivo}'")
     assert header_iniziale != header_successivo, \
@@ -41,7 +38,7 @@ def test_naviga_periodi_calendario(page):
 
     # Naviga indietro
     page.locator('button[title="Prev"]').click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
     header_tornato = header.inner_text().strip()
     print(f"Header dopo Prev: '{header_tornato}'")
     assert header_tornato == header_iniziale, \
@@ -50,7 +47,7 @@ def test_naviga_periodi_calendario(page):
     # Vai alla settimana corrente con "Oggi" (può essere disabilitato se già su oggi)
     try:
         page.locator('button[title="Oggi"]').click(force=True)
-        time.sleep(1)
+        page.wait_for_timeout(500)
     except Exception:
         pass
 

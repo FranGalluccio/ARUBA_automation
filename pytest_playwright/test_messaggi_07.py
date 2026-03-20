@@ -31,52 +31,52 @@ def test_messaggi_preferiti_pinnati(page):
         page.locator('span[title="Invia"]').click()
         page.wait_for_timeout(4000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(2)
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     count = page.locator('div.frame-record-desktop').count()
     assert count >= 2, f"Inbox ha solo {count} messaggi — impossibile testare preferiti/pinnati"
 
     # Seleziona i primi 2 messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
     page.locator('div.aru-input-checkbox').nth(2).click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
 
     # Clicca su altro
     page.locator('svg[title="Altro"]').click()
-    time.sleep(1)
+    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).wait_for(state="visible", timeout=5000)
 
     # Aggiungi ai preferiti
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).click()
-    time.sleep(2)
+    page.wait_for_timeout(1000)
 
     # Seleziona i primi 2 messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
     page.locator('div.aru-input-checkbox').nth(2).click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
 
     # Clicca su altro
     page.locator('svg[title="Altro"]').click()
-    time.sleep(1)
+    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).wait_for(state="visible", timeout=5000)
 
     # Rimuovi dai preferiti
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).click()
-    time.sleep(2)
+    page.wait_for_timeout(1000)
 
     # Seleziona i primi 2 messaggi
     page.locator('div.aru-input-checkbox').nth(1).click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
     page.locator('div.aru-input-checkbox').nth(2).click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
 
     # Clicca su altro
     page.locator('svg[title="Altro"]').click()
-    time.sleep(1)
+    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).wait_for(state="visible", timeout=5000)
 
     # Aggiungi in evidenza
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
-    time.sleep(2)
+    page.wait_for_timeout(1000)
 
     # Passa sopra la prima riga (hover) e poi clicca sul checkbox
     page.locator('div.frame-record-desktop-row-content').nth(0).hover()
@@ -85,16 +85,17 @@ def test_messaggi_preferiti_pinnati(page):
     # Passa sopra la seconda riga (hover) e poi clicca sul checkbox
     page.locator('div.frame-record-desktop-row-content').nth(1).hover()
     page.locator('div.frame-record-desktop-row-content').nth(1).locator('div.aru-input-checkbox').click(force=True)
-    
+
     # Clicca su altro
     page.locator('svg[title="Altro"]').click()
-    
+    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).wait_for(state="visible", timeout=5000)
+
     # Rimuovi da in evidenza
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
-    
-    time.sleep(1)
+
     # Verifica toast di conferma che i messaggi non sono più in evidenza
-    toast = page.locator("div.aru-toast__message").first
+    toast = page.locator("div.aru-toast__message").filter(has_text="non sono più in evidenza").first
+    toast.wait_for(state="visible", timeout=8000)
     assert toast.is_visible(), "Nessun toast di conferma per la rimozione da 'In evidenza'"
     assert " messaggi non sono più in evidenza." in toast.text_content(), \
         f"Toast non contiene il testo atteso: '{toast.text_content()}'"
@@ -107,8 +108,7 @@ def test_messaggi_preferiti_pinnati(page):
     assert highlighted == 0, (
         f"Trovati {highlighted} messaggi ancora marcati come 'in evidenza' dopo la rimozione"
     )
-    
-    time.sleep(1)
+
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,

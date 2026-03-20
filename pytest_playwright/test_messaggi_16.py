@@ -24,25 +24,21 @@ def test_copia_messaggio_in_cartella(page):
     # Crea una cartella di destinazione
     nome_cartella = "Test copia playwright"
     page.locator('span[title="Crea nuova cartella"]').click()
-    time.sleep(1)
     folder_input = page.locator('input[placeholder="Nome cartella"]')
     folder_input.wait_for(state="visible", timeout=5000)
     folder_input.fill(nome_cartella)
-    # Salva la cartella: prova Enter prima, poi il bottone
     # Salva la cartella cliccando il pulsante "Salva" nel CDK overlay pane
     page.locator('.cdk-overlay-pane button:has-text("Salva")').first.click()
-    time.sleep(1)
     # Aspetta che il dialog si chiuda
     try:
         page.locator('.cdk-overlay-backdrop').wait_for(state="hidden", timeout=5000)
     except Exception:
         pass
-    time.sleep(1)
+    page.wait_for_timeout(500)
     # Naviga direttamente all'inbox per bypassare eventuali backdrop residui
     inbox_url = config["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
     page.goto(inbox_url, timeout=20000)
-    time.sleep(1)
-    time.sleep(1)
+    page.wait_for_load_state("load")
 
     # Invia un messaggio a se stessi
     Helper.crea_messaggio(
@@ -56,7 +52,6 @@ def test_copia_messaggio_in_cartella(page):
     # Aspetta consegna
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click(force=True)
-    time.sleep(1)
 
     # Apri il messaggio
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -65,14 +60,14 @@ def test_copia_messaggio_in_cartella(page):
 
     # Clicca Copia
     page.locator('aru-symbol[title="Copia"]').first.click(force=True)
-    time.sleep(1)
+    page.wait_for_timeout(500)
 
     # Clicca il pulsante della cartella nel dropdown (nth(1) = Content area = dropdown item)
+    page.locator(f'button[title="{nome_cartella}"]').nth(1).wait_for(state="visible", timeout=5000)
     page.locator(f'button[title="{nome_cartella}"]').nth(1).click(force=True)
-    time.sleep(1)
+    page.wait_for_timeout(500)
 
     # Verifica toast (non bloccante)
-    time.sleep(1)
     try:
         toast = page.locator("div.aru-toast__message").first
         if toast.is_visible():
@@ -82,16 +77,12 @@ def test_copia_messaggio_in_cartella(page):
 
     # Verifica: il messaggio è presente nella cartella di destinazione
     page.locator(f'button[title="{nome_cartella}"]').first.click(force=True)
-    time.sleep(1)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
     assert page.locator('div.frame-record-desktop').count() > 0, "La copia del messaggio non è stata trovata nella cartella"
 
     # Verifica: il messaggio è ancora presente in In arrivo (non rimosso)
     page.locator('button[title="In arrivo"]').click()
-    time.sleep(1)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-
-    
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -103,7 +94,6 @@ def test_copia_messaggio_in_cartella(page):
 
     # Cleanup: elimina la cartella
     page.locator(f'button[title="{nome_cartella}"]').first.click(button="right")
-    time.sleep(1)
+    page.locator('button:has-text("Elimina cartella")').wait_for(state="visible", timeout=5000)
     page.locator('button:has-text("Elimina cartella")').click()
     page.locator('span[title="Elimina"]').click()
-    time.sleep(1)

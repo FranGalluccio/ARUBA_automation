@@ -1,7 +1,6 @@
 import os
 import json
 from datetime import datetime
-import time
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -25,16 +24,14 @@ def test_etichetta(page):
 
     # Clicca su nuova cartella
     page.locator('span[title="Nuova etichetta"]').click()
-    
+
     nome_etichetta = "Test etichetta lavoro"
-    time.sleep(1)
     # Compila nome etichetta
+    page.locator("input[placeholder='Es. Lavoro']").wait_for(state="visible", timeout=5000)
     page.locator("input[placeholder='Es. Lavoro']").fill(nome_etichetta)
-    time.sleep(1)
     # Salva nuova etichetta
     page.get_by_role("button", name="Salva").click()
-    time.sleep(1)
-    
+
     chiudi = page.get_by_role("button", name="Chiudi")
 
     try:
@@ -45,42 +42,41 @@ def test_etichetta(page):
 
     # Seleziona i messaggi (hover per renderli visibili)
     page.locator('div.frame-record-desktop').nth(0).hover()
-    time.sleep(0.5)
+    page.wait_for_timeout(300)
     page.locator('div.aru-input-checkbox').nth(1).click(force=True)
-    time.sleep(1)
+    page.wait_for_timeout(500)
     page.locator('div.frame-record-desktop').nth(1).hover()
-    time.sleep(0.5)
+    page.wait_for_timeout(300)
     page.locator('div.aru-input-checkbox').nth(2).click(force=True)
-    
+
     # Clicca su etichetta
     page.locator('button:has(aru-symbol[title="Etichetta"])').nth(0).click()
-    
-    time.sleep(1)
+    page.locator('aru-chosen-closed[inputgroupinputs*="Test etichetta lavoro"]').wait_for(state="visible", timeout=5000)
 
     # Seleziona etichetta lavoro
     page.locator('aru-chosen-closed[inputgroupinputs*="Test etichetta lavoro"]').click()
-    time.sleep(1)
+    page.wait_for_timeout(500)
     # Applica etichetta
     page.evaluate('''() => {
     const btn = document.querySelector('button[title="Applica"]');
     btn?.click();
 }''')
-    
+
     # Clicca con tasto destro sull'etichetta creata
     page.locator(f'button[title="{nome_etichetta}"]').click(button="right")
-    
+
     # Elimina etichetta
+    page.locator('button:has-text("Elimina etichetta")').wait_for(state="visible", timeout=5000)
     page.locator('button:has-text("Elimina etichetta")').click()
-    
+
     # Conferma elimina etichetta
     page.locator('button[title="Si"]').click()
-    time.sleep(1)
-    # Verifica toast di conferma invio
-    toast = page.locator("div.aru-toast__message").first
+
+    # Verifica toast di conferma eliminazione etichetta
+    toast = page.locator("div.aru-toast__message").filter(has_text="L'etichetta è stata eliminata.").first
     expect(toast).to_be_visible()
     assert "L'etichetta è stata eliminata." in toast.text_content()
-    
-    time.sleep(1)
+
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,
@@ -89,12 +85,3 @@ def test_etichetta(page):
     page.screenshot(path=screenshot_path, full_page=True)
 
     print(f"Screenshot salvato in: {screenshot_path}")
-    
-    
-    
-
-
-
-
-
-

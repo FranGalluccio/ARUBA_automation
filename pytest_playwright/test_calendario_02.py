@@ -28,68 +28,71 @@ def test_creazione_modifica_evento(page):
     titolo_base = f"evento test automatico {ts}"
     titolo_modificato = f"evento test automatico modificato {ts}"
 
-    time.sleep(1)
-
     # Crea nuovo evento
     page.get_by_role("button", name="Calendario").click()
     page.get_by_role("button", name="Nuovo evento").click()
+    page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
     page.get_by_placeholder("Inserisci un titolo").fill(titolo_base)
     page.get_by_role("button", name="Salva").click()
-    time.sleep(1)
+    page.locator("a").filter(has_text=titolo_base).filter(has_not_text="modificato").first.wait_for(state="visible", timeout=8000)
     page.locator("a").filter(has_text=titolo_base).filter(has_not_text="modificato").first.click()
+    page.get_by_role("button", name="Modifica").wait_for(state="visible", timeout=5000)
     page.get_by_role("button", name="Modifica").click()
-    time.sleep(1)
+    page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=5000)
     page.get_by_placeholder("Inserisci un titolo").click()
-    time.sleep(1)
     page.get_by_placeholder("Inserisci un titolo").fill("")
     page.get_by_placeholder("Inserisci un titolo").fill(titolo_modificato)
-    time.sleep(1)
     page.get_by_role("button", name="Salva").click()
 
     try:
-        time.sleep(1)
+        page.wait_for_timeout(1000)
         screenshot_path = os.path.join(
             REPORT_FOLDER,
             f"test_calendario_02___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
-        time.sleep(1)
     finally:
         # Cleanup: elimina evento (eseguito anche in caso di fallimento)
         try:
             page.get_by_role("button", name="Calendario").click()
-            time.sleep(1)
+            page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
             page.get_by_role("button", name="Eventi").click(force=True)
-            time.sleep(2)
+            page.wait_for_timeout(1500)
             for titolo in ["evento test automatico"]:
                 for _ in range(20):
                     ev = page.get_by_text(titolo, exact=False).first
                     if ev.count() == 0:
                         break
                     ev.click()
-                    time.sleep(2)
+                    page.wait_for_timeout(1500)
                     try:
                         page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
-                        time.sleep(1)
+                        page.wait_for_timeout(500)
                     except Exception:
                         pass
                     try:
                         page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
-                        time.sleep(1)
+                        page.wait_for_timeout(500)
                     except Exception:
                         pass
                     try:
                         page.get_by_role("button", name="Elimina").first.click(timeout=3000)
-                        time.sleep(2)
+                        page.wait_for_timeout(1500)
+                        try:
+                            toast = page.locator("div.aru-toast__message").first
+                            if toast.is_visible():
+                                print(f"Toast eliminazione: {toast.text_content()}")
+                        except Exception:
+                            pass
                     except Exception:
                         pass
                     try:
                         page.keyboard.press("Escape")
-                        time.sleep(0.5)
+                        page.wait_for_timeout(300)
                     except Exception:
                         pass
                     page.get_by_role("button", name="Eventi").click(force=True)
-                    time.sleep(2)
+                    page.wait_for_timeout(1500)
         except Exception:
             pass

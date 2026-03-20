@@ -1,7 +1,6 @@
 import os
 import json
 from datetime import datetime
-import time
 from base_pec import LoginPec, Helper
 from playwright.sync_api import sync_playwright, expect
 
@@ -23,12 +22,11 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 def test_creazione_calendario(page):
     # Login PEC
     LoginPec(page).login_pec(config)
-    
-    time.sleep(1)
-    
+
     # Crea nuovo calendario
     page.get_by_role("button", name="Calendario").click()
     page.get_by_role("button", name="Nuovo calendario").click()
+    page.get_by_role("textbox", name="input field").wait_for(state="visible", timeout=5000)
     page.get_by_role("textbox", name="input field").click()
     page.get_by_role("textbox", name="input field").fill("Lavoro")
     page.locator("aru-webmail-input-color").get_by_role("button").click()
@@ -46,20 +44,14 @@ def test_creazione_calendario(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    
+
     # Cleanup: elimina calendario creato
     try:
-        time.sleep(2)
+        page.get_by_role("checkbox", name="Lavoro").first.wait_for(state="visible", timeout=5000)
         page.get_by_role("checkbox", name="Lavoro").first.click(button="right")
-        time.sleep(1)
+        page.get_by_role("menuitem", name="Elimina").wait_for(state="visible", timeout=3000)
         page.get_by_role("menuitem", name="Elimina").click()
-        time.sleep(1)
+        page.get_by_role("button", name="Sì").wait_for(state="visible", timeout=3000)
         page.get_by_role("button", name="Sì").click()
-        time.sleep(1)
     except Exception:
         pass
-    
-
-
-    
-    

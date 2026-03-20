@@ -4,7 +4,6 @@ from datetime import datetime
 import time
 from base_pec import LoginPec, Helper
 from playwright.sync_api import sync_playwright, expect
-from datetime import datetime
 import locale
 
 # Forza locale italiana (necessaria per mesi in italiano)
@@ -31,20 +30,15 @@ def test_creazione_evento_ricorrente(page):
     ts = int(time.time())
     titolo_evento = f"nuovo evento ricorrente playwright {ts}"
 
-    time.sleep(1)
-
     # Crea nuovo evento ricorrente
     page.get_by_role("button", name="Calendario").click()
     page.get_by_role("button", name="Nuovo evento", exact=True).click()
+    page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
     page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
-    #page.get_by_role("textbox", name="input date").first.click()
-    #page.get_by_text("Gennaio 2026").click()
-    #page.locator("#event-dialog").get_by_text("Gennaio").click()
-    #page.locator("#event-dialog").get_by_text("28").click()
     page.get_by_role("combobox", name="Non ripetere").click()
     page.get_by_role("button", name="Personalizza...").click()
     page.get_by_role("radio", name="Dopo").check()
-    time.sleep(1)
+    page.wait_for_timeout(500)
     page.get_by_role("dialog") \
     .filter(has_text="Personalizza") \
     .filter(has=page.locator("button", has_text="Salva")) \
@@ -52,63 +46,68 @@ def test_creazione_evento_ricorrente(page):
     .get_by_role("button", name="Salva") \
     .click()
 
-    time.sleep(1)
+    page.wait_for_timeout(500)
     page.get_by_role("button", name="Salva").click()
 
     try:
-        time.sleep(1)
+        page.wait_for_timeout(1000)
         screenshot_path = os.path.join(
             REPORT_FOLDER,
             f"test_calendario_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
-        time.sleep(1)
     finally:
         # Cleanup: elimina evento ricorrente (eseguito anche in caso di fallimento)
         try:
             page.get_by_role("button", name="Calendario").click()
-            time.sleep(1)
+            page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
             page.get_by_role("button", name="Eventi").click(force=True)
-            time.sleep(2)
+            page.wait_for_timeout(1500)
             for _ in range(20):
                 ev = page.get_by_text("nuovo evento ricorrente playwright", exact=False).first
                 if ev.count() == 0:
                     break
                 ev.click()
-                time.sleep(2)
+                page.wait_for_timeout(1500)
                 # 1. Apri menu 3 puntini
                 try:
                     page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 # 2. Annulla evento dal menu
                 try:
                     page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
                 # 3. Dialog ricorrente: seleziona "Tutti gli eventi" → Ok
                 try:
                     page.get_by_role("radio", name="Tutti gli eventi").check(timeout=2000)
-                    time.sleep(0.5)
+                    page.wait_for_timeout(300)
                     page.get_by_role("button", name="Ok").first.click(timeout=2000)
-                    time.sleep(1)
+                    page.wait_for_timeout(500)
                 except Exception:
                     pass
-                # 3. Dialog conferma: Elimina
+                # 4. Dialog conferma: Elimina
                 try:
                     page.get_by_role("button", name="Elimina").first.click(timeout=3000)
-                    time.sleep(2)
+                    page.wait_for_timeout(1500)
+                    try:
+                        toast = page.locator("div.aru-toast__message").first
+                        if toast.is_visible():
+                            print(f"Toast eliminazione: {toast.text_content()}")
+                    except Exception:
+                        pass
                 except Exception:
                     pass
                 try:
                     page.keyboard.press("Escape")
-                    time.sleep(0.5)
+                    page.wait_for_timeout(300)
                 except Exception:
                     pass
                 page.get_by_role("button", name="Eventi").click(force=True)
-                time.sleep(2)
+                page.wait_for_timeout(1500)
         except Exception:
             pass
