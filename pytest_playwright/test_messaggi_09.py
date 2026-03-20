@@ -55,18 +55,12 @@ def test_segna_come_letto_da_leggere(page):
     page.locator('button:has(aru-symbol[title="Segna tutti come da leggere"])').first.click(force=True)
     page.wait_for_timeout(1500)
 
-    # Verifica che almeno un messaggio risulti non letto
-    aggiorna = page.locator('aru-symbol[title="Aggiorna"]')
-    aggiorna.click()
-    page.wait_for_timeout(1000)
-
-    unread_count = page.locator(
-        'div.frame-record-desktop.unread, '
-        'div.frame-record-desktop[class*="unread"], '
-        '[class*="not-read"]'
-    ).count()
-    assert unread_count > 0, (
-        "Dopo 'Segna tutti come da leggere' non sono stati trovati messaggi non letti nella inbox"
+    # Verifica che almeno un messaggio risulti non letto:
+    # il titolo della pagina mostra "(N)" davanti quando ci sono N messaggi non letti
+    page.wait_for_timeout(2000)
+    title = page.title()
+    assert title.startswith("("), (
+        f"Dopo 'Segna tutti come da leggere' il titolo non mostra messaggi non letti: '{title}'"
     )
 
     # Percorso screenshot dinamico
