@@ -41,8 +41,8 @@ def test_messaggio_alta_priorita(page):
     # Trova il pulsante "Invia" e cliccalo
     page.locator('span[title="Invia"]').click()
     
-     # Aspetta 8 secondi
-    page.wait_for_timeout(8000)
+     # Aspetta consegna
+    page.wait_for_timeout(15000)
     
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()

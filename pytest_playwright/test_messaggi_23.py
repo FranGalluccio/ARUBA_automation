@@ -34,7 +34,7 @@ def test_ricevuta_accettazione(page):
     # Vai alla inbox e aggiorna (la RA arriva entro pochi secondi)
     page.wait_for_timeout(5000)
     page.locator("#messages").get_by_label("Messaggi").first.click()
-    page.wait_for_timeout(30000)
+    page.wait_for_timeout(45000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
     page.wait_for_timeout(5000)
     page.locator('aru-symbol[title="Aggiorna"]').click()

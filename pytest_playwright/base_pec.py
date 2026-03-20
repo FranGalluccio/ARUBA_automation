@@ -47,7 +47,8 @@ class LoginPec:
 
     # Attendi caricamento pagina
         self.page.wait_for_load_state("load", timeout=20_000)
-        
+        self.page.wait_for_timeout(2000)
+
     # Verifica login riuscito (pattern URL configurabile per ambienti diversi)
         url_pattern = config["pec"].get("inbox_url_pattern", "INBOX")
         expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=20_000)

@@ -50,7 +50,7 @@ def test_archivio_messaggio_inviato(page):
     #  dal caricamento dell'h1 sulla pagina di configurazione)
     page.goto(ARCHIVE_SETTINGS_URL, timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
-    time.sleep(2)
+    time.sleep(5)
     if page.locator("h1").filter(has_text="Archivio").count() == 0:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
 
@@ -63,10 +63,12 @@ def test_archivio_messaggio_inviato(page):
 
     # Salva
     try:
-        page.locator('aru-button[skin="primary"]').first.click()
+        salva = page.locator('aru-button[skin="primary"]').first
+        salva.wait_for(state="visible", timeout=10000)
+        salva.click()
         time.sleep(1)
     except Exception:
-        page.get_by_role("button", name="Salva").first.click()
+        page.get_by_role("button", name="Salva").first.click(timeout=15000)
         time.sleep(1)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_config_{datetime.now():%H-%M-%S}.png"))

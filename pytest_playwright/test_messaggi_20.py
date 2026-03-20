@@ -35,7 +35,7 @@ def test_scarica_allegato_ricevuto(page):
     page.locator('span[title="Invia"]').click()
 
     # Aspetta consegna
-    page.wait_for_timeout(8000)
+    page.wait_for_timeout(15000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
     time.sleep(1)
 
