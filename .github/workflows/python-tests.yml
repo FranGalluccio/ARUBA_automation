@@ -30,6 +30,7 @@ on:
         options:
           - LAPTOP-7AQM6PC9
           - michela
+          - lorenzo
 
 jobs:
   test:
