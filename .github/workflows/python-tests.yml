@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Mostra ambiente selezionato
-        if: inputs.runner != 'lorenzo'
+        if: runner.os != 'Linux'
         shell: powershell
         run: |
           $amb = "${{ inputs.ambiente }}"
@@ -53,7 +53,7 @@ jobs:
           Write-Host "========================================" -ForegroundColor Cyan
 
       - name: Mostra ambiente selezionato (lorenzo)
-        if: inputs.runner == 'lorenzo'
+        if: runner.os == 'Linux'
         shell: bash
         run: |
           amb="${{ inputs.ambiente }}"
@@ -63,21 +63,21 @@ jobs:
           echo "========================================"
 
       - name: Install dependencies
-        if: inputs.runner != 'lorenzo'
+        if: runner.os != 'Linux'
         shell: powershell
         run: |
           python -m pip install -r requirements.txt
           python -m playwright install chromium
 
       - name: Install dependencies (lorenzo)
-        if: inputs.runner == 'lorenzo'
+        if: runner.os == 'Linux'
         shell: bash
         run: |
           python -m pip install -r requirements.txt
           python -m playwright install chromium
 
       - name: Run tests
-        if: inputs.runner != 'lorenzo'
+        if: runner.os != 'Linux'
         shell: powershell
         continue-on-error: true
         env:
@@ -116,7 +116,7 @@ jobs:
             --browser chromium
 
       - name: Run tests (lorenzo)
-        if: inputs.runner == 'lorenzo'
+        if: runner.os == 'Linux'
         shell: bash
         continue-on-error: true
         env:
