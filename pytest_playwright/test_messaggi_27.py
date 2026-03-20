@@ -65,7 +65,7 @@ def test_anomalia_invio_non_pec(page):
 
     # Cerca avviso/errore sincrono nella UI: alert, toast, testo "anomalia"
     avviso_ui = page.locator('[role="alert"], .alert, aru-toast, .error-message').first
-    has_anomalia_text = page.get_by_text("anomalia", exact=False).is_visible()
+    has_anomalia_text = page.get_by_text("anomalia", exact=False).first.is_visible()
 
     # Se la UI mostra un avviso sincrono il test passa subito
     if avviso_ui.is_visible() or has_anomalia_text:

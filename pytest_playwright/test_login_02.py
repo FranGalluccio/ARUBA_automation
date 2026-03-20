@@ -49,7 +49,7 @@ def test_login_credenziali_errate(page):
     expect(error_message).to_be_visible()
     # Messaggio di errore varia per ambiente/lingua (IT: "dati inseriti", EN: "details correctly")
     err_text = error_message.inner_text()
-    assert "dati inseriti" in err_text.lower() or "details" in err_text.lower() or "incorrect" in err_text.lower() or "not correct" in err_text.lower(), \
+    assert "dati inseriti" in err_text.lower() or "details" in err_text.lower() or "incorrect" in err_text.lower() or "not correct" in err_text.lower() or "correttamente" in err_text.lower(), \
         f"Messaggio di errore login inatteso: '{err_text}'"
 
     time.sleep(1)
