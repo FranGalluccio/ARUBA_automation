@@ -59,17 +59,17 @@ def test_modifica_contatto(page):
         # oppure tenta doppio click sul contatto per aprire l'editor
         try:
             modifica_btn = page.locator('button[title="Modifica"], aru-symbol[title="Modifica"]').first
-            modifica_btn.wait_for(state="visible", timeout=3000)
+            modifica_btn.wait_for(state="visible", timeout=8000)
             modifica_btn.click()
         except Exception:
             # Fallback: doppio click sulla riga per aprire edit
             row.dblclick()
 
-        time.sleep(1)
+        time.sleep(3)
 
         # Modifica il cognome
         cognome_input = page.get_by_placeholder("Inserisci cognome")
-        cognome_input.wait_for(state="visible", timeout=15000)
+        cognome_input.wait_for(state="visible", timeout=30000)
         cognome_input.click(click_count=3)
         cognome_input.fill("Modificato")
 

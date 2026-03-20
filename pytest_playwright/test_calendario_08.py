@@ -85,8 +85,8 @@ def test_evento_tutto_il_giorno(page):
             time.sleep(1)
             page.get_by_role("button", name="Eventi").click(force=True)
             time.sleep(2)
-            for _ in range(5):
-                ev = page.get_by_text(titolo_evento, exact=False).first
+            for _ in range(20):
+                ev = page.get_by_text("evento tutto il giorno playwright", exact=False).first
                 if ev.count() == 0:
                     break
                 ev.click()

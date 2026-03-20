@@ -115,7 +115,7 @@ def test_import_export_calendario(page: Page):
             time.sleep(1)
             page.get_by_role("button", name="Eventi").click()
             time.sleep(2)
-            for _ in range(5):
+            for _ in range(20):
                 ev = page.locator('a, [class*="event"]').filter(has_text="test").first
                 if ev.count() == 0:
                     break
