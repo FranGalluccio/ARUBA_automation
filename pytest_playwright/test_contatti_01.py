@@ -30,10 +30,10 @@ def test_aggiungere_nuovo_contatto(page):
     unique_email = f"testautomatico_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
 
     page.click("#contacts")
-    time.sleep(1)
+    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
     try:
-        page.get_by_role("button", name="Nuovo").click()
+        page.get_by_role("button", name="Nuovo", exact=True).click()
         page.get_by_role("button", name="Procedi").click()
         page.get_by_placeholder("Inserisci nome").click()
         page.get_by_placeholder("Inserisci nome").fill("Test")

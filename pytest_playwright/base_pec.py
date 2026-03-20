@@ -52,9 +52,22 @@ class LoginPec:
     # Gestisci redirect smart-login (sessione residua che intercetta il login)
         if "smart-login" in self.page.url:
             inbox_url = config["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
-            self.page.goto(inbox_url, timeout=30_000)
-            self.page.wait_for_load_state("load", timeout=20_000)
+            self.page.goto(inbox_url, timeout=60_000, wait_until="domcontentloaded")
             self.page.wait_for_timeout(3000)
+
+    # Gestisci redirect Keycloak authenticate (execution token scaduto a metà run)
+        elif "login-actions/authenticate" in self.page.url:
+            self.page.goto(config["pec"]["url"], timeout=60_000)
+            self.page.wait_for_load_state("load", timeout=30_000)
+            self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(config["pec"]["username"])
+            self.page.locator("input[name='password'], input#password, input[type='password']").first.fill(config["pec"]["password"])
+            self.page.locator("button[type='submit'], button:has-text('Login')").first.click()
+            self.page.wait_for_load_state("load", timeout=30_000)
+            self.page.wait_for_timeout(5000)
+            if "smart-login" in self.page.url:
+                inbox_url = config["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
+                self.page.goto(inbox_url, timeout=60_000, wait_until="domcontentloaded")
+                self.page.wait_for_timeout(3000)
 
     # Verifica login riuscito (pattern URL configurabile per ambienti diversi)
         url_pattern = config["pec"].get("inbox_url_pattern", "INBOX")
@@ -77,7 +90,7 @@ class LoginPec:
 
     # Cookie (se presente)
         try:
-            self.page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click()
+            self.page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=2000)
         except Exception:
             pass
 
@@ -142,5 +155,11 @@ class Helper:
                 file_chooser.set_files([path_allegato])
                 page.wait_for_timeout(5000)
                 time.sleep(3)
+
+    # Dismiss cookie banner se appare durante la composizione del messaggio
+        try:
+            page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=2000)
+        except Exception:
+            pass
 
 

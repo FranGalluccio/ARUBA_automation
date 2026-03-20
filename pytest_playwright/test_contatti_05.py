@@ -25,13 +25,13 @@ def test_modifica_contatto(page):
 
     time.sleep(1)
     page.click("#contacts")
-    time.sleep(1)
+    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
     # Crea un nuovo contatto da modificare
     unique_email = f"testmod_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
 
     try:
-        page.get_by_role("button", name="Nuovo").click()
+        page.get_by_role("button", name="Nuovo", exact=True).click()
         page.get_by_role("button", name="Procedi").click()
         page.get_by_placeholder("Inserisci nome").fill("Contatto")
         page.get_by_placeholder("Inserisci cognome").fill("DaModificare")

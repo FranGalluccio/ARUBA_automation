@@ -25,14 +25,14 @@ def test_ricerca_contatto(page):
 
     time.sleep(1)
     page.click("#contacts")
-    time.sleep(1)
+    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
     # Crea un contatto con nome univoco per la ricerca
     nome_univoco = f"RicercaTest{int(time.time())}"
     unique_email = f"ricerca_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
 
     try:
-        page.get_by_role("button", name="Nuovo").click()
+        page.get_by_role("button", name="Nuovo", exact=True).click()
         page.get_by_role("button", name="Procedi").click()
         page.get_by_placeholder("Inserisci nome").fill(nome_univoco)
         page.get_by_placeholder("Inserisci cognome").fill("Playwright")
