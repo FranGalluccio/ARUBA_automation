@@ -69,7 +69,7 @@ def test_modifica_contatto(page):
 
         # Modifica il cognome
         cognome_input = page.get_by_placeholder("Inserisci cognome")
-        cognome_input.wait_for(state="visible", timeout=5000)
+        cognome_input.wait_for(state="visible", timeout=15000)
         cognome_input.click(click_count=3)
         cognome_input.fill("Modificato")
 

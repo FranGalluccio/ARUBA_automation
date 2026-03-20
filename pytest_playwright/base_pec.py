@@ -46,12 +46,19 @@ class LoginPec:
         self.page.locator("button[type='submit'], button:has-text('Login')").first.click()
 
     # Attendi caricamento pagina
-        self.page.wait_for_load_state("load", timeout=20_000)
-        self.page.wait_for_timeout(2000)
+        self.page.wait_for_load_state("load", timeout=30_000)
+        self.page.wait_for_timeout(5000)
+
+    # Gestisci redirect smart-login (sessione residua che intercetta il login)
+        if "smart-login" in self.page.url:
+            inbox_url = config["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
+            self.page.goto(inbox_url, timeout=30_000)
+            self.page.wait_for_load_state("load", timeout=20_000)
+            self.page.wait_for_timeout(3000)
 
     # Verifica login riuscito (pattern URL configurabile per ambienti diversi)
         url_pattern = config["pec"].get("inbox_url_pattern", "INBOX")
-        expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=20_000)
+        expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=30_000)
 
     # BNL: dopo il login reindirizza a /security/managedetails (pannello gestione account).
     # Il link "Read emails" è nel dropdown del profilo utente (elemento <a> con testo email).
