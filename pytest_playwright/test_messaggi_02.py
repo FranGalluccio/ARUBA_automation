@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 
 from base_pec import LoginPec, Helper
@@ -14,23 +15,24 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
+
 def test_messaggio_inoltrato(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
- # Aspetta che almeno un record sia visibile
+    # Oggetto univoco per identificare il messaggio inoltrato
+    ts = int(time.time())
+    oggetto_inoltro = f"Test inoltro playwright {ts}"
+
+    # Aspetta che almeno un record sia visibile e apri il primo
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-
-    # Clicca sul primo record
     page.locator('div.frame-record-desktop').first.click()
-    
-    # Clicca su inoltra
-    page.locator('aru-symbol[title="Inoltra"]').first.click()
-    
- # Prendi il destinatario dal config (usa la chiave principale)
-    destinatario = config["destinatari"]["destinatario_principale"]
 
-    # Fallback stabile: seleziona SOLO il campo destinatario
+    # Clicca su Inoltra
+    page.locator('aru-symbol[title="Inoltra"]').first.click()
+
+    # Compila destinatario
+    destinatario = config["destinatari"]["destinatario_principale"]
     destinatario_input = page.locator("input[placeholder='Destinatari']")
     try:
         destinatario_input.fill(destinatario)
@@ -38,44 +40,38 @@ def test_messaggio_inoltrato(page):
         page.locator('input[aria-label="input field"]').click()
         destinatario_input.fill(destinatario)
 
-    # Compila oggetto e corpo
-    page.locator('input[aria-label="input field"]').fill("Test automatico con Playwright - Inoltro messaggio")
+    # Oggetto univoco
+    page.locator('input[aria-label="input field"]').fill(oggetto_inoltro)
     page.locator("div[contenteditable='true']").fill("Corpo del messaggio inoltrato")
-    
-    # Trova il pulsante "Invia" e cliccalo
+
+    # Invia
     page.locator('span[title="Invia"]').click()
-    
-     # Aspetta 8 secondi
-    page.wait_for_timeout(8000)
-    
-    # Aggiorna la posta
+
+    # Aspetta consegna PEC (polling fino a 30s)
     page.locator('aru-symbol[title="Aggiorna"]').click()
+    messaggio_arrivato = False
+    for _ in range(10):
+        page.wait_for_timeout(3000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(1000)
+        if page.locator('div.frame-record-desktop').filter(has_text=oggetto_inoltro).count() > 0:
+            messaggio_arrivato = True
+            break
 
-    # Aspetta che almeno un record sia visibile
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+    assert messaggio_arrivato, f"Il messaggio inoltrato '{oggetto_inoltro}' non è arrivato in inbox entro 30s"
 
-    # Clicca sul primo record
-    page.locator('div.frame-record-desktop').first.click()
-
-    # Aspetta che il contenuto della mail sia visibile
+    # Apri il messaggio specifico
+    page.locator('div.frame-record-desktop').filter(has_text=oggetto_inoltro).first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
-    
-    # Prende il testo dell'oggetto dal messaggio aperto
+
+    # Verifica oggetto
     oggetto = page.locator("div.message-header-title-subject").inner_text().strip()
+    assert oggetto_inoltro in oggetto, f"Oggetto inatteso: {oggetto}"
 
-    # Confronto
-    assert "Test automatico" in oggetto, f"Oggetto inatteso: {oggetto}"
-    
-    page.wait_for_timeout(2000)
-
-    # Percorso screenshot dinamico
+    # Screenshot
     screenshot_path = os.path.join(
         REPORT_FOLDER,
         f"test_messaggi_02___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
-    
-    
-    

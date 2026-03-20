@@ -57,13 +57,15 @@ def test_messaggio_con_allegato(page):
         link_external_button.click()
 
     new_page = popup_info.value
-    new_page.wait_for_load_state("domcontentloaded")
+    new_page.wait_for_load_state("networkidle", timeout=15000)
 
     # Verifica pagina esterna
     assert "external-message" in new_page.url
 
-    # Clicca sull’allegato usando il nome dinamico
-    new_page.locator(f'button[title="{os.path.basename(file_allegato)}"]').click()
+    # Aspetta che il bottone allegato sia visibile
+    nome_allegato = os.path.basename(file_allegato)
+    new_page.locator(f'button[title="{nome_allegato}"]').wait_for(state="visible", timeout=15000)
+    new_page.locator(f'button[title="{nome_allegato}"]').click()
     
     # Mostra anteprima
     new_page.locator('text="Mostra anteprima"').first.click()

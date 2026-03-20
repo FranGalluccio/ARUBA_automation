@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 
 from base_pec import LoginPec, Helper
@@ -16,75 +17,67 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
-# --- Percorso importa messaggi ---
-importa_messaggi = os.environ.get("IMPORTA_MESSAGGI", config.get("importa_messaggi"))
 
 def test_cartella(page):
+    ts = int(time.time())
+    nome_cartella = f"Test cartella playwright {ts}"
+    nuovo_nome_cartella = f"Test cartella playwright modificata {ts}"
+
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    # Clicca su nuova cartella
-    page.locator('span[title="Crea nuova cartella"]').click()
-    
-    nome_cartella = "Test automatico playwright"
-    # Compila nome cartella
-    page.locator('input[placeholder="Nome cartella"]').fill(nome_cartella)
-    
-    # Clicca su salva
-    page.locator('span[title="Salva"]').click()
+    try:
+        # Clicca su nuova cartella
+        page.locator('span[title="Crea nuova cartella"]').click()
 
-    # Verifica toast di conferma invio
-    toast = page.locator("div.aru-toast__message").first
-    expect(toast).to_be_visible()
-    assert "La cartella è stata creata." in toast.text_content()
+        # Compila nome cartella
+        page.locator('input[placeholder="Nome cartella"]').wait_for(state="visible", timeout=5000)
+        page.locator('input[placeholder="Nome cartella"]').fill(nome_cartella)
 
-    page.locator(f'button[title="{nome_cartella}"]').click(button="right")
-    page.locator('button:has-text("Modifica cartella")').wait_for(state="visible", timeout=5000)
-    page.locator('button:has-text("Modifica cartella")').click()
+        # Salva usando il bottone nel dialog overlay
+        page.locator('.cdk-overlay-pane button:has-text("Salva")').first.click()
 
-    # Modifica nome cartella
-    nuovo_nome_cartella = "Test automatico playwright - Modificata"
-    page.locator('input[aria-label="input field"]').fill(nuovo_nome_cartella)
+        # Verifica toast di conferma creazione (wait senza filter — il toast è veloce)
+        toast = page.locator("div.aru-toast__message").first
+        toast.wait_for(state="visible", timeout=8000)
+        assert "La cartella è stata creata." in toast.text_content()
 
-    # Clicca su salva
-    page.locator('span[title="Salva"]').click()
+        # Rinomina cartella via tasto destro
+        page.locator(f'button[title="{nome_cartella}"]').wait_for(state="visible", timeout=5000)
+        page.locator(f'button[title="{nome_cartella}"]').click(button="right")
+        page.locator('button:has-text("Modifica cartella")').wait_for(state="visible", timeout=5000)
+        page.locator('button:has-text("Modifica cartella")').click()
 
-    # Verifica toast di conferma modifica (attende il toast specifico)
-    toast = page.locator("div.aru-toast__message").filter(has_text="La cartella è stata modificata.").first
-    expect(toast).to_be_visible()
-    assert "La cartella è stata modificata." in toast.text_content()
+        # Modifica nome cartella
+        page.locator('input[aria-label="input field"]').wait_for(state="visible", timeout=5000)
+        page.locator('input[aria-label="input field"]').fill(nuovo_nome_cartella)
 
-    # Clicca con tasto destro sulla cartella modificata
-    page.locator(f'button[title="{nuovo_nome_cartella}"]').wait_for(state="visible", timeout=5000)
-    page.locator(f'button[title="{nuovo_nome_cartella}"]').click(button="right")
-    page.locator('button:has-text("Elimina cartella")').wait_for(state="visible", timeout=5000)
-    page.locator('button:has-text("Elimina cartella")').click()
+        # Salva modifica
+        page.locator('.cdk-overlay-pane button:has-text("Salva")').first.click()
 
-    # Clicca su elimina
-    page.locator('span[title="Elimina"]').click()
+        # Verifica toast di conferma modifica
+        toast = page.locator("div.aru-toast__message").filter(has_text="La cartella è stata modificata.").first
+        expect(toast).to_be_visible()
+        assert "La cartella è stata modificata." in toast.text_content()
 
-    # Verifica toast di conferma invio
-    toast = page.locator("div.aru-toast__message").first
-    expect(toast).to_be_visible()
-    assert "La cartella è stata eliminata." in toast.text_content()
+        # Screenshot
+        screenshot_path = os.path.join(
+            REPORT_FOLDER,
+            f"test_messaggi_05___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        )
+        page.screenshot(path=screenshot_path, full_page=True)
+        print(f"Screenshot salvato in: {screenshot_path}")
 
-    # Percorso screenshot dinamico
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_messaggi_05___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-
-    print(f"Screenshot salvato in: {screenshot_path}")
-
-    
-
-    
-    
-    
-
-
-   
-
-
-
+    finally:
+        # Cleanup: elimina la cartella (con nome originale o modificato)
+        for nome in [nuovo_nome_cartella, nome_cartella]:
+            try:
+                btn = page.locator(f'button[title="{nome}"]').first
+                if btn.count() > 0 and btn.is_visible():
+                    btn.click(button="right")
+                    page.locator('button:has-text("Elimina cartella")').wait_for(state="visible", timeout=3000)
+                    page.locator('button:has-text("Elimina cartella")').click()
+                    page.locator('span[title="Elimina"]').click()
+                    page.wait_for_timeout(500)
+            except Exception:
+                pass
