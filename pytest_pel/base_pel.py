@@ -28,7 +28,17 @@ class LoginPel:
         username = config["pel"]["username"]
         password = config["pel"]["password"]
 
-        self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(username)
+        # Accetta cookie prima che blocchi il form
+        try:
+            self.page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=5000)
+        except Exception:
+            pass
+
+        # Aspetta che il campo username sia visibile (caricamento asincrono)
+        # Il form PEL usa name='text' per l'username (non 'username' o 'email')
+        username_input = self.page.locator("input[name='text'], input[name='username'], input#username, input[type='email']").first
+        username_input.wait_for(state="visible", timeout=15_000)
+        username_input.fill(username)
         self.page.locator("input[name='password'], input#password, input[type='password']").first.fill(password)
         self.page.locator("button[type='submit'], button:has-text('Login'), aru-button[skin='primary']").first.click()
 
@@ -36,12 +46,6 @@ class LoginPel:
 
         url_pattern = config["pel"].get("inbox_url_pattern", "INBOX")
         expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=20_000)
-
-        # Cookie (se presente)
-        try:
-            self.page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click()
-        except Exception:
-            pass
 
         # Chiudi modale iniziale (se presente)
         try:
