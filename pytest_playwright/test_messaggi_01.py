@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 
 from base_pec import LoginPec, Helper
@@ -21,32 +22,35 @@ file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 def test_messaggio_con_allegato(page):
     # Login PEC
     LoginPec(page).login_pec(config)
-    
+
+    ts = int(time.time())
+    oggetto = f"Test allegato playwright {ts}"
+
     Helper.crea_messaggio(
         page,
         config,
-        oggetto="Test automatico con Playwright - Invio allegati",  # oggetto del messaggio
-        corpo="Test automatico invio messaggio PEC con Playwright",  # corpo del messaggio
-        path_allegato=file_allegato  # allegato opzionale
-        # destinatario_key non serve se usi il principale
-)
-    
-    # Trova il pulsante "Invia" e cliccalo
+        oggetto=oggetto,
+        corpo="Test automatico invio messaggio PEC con Playwright",
+        path_allegato=file_allegato,
+    )
+
+    # Invia
     page.locator('span[title="Invia"]').click()
 
-     # Aspetta 8 secondi
-    page.wait_for_timeout(8000)
-    
-    # Aggiorna la posta
-    page.locator('aru-symbol[title="Aggiorna"]').click()
+    # Polling: aspetta che il messaggio arrivi in inbox (fino a 40s)
+    messaggio_arrivato = False
+    for _ in range(13):
+        page.wait_for_timeout(3000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(1000)
+        if page.locator('div.frame-record-desktop').filter(has_text=oggetto).count() > 0:
+            messaggio_arrivato = True
+            break
 
-    # Aspetta che almeno un record sia visibile
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+    assert messaggio_arrivato, f"Il messaggio '{oggetto}' non è arrivato in inbox entro 40s"
 
-    # Clicca sul primo record
-    page.locator('div.frame-record-desktop').first.click()
-
-    # Aspetta che il contenuto della mail sia visibile
+    # Clicca sul messaggio specifico
+    page.locator('div.frame-record-desktop').filter(has_text=oggetto).first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Apri in nuova finestra
@@ -66,7 +70,7 @@ def test_messaggio_con_allegato(page):
     nome_allegato = os.path.basename(file_allegato)
     new_page.locator(f'button[title="{nome_allegato}"]').wait_for(state="visible", timeout=15000)
     new_page.locator(f'button[title="{nome_allegato}"]').click()
-    
+
     # Mostra anteprima
     new_page.locator('text="Mostra anteprima"').first.click()
     new_page.wait_for_timeout(2000)
@@ -77,5 +81,4 @@ def test_messaggio_con_allegato(page):
         f"test_messaggi_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     new_page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")

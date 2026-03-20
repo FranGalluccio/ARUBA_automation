@@ -16,7 +16,7 @@ REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-resu
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 # --- Path file calendario (.ics) ---
-FILE_ICS = os.path.abspath(config["calendario_import"])
+FILE_ICS = os.path.normpath(os.path.join(os.path.dirname(CONFIG_FILE), config["calendario_import"]))
 assert os.path.exists(FILE_ICS), f"File ICS non trovato: {FILE_ICS}"
 
 
