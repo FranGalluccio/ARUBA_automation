@@ -1,6 +1,5 @@
 import os
 import json
-import time
 import pytest
 from datetime import datetime
 from base_pec import LoginPec
@@ -32,13 +31,12 @@ def test_leggi_fatture_settings(page):
     # --- Verifica disponibilità feature (check da settings home) ---
     page.goto(SETTINGS_URL, timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
-    time.sleep(1)
 
     # Espandi accordion "Account e sicurezza" se necessario
     try:
         if not page.locator('button[title="Leggi fatture"]').is_visible():
             page.locator('button[title="Account e sicurezza"]').first.click(force=True)
-            time.sleep(1)
+            page.locator('button[title="Leggi fatture"]').first.wait_for(state="visible", timeout=5000)
     except Exception:
         pass
 
@@ -52,7 +50,6 @@ def test_leggi_fatture_settings(page):
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
-    time.sleep(2)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_02_pagina_{datetime.now():%H-%M-%S}.png"))
 

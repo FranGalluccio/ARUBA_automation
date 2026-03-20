@@ -1,7 +1,7 @@
 import os
 import json
-from datetime import datetime
 import time
+from datetime import datetime
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -21,14 +21,13 @@ def test_elimina_gruppo(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
     page.click("#contacts")
-    time.sleep(1)
+    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
     # Crea un gruppo da eliminare
     group_name = f"Gruppo test {int(time.time())}"
 
-    page.get_by_role("button", name="Nuovo").click()
+    page.get_by_role("button", name="Nuovo", exact=True).click()
     # Seleziona "Gruppo" nel dialog
     try:
         page.locator("#group").check()
@@ -38,7 +37,7 @@ def test_elimina_gruppo(page):
         except Exception:
             pass
     page.get_by_role("button", name="Procedi").click()
-    time.sleep(1)
+    page.get_by_role("textbox", name="input field").wait_for(state="visible", timeout=5000)
 
     # Inserisci il nome del gruppo
     page.get_by_role("textbox", name="input field").fill(group_name)
@@ -48,17 +47,16 @@ def test_elimina_gruppo(page):
         search_box = page.get_by_role("textbox", name="input search")
         search_box.click()
         search_box.fill("test")
-        time.sleep(1)
+        page.get_by_role("checkbox").first.wait_for(state="visible", timeout=3000)
         cb = page.get_by_role("checkbox").first
         if cb.count() > 0:
             cb.click()
         page.get_by_role("button", name="Aggiungi contatti").click()
-        time.sleep(1)
+        page.get_by_role("button", name="Salva").wait_for(state="visible", timeout=3000)
     except Exception:
         pass
 
     page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
 
     try:
         # Verifica che il gruppo sia stato creato nella sidebar
@@ -68,7 +66,6 @@ def test_elimina_gruppo(page):
 
         # Tasto destro sul gruppo per il menu contestuale
         group_btn.click(button="right")
-        time.sleep(1)
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_contatti_10_menu_{datetime.now():%H-%M-%S}.png"))
 
         # Cerca voci del menu contestuale
@@ -85,7 +82,6 @@ def test_elimina_gruppo(page):
                 if item.is_visible():
                     item.click()
                     menu_item_found = True
-                    time.sleep(1)
                     break
             except Exception:
                 pass
@@ -93,7 +89,6 @@ def test_elimina_gruppo(page):
         assert menu_item_found, "Voce 'Elimina' non trovata nel menu contestuale del gruppo"
 
         # Conferma eliminazione
-        time.sleep(1)
         try:
             confirm_btn = page.locator('.cdk-overlay-pane button:has-text("Elimina")').first
             confirm_btn.wait_for(state="visible", timeout=3000)
@@ -109,7 +104,9 @@ def test_elimina_gruppo(page):
                         break
                 except Exception:
                     pass
-        time.sleep(2)
+
+        # Aspetta che il gruppo scompaia
+        page.locator(f'button[title="{group_name}"]').wait_for(state="hidden", timeout=5000)
 
         # Verifica che il gruppo non sia più presente nella sidebar
         remaining = page.locator(f'button[title="{group_name}"]').count()
@@ -125,12 +122,11 @@ def test_elimina_gruppo(page):
         print(f"Screenshot salvato in: {screenshot_path}")
 
     finally:
-        # Cleanup: elimina il gruppo se ancora presente (es. test fallito prima della cancellazione)
+        # Cleanup: elimina il gruppo se ancora presente
         try:
             group_btn = page.locator(f'button[title="{group_name}"]').first
             if group_btn.count() > 0:
                 group_btn.click(button="right")
-                time.sleep(1)
                 for sel in [
                     'aru-menu-item:has-text("Elimina")',
                     'button:has-text("Elimina gruppo")',
@@ -140,7 +136,6 @@ def test_elimina_gruppo(page):
                     item = page.locator(sel).first
                     if item.is_visible():
                         item.click()
-                        time.sleep(1)
                         break
                 for confirm_sel in [
                     '.cdk-overlay-pane button:has-text("Elimina")',
@@ -153,6 +148,5 @@ def test_elimina_gruppo(page):
                             break
                     except Exception:
                         pass
-                time.sleep(1)
         except Exception:
             pass

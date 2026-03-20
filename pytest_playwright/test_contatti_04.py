@@ -3,7 +3,6 @@ import json
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 from base_pec import LoginPec, Helper
-import time
 
 # --- Leggi config.json ---
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
@@ -42,9 +41,9 @@ def test_importa_contatti(page):
         page.get_by_role("button", name="Importa", exact=True).click()
         page.wait_for_timeout(2000)
 
-        time.sleep(1)
         # Verifica toast di conferma invio
         toast = page.locator("div.aru-toast__message").first
+        toast.wait_for(state="visible", timeout=8000)
         assert toast.is_visible()
         assert "I contatti sono stati importati." in toast.text_content()
 
@@ -60,14 +59,12 @@ def test_importa_contatti(page):
         # Cleanup: seleziona tutti i contatti ed elimina
         try:
             page.locator("#contacts").click()
-            time.sleep(1)
+            page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
             page.locator('button[title="Tutti i contatti"]').first.click()
-            time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
-            time.sleep(0.5)
+            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.wait_for(state="visible", timeout=5000)
             page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-            time.sleep(0.5)
             page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
-            time.sleep(1)
         except Exception:
             pass

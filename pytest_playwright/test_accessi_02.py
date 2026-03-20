@@ -1,6 +1,5 @@
 import os
 import json
-import time
 import pytest
 from datetime import datetime
 from base_pec import LoginPec
@@ -33,12 +32,11 @@ def test_form_multiutente_pec(page):
     # --- Verifica disponibilità feature ---
     page.goto(SETTINGS_URL, timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
-    time.sleep(1)
 
     try:
         if not page.locator('button[title="Accessi altri account"]').is_visible():
             page.locator('button[title="Account e sicurezza"]').first.click(force=True)
-            time.sleep(1)
+            page.locator('button[title="Accessi altri account"]').first.wait_for(state="visible", timeout=5000)
     except Exception:
         pass
 
@@ -52,7 +50,7 @@ def test_form_multiutente_pec(page):
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
-    time.sleep(2)
+    page.wait_for_timeout(1000)
 
     # --- Naviga a Multiutente PEC: prima prova il bottone sidebar, poi il primo "Gestisci" ---
     multiutente_nav = page.locator('button[title="Multiutente PEC"]').first
@@ -64,7 +62,7 @@ def test_form_multiutente_pec(page):
             pytest.skip("Nessun percorso verso Multiutente PEC trovato")
         gestisci_btn.click(force=True)
 
-    time.sleep(2)
+    page.wait_for_timeout(1000)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_accessi_02_multiutente_{datetime.now():%H-%M-%S}.png"))
 
@@ -97,7 +95,10 @@ def test_form_multiutente_pec(page):
 
     # --- Clicca Aggiungi e verifica apertura form ---
     aggiungi_btn.click(force=True)
-    time.sleep(2)
+    try:
+        page.locator('.cdk-overlay-pane').first.wait_for(state="visible", timeout=5000)
+    except Exception:
+        page.wait_for_timeout(1000)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_accessi_02_form_{datetime.now():%H-%M-%S}.png"))
 
@@ -140,14 +141,12 @@ def test_form_multiutente_pec(page):
             el = page.locator(sel).first
             if el.is_visible():
                 el.click()
-                time.sleep(1)
                 break
         except Exception:
             pass
     else:
         # Fallback: tasto Escape
         page.keyboard.press("Escape")
-        time.sleep(1)
 
     # Screenshot finale
     screenshot_path = os.path.join(

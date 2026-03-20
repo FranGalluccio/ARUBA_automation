@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -37,7 +37,6 @@ def test_messaggio_alta_priorita(page):
     # Clicca alta priorità
     page.locator('aru-button#high-priority').click()
     
-    time.sleep(1)
     # Trova il pulsante "Invia" e cliccalo
     page.locator('span[title="Invia"]').click()
     
@@ -60,9 +59,8 @@ def test_messaggio_alta_priorita(page):
     
     # Verifica che il simbolo "important" sia visibile nel messaggio aperto
     important_symbol = page.locator('aru-symbol[symbol="important"]').first
-    expect(important_symbol).to_be_visible()      
-    
-    time.sleep(1)
+    expect(important_symbol).to_be_visible()
+
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,

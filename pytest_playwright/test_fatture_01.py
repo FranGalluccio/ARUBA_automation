@@ -1,6 +1,5 @@
 import os
 import json
-import time
 import pytest
 from datetime import datetime
 from base_pec import LoginPec
@@ -54,7 +53,6 @@ def test_import_fattura_ricevute(page):
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
-    time.sleep(2)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_pre_{datetime.now():%H-%M-%S}.png"))
     count_before = _count_fatture(page)
@@ -66,14 +64,12 @@ def test_import_fattura_ricevute(page):
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
-    time.sleep(1)
 
     # Espandi "Gestione messaggi" se collassato
     try:
         gm_btn = page.locator('button[title="Gestione messaggi"]').first
         gm_btn.wait_for(state="visible", timeout=5000)
         gm_btn.click(force=True)
-        time.sleep(1)
     except Exception:
         pass
 
@@ -88,7 +84,6 @@ def test_import_fattura_ricevute(page):
             importa_btn.dispatch_event("click")
         except Exception:
             pytest.skip("Bottone 'Importa' non accessibile - feature non disponibile in questo ambiente")
-    time.sleep(1)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_import_dialog_{datetime.now():%H-%M-%S}.png"))
 
@@ -103,13 +98,9 @@ def test_import_fattura_ricevute(page):
     # --- Seleziona il file fattura ---
     file_input = page.locator("#hidden_input")
     file_input.set_input_files(FILE_FATTURA)
-    time.sleep(2)
+    page.wait_for_timeout(1000)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_file_selezionato_{datetime.now():%H-%M-%S}.png"))
-
-    # Clicca "Importa" nel dialog per avviare l'upload (non il bottone sidebar già cliccato)
-    # get_by_role pierces shadow DOM; prendiamo l'ultimo bottone "Importa" visibile
-    time.sleep(1)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_before_confirm_{datetime.now():%H-%M-%S}.png"))
     try:
         all_importa = page.get_by_role("button", name="Importa", exact=True).all()
@@ -131,7 +122,7 @@ def test_import_fattura_ricevute(page):
             }""")
     except Exception:
         pass
-    time.sleep(5)
+    page.wait_for_timeout(3000)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_post_import_{datetime.now():%H-%M-%S}.png"))
 
@@ -141,7 +132,6 @@ def test_import_fattura_ricevute(page):
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
-    time.sleep(2)
 
     fattura_trovata = False
     for attempt in range(20):
@@ -157,9 +147,7 @@ def test_import_fattura_ricevute(page):
                 page.wait_for_load_state("load", timeout=10000)
             except Exception:
                 pass
-            time.sleep(2)
-        else:
-            time.sleep(2)
+        page.wait_for_timeout(2000)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_fatture_ricevute_{datetime.now():%H-%M-%S}.png"))
 
@@ -171,13 +159,17 @@ def test_import_fattura_ricevute(page):
     # --- Apri la fattura e clicca "Visualizza fattura" ---
     prima_riga = page.locator('div.frame-record-desktop').first
     prima_riga.click()
-    time.sleep(2)
+    visualizza_btn = page.locator('button:has-text("Visualizza fattura"), aru-button:has-text("Visualizza fattura")').first
+    try:
+        visualizza_btn.wait_for(state="visible", timeout=8000)
+    except Exception:
+        page.wait_for_timeout(1500)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_dettaglio_{datetime.now():%H-%M-%S}.png"))
 
     # Clicca "Visualizza fattura" — può aprire una nuova tab
     pages_before = len(page.context.pages)
-    page.locator('button:has-text("Visualizza fattura"), aru-button:has-text("Visualizza fattura")').first.click()
-    time.sleep(3)
+    visualizza_btn.click()
+    page.wait_for_timeout(2000)
 
     pages_after = page.context.pages
 
@@ -185,7 +177,6 @@ def test_import_fattura_ricevute(page):
         viewer_page = pages_after[-1]
         try:
             viewer_page.wait_for_load_state("load", timeout=15000)
-            time.sleep(2)
         except Exception:
             pass
         viewer_url = viewer_page.url
@@ -218,7 +209,6 @@ def test_import_fattura_ricevute(page):
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
-    time.sleep(2)
 
     # --- Cleanup: elimina tutte le fatture (2 passaggi) ---
     ELIMINA_BTN = (
@@ -233,12 +223,12 @@ def test_import_fattura_ricevute(page):
     try:
         # Step 1: seleziona → Elimina (sposta nel Cestino)
         page.locator('div.aru-input-checkbox').first.click()
-        time.sleep(1)
+        page.locator(ELIMINA_BTN).first.wait_for(state="visible", timeout=5000)
         page.locator(ELIMINA_BTN).first.click()
-        time.sleep(2)
+        page.wait_for_timeout(1000)
         try:
             page.get_by_role("button", name="Sì").click(timeout=2000)
-            time.sleep(2)
+            page.wait_for_timeout(1000)
         except Exception:
             pass
 
@@ -247,12 +237,11 @@ def test_import_fattura_ricevute(page):
             # Clicca checkbox solo se il bottone "Elimina definitivamente" non è già visibile
             if not page.locator(ELIMINA_DEF).first.is_visible():
                 page.locator('div.aru-input-checkbox').first.click()
-                time.sleep(1)
+                page.wait_for_timeout(500)
             # Clicca "Elimina definitivamente" nel toolbar
             page.locator(ELIMINA_DEF).first.click()
-            time.sleep(2)
+            page.wait_for_timeout(1000)
             # Clicca "Elimina definitivamente" nel dialog di conferma
             page.locator(ELIMINA_DEF).last.click(timeout=5000)
-            time.sleep(2)
     except Exception:
         pass

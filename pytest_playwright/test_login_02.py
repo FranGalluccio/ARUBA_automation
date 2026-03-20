@@ -1,7 +1,6 @@
 import os
 import json
 from datetime import datetime
-import time
 from playwright.sync_api import expect
 
 
@@ -39,8 +38,6 @@ def test_login_credenziali_errate(page):
     # Clicca login
     page.locator("button[type='submit'], button:has-text('Login')").first.click()
 
-    time.sleep(2)
-
     # Verifica che l'URL non contenga INBOX (login fallito, nessun redirect alla casella)
     assert "INBOX" not in page.url, f"Il login con credenziali errate ha avuto successo inaspettatamente. URL: {page.url}"
 
@@ -52,13 +49,10 @@ def test_login_credenziali_errate(page):
     assert "dati inseriti" in err_text.lower() or "details" in err_text.lower() or "incorrect" in err_text.lower() or "not correct" in err_text.lower() or "correttamente" in err_text.lower(), \
         f"Messaggio di errore login inatteso: '{err_text}'"
 
-    time.sleep(1)
-
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,
         f"test_login_02___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")

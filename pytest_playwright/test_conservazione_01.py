@@ -1,6 +1,5 @@
 import os
 import json
-import time
 import pytest
 from datetime import datetime
 from base_pec import LoginPec
@@ -41,7 +40,7 @@ def test_cartella_da_conservare(page):
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
-    time.sleep(2)
+    page.wait_for_timeout(1000)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_conservazione_01_click_{datetime.now():%H-%M-%S}.png"))
 

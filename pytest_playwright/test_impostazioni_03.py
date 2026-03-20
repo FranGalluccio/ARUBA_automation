@@ -1,7 +1,7 @@
 import os
 import json
-from datetime import datetime
 import time
+from datetime import datetime
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -25,13 +25,11 @@ def test_regole_messaggi(page):
 
     # Vai alle impostazioni → Regole messaggi (sotto accordion "Messaggi e scrittura")
     page.goto(SETTINGS_URL + "/home", timeout=20000)
-    time.sleep(1)
     # Espandi l'accordion "Messaggi e scrittura" se necessario
     if not page.locator('button[title="Regole messaggi"]').is_visible():
         page.locator('button[title="Messaggi e scrittura"]').first.click(force=True)
-        time.sleep(1)
+        page.locator('button[title="Regole messaggi"]').first.wait_for(state="visible", timeout=5000)
     page.locator('button[title="Regole messaggi"]').click(force=True)
-    time.sleep(2)
 
     # Verifica che la pagina Regole messaggi sia caricata
     page.locator('h1, [class*="filter"], [class*="rule"]').first.wait_for(state="visible", timeout=8000)
@@ -40,10 +38,8 @@ def test_regole_messaggi(page):
     create_btn = page.locator('aru-button[kind="solid"][skin="primary"]').first
     create_btn.wait_for(state="visible", timeout=8000)
     create_btn.click(force=True)
-    time.sleep(1)
 
     # Verifica che il form di creazione regola si sia aperto
-    time.sleep(1)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_impostazioni_03_form_{datetime.now():%H-%M-%S}.png"))
 
     # Il form è aperto: verifica che siano presenti label o placeholder specifici del form regola
@@ -64,7 +60,6 @@ def test_regole_messaggi(page):
                 break
         except Exception:
             pass
-    time.sleep(1)
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -78,8 +73,6 @@ def test_regole_messaggi(page):
     try:
         row = page.locator('[class*="rule"], [class*="regola"], tr, li').filter(has_text=nome_regola).first
         row.locator('button[title="Elimina"], aru-symbol[title="Elimina"]').click()
-        time.sleep(1)
         page.locator('button[title="Si"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=2000)
-        time.sleep(1)
     except Exception:
         pass

@@ -23,7 +23,6 @@ def test_modifica_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
     page.click("#contacts")
     page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
@@ -37,13 +36,11 @@ def test_modifica_contatto(page):
         page.get_by_placeholder("Inserisci cognome").fill("DaModificare")
         page.get_by_placeholder("Inserisci email").fill(unique_email)
         page.get_by_role("button", name="Salva").click()
-        time.sleep(2)
 
         # Cerca il contatto appena creato
         search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
         search.click()
         search.fill("DaModificare")
-        time.sleep(1)
 
         # Trova il contatto nella lista
         row = page.locator('div.frame-record-desktop').filter(has_text="DaModificare").first
@@ -51,9 +48,7 @@ def test_modifica_contatto(page):
 
         # Hover per far apparire il checkbox e selezionarlo
         row.hover()
-        time.sleep(0.5)
         row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-        time.sleep(1)
 
         # Cerca pulsante Modifica nella toolbar (appare quando si seleziona 1 contatto)
         # oppure tenta doppio click sul contatto per aprire l'editor
@@ -65,8 +60,6 @@ def test_modifica_contatto(page):
             # Fallback: doppio click sulla riga per aprire edit
             row.dblclick()
 
-        time.sleep(3)
-
         # Modifica il cognome
         cognome_input = page.get_by_placeholder("Inserisci cognome")
         cognome_input.wait_for(state="visible", timeout=30000)
@@ -75,19 +68,15 @@ def test_modifica_contatto(page):
 
         # Salva
         page.get_by_role("button", name="Salva").click()
-        time.sleep(1)
 
         # Verifica che il cognome aggiornato sia presente
         search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
         search2.click(click_count=3)
         search2.fill("Modificato")
-        time.sleep(1)
 
         result = page.locator('div.frame-record-desktop').filter(has_text="Modificato").first
         result.wait_for(state="visible", timeout=5000)
         assert result.is_visible(), "Il contatto modificato non è visibile"
-
-        time.sleep(1)
 
         # Screenshot
         screenshot_path = os.path.join(
@@ -101,14 +90,12 @@ def test_modifica_contatto(page):
         # Cleanup: seleziona tutti i contatti ed elimina
         try:
             page.click("#contacts")
-            time.sleep(1)
+            page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
             page.locator('button[title="Tutti i contatti"]').first.click()
-            time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
-            time.sleep(0.5)
+            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.wait_for(state="visible", timeout=5000)
             page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-            time.sleep(0.5)
             page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
-            time.sleep(1)
         except Exception:
             pass

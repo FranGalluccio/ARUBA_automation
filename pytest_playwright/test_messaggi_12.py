@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -32,8 +32,8 @@ def test_invio_messaggio_semplice(page):
     page.locator('span[title="Invia"]').click()
 
     # Aspetta toast di conferma
-    time.sleep(2)
     toast = page.locator("div.aru-toast__message").first
+    toast.wait_for(state="visible", timeout=8000)
     expect(toast).to_be_visible()
     assert "Il messaggio è stato inviato" in toast.text_content()
 

@@ -1,7 +1,7 @@
 import os
 import json
-from datetime import datetime
 import time
+from datetime import datetime
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -26,7 +26,6 @@ def test_crea_firma(page):
 
     # Naviga direttamente alla pagina Firme
     page.goto(SIGNATURES_URL, timeout=20000)
-    time.sleep(2)
 
     # Verifica che la pagina Firme sia caricata
     firme_header = page.locator('h1').filter(has_text="Firme").first
@@ -37,7 +36,6 @@ def test_crea_firma(page):
     create_btn = page.locator('aru-button[kind="solid"][skin="primary"]').first
     create_btn.wait_for(state="visible", timeout=5000)
     create_btn.click()
-    time.sleep(1)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_impostazioni_01_form_{datetime.now():%H-%M-%S}.png"))
 
@@ -66,8 +64,9 @@ def test_crea_firma(page):
 
     # Salva la firma
     try:
-        page.locator('button[title="Salva"], aru-button[skin="primary"]').first.click()
-        time.sleep(1)
+        save_btn = page.locator('button[title="Salva"], aru-button[skin="primary"]').first
+        save_btn.wait_for(state="visible", timeout=3000)
+        save_btn.click()
     except Exception:
         pass
 

@@ -1,7 +1,7 @@
 import os
 import json
-from datetime import datetime
 import time
+from datetime import datetime
 from base_pec import LoginPec, Helper
 from playwright.sync_api import sync_playwright, expect
 
@@ -26,9 +26,8 @@ def test_aggiungere_nuovo_gruppo(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
     page.locator("#contacts").click()
-    time.sleep(1)
+    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
     ts = int(time.time())
     group_name = f"Test automatico gruppo {ts}"
@@ -36,32 +35,31 @@ def test_aggiungere_nuovo_gruppo(page):
 
     try:
         # Crea un contatto temporaneo da aggiungere al gruppo
-        page.get_by_role("button", name="Nuovo").click()
+        page.get_by_role("button", name="Nuovo", exact=True).click()
         page.get_by_role("button", name="Procedi").click()
         page.get_by_placeholder("Inserisci nome").fill(contact_name)
         page.get_by_placeholder("Inserisci email").fill(f"gruppocontact_{ts}@{TEST_EMAIL_DOMAIN}")
         page.get_by_role("button", name="Salva").click()
-        time.sleep(2)
+        page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
         # Crea il gruppo
-        page.get_by_role("button", name="Nuovo").click()
+        page.get_by_role("button", name="Nuovo", exact=True).click()
         page.locator("#group").check()
         page.get_by_role("button", name="Procedi").click()
         page.get_by_role("textbox", name="input field").click()
         page.get_by_role("textbox", name="input field").fill(group_name)
         page.get_by_role("textbox", name="input search").click()
         page.get_by_role("textbox", name="input search").fill(contact_name)
-        time.sleep(1)
+        page.get_by_role("checkbox", name=contact_name).first.wait_for(state="visible", timeout=5000)
         page.get_by_role("checkbox", name=contact_name).first.click()
         page.get_by_role("button", name="Aggiungi contatti").click()
-        time.sleep(1)
+        page.get_by_role("button", name="Salva").wait_for(state="visible", timeout=5000)
         page.get_by_role("button", name="Salva").click()
 
         expect(
             page.get_by_label("sidebar").get_by_role("button", name=group_name)
         ).to_be_visible()
 
-        time.sleep(1)
         # Percorso screenshot dinamico
         screenshot_path = os.path.join(
             REPORT_FOLDER,
@@ -76,7 +74,7 @@ def test_aggiungere_nuovo_gruppo(page):
             group_btn = page.locator(f'button[title="{group_name}"]').first
             if group_btn.count() > 0:
                 group_btn.click(button="right")
-                time.sleep(1)
+                page.locator('aru-menu-item:has-text("Elimina"), button:has-text("Elimina gruppo"), button:has-text("Elimina"), [role="menuitem"]:has-text("Elimina")').first.wait_for(state="visible", timeout=3000)
                 for sel in [
                     'aru-menu-item:has-text("Elimina")',
                     'button:has-text("Elimina gruppo")',
@@ -86,7 +84,6 @@ def test_aggiungere_nuovo_gruppo(page):
                     item = page.locator(sel).first
                     if item.is_visible():
                         item.click()
-                        time.sleep(1)
                         break
                 for confirm_sel in [
                     '.cdk-overlay-pane button:has-text("Elimina")',
@@ -99,24 +96,20 @@ def test_aggiungere_nuovo_gruppo(page):
                             break
                     except Exception:
                         pass
-                time.sleep(1)
         except Exception:
             pass
 
         # Cleanup: seleziona tutti i contatti ed elimina
         try:
             page.locator("#contacts").click()
-            time.sleep(1)
+            page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=5000)
             page.locator('button[title="Tutti i contatti"]').first.click()
-            time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
-            time.sleep(0.5)
             page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-            time.sleep(0.5)
             try:
                 page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
             except Exception:
                 page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
-            time.sleep(1)
         except Exception:
             pass

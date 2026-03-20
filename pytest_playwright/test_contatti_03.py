@@ -3,7 +3,6 @@ import json
 from datetime import datetime
 from playwright.sync_api import sync_playwright, expect
 from base_pec import LoginPec, Helper
-import time
 
 
 # --- Leggi config.json ---
@@ -24,19 +23,16 @@ def test_esporta_contatti(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
     # Apertura rubrica
     page.locator("#contacts").click()
-    page.wait_for_timeout(1000)
+    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
-    time.sleep(1)
     # Attendi il download
     with page.expect_download() as download_info:
         page.get_by_role("button", name="Esporta").click()
         page.get_by_role("combobox", name="Esporta rubrica in vCard").click()
         page.get_by_role("button", name="Esporta rubrica in CSV").click()
         page.get_by_role("button", name="Esporta rubrica").click()
-        time.sleep(1)
 
     download = download_info.value
 
@@ -51,7 +47,6 @@ def test_esporta_contatti(page):
     # Verifica effettiva del file
     assert os.path.exists(download_path), "Il file CSV NON è stato scaricato!"
 
-    time.sleep(1)
     # Screenshot (per debug)
     screenshot_path = os.path.join(
         REPORT_FOLDER,

@@ -33,14 +33,12 @@ def test_verifica_cartella_inviati(page):
     page.locator('span[title="Invia"]').click()
 
     # Aspetta toast conferma
-    time.sleep(2)
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
     assert "Il messaggio è stato inviato" in toast.text_content()
 
     # Apri cartella Inviati
     page.locator('button[title="Inviati"]').click()
-    time.sleep(1)
 
     # Verifica che ci siano messaggi nella cartella Inviati
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
@@ -51,8 +49,6 @@ def test_verifica_cartella_inviati(page):
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
     oggetto_visibile = page.locator("div.message-header-title-subject").inner_text().strip()
     assert oggetto_inviato in oggetto_visibile, f"Oggetto inatteso: {oggetto_visibile}"
-
-    time.sleep(1)
 
     # Screenshot
     screenshot_path = os.path.join(

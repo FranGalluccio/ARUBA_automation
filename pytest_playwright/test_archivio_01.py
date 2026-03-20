@@ -1,6 +1,5 @@
 import os
 import json
-import time
 import pytest
 from datetime import datetime
 from base_pec import LoginPec
@@ -28,7 +27,6 @@ def test_configurazione_archivio(page):
     #  la feature è verificata controllando che la pagina si carichi con l'h1 atteso)
     page.goto(ARCHIVE_URL, timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
-    time.sleep(2)
     if page.locator("h1").filter(has_text="Archivio").count() == 0:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
 
@@ -73,18 +71,15 @@ def test_configurazione_archivio(page):
     # Clicca il secondo radio button (Scegli quali)
     try:
         page.locator("input[type='radio']").nth(1).click()
-        time.sleep(1)
     except Exception:
         # Fallback: cerca per label text vicino
         page.get_by_text("Scegli quali messaggi archiviare", exact=False).first.click()
-        time.sleep(1)
 
     # Abilita checkbox "ricevute di accettazione"
     try:
         ra_checkbox = page.locator("input[type='checkbox']").first
         if ra_checkbox.is_visible():
             ra_checkbox.check()
-            time.sleep(0.5)
     except Exception:
         pass
 
@@ -95,14 +90,12 @@ def test_configurazione_archivio(page):
     try:
         save_btn.wait_for(state="visible", timeout=5000)
         save_btn.click()
-        time.sleep(2)
     except Exception:
         # Fallback: cerca qualsiasi aru-button o button visibile con testo Salva
         try:
             btn = page.locator('aru-button:has-text("Salva"), button:has-text("Salva")').first
             btn.wait_for(state="attached", timeout=5000)
             btn.dispatch_event("click")
-            time.sleep(2)
         except Exception:
             pass
 
@@ -117,7 +110,6 @@ def test_configurazione_archivio(page):
     # --- Ricarica e verifica persist ---
     page.reload()
     page.wait_for_load_state("load", timeout=15000)
-    time.sleep(2)
 
     # Verifica che la pagina sia ancora quella giusta
     assert "archive" in page.url or page.locator("h1").filter(has_text="Archivio").count() > 0, \
@@ -134,8 +126,7 @@ def test_configurazione_archivio(page):
     # --- Cleanup: ripristina "Archivia tutti" ---
     try:
         page.locator("input[type='radio']").first.click()
-        time.sleep(0.5)
         page.locator('aru-button[skin="primary"], button[type="submit"]').first.click()
-        time.sleep(1)
+        page.wait_for_timeout(500)
     except Exception:
         pass

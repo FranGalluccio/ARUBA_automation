@@ -1,6 +1,5 @@
 import os
 import json
-import time
 import pytest
 from datetime import datetime
 from base_pec import LoginPec
@@ -33,12 +32,11 @@ def test_panoramica_accessi_altri_account(page):
     # --- Verifica disponibilità feature ---
     page.goto(SETTINGS_URL, timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
-    time.sleep(1)
 
     try:
         if not page.locator('button[title="Accessi altri account"]').is_visible():
             page.locator('button[title="Account e sicurezza"]').first.click(force=True)
-            time.sleep(1)
+            page.locator('button[title="Accessi altri account"]').first.wait_for(state="visible", timeout=5000)
     except Exception:
         pass
 
@@ -52,7 +50,6 @@ def test_panoramica_accessi_altri_account(page):
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
-    time.sleep(2)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_accessi_01_panoramica_{datetime.now():%H-%M-%S}.png"))
 
@@ -90,7 +87,10 @@ def test_panoramica_accessi_altri_account(page):
     multiutente_nav = page.locator('button[title="Multiutente PEC"]').first
     if multiutente_nav.is_visible():
         multiutente_nav.click(force=True)
-        time.sleep(2)
+        try:
+            page.wait_for_load_state("load", timeout=8000)
+        except Exception:
+            pass
         content = page.content().lower()
         assert "multiutente" in content or "multi" in content, \
             "Sotto-pagina Multiutente PEC non si è caricata"
@@ -99,13 +99,19 @@ def test_panoramica_accessi_altri_account(page):
         ))
         # Torna indietro
         page.goto(ACCESSI_URL, timeout=20000)
-        time.sleep(1)
+        try:
+            page.wait_for_load_state("load", timeout=8000)
+        except Exception:
+            pass
 
     # Supervisore360 sub-page
     supervisore_nav = page.locator('button[title="Supervisore360"]').first
     if supervisore_nav.is_visible():
         supervisore_nav.click(force=True)
-        time.sleep(2)
+        try:
+            page.wait_for_load_state("load", timeout=8000)
+        except Exception:
+            pass
         content = page.content().lower()
         assert "supervisore" in content or "supervisor" in content, \
             "Sotto-pagina Supervisore360 non si è caricata"

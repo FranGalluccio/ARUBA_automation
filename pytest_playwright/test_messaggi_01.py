@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 
 # --- Leggi config.json ---
@@ -39,8 +39,6 @@ def test_messaggio_con_allegato(page):
     
     # Aggiorna la posta
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    
-    time.sleep(1)
 
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -69,9 +67,7 @@ def test_messaggio_con_allegato(page):
     
     # Mostra anteprima
     new_page.locator('text="Mostra anteprima"').first.click()
-    
-    # Aspetta 5 secondi prima dello screenshot
-    time.sleep(5)
+    new_page.wait_for_timeout(2000)
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(

@@ -1,7 +1,6 @@
 import os
 import json
 from datetime import datetime
-import time
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -25,12 +24,10 @@ def test_impostazioni_cestino(page):
 
     # Vai alle impostazioni → Cestino (sotto accordion "Messaggi e scrittura")
     page.goto(SETTINGS_URL + "/home", timeout=20000)
-    time.sleep(1)
     if not page.locator('button[title="Cestino"]').is_visible():
         page.locator('button[title="Messaggi e scrittura"]').click(force=True)
-        time.sleep(1)
+        page.locator('button[title="Cestino"]').first.wait_for(state="visible", timeout=5000)
     page.locator('button[title="Cestino"]').click(force=True)
-    time.sleep(1)
 
     # Verifica che la sezione Cestino nelle impostazioni sia caricata:
     # il pannello delle impostazioni deve mostrare testo relativo alla svuotatura/eliminazione del cestino

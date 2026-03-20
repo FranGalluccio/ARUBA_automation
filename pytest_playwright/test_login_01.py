@@ -1,7 +1,6 @@
 import os
 import json
 from datetime import datetime
-import time
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -21,8 +20,6 @@ def test_logout(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
-
     # Apri menu account (standard Aruba: username button apre dropdown con Esci)
     username = config["pec"]["username"].strip()
     try:
@@ -33,7 +30,11 @@ def test_logout(page):
         except Exception:
             pass  # BNL: nessun button con email nel title — Esci via JS click
 
-    time.sleep(1)
+    # Attendi che il bottone Esci sia visibile nel dropdown
+    try:
+        page.locator('button[title="Esci"]').wait_for(state="visible", timeout=5000)
+    except Exception:
+        pass
 
     # Clicca su Esci — usa JS eval per bypassare visibilità CSS (BNL: dentro dropdown chiuso)
     try:
@@ -52,13 +53,10 @@ def test_logout(page):
     login_field = page.locator("input[name='username'], input#username, input[type='email']").first
     expect(login_field).to_be_visible()
 
-    time.sleep(1)
-
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,
         f"test_login_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")

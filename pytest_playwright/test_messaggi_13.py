@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -33,7 +33,6 @@ def test_risposta_a_tutti(page):
     # Aspetta consegna
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(1)
 
     # Cerca il messaggio inviato per soggetto
     oggetto_originale = "Test automatico con Playwright - Originale per reply all"
@@ -57,7 +56,6 @@ def test_risposta_a_tutti(page):
     # Aspetta consegna risposta
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(1)
 
     # Cerca il messaggio di risposta per prefisso "Re:"
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -70,8 +68,6 @@ def test_risposta_a_tutti(page):
     # Verifica prefisso "Re:" nell'oggetto
     oggetto = page.locator("div.message-header-title-subject").inner_text().strip()
     assert "Re:" in oggetto, f"Oggetto inatteso (manca 'Re:'): {oggetto}"
-
-    time.sleep(1)
 
     # Screenshot
     screenshot_path = os.path.join(

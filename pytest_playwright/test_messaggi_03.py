@@ -1,7 +1,6 @@
 import os
 import json
 from datetime import datetime
-import time
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -27,10 +26,8 @@ def test_messaggio_in_bozza(page):
         destinatario_key="destinatario_principale"  # opzionale, default già principale
 )
     
-    # Attesa per caricamento
-    time.sleep(1)
-    
     # Clicca e salva bozza
+    page.locator("#new-message\\.save-menu").wait_for(state="visible", timeout=5000)
     page.locator("#new-message\\.save-menu").click()
     page.locator("#save-draft").click()
     
@@ -49,17 +46,12 @@ def test_messaggio_in_bozza(page):
     # Clicca sul primo record
     page.locator('div.frame-record-desktop').first.click()
     
-    # Attesa prima di inviare il messaggio
-    time.sleep(4)
-    
     # Trova il pulsante "Invia" e cliccalo
+    page.locator('span[title="Invia"]').wait_for(state="visible", timeout=10000)
     page.locator('span[title="Invia"]').click()
-    
-    # Aspetta 3 secondi che il toast appaia
-    time.sleep(2)
-    
+
     # Verifica toast di conferma invio
-    toast = page.locator("div.aru-toast__message").first
+    toast = page.locator("div.aru-toast__message").filter(has_text="Il messaggio è stato inviato").first
     expect(toast).to_be_visible()
     assert "Il messaggio è stato inviato" in toast.text_content()
     

@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -31,7 +31,7 @@ def test_filtri_inbox(page):
 
     # Apri il dropdown filtro
     filter_select.click(force=True)
-    time.sleep(1)
+    page.wait_for_timeout(1000)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_messaggi_18_filter_open_{datetime.now():%H-%M-%S}.png"))
 
     # Cerca le opzioni del filtro (potrebbero essere in aru-menu-item o altri elementi)
@@ -76,7 +76,7 @@ def test_filtri_inbox(page):
             if opts:
                 clicked_option_text = opts[0].inner_text().strip()
                 opts[0].click()
-                time.sleep(1)
+                page.wait_for_timeout(1000)
                 break
         else:
             page.keyboard.press("Escape")
@@ -94,8 +94,6 @@ def test_filtri_inbox(page):
             assert dropdown_closed or filter_label_visible, (
                 f"Il filtro '{clicked_option_text}' non sembra essere stato applicato"
             )
-
-    time.sleep(1)
 
     # Screenshot finale
     screenshot_path = os.path.join(

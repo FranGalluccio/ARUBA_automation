@@ -31,7 +31,7 @@ def _click_waffle_menu(page):
             el = page.locator(sel).first
             if el.count() > 0 and el.is_visible():
                 el.click()
-                time.sleep(1)
+                page.wait_for_timeout(500)
                 return True
         except Exception:
             pass
@@ -50,7 +50,6 @@ def test_archivio_messaggio_inviato(page):
     #  dal caricamento dell'h1 sulla pagina di configurazione)
     page.goto(ARCHIVE_SETTINGS_URL, timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
-    time.sleep(5)
     if page.locator("h1").filter(has_text="Archivio").count() == 0:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
 
@@ -59,17 +58,14 @@ def test_archivio_messaggio_inviato(page):
         page.get_by_text("Archivia tutti i messaggi ricevuti o inviati", exact=False).first.click()
     except Exception:
         page.locator("input[type='radio']").first.click()
-    time.sleep(0.5)
 
     # Salva
     try:
         salva = page.locator('aru-button[skin="primary"]').first
         salva.wait_for(state="visible", timeout=10000)
         salva.click()
-        time.sleep(1)
     except Exception:
         page.get_by_role("button", name="Salva").first.click(timeout=15000)
-        time.sleep(1)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_config_{datetime.now():%H-%M-%S}.png"))
 
@@ -79,7 +75,6 @@ def test_archivio_messaggio_inviato(page):
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
-    time.sleep(1)
 
     oggetto_univoco = f"Test archivio playwright {int(time.time())}"
     # Invia sempre a se stessi (indirizzo PEC dell'account corrente) per garantire l'archiviazione
@@ -92,13 +87,13 @@ def test_archivio_messaggio_inviato(page):
 
     # Invia il messaggio (stesso pattern usato negli altri test)
     page.locator('span[title="Invia"]').click()
-    time.sleep(3)
+    page.wait_for_timeout(2000)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_inviato_{datetime.now():%H-%M-%S}.png"))
     print(f"Messaggio inviato con oggetto: {oggetto_univoco}")
 
-    # Breve attesa per il recapito del messaggio
-    time.sleep(10)
+    # Attesa per il recapito del messaggio (operazione server-side)
+    page.wait_for_timeout(10000)
 
     # --- Step 3: apri sezione Archivio (mailbox, non impostazioni) ---
     # Torna a INBOX per avere il nav pulito
@@ -107,7 +102,6 @@ def test_archivio_messaggio_inviato(page):
         page.wait_for_load_state("load", timeout=15000)
     except Exception:
         pass
-    time.sleep(2)
 
     # Dismetti eventuale overlay
     try:
@@ -123,7 +117,6 @@ def test_archivio_messaggio_inviato(page):
 
     # Apri waffle menu (symbol="services2"), poi clicca Archivio (diventa visibile dopo apertura)
     if _click_waffle_menu(page):
-        time.sleep(2)  # attendi apertura pannello waffle
         try:
             archivio_btn = page.locator(
                 'aru-button[title="Archivio"], button[title="Archivio"]'
@@ -134,7 +127,7 @@ def test_archivio_messaggio_inviato(page):
                 page.wait_for_load_state("load", timeout=15000)
             except Exception:
                 pass
-            time.sleep(3)
+            page.wait_for_timeout(1000)
             archivio_opened = True
         except Exception as e:
             print(f"Click Archivio da waffle fallito: {e}")
@@ -155,16 +148,14 @@ def test_archivio_messaggio_inviato(page):
     search_box = archivio_page.locator('input[placeholder="Cerca messaggio..."]').first
     search_box.wait_for(state="visible", timeout=15000)
     search_box.click()
-    time.sleep(1)
     # Usa keyboard.type per digitare carattere per carattere (fill fallisce sul shadow DOM)
     archivio_page.keyboard.type(oggetto_univoco, delay=50)
-    time.sleep(1)
     # Clicca "Cerca" per eseguire la ricerca
     try:
         archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
     except Exception:
         archivio_page.keyboard.press("Enter")
-    time.sleep(5)
+    page.wait_for_timeout(3000)
 
     archivio_page.screenshot(path=os.path.join(
         REPORT_FOLDER, f"test_archivio_02_ricerca_{datetime.now():%H-%M-%S}.png"
@@ -180,11 +171,10 @@ def test_archivio_messaggio_inviato(page):
     found = _messaggio_trovato()
     if not found:
         # Latenza archivio: riprova dopo 20s — cancella chip e cerca di nuovo
-        time.sleep(20)
+        page.wait_for_timeout(20000)
         # Cancella il chip/filtro attivo cliccando la ×
         try:
             archivio_page.locator('button[aria-label="Rimuovi filtro"], [title="Rimuovi filtro"], button.chip-remove').first.click(timeout=2000)
-            time.sleep(1)
         except Exception:
             pass
         # Ri-cerca dalla barra principale
@@ -192,14 +182,12 @@ def test_archivio_messaggio_inviato(page):
         try:
             search_box2.wait_for(state="visible", timeout=10000)
             search_box2.click()
-            time.sleep(1)
             archivio_page.keyboard.type(oggetto_univoco, delay=50)
-            time.sleep(1)
             try:
                 archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
             except Exception:
                 archivio_page.keyboard.press("Enter")
-            time.sleep(5)
+            page.wait_for_timeout(3000)
         except Exception:
             pass
         found = _messaggio_trovato()

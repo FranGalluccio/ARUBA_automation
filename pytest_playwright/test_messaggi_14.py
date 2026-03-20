@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -33,7 +33,6 @@ def test_elimina_messaggio(page):
     # Aspetta consegna
     page.wait_for_timeout(8000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(1)
 
     # Apri il messaggio
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -42,18 +41,15 @@ def test_elimina_messaggio(page):
 
     # Clicca Elimina
     page.locator('aru-symbol[title="Elimina"]').first.click()
-    time.sleep(2)
+    page.wait_for_timeout(2000)
 
     # Verifica: apri il cestino e verifica che il messaggio sia presente
     page.locator('button[title="Cestino"]').click()
-    time.sleep(1)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     # Verifica che ci sia almeno un messaggio nel cestino
     count = page.locator('div.frame-record-desktop').count()
     assert count > 0, "Il messaggio eliminato non è stato trovato nel cestino"
-
-    time.sleep(1)
 
     # Screenshot
     screenshot_path = os.path.join(

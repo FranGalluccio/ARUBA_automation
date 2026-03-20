@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -32,51 +32,42 @@ def test_cartella(page):
     
     # Clicca su salva
     page.locator('span[title="Salva"]').click()
-    
-    time.sleep(1)
 
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
     assert "La cartella è stata creata." in toast.text_content()
-    
+
     page.locator(f'button[title="{nome_cartella}"]').click(button="right")
-    
-    time.sleep(1)
-    
+    page.locator('button:has-text("Modifica cartella")').wait_for(state="visible", timeout=5000)
     page.locator('button:has-text("Modifica cartella")').click()
-    
+
     # Modifica nome cartella
     nuovo_nome_cartella = "Test automatico playwright - Modificata"
     page.locator('input[aria-label="input field"]').fill(nuovo_nome_cartella)
-    
+
     # Clicca su salva
     page.locator('span[title="Salva"]').click()
-    
-    time.sleep(2)
-    # Verifica toast di conferma invio
-    toast = page.locator("div.aru-toast__message").first
+
+    # Verifica toast di conferma modifica (attende il toast specifico)
+    toast = page.locator("div.aru-toast__message").filter(has_text="La cartella è stata modificata.").first
     expect(toast).to_be_visible()
     assert "La cartella è stata modificata." in toast.text_content()
-    
-    time.sleep(1) 
+
     # Clicca con tasto destro sulla cartella modificata
+    page.locator(f'button[title="{nuovo_nome_cartella}"]').wait_for(state="visible", timeout=5000)
     page.locator(f'button[title="{nuovo_nome_cartella}"]').click(button="right")
-    
-    time.sleep(1)
-    # Clicca su modifica cartella
+    page.locator('button:has-text("Elimina cartella")').wait_for(state="visible", timeout=5000)
     page.locator('button:has-text("Elimina cartella")').click()
-    
+
     # Clicca su elimina
     page.locator('span[title="Elimina"]').click()
-    
-    time.sleep(1)
+
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
     assert "La cartella è stata eliminata." in toast.text_content()
-    
-    time.sleep(1)
+
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,

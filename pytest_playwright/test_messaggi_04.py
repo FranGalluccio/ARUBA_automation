@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -37,21 +37,16 @@ def test_messaggio_importato(page):
 
     # Attendi caricamento allegato
     page.wait_for_timeout(2000)
-            
-    # Piccola attesa per sicurezza
-    time.sleep(1)
-    
+    page.locator('button[title="Importa"]').nth(1).wait_for(state="visible", timeout=5000)
+
     # Clicca il bottone "Importa"
     page.locator('button[title="Importa"]').nth(1).click()
-    
-    
-    time.sleep(1)
+
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
     assert "1 nuovo messaggio da leggere" in toast.text_content()
-    
-    time.sleep(1)
+
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,

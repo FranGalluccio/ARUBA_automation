@@ -1,7 +1,7 @@
 import os
 import json
-from datetime import datetime
 import time
+from datetime import datetime
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -23,9 +23,8 @@ def test_scrivi_email_da_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
     page.click("#contacts")
-    time.sleep(1)
+    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
     ts = int(time.time())
     nome_test = f"EmailTest{ts}"
@@ -33,26 +32,23 @@ def test_scrivi_email_da_contatto(page):
 
     try:
         # Crea un contatto con email per il test
-        page.get_by_role("button", name="Nuovo").click()
+        page.get_by_role("button", name="Nuovo", exact=True).click()
         page.get_by_role("button", name="Procedi").click()
         page.get_by_placeholder("Inserisci nome").fill(nome_test)
         page.get_by_placeholder("Inserisci cognome").fill("Contact")
         page.get_by_placeholder("Inserisci email").fill(email_contatto)
         page.get_by_role("button", name="Salva").click()
-        time.sleep(2)
 
         # Cerca il contatto
         search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
         search.click()
         search.fill(nome_test)
-        time.sleep(1)
 
         row = page.locator('div.frame-record-desktop').filter(has_text=nome_test).first
         row.wait_for(state="visible", timeout=8000)
 
         # Hover per rivelare i pulsanti di azione
         row.hover()
-        time.sleep(1)
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_contatti_09_hover_{datetime.now():%H-%M-%S}.png"))
 
         def compose_open():
@@ -60,7 +56,7 @@ def test_scrivi_email_da_contatto(page):
                 crea_dialog = page.locator('text="Crea contatto, gruppo, rubrica"').first
                 if crea_dialog.is_visible():
                     page.keyboard.press("Escape")
-                    time.sleep(0.5)
+                    page.wait_for_timeout(500)
             except Exception:
                 pass
             return page.locator('span[title="Invia"]').count() > 0
@@ -71,7 +67,7 @@ def test_scrivi_email_da_contatto(page):
         try:
             if mailto_link.count() > 0:
                 mailto_link.click(force=True)
-                time.sleep(1)
+                page.wait_for_timeout(1000)
                 email_clicked = compose_open()
         except Exception:
             pass
@@ -80,7 +76,7 @@ def test_scrivi_email_da_contatto(page):
             for btn in action_btns:
                 try:
                     btn.click(force=True)
-                    time.sleep(1)
+                    page.wait_for_timeout(1000)
                     if compose_open():
                         email_clicked = True
                         break
@@ -89,18 +85,17 @@ def test_scrivi_email_da_contatto(page):
         if not email_clicked:
             try:
                 page.locator('button[title="Scrivi email"], button[title*="email"], button[title*="mail"]').first.click(timeout=3000)
-                time.sleep(1)
+                page.wait_for_timeout(1000)
                 email_clicked = compose_open()
             except Exception:
                 pass
         if not email_clicked:
             try:
                 row.hover()
-                time.sleep(1)
                 row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-                time.sleep(1)
+                page.wait_for_timeout(500)
                 page.locator('button[title="Scrivi email"], button[title*="Scrivi"]').first.click(timeout=3000)
-                time.sleep(1)
+                page.wait_for_timeout(1000)
                 email_clicked = compose_open()
             except Exception:
                 pass
@@ -109,7 +104,6 @@ def test_scrivi_email_da_contatto(page):
             REPORT_FOLDER,
             f"test_contatti_09___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
         )
-        time.sleep(1)
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
 
@@ -118,27 +112,23 @@ def test_scrivi_email_da_contatto(page):
         # Chiudi il dialog senza inviare
         try:
             page.locator('button[title="Chiudi"]').last.click(force=True)
-            time.sleep(1)
+            page.wait_for_timeout(500)
             page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
         except Exception:
             try:
                 page.keyboard.press("Escape")
             except Exception:
                 pass
-        time.sleep(1)
 
     finally:
         # Cleanup: seleziona tutti i contatti ed elimina
         try:
             page.click("#contacts")
-            time.sleep(1)
+            page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=5000)
             page.locator('button[title="Tutti i contatti"]').first.click()
-            time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
-            time.sleep(0.5)
             page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-            time.sleep(0.5)
             page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
-            time.sleep(1)
         except Exception:
             pass

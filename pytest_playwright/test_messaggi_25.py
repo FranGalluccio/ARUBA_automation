@@ -36,10 +36,10 @@ def test_invio_allegati_multipli(page):
                 btn = page.locator('button:has-text("Ricordarmelo"), button:has-text("Chiudi"), button:has-text("Non ora")').first
                 if btn.is_visible():
                     btn.click(force=True)
-                    time.sleep(0.5)
+                    page.wait_for_timeout(300)
                     continue
                 page.locator('.cdk-overlay-pane').last.locator('button').last.click(force=True)
-                time.sleep(0.5)
+                page.wait_for_timeout(300)
             except Exception:
                 break
 

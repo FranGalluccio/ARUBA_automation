@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-import time
+
 from base_pec import LoginPec, Helper
 from playwright.sync_api import expect
 
@@ -37,7 +37,6 @@ def test_scarica_allegato_ricevuto(page):
     # Aspetta consegna
     page.wait_for_timeout(15000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-    time.sleep(1)
 
     # Apri messaggio
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
@@ -61,7 +60,6 @@ def test_scarica_allegato_ricevuto(page):
     attachment_btn = new_page.locator(f'button[title="{nome_file}"]')
     attachment_btn.wait_for(state="visible", timeout=15000)
     attachment_btn.click()
-    time.sleep(1)
 
     # Scarica l'allegato
     with new_page.expect_download() as download_info:

@@ -26,7 +26,6 @@ def test_aggiungere_nuovo_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
     unique_email = f"testautomatico_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
 
     page.click("#contacts")
@@ -42,14 +41,13 @@ def test_aggiungere_nuovo_contatto(page):
         page.get_by_placeholder("Inserisci email").click()
         page.get_by_placeholder("Inserisci email").fill(unique_email)
         page.get_by_role("button", name="Salva").click()
-        time.sleep(2)
 
         # Verifica che il contatto sia stato creato (cerca per email univoca)
         search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
         search.click()
         search.fill(unique_email)
-        time.sleep(1)
         row = page.locator('div.frame-record-desktop').filter(has_text="Test").first
+        row.wait_for(state="visible", timeout=8000)
         assert row.is_visible(), f"Contatto con email '{unique_email}' non trovato dopo il salvataggio"
 
         # Percorso screenshot dinamico
@@ -64,17 +62,15 @@ def test_aggiungere_nuovo_contatto(page):
         # Cleanup: seleziona tutti i contatti ed elimina
         try:
             page.click("#contacts")
-            time.sleep(1)
+            page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
             page.locator('button[title="Tutti i contatti"]').first.click()
-            time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
-            time.sleep(0.5)
+            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.wait_for(state="visible", timeout=5000)
             page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-            time.sleep(0.5)
             try:
                 page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
             except Exception:
                 page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
-            time.sleep(1)
         except Exception:
             pass

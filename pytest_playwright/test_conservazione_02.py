@@ -1,6 +1,5 @@
 import os
 import json
-import time
 import pytest
 from datetime import datetime
 from base_pec import LoginPec
@@ -34,7 +33,7 @@ def _click_waffle_menu(page):
             el = page.locator(sel).first
             if el.count() > 0 and el.is_visible():
                 el.click()
-                time.sleep(1)
+                page.wait_for_timeout(500)
                 return True
         except Exception:
             pass
@@ -53,8 +52,6 @@ def test_conservazione_waffle_menu(page):
     except Exception:
         pass
 
-    time.sleep(1)
-
     # --- Prova apertura waffle menu ---
     waffle_opened = _click_waffle_menu(page)
 
@@ -63,7 +60,6 @@ def test_conservazione_waffle_menu(page):
         # Usa dispatch_event per forzare il click senza verificare la visibilità
         page.goto(SETTINGS_URL, timeout=20000)
         page.wait_for_load_state("load", timeout=15000)
-        time.sleep(1)
         try:
             conservazione_btn = page.locator('button[title="Conservazione"]').first
             conservazione_btn.wait_for(state="attached", timeout=5000)
@@ -72,7 +68,6 @@ def test_conservazione_waffle_menu(page):
                 page.wait_for_load_state("load", timeout=10000)
             except Exception:
                 pass
-            time.sleep(2)
         except Exception:
             pytest.skip("Feature 'Conservazione' non disponibile in questo ambiente")
 
@@ -87,7 +82,6 @@ def test_conservazione_waffle_menu(page):
 
     else:
         # Waffle menu aperto — cerca la voce "Conservazione"
-        time.sleep(1)
         conservazione_item = page.locator(
             'button:has-text("Conservazione"), a:has-text("Conservazione"), '
             'aru-menu-item:has-text("Conservazione"), [role="menuitem"]:has-text("Conservazione")'
@@ -106,7 +100,6 @@ def test_conservazione_waffle_menu(page):
                 conservazione_item.click()
             conservazione_page = new_page_info.value
             conservazione_page.wait_for_load_state("load", timeout=15000)
-            time.sleep(2)
             content = conservazione_page.content().lower()
             assert "conservazione" in content or "conservation" in content, \
                 "La sezione Conservazione non si è aperta correttamente (nuova tab)"
@@ -118,7 +111,7 @@ def test_conservazione_waffle_menu(page):
         except Exception:
             # Stessa tab
             conservazione_item.click()
-            time.sleep(2)
+            page.wait_for_timeout(1500)
             content = page.content().lower()
             assert "conservazione" in content or "conservation" in content, \
                 "La sezione Conservazione non si è aperta correttamente"

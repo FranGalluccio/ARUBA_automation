@@ -1,7 +1,7 @@
 import os
 import json
-from datetime import datetime
 import time
+from datetime import datetime
 from base_pec import LoginPec
 from playwright.sync_api import expect
 
@@ -23,61 +23,56 @@ def test_elimina_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
     page.click("#contacts")
-    time.sleep(1)
+    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
     # Crea un contatto da eliminare
     unique_email = f"testelimina_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
     cognome = f"DaEliminare{int(time.time())}"
 
     try:
-        page.get_by_role("button", name="Nuovo").click()
+        page.get_by_role("button", name="Nuovo", exact=True).click()
         page.get_by_role("button", name="Procedi").click()
         page.get_by_placeholder("Inserisci nome").fill("Contatto")
         page.get_by_placeholder("Inserisci cognome").fill(cognome)
         page.get_by_placeholder("Inserisci email").fill(unique_email)
         page.get_by_role("button", name="Salva").click()
-        time.sleep(2)
 
         # Cerca il contatto appena creato
         search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
         search.click()
         search.fill(cognome)
-        time.sleep(1)
 
         row = page.locator('div.frame-record-desktop').filter(has_text=cognome).first
         row.wait_for(state="visible", timeout=5000)
 
         row.hover()
-        time.sleep(0.5)
         row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-        time.sleep(1)
 
         # Clicca Elimina dalla toolbar
         elimina_btn = page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first
         elimina_btn.wait_for(state="visible", timeout=5000)
         elimina_btn.click()
-        time.sleep(1)
 
         # Screenshot per diagnostica
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_contatti_06_del_{datetime.now():%H-%M-%S}.png"))
 
         # Conferma nella dialog
         page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
-        time.sleep(2)
 
-        # Verifica che il contatto non sia più presente
+        # Aspetta che la lista si aggiorni dopo l'eliminazione
         try:
             page.locator('.cdk-overlay-backdrop').wait_for(state="hidden", timeout=3000)
         except Exception:
             pass
-        time.sleep(1)
+        try:
+            row.wait_for(state="hidden", timeout=5000)
+        except Exception:
+            pass
+
         search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
         search2.click(force=True)
-        time.sleep(0.5)
         search2.fill(cognome)
-        time.sleep(1)
 
         assert page.locator('div.frame-record-desktop').filter(has_text=cognome).count() == 0, \
             f"Il contatto '{cognome}' è ancora presente dopo l'eliminazione"
@@ -94,14 +89,11 @@ def test_elimina_contatto(page):
         # Cleanup: seleziona tutti i contatti ed elimina (safety net)
         try:
             page.click("#contacts")
-            time.sleep(1)
+            page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=5000)
             page.locator('button[title="Tutti i contatti"]').first.click()
-            time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
-            time.sleep(0.5)
             page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-            time.sleep(0.5)
             page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
-            time.sleep(1)
         except Exception:
             pass

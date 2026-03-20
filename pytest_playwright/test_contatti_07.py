@@ -23,7 +23,6 @@ def test_ricerca_contatto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    time.sleep(1)
     page.click("#contacts")
     page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
@@ -38,20 +37,16 @@ def test_ricerca_contatto(page):
         page.get_by_placeholder("Inserisci cognome").fill("Playwright")
         page.get_by_placeholder("Inserisci email").fill(unique_email)
         page.get_by_role("button", name="Salva").click()
-        time.sleep(1)
 
         # Usa la barra di ricerca
         search = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="Cerca"]').first
         search.click()
         search.fill(nome_univoco)
-        time.sleep(1)
 
         # Verifica che il contatto sia visibile nei risultati
         result = page.locator('div.frame-record-desktop, [class*="contact-row"]').filter(has_text=nome_univoco).first
         result.wait_for(state="visible", timeout=8000)
         assert result.is_visible(), f"Il contatto '{nome_univoco}' non è stato trovato nella ricerca"
-
-        time.sleep(1)
 
         # Screenshot
         screenshot_path = os.path.join(
@@ -65,14 +60,12 @@ def test_ricerca_contatto(page):
         # Cleanup: seleziona tutti i contatti ed elimina
         try:
             page.click("#contacts")
-            time.sleep(1)
+            page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
             page.locator('button[title="Tutti i contatti"]').first.click()
-            time.sleep(1)
+            page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
-            time.sleep(0.5)
+            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.wait_for(state="visible", timeout=5000)
             page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-            time.sleep(0.5)
             page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
-            time.sleep(1)
         except Exception:
             pass
