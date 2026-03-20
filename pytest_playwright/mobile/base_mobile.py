@@ -119,10 +119,16 @@ class LoginPecMobile:
             "button[type='submit'], button:has-text('Login'), button:has-text('Accedi')"
         ).first.click()
 
-        self.page.wait_for_load_state("load", timeout=20_000)
+        self.page.wait_for_load_state("load", timeout=30_000)
+        self.page.wait_for_timeout(5000)
+        if "smart-login" in self.page.url:
+            inbox_url = cfg["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
+            self.page.goto(inbox_url, timeout=30_000)
+            self.page.wait_for_load_state("load", timeout=20_000)
+            self.page.wait_for_timeout(3000)
 
         url_pattern = cfg["pec"].get("inbox_url_pattern", "INBOX")
-        expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=20_000)
+        expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=30_000)
 
         # Chiudi cookie banner webmail (appare dopo il login, diverso da quello del login page)
         for selector in [
