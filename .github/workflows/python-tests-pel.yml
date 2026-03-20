@@ -71,8 +71,8 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          python -m pip install -r requirements.txt
-          python -m playwright install chromium
+          python3 -m pip install -r requirements.txt
+          python3 -m playwright install chromium
 
       - name: Run tests
         if: runner.os == 'Windows'
@@ -127,7 +127,7 @@ jobs:
           reportDir="pytest_pel/test-results"
           mkdir -p "$reportDir"
 
-          python -m pytest pytest_pel/ \
+          python3 -m pytest pytest_pel/ \
             --junitxml="$reportDir/report.xml" \
             --html="$reportDir/report.html" \
             --self-contained-html \
