@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 
 from base_pec import LoginPec, Helper
@@ -21,6 +22,8 @@ def test_invio_messaggio_con_cc(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
+    ts = int(time.time())
+    oggetto = f"Test CC playwright {ts}"
     destinatario = config["destinatari"]["destinatario_principale"]
 
     # Apri nuovo messaggio
@@ -30,39 +33,42 @@ def test_invio_messaggio_con_cc(page):
     to_input = page.locator("input[placeholder='Destinatari']").first
     to_input.wait_for(state="visible", timeout=5000)
     to_input.fill(destinatario)
-    # Press Enter/Tab per confermare il destinatario come chip
     to_input.press("Enter")
 
-    # Aggiungi CC (dopo click sul bottone CC, appare un nuovo input Destinatari)
+    # Aggiungi CC
     page.locator('button[title="CC"]').click()
     page.wait_for_timeout(1000)
     cc_destinatario = config["destinatari"].get("destinatario_secondario", destinatario)
-    # Ora ci sono 2 input Destinatari, il secondo è il CC
     cc_inputs = page.locator("input[placeholder='Destinatari']").all()
-    if len(cc_inputs) >= 2:
-        cc_input = cc_inputs[-1]  # prendi l'ultimo (il CC appena aggiunto)
-    else:
-        cc_input = page.locator("input[placeholder='Destinatari']").first
+    cc_input = cc_inputs[-1] if len(cc_inputs) >= 2 else page.locator("input[placeholder='Destinatari']").first
     cc_input.fill(cc_destinatario)
 
     # Compila oggetto e corpo
-    page.locator('input[aria-label="input field"]').fill("Test automatico con Playwright - Messaggio con CC")
+    page.locator('input[aria-label="input field"]').fill(oggetto)
     page.locator("div[contenteditable='true']").fill("Corpo del messaggio con CC")
 
     # Invia
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta toast di conferma
+    # Aspetta toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
     assert "Il messaggio è stato inviato" in toast.text_content()
 
-    # Aspetta consegna e verifica il messaggio ricevuto mostra CC
-    page.wait_for_timeout(8000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
+    # Polling: aspetta che il messaggio arrivi in inbox (fino a 40s)
+    messaggio_arrivato = False
+    for _ in range(13):
+        page.wait_for_timeout(3000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(1000)
+        if page.locator('div.frame-record-desktop').filter(has_text=oggetto).count() > 0:
+            messaggio_arrivato = True
+            break
 
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    page.locator('div.frame-record-desktop').first.click()
+    assert messaggio_arrivato, f"Il messaggio '{oggetto}' non è arrivato in inbox entro 40s"
+
+    # Apri il messaggio specifico e verifica il contenuto
+    page.locator('div.frame-record-desktop').filter(has_text=oggetto).first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     

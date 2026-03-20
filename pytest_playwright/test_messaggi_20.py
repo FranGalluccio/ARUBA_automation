@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 
 from base_pec import LoginPec, Helper
@@ -24,23 +25,33 @@ def test_scarica_allegato_ricevuto(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
+    ts = int(time.time())
+    oggetto = f"Test scarica allegato playwright {ts}"
+
     # Invia messaggio con allegato a se stessi
     Helper.crea_messaggio(
         page,
         config,
-        oggetto="Test automatico con Playwright - Scarica allegato",
+        oggetto=oggetto,
         corpo="Messaggio con allegato da scaricare",
         path_allegato=file_allegato,
     )
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta consegna
-    page.wait_for_timeout(15000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
+    # Polling: aspetta che il messaggio arrivi in inbox (fino a 40s)
+    messaggio_arrivato = False
+    for _ in range(13):
+        page.wait_for_timeout(3000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(1000)
+        if page.locator('div.frame-record-desktop').filter(has_text=oggetto).count() > 0:
+            messaggio_arrivato = True
+            break
 
-    # Apri messaggio
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    page.locator('div.frame-record-desktop').first.click()
+    assert messaggio_arrivato, f"Il messaggio '{oggetto}' non è arrivato in inbox entro 40s"
+
+    # Apri il messaggio specifico
+    page.locator('div.frame-record-desktop').filter(has_text=oggetto).first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Apri in nuova finestra
