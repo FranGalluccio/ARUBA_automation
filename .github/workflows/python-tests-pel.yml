@@ -39,6 +39,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Mostra ambiente selezionato
+        if: inputs.runner != 'lorenzo'
         shell: powershell
         run: |
           $amb = "${{ inputs.ambiente }}"
@@ -48,13 +49,33 @@ jobs:
           Write-Host "  AMBIENTE: $amb" -ForegroundColor Yellow
           Write-Host "========================================" -ForegroundColor Cyan
 
+      - name: Mostra ambiente selezionato (lorenzo)
+        if: inputs.runner == 'lorenzo'
+        shell: bash
+        run: |
+          amb="${{ inputs.ambiente }}"
+          if [ -z "$amb" ]; then amb="test-domini (default - push automatico)"; fi
+          echo "========================================"
+          echo "  SUITE: PEL"
+          echo "  AMBIENTE: $amb"
+          echo "========================================"
+
       - name: Install dependencies
+        if: inputs.runner != 'lorenzo'
         shell: powershell
         run: |
           python -m pip install -r requirements.txt
           python -m playwright install chromium
 
+      - name: Install dependencies (lorenzo)
+        if: inputs.runner == 'lorenzo'
+        shell: bash
+        run: |
+          python -m pip install -r requirements.txt
+          python -m playwright install chromium
+
       - name: Run tests
+        if: inputs.runner != 'lorenzo'
         shell: powershell
         continue-on-error: true
         env:
@@ -82,6 +103,37 @@ jobs:
             --capture=tee-sys `
             --tb=short `
             --color=yes `
+            --browser chromium
+
+      - name: Run tests (lorenzo)
+        if: inputs.runner == 'lorenzo'
+        shell: bash
+        continue-on-error: true
+        env:
+          PEL_URL: >-
+            ${{ inputs.ambiente == 'prod-domini' && 'https://webmail.aruba.it/new/auth/login'
+             || 'https://webmaildominitest.aruba.it/new/auth/login' }}
+          PEL_INBOX_URL_PATTERN: "INBOX"
+          PEL_USERNAME: >-
+            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_USERNAME
+             || secrets.TEST_PEL_USERNAME }}
+          PEL_PASSWORD: >-
+            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_PASSWORD
+             || secrets.TEST_PEL_PASSWORD }}
+          PEL_DESTINATARIO_SECONDARIO: >-
+            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_DESTINATARIO_SECONDARIO
+             || secrets.TEST_PEL_DESTINATARIO_SECONDARIO }}
+        run: |
+          reportDir="pytest_pel/test-results"
+          mkdir -p "$reportDir"
+
+          python -m pytest pytest_pel/ \
+            --junitxml="$reportDir/report.xml" \
+            --html="$reportDir/report.html" \
+            --self-contained-html \
+            --capture=tee-sys \
+            --tb=short \
+            --color=yes \
             --browser chromium
 
       - name: Upload JUnit XML report
