@@ -7,11 +7,11 @@ def test_navigazione_contatti_mobile(page):
     """Naviga alla sezione Contatti via bottom tab e verifica il caricamento."""
 
     LoginPecMobile(page).login_pec()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
     nav = MobileNav(page)
     nav.nav_tab("contatti")
-    time.sleep(2)
+    page.wait_for_timeout(2000)
 
     screenshot(page, "test_contatti_01_sezione")
 
@@ -35,11 +35,11 @@ def test_crea_cerca_elimina_contatto_mobile(page):
     """Crea un contatto su mobile, lo cerca, verifica che esista, poi lo elimina."""
 
     LoginPecMobile(page).login_pec()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
     nav = MobileNav(page)
     nav.nav_tab("contatti")
-    time.sleep(2)
+    page.wait_for_timeout(2000)
 
     ts = int(time.time())
     nome = f"MobileTest{ts}"
@@ -50,12 +50,12 @@ def test_crea_cerca_elimina_contatto_mobile(page):
     # --- Crea nuovo contatto (FAB blu "+") via JS click (bypassa viewport CDP) ---
     nav = MobileNav(page)
     nav.click_fab("Nuovo contatto")
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
     # Dialog tipo contatto — clicca "Procedi" se appare
     try:
         page.get_by_role("button", name="Procedi").click(timeout=3000)
-        time.sleep(0.5)
+        page.wait_for_timeout(500)
     except Exception:
         pass
 
@@ -64,7 +64,7 @@ def test_crea_cerca_elimina_contatto_mobile(page):
     page.get_by_placeholder("Inserisci cognome").fill("Mobile")
     page.get_by_placeholder("Inserisci email").fill(email)
     page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
+    page.wait_for_timeout(2000)
 
     screenshot(page, "test_contatto_02_salvato")
 
@@ -72,7 +72,7 @@ def test_crea_cerca_elimina_contatto_mobile(page):
     # Su mobile il campo ricerca è nascosto: prima click sull'icona search per rivelarlo
     try:
         page.get_by_role("button", name="Cerca").first.click(timeout=2000)
-        time.sleep(0.5)
+        page.wait_for_timeout(500)
     except Exception:
         pass
 
@@ -84,7 +84,7 @@ def test_crea_cerca_elimina_contatto_mobile(page):
     ).first
     try:
         search.fill(nome, timeout=5000)
-        time.sleep(1)
+        page.wait_for_timeout(1000)
     except Exception:
         pass  # Se la ricerca non è disponibile, verifichiamo la presenza diretta
 
@@ -100,16 +100,16 @@ def test_crea_cerca_elimina_contatto_mobile(page):
     try:
         r = page.locator('div.frame-record-desktop').filter(has_text=nome).first
         r.hover()
-        time.sleep(0.5)
+        page.wait_for_timeout(500)
         r.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-        time.sleep(0.5)
+        page.wait_for_timeout(500)
         page.locator(
             'aru-symbol[title="Elimina"], button[title="Elimina"], '
             'button:has(aru-symbol[title="Elimina"])'
         ).first.click()
-        time.sleep(1)
+        page.wait_for_timeout(1000)
         page.locator('button:has-text("Sì"), button[title="Si"]').first.click(timeout=2000)
-        time.sleep(1)
+        page.wait_for_timeout(1000)
     except Exception:
         pass
 

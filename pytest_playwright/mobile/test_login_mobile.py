@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 from base_mobile import LoginPecMobile, MobileNav, config, REPORT_FOLDER, screenshot
 
@@ -8,7 +7,7 @@ def test_login_mobile(page):
     (bottom navigation bar + hamburger)."""
 
     LoginPecMobile(page).login_pec()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
     # Verifica URL inbox
     assert any(p in page.url for p in ["INBOX", "messages", "mail"]), \

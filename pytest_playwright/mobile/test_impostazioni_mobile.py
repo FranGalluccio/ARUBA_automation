@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 from base_mobile import LoginPecMobile, MobileNav, config, REPORT_FOLDER, screenshot
 
@@ -8,7 +7,7 @@ def test_navigazione_impostazioni_mobile(page):
     e verifica che la pagina carichi correttamente."""
 
     LoginPecMobile(page).login_pec()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
     nav = MobileNav(page)
     screenshot(page, "test_impostazioni_01_inbox")
@@ -17,14 +16,14 @@ def test_navigazione_impostazioni_mobile(page):
     settings_reached = False
     try:
         nav.nav_tab("altro")
-        time.sleep(1)
+        page.wait_for_timeout(1000)
         screenshot(page, "test_impostazioni_02_altro")
 
         page.locator(
             'text="Impostazioni", button:has-text("Impostazioni"), '
             'a:has-text("Impostazioni"), [class*="settings"]'
         ).first.click(timeout=4000)
-        time.sleep(2)
+        page.wait_for_timeout(2000)
         if "settings" in page.url.lower() or "impostazioni" in page.url.lower():
             settings_reached = True
     except Exception:
@@ -34,14 +33,14 @@ def test_navigazione_impostazioni_mobile(page):
     if not settings_reached:
         try:
             nav.open_hamburger()
-            time.sleep(0.5)
+            page.wait_for_timeout(500)
             screenshot(page, "test_impostazioni_03_drawer")
 
             page.locator(
                 'text="Impostazioni", button:has-text("Impostazioni"), '
                 'a:has-text("Impostazioni")'
             ).first.click(timeout=4000)
-            time.sleep(2)
+            page.wait_for_timeout(2000)
             if "settings" in page.url.lower() or "impostazioni" in page.url.lower():
                 settings_reached = True
         except Exception:
@@ -55,7 +54,7 @@ def test_navigazione_impostazioni_mobile(page):
             page.wait_for_load_state("load", timeout=10000)
         except Exception:
             pass
-        time.sleep(1)
+        page.wait_for_timeout(1000)
         settings_reached = "settings" in page.url.lower() or "impostazioni" in page.url.lower()
 
     assert settings_reached, \
@@ -82,7 +81,7 @@ def test_accesso_sezione_impostazioni_mobile(page):
     (Casella PEC, Messaggi e scrittura, Account e sicurezza)."""
 
     LoginPecMobile(page).login_pec()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
     # Naviga direttamente alle impostazioni
     settings_url = config["pec"]["url"].rstrip("/") + "/new/settings/home"
@@ -91,7 +90,7 @@ def test_accesso_sezione_impostazioni_mobile(page):
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
         pass
-    time.sleep(2)
+    page.wait_for_timeout(2000)
 
     screenshot(page, "test_sez_impostazioni_01")
 
@@ -107,7 +106,7 @@ def test_accesso_sezione_impostazioni_mobile(page):
     # Clicca su "Casella PEC" (o "Account e sicurezza") per verificare navigazione interna
     try:
         page.locator('text="Casella PEC"').first.click(timeout=3000)
-        time.sleep(1)
+        page.wait_for_timeout(1000)
         screenshot(page, "test_sez_impostazioni_02_casella_pec")
     except Exception:
         pass

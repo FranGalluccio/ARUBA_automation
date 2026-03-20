@@ -11,7 +11,7 @@ def test_inbox_navigation_mobile(page):
     switch tra cartelle via hamburger, ritorno via bottom tab."""
 
     LoginPecMobile(page).login_pec()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
     nav = MobileNav(page)
 
     # --- Lista messaggi visibile ---
@@ -31,7 +31,7 @@ def test_inbox_navigation_mobile(page):
 
     # --- Naviga a Inviati ---
     page.locator('text="Inviati"').first.click()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
     screenshot(page, "test_messaggi_03_inviati")
     assert "Inviati" in page.url or "Sent" in page.url or \
            page.locator('h1, [class*="title"]').filter(has_text="Inviati").count() > 0, \
@@ -39,7 +39,7 @@ def test_inbox_navigation_mobile(page):
 
     # --- Ritorna a Messaggi via bottom tab ---
     nav.nav_tab("messaggi")
-    time.sleep(1)
+    page.wait_for_timeout(1000)
     assert "INBOX" in page.url or "messages" in page.url, \
         f"Bottom tab 'Messaggi' non ha navigato all'inbox — URL: {page.url}"
 
@@ -51,9 +51,9 @@ def test_apri_messaggio_mobile(page):
     """Apre il primo messaggio in inbox su mobile e verifica il dettaglio."""
 
     LoginPecMobile(page).login_pec()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
-    time.sleep(2)
+    page.wait_for_timeout(2000)
     screenshot(page, "test_apri_msg_01_lista")
 
     # Su mobile i row sono a y > window.innerHeight (CDP viewport troncato).
@@ -65,7 +65,7 @@ def test_apri_messaggio_mobile(page):
             if (btn) { btn.click(); return true; }
             return false;
         }""")
-        time.sleep(2)
+        page.wait_for_timeout(2000)
         opened = True
     except Exception:
         pass
@@ -73,8 +73,8 @@ def test_apri_messaggio_mobile(page):
     if not opened:
         # Fallback: forza click sulle coordinate centro-alto del viewport (area messaggi)
         page.mouse.click(195, 300)
-        time.sleep(2)
-    time.sleep(2)
+        page.wait_for_timeout(2000)
+    page.wait_for_timeout(2000)
 
     screenshot(page, "test_apri_msg_02_dettaglio")
 
@@ -89,19 +89,19 @@ def test_componi_invia_mobile(page):
     """Compone e invia un messaggio tramite FAB mobile, verifica toast di conferma."""
 
     LoginPecMobile(page).login_pec()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
     nav = MobileNav(page)
     ts = int(time.time())
     oggetto = f"Test mobile {ts}"
     corpo = "Test automatico composizione mobile Playwright"
 
-    time.sleep(1)
+    page.wait_for_timeout(1000)
     screenshot(page, "test_componi_01_pre")
 
     # Apri compose via FAB
     nav.open_compose()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
     screenshot(page, "test_componi_02_compose_aperto")
 
     # Verifica che la finestra di composizione si sia aperta
@@ -119,7 +119,7 @@ def test_componi_invia_mobile(page):
         "input[aria-label*='Destinatari']"
     ).first.fill(destinatario)
     page.keyboard.press("Enter")
-    time.sleep(0.5)
+    page.wait_for_timeout(500)
 
     # Oggetto
     page.locator(
@@ -137,7 +137,7 @@ def test_componi_invia_mobile(page):
         'span[title="Invia"], button[title="Invia"], '
         'aru-button:has-text("Invia"), button:has-text("Invia")'
     ).first.click()
-    time.sleep(3)
+    page.wait_for_timeout(3000)
 
     screenshot(page, "test_componi_04_post_invio")
 

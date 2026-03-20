@@ -7,11 +7,11 @@ def test_navigazione_calendario_mobile(page):
     """Naviga al Calendario via bottom tab e verifica il caricamento."""
 
     LoginPecMobile(page).login_pec()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
     nav = MobileNav(page)
     nav.nav_tab("calendario")
-    time.sleep(2)
+    page.wait_for_timeout(2000)
 
     screenshot(page, "test_calendario_01_sezione")
 
@@ -35,11 +35,11 @@ def test_crea_elimina_evento_mobile(page):
     """Crea un nuovo evento dal calendario mobile e lo elimina (cleanup)."""
 
     LoginPecMobile(page).login_pec()
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
     nav = MobileNav(page)
     nav.nav_tab("calendario")
-    time.sleep(2)
+    page.wait_for_timeout(2000)
 
     ts = int(time.time())
     titolo = f"Evento mobile {ts}"
@@ -49,17 +49,17 @@ def test_crea_elimina_evento_mobile(page):
     # --- Clicca "Nuovo evento" (FAB blu "+") via JS click (bypassa viewport CDP) ---
     nav = MobileNav(page)
     nav.click_fab("Nuovo evento")
-    time.sleep(1)
+    page.wait_for_timeout(1000)
 
     screenshot(page, "test_evento_02_form")
 
     # Compila titolo
     page.get_by_placeholder("Inserisci un titolo").fill(titolo)
-    time.sleep(0.5)
+    page.wait_for_timeout(500)
 
     # Salva
     page.get_by_role("button", name="Salva").click()
-    time.sleep(2)
+    page.wait_for_timeout(2000)
 
     screenshot(page, "test_evento_03_salvato")
 
@@ -72,19 +72,25 @@ def test_crea_elimina_evento_mobile(page):
     # --- Cleanup: elimina l'evento ---
     try:
         nav.nav_tab("calendario")
-        time.sleep(1)
+        page.wait_for_timeout(1000)
         page.get_by_role("button", name="Eventi").click(timeout=3000)
-        time.sleep(2)
+        page.wait_for_timeout(2000)
         while True:
             ev = page.locator('a, [class*="event"]').filter(has_text=titolo).first
             if ev.count() == 0:
                 break
             ev.click()
-            time.sleep(1)
+            page.wait_for_timeout(1000)
             page.get_by_role("button", name="Annulla evento").first.click()
-            time.sleep(1)
+            page.wait_for_timeout(1000)
             page.get_by_role("button", name="Elimina").first.click()
-            time.sleep(2)
+            page.wait_for_timeout(2000)
+            try:
+                toast = page.locator("div.aru-toast__message").first
+                if toast.is_visible():
+                    print(f"Toast eliminazione: {toast.text_content()}")
+            except Exception:
+                pass
     except Exception:
         pass
 
