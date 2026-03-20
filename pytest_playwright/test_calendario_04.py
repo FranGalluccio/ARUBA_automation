@@ -53,6 +53,10 @@ def test_import_export_calendario(page: Page):
 
         page.wait_for_timeout(1000)
 
+        # Re-apri il sidebar del calendario (l'import chiude il pannello laterale)
+        page.get_by_role("button", name="Calendario").first.click()
+        page.wait_for_timeout(1000)
+
         # Screenshot dopo import
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_post_import_{datetime.now():%H-%M-%S}.png"))
 
