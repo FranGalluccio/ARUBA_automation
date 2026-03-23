@@ -22,31 +22,30 @@ def test_creazione_modifica_evento(page):
     titolo_modificato = f"evento pel auto modificato {ts}"
 
     try:
-        page.get_by_role("button", name="Calendario").click()
+        page.get_by_role("button", name="Calendario", exact=True).click()
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
         page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
         page.get_by_placeholder("Inserisci un titolo").fill(titolo_base)
-        page.get_by_role("button", name="Salva").click()
-        page.wait_for_timeout(1000)
+        page.get_by_role("button", name="Salva").first.click()
+        page.wait_for_timeout(1500)
 
         # Apri l'evento appena creato
-        page.locator("a, [class*='event']").filter(has_text=titolo_base).first.wait_for(
+        page.locator(".fc-event").filter(has_text=titolo_base).first.wait_for(
             state="visible", timeout=8000
         )
-        page.locator("a, [class*='event']").filter(has_text=titolo_base).first.click()
+        page.locator(".fc-event").filter(has_text=titolo_base).first.click()
         page.get_by_role("button", name="Modifica").wait_for(state="visible", timeout=5000)
         page.get_by_role("button", name="Modifica").click()
 
         # Modifica il titolo
         titolo_input = page.get_by_placeholder("Inserisci un titolo")
         titolo_input.wait_for(state="visible", timeout=5000)
-        titolo_input.triple_click()
         titolo_input.fill(titolo_modificato)
-        page.get_by_role("button", name="Salva").click()
-        page.wait_for_timeout(1000)
+        page.get_by_role("button", name="Salva").first.click()
+        page.wait_for_timeout(1500)
 
         # Verifica che il titolo aggiornato sia visibile
-        page.locator("a, [class*='event']").filter(has_text=titolo_modificato).first.wait_for(
+        page.locator(".fc-event").filter(has_text=titolo_modificato).first.wait_for(
             state="visible", timeout=8000
         )
 

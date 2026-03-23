@@ -27,7 +27,7 @@ def test_cambio_vista_calendario(page):
         ("Eventi",    '[title="Eventi"]'),
         ("Settimana", '[title="Settimana"]'),
     ]:
-        page.locator(selector).click()
+        page.locator(selector).first.click()
         page.wait_for_timeout(1000)
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_06_{vista.lower()}_{datetime.now():%H-%M-%S}.png"))
         print(f"  Vista {vista}: URL={page.url}")

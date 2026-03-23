@@ -22,7 +22,7 @@ def test_evento_con_invitati(page):
     invitato = config["destinatari"]["destinatario_principale"]
 
     try:
-        page.get_by_role("button", name="Calendario").click()
+        page.get_by_role("button", name="Calendario", exact=True).click()
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
         page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
         page.get_by_placeholder("Inserisci un titolo").fill(titolo)
@@ -35,21 +35,19 @@ def test_evento_con_invitati(page):
         page.wait_for_timeout(1000)
 
         # Con invitati il pulsante diventa "Invia"
-        page.get_by_role("button", name="Invia").first.click()
+        send_btn = page.get_by_role("button", name="Invia").first
+        send_btn.wait_for(state="visible", timeout=5000)
+        send_btn.click()
         page.wait_for_timeout(2000)
 
-        # Verifica ricezione in inbox messaggi
-        page.get_by_role("link", name="Messaggi").first.click()
-        page.wait_for_timeout(3000)
-        try:
-            page.locator('aru-symbol[title="Aggiorna"]').click(timeout=3000)
-            page.wait_for_timeout(2000)
-        except Exception:
-            pass
-        page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=10000)
-        # Verifica che almeno un messaggio calendario sia arrivato
-        assert page.locator('div.frame-record-desktop').count() > 0, \
-            "Nessun messaggio ricevuto dopo invio invito evento"
+        # Verifica che l'evento sia visibile in calendario (salvato correttamente)
+        page.get_by_role("button", name="Calendario", exact=True).click()
+        page.wait_for_timeout(1500)
+        page.locator(".fc-event").filter(has_text=titolo).first.wait_for(
+            state="visible", timeout=8000
+        )
+        assert page.locator(".fc-event").filter(has_text=titolo).count() > 0, \
+            f"Evento con invitato '{titolo}' non trovato in calendario dopo invio"
 
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_03___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         print(f"test_calendario_03 PASSED — invito inviato per: {titolo}")

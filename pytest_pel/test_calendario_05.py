@@ -21,17 +21,21 @@ def test_crea_calendario_personalizzato(page):
     nome_cal = f"Cal Lavoro {ts}"
 
     try:
-        page.get_by_role("button", name="Calendario").click()
+        page.get_by_role("button", name="Calendario", exact=True).click()
         page.wait_for_timeout(1000)
 
         # Apri gestione calendario
-        page.locator('[title="Gestione calendario"]').click()
+        page.get_by_role("button", name="Gestione calendario").first.click()
         page.wait_for_timeout(1000)
 
         # Crea nuovo calendario
         page.get_by_role("button", name="Nuovo", exact=False).first.click()
-        page.wait_for_timeout(500)
-        page.get_by_placeholder("Nome calendario", exact=False).fill(nome_cal)
+        page.wait_for_timeout(800)
+        nome_input = page.locator(
+            "input[placeholder*='Nome'], input[placeholder*='nome'], input[aria-label='input field']"
+        ).first
+        nome_input.wait_for(state="visible", timeout=8000)
+        nome_input.fill(nome_cal)
 
         # Scegli colore (il terzo disponibile)
         colori = page.locator('[class*="color"], [class*="colour"], input[type="color"], [role="radio"]').all()
@@ -53,7 +57,7 @@ def test_crea_calendario_personalizzato(page):
             pass
 
         # Verifica che il calendario sia visibile nella sidebar
-        page.locator('[title="I miei calendari"]').click()
+        page.locator('[title="I miei calendari"]').first.click()
         page.wait_for_timeout(500)
         assert page.get_by_text(nome_cal, exact=False).count() > 0, \
             f"Calendario '{nome_cal}' non trovato nella sidebar"

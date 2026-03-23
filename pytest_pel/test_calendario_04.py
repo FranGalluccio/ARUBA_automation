@@ -28,7 +28,7 @@ def test_import_export_calendario(page):
         page.wait_for_timeout(1000)
 
         # --- Importa ---
-        page.locator('[title="Importa"]').click()
+        page.get_by_role("button", name="Importa").first.click()
         page.locator("#hidden_input").wait_for(state="attached", timeout=5000)
         page.locator("#hidden_input").set_input_files(FILE_ICS)
 
