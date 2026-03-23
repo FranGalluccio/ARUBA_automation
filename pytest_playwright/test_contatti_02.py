@@ -112,7 +112,7 @@ def test_aggiungere_nuovo_gruppo(page):
             page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
             try:
                 page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.wait_for(state="visible", timeout=5000)
-            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click()
+                page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click()
             except Exception:
                 page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
         except Exception:

@@ -59,7 +59,7 @@ def test_elimina_contatto(page):
 
         # Conferma nella dialog
         page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.wait_for(state="visible", timeout=5000)
-            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click()
+        page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click()
 
         # Aspetta che la lista si aggiorni dopo l'eliminazione
         try:
