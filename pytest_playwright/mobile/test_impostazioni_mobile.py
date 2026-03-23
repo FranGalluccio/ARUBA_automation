@@ -62,6 +62,9 @@ def test_navigazione_impostazioni_mobile(page):
 
     screenshot(page, "test_impostazioni_04_pagina")
 
+    # Aspetta che Angular carichi il contenuto della pagina impostazioni
+    page.wait_for_timeout(3000)
+
     # Verifica contenuto impostazioni
     content_ok = (
         page.locator('h1:has-text("Impostazioni"), h2:has-text("Impostazioni")').count() > 0
