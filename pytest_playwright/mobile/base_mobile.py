@@ -126,8 +126,25 @@ class LoginPecMobile:
             self.page.goto(inbox_url, timeout=30_000)
             self.page.wait_for_load_state("load", timeout=20_000)
             self.page.wait_for_timeout(3000)
-            # Se smart-login ha triggerato un logout e siamo finiti alla pagina di auth, ri-logghiamo
-            if "login" in self.page.url.lower() or "auth" in self.page.url.lower():
+            if "login-actions/authenticate" in self.page.url:
+                # Token Keycloak scaduto — ricomincia il login da capo
+                self.page.goto(cfg["pec"]["url"], timeout=60_000)
+                self.page.wait_for_load_state("load", timeout=30_000)
+                self.page.wait_for_timeout(2000)
+                if "INBOX" not in self.page.url:
+                    self.page.locator(
+                        "input[name='username'], input#username, input[type='email']"
+                    ).first.fill(cfg["pec"]["username"])
+                    self.page.locator(
+                        "input[name='password'], input#password, input[type='password']"
+                    ).first.fill(cfg["pec"]["password"])
+                    self.page.locator(
+                        "button[type='submit'], button:has-text('Login'), button:has-text('Accedi')"
+                    ).first.click()
+                    self.page.wait_for_load_state("load", timeout=30_000)
+                    self.page.wait_for_timeout(5000)
+            elif "login" in self.page.url.lower() or "auth" in self.page.url.lower():
+                # Redirect a pagina di login normale — ri-logghiamo
                 self.page.locator(
                     "input[name='username'], input#username, input[type='email']"
                 ).first.fill(cfg["pec"]["username"])
@@ -139,6 +156,30 @@ class LoginPecMobile:
                 ).first.click()
                 self.page.wait_for_load_state("load", timeout=30_000)
                 self.page.wait_for_timeout(5000)
+
+        elif "login-actions/authenticate" in self.page.url:
+            # Execution token Keycloak scaduto — ricomincia il login da capo
+            self.page.goto(cfg["pec"]["url"], timeout=60_000)
+            self.page.wait_for_load_state("load", timeout=30_000)
+            self.page.wait_for_timeout(2000)
+            # Se la sessione è ancora valida il browser va direttamente su INBOX
+            if "INBOX" not in self.page.url:
+                self.page.locator(
+                    "input[name='username'], input#username, input[type='email']"
+                ).first.fill(cfg["pec"]["username"])
+                self.page.locator(
+                    "input[name='password'], input#password, input[type='password']"
+                ).first.fill(cfg["pec"]["password"])
+                self.page.locator(
+                    "button[type='submit'], button:has-text('Login'), button:has-text('Accedi')"
+                ).first.click()
+                self.page.wait_for_load_state("load", timeout=30_000)
+                self.page.wait_for_timeout(5000)
+                if "smart-login" in self.page.url:
+                    inbox_url = cfg["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
+                    self.page.goto(inbox_url, timeout=30_000)
+                    self.page.wait_for_load_state("load", timeout=20_000)
+                    self.page.wait_for_timeout(3000)
 
         url_pattern = cfg["pec"].get("inbox_url_pattern", "INBOX")
         expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=30_000)
