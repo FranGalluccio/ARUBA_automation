@@ -63,10 +63,12 @@ def test_importa_contatti(page):
             page.locator("#contacts").click()
             page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
             page.locator('button[title="Tutti i contatti"]').first.click()
+            page.wait_for_timeout(2000)
             page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
             page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.wait_for(state="visible", timeout=5000)
             page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click(timeout=3000)
+            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.wait_for(state="visible", timeout=5000)
+            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click()
         except Exception:
             pass
