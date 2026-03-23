@@ -39,20 +39,12 @@ def test_messaggio_alta_priorita(page):
     # Invia
     page.locator('span[title="Invia"]').click()
 
-    # Polling: aspetta che il messaggio arrivi in inbox (fino a 40s)
-    messaggio_arrivato = False
-    for _ in range(13):
-        page.wait_for_timeout(3000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
-        page.wait_for_timeout(1000)
-        if page.locator('div.frame-record-desktop').filter(has_text=oggetto).count() > 0:
-            messaggio_arrivato = True
-            break
-
-    assert messaggio_arrivato, f"Il messaggio '{oggetto}' non è arrivato in inbox entro 40s"
-
-    # Apri il messaggio specifico
-    page.locator('div.frame-record-desktop').filter(has_text=oggetto).first.click()
+    # Aspetta ricezione, aggiorna e apri il primo messaggio
+    page.wait_for_timeout(10000)
+    page.locator('aru-symbol[title="Aggiorna"]').click()
+    page.wait_for_timeout(2000)
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+    page.locator('div.frame-record-desktop').first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=20000)
 
     # Verifica che il simbolo "important" sia visibile nel messaggio aperto

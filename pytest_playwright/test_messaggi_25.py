@@ -24,8 +24,10 @@ def test_invio_allegati_multipli(page):
     ts = int(time.time())
     oggetto = f"Test allegati multipli {ts}"
 
-    # Percorso allegato relativo alla CWD (root del progetto), come in tutti gli altri test
-    path_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato", "dati_test/allegato-test.pdf"))
+    # Percorso allegato risolto rispetto alla root del repo
+    _git_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    _raw_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato", "dati_test/allegato-test.pdf"))
+    path_allegato = os.path.normpath(os.path.join(_git_root, _raw_allegato)) if _raw_allegato and not os.path.isabs(_raw_allegato) else _raw_allegato
 
     # Dismiss any CDK backdrop
     if page.locator('.cdk-overlay-backdrop').is_visible():

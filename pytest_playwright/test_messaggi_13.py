@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 
 from base_pec import LoginPec, Helper
@@ -21,53 +22,38 @@ def test_risposta_a_tutti(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
+    ts = int(time.time())
+    oggetto = f"Test risposta tutti playwright {ts}"
+
     # Invia messaggio a se stessi come base per il reply all
-    Helper.crea_messaggio(
-        page,
-        config,
-        oggetto="Test automatico con Playwright - Originale per reply all",
-        corpo="Corpo del messaggio originale",
-    )
+    Helper.crea_messaggio(page, config, oggetto=oggetto, corpo="Corpo del messaggio originale")
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta consegna
-    page.wait_for_timeout(8000)
+    # Aspetta ricezione, aggiorna e apri il primo messaggio
+    page.wait_for_timeout(10000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-
-    # Cerca il messaggio inviato per soggetto
-    oggetto_originale = "Test automatico con Playwright - Originale per reply all"
+    page.wait_for_timeout(2000)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto_originale).first
-    if msg.count() == 0:
-        msg = page.locator('div.frame-record-desktop').first
-    msg.click()
+    page.locator('div.frame-record-desktop').first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
-    # Clicca Rispondi a tutti
+    # Rispondi a tutti
     page.locator('aru-symbol[title="Rispondi a tutti"]').first.click()
-
-    # Aspetta apertura form risposta
     page.locator("div[contenteditable='true']").first.wait_for(state="visible", timeout=5000)
     page.locator("div[contenteditable='true']").first.fill("Risposta a tutti automatica tramite Playwright")
-
-    # Invia risposta
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta consegna risposta
-    page.wait_for_timeout(8000)
+    # Aspetta ricezione risposta, aggiorna e apri il primo messaggio
+    page.wait_for_timeout(10000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-
-    # Cerca il messaggio di risposta per prefisso "Re:"
+    page.wait_for_timeout(2000)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    reply_msg = page.locator('div.frame-record-desktop').filter(has_text="Re:").first
-    if reply_msg.count() == 0:
-        reply_msg = page.locator('div.frame-record-desktop').first
-    reply_msg.click()
+    page.locator('div.frame-record-desktop').first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Verifica prefisso "Re:" nell'oggetto
-    oggetto = page.locator("div.message-header-title-subject").inner_text().strip()
-    assert "Re:" in oggetto, f"Oggetto inatteso (manca 'Re:'): {oggetto}"
+    soggetto = page.locator("div.message-header-title-subject").inner_text().strip()
+    assert "Re:" in soggetto, f"Oggetto inatteso (manca 'Re:'): {soggetto}"
 
     # Screenshot
     screenshot_path = os.path.join(

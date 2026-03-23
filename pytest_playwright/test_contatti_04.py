@@ -15,7 +15,9 @@ REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-resu
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 # --- Percorso rubrica da importare ---
-file_rubrica = os.environ.get("RUBRICA_IMPORT", config.get("rubrica_import"))
+_GIT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_raw = os.environ.get("RUBRICA_IMPORT", config.get("rubrica_import"))
+file_rubrica = os.path.normpath(os.path.join(_GIT_ROOT, _raw)) if _raw and not os.path.isabs(_raw) else _raw
 
 
 def test_importa_contatti(page):

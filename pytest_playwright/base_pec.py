@@ -15,8 +15,19 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
+# --- Root del repo (parent di pytest_playwright/) ---
+GIT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _resolve_path(raw):
+    """Risolve un path relativo rispetto alla root del repo Git_automation/."""
+    if raw and not os.path.isabs(raw):
+        return os.path.normpath(os.path.join(GIT_ROOT, raw))
+    return raw
+
+
 # --- Percorso allegato dinamico ---
-file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
+file_allegato = _resolve_path(os.environ.get("FILE_ALLEGATO", config.get("file_allegato")))
 
 class LoginPec:
     def __init__(self, page: Page):
@@ -161,5 +172,6 @@ class Helper:
             page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=2000)
         except Exception:
             pass
+
 
 

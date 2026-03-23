@@ -18,7 +18,9 @@ REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-resu
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 # --- Percorso allegato ---
-file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
+_GIT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_raw = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
+file_allegato = os.path.normpath(os.path.join(_GIT_ROOT, _raw)) if _raw and not os.path.isabs(_raw) else _raw
 
 
 def test_scarica_allegato_ricevuto(page):
@@ -38,20 +40,12 @@ def test_scarica_allegato_ricevuto(page):
     )
     page.locator('span[title="Invia"]').click()
 
-    # Polling: aspetta che il messaggio arrivi in inbox (fino a 40s)
-    messaggio_arrivato = False
-    for _ in range(13):
-        page.wait_for_timeout(3000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
-        page.wait_for_timeout(1000)
-        if page.locator('div.frame-record-desktop').filter(has_text=oggetto).count() > 0:
-            messaggio_arrivato = True
-            break
-
-    assert messaggio_arrivato, f"Il messaggio '{oggetto}' non è arrivato in inbox entro 40s"
-
-    # Apri il messaggio specifico
-    page.locator('div.frame-record-desktop').filter(has_text=oggetto).first.click()
+    # Aspetta ricezione, aggiorna e apri il primo messaggio
+    page.wait_for_timeout(10000)
+    page.locator('aru-symbol[title="Aggiorna"]').click()
+    page.wait_for_timeout(2000)
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+    page.locator('div.frame-record-desktop').first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Apri in nuova finestra

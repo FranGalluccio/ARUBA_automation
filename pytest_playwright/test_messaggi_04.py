@@ -17,7 +17,9 @@ REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-resu
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 # --- Percorso importa messaggi ---
-importa_messaggi = os.environ.get("IMPORTA_MESSAGGI", config.get("importa_messaggi"))
+_GIT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_raw = os.environ.get("IMPORTA_MESSAGGI", config.get("importa_messaggi"))
+importa_messaggi = os.path.normpath(os.path.join(_GIT_ROOT, _raw)) if _raw and not os.path.isabs(_raw) else _raw
 
 def test_messaggio_importato(page):
     # Login PEC

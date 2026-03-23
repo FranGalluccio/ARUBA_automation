@@ -15,7 +15,9 @@ REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-resu
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 # --- Percorso allegato dinamico ---
-file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
+_GIT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_raw = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
+file_allegato = os.path.normpath(os.path.join(_GIT_ROOT, _raw)) if _raw and not os.path.isabs(_raw) else _raw
 
 def test_messaggi_preferiti_pinnati(page):
     # Login PEC

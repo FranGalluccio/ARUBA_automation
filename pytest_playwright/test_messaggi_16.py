@@ -40,17 +40,18 @@ def test_copia_messaggio_in_cartella(page):
     page.goto(inbox_url, timeout=20000)
     page.wait_for_load_state("load")
 
+    ts = int(time.time())
     # Invia un messaggio a se stessi
     Helper.crea_messaggio(
         page,
         config,
-        oggetto="Test automatico con Playwright - Da copiare",
+        oggetto=f"Test copia playwright {ts}",
         corpo="Questo messaggio verrà copiato in una cartella",
     )
     page.locator('span[title="Invia"]').click(force=True)
 
     # Aspetta consegna
-    page.wait_for_timeout(8000)
+    page.wait_for_timeout(10000)
     page.locator('aru-symbol[title="Aggiorna"]').click(force=True)
 
     # Apri il messaggio

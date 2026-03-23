@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 
 from base_pec import LoginPec, Helper
@@ -21,20 +22,20 @@ def test_elimina_messaggio(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
+    ts = int(time.time())
     # Invia un messaggio a se stessi per avere un messaggio da eliminare
     Helper.crea_messaggio(
         page,
         config,
-        oggetto="Test automatico con Playwright - Da eliminare",
+        oggetto=f"Test elimina playwright {ts}",
         corpo="Questo messaggio verrà eliminato nel test",
     )
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta consegna
-    page.wait_for_timeout(8000)
+    # Aspetta consegna e apri il messaggio
+    page.wait_for_timeout(10000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
-
-    # Apri il messaggio
+    page.wait_for_timeout(2000)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
     page.locator('div.frame-record-desktop').first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
@@ -43,13 +44,11 @@ def test_elimina_messaggio(page):
     page.locator('aru-symbol[title="Elimina"]').first.click()
     page.wait_for_timeout(2000)
 
-    # Verifica: apri il cestino e verifica che il messaggio sia presente
+    # Verifica: il messaggio con il nostro timestamp è il primo nel Cestino
     page.locator('button[title="Cestino"]').click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
-
-    # Verifica che ci sia almeno un messaggio nel cestino
-    count = page.locator('div.frame-record-desktop').count()
-    assert count > 0, "Il messaggio eliminato non è stato trovato nel cestino"
+    testo_primo = page.locator('div.frame-record-desktop').first.inner_text()
+    assert str(ts) in testo_primo, f"Il primo messaggio nel Cestino non è quello eliminato (ts={ts}): {testo_primo}"
 
     # Screenshot
     screenshot_path = os.path.join(
