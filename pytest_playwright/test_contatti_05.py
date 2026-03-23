@@ -49,15 +49,19 @@ def test_modifica_contatto(page):
         # Hover per far apparire il checkbox e selezionarlo
         row.hover()
         row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
+        page.wait_for_timeout(500)
 
-        # Cerca pulsante Modifica nella toolbar (appare quando si seleziona 1 contatto)
-        # oppure tenta doppio click sul contatto per aprire l'editor
+        # Cerca pulsante Modifica nella toolbar, poi verifica che il form si apra
         try:
             modifica_btn = page.locator('button[title="Modifica"], aru-symbol[title="Modifica"]').first
-            modifica_btn.wait_for(state="visible", timeout=8000)
+            modifica_btn.wait_for(state="visible", timeout=5000)
             modifica_btn.click()
+            page.wait_for_timeout(1000)
         except Exception:
-            # Fallback: doppio click sulla riga per aprire edit
+            pass
+
+        # Se il form non è aperto, prova dblclick sulla riga
+        if page.get_by_placeholder("Inserisci cognome").count() == 0:
             row.dblclick()
 
         # Modifica il cognome
