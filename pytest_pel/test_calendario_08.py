@@ -50,6 +50,13 @@ def test_evento_giornata_intera(page):
             page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_08_toggle_{datetime.now():%H-%M-%S}.png"))
             print("  Toggle Giornata intera attivato")
 
+        # Chiudi banner cookie se riapparso
+        try:
+            page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=3000)
+            page.wait_for_timeout(500)
+        except Exception:
+            pass
+
         page.get_by_role("button", name="Salva").click()
         page.wait_for_timeout(1000)
 
