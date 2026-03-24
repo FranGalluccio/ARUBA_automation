@@ -1,4 +1,4 @@
-name: Python Playwright Tests - Mobile
+name: Python Playwright Tests - PEC Mobile
 
 on:
   workflow_dispatch:

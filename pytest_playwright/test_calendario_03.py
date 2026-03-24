@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 import time
-from base_pec import LoginPec, Helper
+from base_pec import LoginPec, Helper, elimina_evento_pec
 from playwright.sync_api import expect
 
 
@@ -74,48 +74,4 @@ def test_creazione_invio_evento(page):
         print(f"Screenshot salvato in: {screenshot_path}")
 
     finally:
-        # Cleanup: annulla evento con invitati tramite 3 puntini → Annulla evento
-        try:
-            page.get_by_role("button", name="Calendario").click()
-            page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
-            page.get_by_role("button", name="Eventi").click(force=True)
-            page.wait_for_timeout(1500)
-            for _ in range(20):
-                ev = page.get_by_text("evento test auto invito", exact=False).first
-                if ev.count() == 0:
-                    break
-                ev.click()
-                page.wait_for_timeout(1500)
-                # Clicca i 3 puntini nell'header del popup evento
-                try:
-                    page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
-                    page.wait_for_timeout(500)
-                except Exception:
-                    pass
-                # Clicca "Annulla evento" dal menu a tendina
-                try:
-                    page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
-                    page.wait_for_timeout(500)
-                except Exception:
-                    pass
-                # Eventuale conferma
-                try:
-                    page.get_by_role("button", name="Elimina").first.click(timeout=3000)
-                    page.wait_for_timeout(1500)
-                    try:
-                        toast = page.locator("div.aru-toast__message").first
-                        if toast.is_visible():
-                            print(f"Toast eliminazione: {toast.text_content()}")
-                    except Exception:
-                        pass
-                except Exception:
-                    pass
-                try:
-                    page.keyboard.press("Escape")
-                    page.wait_for_timeout(300)
-                except Exception:
-                    pass
-                page.get_by_role("button", name="Eventi").click(force=True)
-                page.wait_for_timeout(1500)
-        except Exception:
-            pass
+        elimina_evento_pec(page, "evento test auto invito")

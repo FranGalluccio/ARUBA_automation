@@ -1,4 +1,4 @@
-name: Python Playwright Tests - PEL
+name: Python Playwright Tests - PEL Staff
 
 on:
   push:

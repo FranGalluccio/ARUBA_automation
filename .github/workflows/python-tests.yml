@@ -1,4 +1,4 @@
-name: Python Playwright Tests
+name: Python Playwright Tests - PEC
 
 on:
   push:

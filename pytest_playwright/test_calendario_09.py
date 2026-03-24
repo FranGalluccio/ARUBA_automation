@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 import time
-from base_pec import LoginPec
+from base_pec import LoginPec, elimina_evento_pec
 from playwright.sync_api import expect
 
 
@@ -95,8 +95,28 @@ def test_evento_con_promemoria(page):
         except Exception:
             pass
 
-        # Verifica che l'evento sia presente
+        # Verifica che l'evento sia presente nella vista Events
         evento_trovato = page.get_by_text(titolo_evento, exact=False).count() > 0
+
+        # Fallback: cerca via barra di ricerca del calendario
+        if not evento_trovato:
+            try:
+                search = page.locator(
+                    'input[placeholder*="Cerca nel calendario"], '
+                    'input[placeholder*="Cerca calendario"], '
+                    'input[placeholder*="Cerca"]'
+                ).first
+                search.wait_for(state="visible", timeout=5000)
+                search.click()
+                search.fill(titolo_evento)
+                page.keyboard.press("Enter")
+                for _ in range(10):
+                    if page.get_by_text(titolo_evento, exact=False).count() > 0:
+                        evento_trovato = True
+                        break
+                    page.wait_for_timeout(1000)
+            except Exception:
+                pass
 
         # Screenshot
         screenshot_path = os.path.join(
@@ -108,45 +128,4 @@ def test_evento_con_promemoria(page):
         assert evento_trovato, f"L'evento con promemoria '{titolo_evento}' non è stato trovato nel calendario"
 
     finally:
-        # Cleanup: elimina l'evento (eseguito anche in caso di fallimento)
-        try:
-            page.get_by_role("button", name="Calendario").click()
-            page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
-            page.get_by_role("button", name="Eventi").click(force=True)
-            page.wait_for_timeout(1500)
-            for _ in range(20):
-                ev = page.get_by_text("evento con promemoria playwright", exact=False).first
-                if ev.count() == 0:
-                    break
-                ev.click()
-                page.wait_for_timeout(1500)
-                try:
-                    page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
-                    page.wait_for_timeout(500)
-                except Exception:
-                    pass
-                try:
-                    page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
-                    page.wait_for_timeout(500)
-                except Exception:
-                    pass
-                try:
-                    page.get_by_role("button", name="Elimina").first.click(timeout=3000)
-                    page.wait_for_timeout(1500)
-                    try:
-                        toast = page.locator("div.aru-toast__message").first
-                        if toast.is_visible():
-                            print(f"Toast eliminazione: {toast.text_content()}")
-                    except Exception:
-                        pass
-                except Exception:
-                    pass
-                try:
-                    page.keyboard.press("Escape")
-                    page.wait_for_timeout(300)
-                except Exception:
-                    pass
-                page.get_by_role("button", name="Eventi").click(force=True)
-                page.wait_for_timeout(1500)
-        except Exception:
-            pass
+        elimina_evento_pec(page, "evento con promemoria playwright")

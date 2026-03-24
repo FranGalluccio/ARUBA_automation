@@ -174,4 +174,59 @@ class Helper:
             pass
 
 
-
+def elimina_evento_pec(page, testo: str, max_iter: int = 20):
+    """Elimina tutti gli eventi PEC che contengono 'testo' nella vista Eventi.
+    Chiamare dal blocco finally del test per garantire il cleanup."""
+    try:
+        # Chiudi eventuali dialog/overlay aperti prima di navigare
+        for _ in range(4):
+            try:
+                if page.locator('.cdk-overlay-backdrop').count() > 0:
+                    page.keyboard.press("Escape")
+                    page.wait_for_timeout(400)
+                else:
+                    break
+            except Exception:
+                break
+        page.get_by_role("button", name="Calendario", exact=True).click()
+        page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
+        page.get_by_role("button", name="Eventi").click(force=True)
+        page.wait_for_timeout(1500)
+        for _ in range(max_iter):
+            ev = page.get_by_text(testo, exact=False).first
+            if ev.count() == 0:
+                break
+            ev.click()
+            page.wait_for_timeout(1500)
+            try:
+                page.locator('button:has(aru-symbol[symbol="dots-separator"])').first.click(timeout=3000)
+                page.wait_for_timeout(500)
+            except Exception:
+                pass
+            try:
+                page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
+                page.wait_for_timeout(500)
+            except Exception:
+                pass
+            # Gestione eventi ricorrenti: seleziona "Tutti gli eventi" → Ok
+            try:
+                page.get_by_role("radio", name="Tutti gli eventi").check(timeout=2000)
+                page.wait_for_timeout(300)
+                page.get_by_role("button", name="Ok").first.click(timeout=2000)
+                page.wait_for_timeout(500)
+            except Exception:
+                pass
+            try:
+                page.get_by_role("button", name="Elimina").first.click(timeout=3000)
+                page.wait_for_timeout(1500)
+            except Exception:
+                pass
+            try:
+                page.keyboard.press("Escape")
+                page.wait_for_timeout(300)
+            except Exception:
+                pass
+            page.get_by_role("button", name="Eventi").click(force=True)
+            page.wait_for_timeout(1500)
+    except Exception:
+        pass
