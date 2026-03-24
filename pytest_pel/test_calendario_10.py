@@ -52,7 +52,7 @@ def test_pianificazione_multi_invitati(page):
         except Exception:
             pass
 
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_18_invitati_{datetime.now():%H-%M-%S}.png"))
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_10_invitati_{datetime.now():%H-%M-%S}.png"))
 
         # Apri vista pianificazione
         try:
@@ -64,16 +64,16 @@ def test_pianificazione_multi_invitati(page):
                 pass
         page.wait_for_timeout(2500)
 
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_18_planning_{datetime.now():%H-%M-%S}.png"))
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_10_planning_{datetime.now():%H-%M-%S}.png"))
 
         # Verifica che entrambi gli invitati siano visibili nella griglia pianificazione
         inv1_visibile = page.get_by_text(invitato_1, exact=False).count() > 0
         inv2_visibile = page.get_by_text(invitato_2, exact=False).count() > 0
 
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_18___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_10___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         assert inv1_visibile, f"Invitato 1 '{invitato_1}' non trovato nella vista pianificazione"
         assert inv2_visibile, f"Invitato 2 '{invitato_2}' non trovato nella vista pianificazione"
-        print(f"test_calendario_18 PASSED — entrambi gli invitati visibili in pianificazione")
+        print(f"test_calendario_10 PASSED — entrambi gli invitati visibili in pianificazione")
 
     finally:
         # Chiudi dialog pianificazione e form evento se ancora aperti

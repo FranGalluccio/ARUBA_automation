@@ -68,7 +68,7 @@ def test_disponibilita_occupato(page):
         page.get_by_role("button", name="Salva").first.click()
         page.wait_for_timeout(2000)
 
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_15_creato_{datetime.now():%H-%M-%S}.png"))
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_07_creato_{datetime.now():%H-%M-%S}.png"))
 
         # Riapri evento A per verificare che il toggle "Mostrati come occupato" sia ON
         page.locator(".fc-event").filter(has_text=titolo_a).first.wait_for(state="visible", timeout=8000)
@@ -98,7 +98,7 @@ def test_disponibilita_occupato(page):
                 '[class*="toggle--checked"], [class*="toggle-on"], [aria-checked="true"]'
             ).count() > 0
 
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_15___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_07___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
 
         # Annulla modifica
         try:
@@ -110,7 +110,7 @@ def test_disponibilita_occupato(page):
 
         assert toggle_checked, \
             "Toggle 'Mostrati come occupato' non risulta ON dopo il salvataggio dell'evento"
-        print(f"test_calendario_15 PASSED — 'Mostrati come occupato' ON verificato per: {titolo_a}")
+        print(f"test_calendario_07 PASSED — 'Mostrati come occupato' ON verificato per: {titolo_a}")
 
     finally:
         elimina_evento_pel(page, titolo_a)

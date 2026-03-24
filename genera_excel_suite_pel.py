@@ -127,49 +127,7 @@ TESTS = [
      "7. Scattare screenshot.",
      "Il pulsante 'Importa' è accessibile. Il file ICS viene caricato senza errori. L'esportazione (se disponibile) avvia il download di un file ICS."),
 
-    (7, "Calendario", "test_calendario_05.py", "test_crea_calendario_personalizzato",
-     "Verifica la creazione di un nuovo calendario con nome e colore, poi lo elimina.",
-     "1. Accedere con credenziali valide.\n"
-     "2. Navigare nella sezione Calendario.\n"
-     "3. Aprire 'Gestione calendario'.\n"
-     "4. Cliccare 'Nuovo' per creare un nuovo calendario.\n"
-     "5. Inserire un nome univoco (con timestamp).\n"
-     "6. Selezionare un colore tra quelli disponibili.\n"
-     "7. Salvare il calendario.\n"
-     "8. Verificare il toast di conferma.\n"
-     "9. Verificare che il calendario sia visibile nella sidebar.\n"
-     "10. Scattare screenshot.\n"
-     "11. Eliminare il calendario (click destro → Elimina calendario, cleanup).",
-     "Il nuovo calendario è creato e appare nella sidebar. Il toast di conferma è visibile. Il calendario viene eliminato correttamente nel cleanup."),
-
-    (8, "Calendario", "test_calendario_06.py", "test_cambio_vista_calendario",
-     "Verifica il cambio tra le diverse viste del calendario: Giorno, Mese, Eventi, Settimana.",
-     "1. Accedere con credenziali valide.\n"
-     "2. Navigare nella sezione Calendario.\n"
-     "3. Cliccare il pulsante vista 'Giorno' ([title='Giorno']).\n"
-     "4. Scattare screenshot della vista Giorno.\n"
-     "5. Cliccare il pulsante vista 'Mese' ([title='Mese']).\n"
-     "6. Scattare screenshot della vista Mese.\n"
-     "7. Cliccare il pulsante vista 'Eventi' ([title='Eventi']).\n"
-     "8. Scattare screenshot della vista Eventi.\n"
-     "9. Cliccare il pulsante vista 'Settimana' ([title='Settimana']).\n"
-     "10. Scattare screenshot finale.",
-     "Il calendario cambia correttamente tra le viste Giorno, Mese, Eventi e Settimana senza errori. Per ogni cambio lo screenshot mostra il layout corretto."),
-
-    (9, "Calendario", "test_calendario_07.py", "test_navigazione_periodi_calendario",
-     "Verifica la navigazione del calendario tramite mini-calendar e pulsante 'Oggi'.",
-     "1. Accedere con credenziali valide.\n"
-     "2. Navigare nella sezione Calendario.\n"
-     "3. Leggere il primo giorno della settimana corrente (.fc-col-header-cell).\n"
-     "4. Cliccare 'Next' nella mini-calendar per avanzare di un mese.\n"
-     "5. Cliccare il primo giorno disponibile del mese successivo.\n"
-     "6. Verificare che la main view si sia aggiornata (primo giorno diverso).\n"
-     "7. Cliccare il pulsante 'Oggi'.\n"
-     "8. Scattare screenshot.\n"
-     "9. Verificare il ritorno alla settimana corrente (primo giorno uguale all'iniziale, assert).",
-     "La navigazione tramite mini-calendar aggiorna la main view. Il pulsante 'Oggi' riporta correttamente alla settimana corrente."),
-
-    (10, "Calendario", "test_calendario_08.py", "test_evento_giornata_intera",
+    (7, "Calendario", "test_calendario_05.py", "test_evento_giornata_intera",
      "Verifica la creazione di un evento con toggle 'Giornata intera' attivato.",
      "1. Accedere con credenziali valide.\n"
      "2. Navigare nella sezione Calendario.\n"
@@ -182,93 +140,23 @@ TESTS = [
      "9. Eliminare l'evento (cleanup).",
      "L'evento è creato come evento 'Giornata intera' ed è visibile nel calendario (nella banda all-day o nella griglia). Il cleanup elimina l'evento correttamente."),
 
-    (11, "Calendario", "test_calendario_09.py", "test_evento_con_promemoria",
+    (8, "Calendario", "test_calendario_06.py", "test_evento_con_promemoria",
      "Verifica la configurazione e il salvataggio di un promemoria per un evento del calendario.",
      "1. Accedere con credenziali valide.\n"
      "2. Navigare nella sezione Calendario.\n"
      "3. Cliccare 'Nuovo evento'.\n"
      "4. Inserire un titolo univoco.\n"
-     "5. Cliccare 'Aggiungi promemoria'.\n"
-     "6. Configurare il tipo di notifica (email) e inserire l'indirizzo.\n"
-     "7. Salvare il dialog promemoria.\n"
-     "8. Salvare l'evento.\n"
-     "9. Verificare che l'evento sia visibile nel calendario (.fc-event).\n"
-     "10. Scattare screenshot.\n"
-     "11. Eliminare l'evento (cleanup).",
-     "Il promemoria è configurato e l'evento è salvato correttamente. L'evento è visibile nella griglia del calendario. Il cleanup elimina l'evento."),
-
-    (12, "Calendario", "test_calendario_10.py", "test_ricerca_nel_calendario",
-     "Verifica la funzione di ricerca eventi nel calendario tramite la barra di ricerca.",
-     "1. Accedere con credenziali valide.\n"
-     "2. Navigare nella sezione Calendario.\n"
-     "3. Creare un evento con titolo univoco (timestamp).\n"
-     "4. Salvare l'evento.\n"
-     "5. Cercare l'evento tramite la barra 'Cerca nel calendario'.\n"
-     "6. Premere Enter per avviare la ricerca.\n"
-     "7. Verificare che il testo univoco sia trovato.\n"
-     "8. Fallback: se la ricerca restituisce spinner, verificare tramite vista Eventi.\n"
-     "9. Scattare screenshot.\n"
-     "10. Eliminare l'evento (cleanup).",
-     "L'evento con il titolo univoco è trovato tramite ricerca o visibile nella vista Eventi. Il cleanup elimina l'evento."),
-
-    (13, "Calendario", "test_calendario_11.py", "test_evento_luogo_indirizzo",
-     "Verifica la creazione di un evento con tipo luogo 'Indirizzo' e il salvataggio del campo location.",
-     "1. Accedere con credenziali valide.\n"
-     "2. Navigare nella sezione Calendario.\n"
-     "3. Cliccare 'Nuovo evento'.\n"
-     "4. Inserire un titolo univoco.\n"
-     "5. Inserire un indirizzo fisico nel campo luogo (es. 'Via Roma 1, Milano').\n"
-     "6. Salvare l'evento.\n"
-     "7. Aprire l'evento dalla griglia e verificare che l'indirizzo sia presente nel popup.\n"
-     "8. Scattare screenshot.\n"
-     "9. Eliminare l'evento (cleanup).",
-     "Il luogo 'Via Roma 1, Milano' è salvato correttamente e visibile nel popup dell'evento. Il cleanup elimina l'evento."),
-
-    (14, "Calendario", "test_calendario_12.py", "test_evento_luogo_link",
-     "Verifica la creazione di un evento con URL meeting come luogo e il salvataggio del campo.",
-     "1. Accedere con credenziali valide.\n"
-     "2. Navigare nella sezione Calendario.\n"
-     "3. Cliccare 'Nuovo evento'.\n"
-     "4. Inserire un titolo univoco.\n"
-     "5. Inserire un URL meeting nel campo luogo (es. 'https://meet.example.com/test-room').\n"
-     "6. Salvare l'evento.\n"
-     "7. Aprire l'evento dalla griglia e verificare che l'URL sia presente nel popup.\n"
-     "8. Scattare screenshot.\n"
-     "9. Eliminare l'evento (cleanup).",
-     "L'URL meeting è salvato correttamente e visibile (parzialmente o intero) nel popup dell'evento. Il cleanup elimina l'evento."),
-
-    (15, "Calendario", "test_calendario_13.py", "test_evento_corpo_rich_text",
-     "Verifica la creazione di un evento con corpo in rich text (grassetto + lista) tramite suneditor.",
-     "1. Accedere con credenziali valide.\n"
-     "2. Navigare nella sezione Calendario.\n"
-     "3. Cliccare 'Nuovo evento'.\n"
-     "4. Inserire un titolo univoco.\n"
-     "5. Espandere a fullscreen per accedere al rich text editor.\n"
-     "6. Cliccare nell'area editable del suneditor.\n"
-     "7. Attivare il grassetto (toolbar o Ctrl+B) e digitare il testo.\n"
-     "8. Aggiungere una voce di lista.\n"
+     "5. Chiudere banner cookie se presente.\n"
+     "6. Cliccare 'Aggiungi promemoria'.\n"
+     "7. Configurare il tipo di notifica (email) e inserire l'indirizzo.\n"
+     "8. Salvare il dialog promemoria.\n"
      "9. Salvare l'evento.\n"
-     "10. Aprire l'evento e verificare che il testo in grassetto sia visibile nel popup.\n"
+     "10. Verificare che l'evento sia visibile nel calendario (.fc-event).\n"
      "11. Scattare screenshot.\n"
      "12. Eliminare l'evento (cleanup).",
-     "Il testo in grassetto inserito tramite rich text editor è salvato e visibile nel popup evento. Il cleanup elimina l'evento."),
+     "Il promemoria è configurato e l'evento è salvato correttamente. L'evento è visibile nella griglia del calendario. Il cleanup elimina l'evento."),
 
-    (16, "Calendario", "test_calendario_14.py", "test_assegna_calendario_specifico",
-     "Verifica la creazione di un evento assegnandolo a un calendario specifico.",
-     "1. Accedere con credenziali valide.\n"
-     "2. Navigare nella sezione Calendario.\n"
-     "3. Cliccare 'Nuovo evento'.\n"
-     "4. Inserire un titolo univoco.\n"
-     "5. Espandere a fullscreen per accedere al campo 'Calendario assegnato'.\n"
-     "6. Aprire il combobox del calendario (default 'Personale').\n"
-     "7. Selezionare un'opzione diversa dall'attuale se disponibile.\n"
-     "8. Salvare l'evento.\n"
-     "9. Verificare che l'evento sia visibile nel calendario.\n"
-     "10. Scattare screenshot.\n"
-     "11. Eliminare l'evento (cleanup).",
-     "L'evento è creato e assegnato al calendario selezionato. L'evento è visibile nella griglia del calendario. Il cleanup elimina l'evento correttamente."),
-
-    (17, "Calendario", "test_calendario_15.py", "test_disponibilita_occupato",
+    (9, "Calendario", "test_calendario_07.py", "test_disponibilita_occupato",
      "Verifica che un evento con 'Mostrati come occupato' ON salvi correttamente la preferenza.",
      "1. Accedere con credenziali valide.\n"
      "2. Navigare nella sezione Calendario.\n"
@@ -284,22 +172,47 @@ TESTS = [
      "12. Eliminare l'evento nel finally (cleanup).",
      "Il toggle 'Mostrati come occupato' è checked (ON) alla riapertura dell'evento, confermando che la preferenza è stata salvata correttamente."),
 
-    (18, "Calendario", "test_calendario_16.py", "test_disponibilita_libero",
+    (10, "Calendario", "test_calendario_08.py", "test_disponibilita_libero",
      "Verifica che un evento con 'Mostrati come occupato' OFF non renda lo slot occupato nella vista pianificazione.",
      "1. Accedere con credenziali valide.\n"
-     "2. Creare evento A con 'Mostrati come occupato' OFF (Libero) alle 14:00-15:00.\n"
+     "2. Creare evento A con 'Mostrati come occupato' OFF (Libero) con orario futuro.\n"
      "3. Creare evento B alla stessa ora aggiungendo se stesso come invitato.\n"
      "4. Aprire la vista di pianificazione disponibilità (aru-button.planning-button).\n"
-     "5. Verificare che lo slot 14:00-15:00 NON risulti 'Occupato' (exact=True).\n"
+     "5. Verificare che lo slot NON risulti 'Occupato' (exact=True).\n"
      "6. Scattare screenshot.\n"
-     "7. Chiudere la vista pianificazione e annullare l'evento B.\n"
-     "8. Eliminare entrambi gli eventi nel finally (cleanup).",
-     "Lo slot 14:00-15:00 non risulta 'Occupato' nella vista pianificazione, confermando che l'evento con 'Mostrati come occupato' OFF non impatta la disponibilità."),
+     "7. Nel finally: chiudere dialog aperti, eliminare entrambi gli eventi (cleanup).",
+     "Lo slot non risulta 'Occupato' nella vista pianificazione, confermando che l'evento con 'Mostrati come occupato' OFF non impatta la disponibilità."),
+
+    (11, "Calendario", "test_calendario_09.py", "test_pianificazione_invitato_occupato",
+     "Verifica che nella vista pianificazione disponibilità uno slot risulti occupato quando l'invitato ha un evento con 'Mostrati come occupato' ON.",
+     "1. Accedere con credenziali valide.\n"
+     "2. Creare evento A con orario futuro (+2h) — 'Mostrati come occupato' ON (default).\n"
+     "3. Aprire un nuovo evento B alla stessa ora, aggiungere se stesso come invitato.\n"
+     "4. Aprire la vista pianificazione disponibilità (aru-button.planning-button).\n"
+     "5. Identificare la modale 'Disponibilità degli invitati' (pane con 'Tu (').\n"
+     "6. Verificare la presenza di un blocco colorato (rosa/rosso) nella griglia.\n"
+     "7. Scattare screenshot.\n"
+     "8. Nel finally: chiudere dialog aperti, eliminare evento A e annullare evento B (cleanup).",
+     "La modale pianificazione mostra un blocco colorato nella riga dell'invitato, confermando che l'evento A con 'Mostrati come occupato' ON occupa lo slot. Il cleanup elimina correttamente entrambi gli eventi."),
+
+    (12, "Calendario", "test_calendario_10.py", "test_pianificazione_multi_invitati",
+     "Verifica la vista pianificazione disponibilità con più invitati, confermando che tutti appaiono nella griglia.",
+     "1. Accedere con credenziali valide.\n"
+     "2. Navigare nella sezione Calendario.\n"
+     "3. Creare un nuovo evento con titolo univoco.\n"
+     "4. Aggiungere destinatario_principale come invitato 1.\n"
+     "5. Aggiungere destinatario_secondario come invitato 2.\n"
+     "6. Aprire la vista pianificazione (link 'Pianifica e mostra disponibilità invitati' o aru-button.planning-button).\n"
+     "7. Verificare che invitato 1 sia visibile nella griglia pianificazione.\n"
+     "8. Verificare che invitato 2 sia visibile nella griglia pianificazione.\n"
+     "9. Scattare screenshot.\n"
+     "10. Nel finally: chiudere dialog aperti, eliminare l'evento (cleanup).",
+     "La vista pianificazione mostra entrambi gli invitati nella griglia. Il cleanup chiude il dialog e rimuove l'evento correttamente."),
 
     # ══════════════════════════════════════════════════════════════════════════
     # IMPOSTAZIONI
     # ══════════════════════════════════════════════════════════════════════════
-    (19, "Impostazioni", "test_impostazioni_calendari.py", "test_impostazioni_luogo_predefinito",
+    (13, "Impostazioni", "test_impostazioni_calendari.py", "test_impostazioni_luogo_predefinito",
      "S1: Imposta un luogo predefinito nelle impostazioni calendario e verifica che venga pre-compilato alla creazione di un nuovo evento.",
      "1. Accedere con credenziali valide.\n"
      "2. Navigare a /settings/calendars/customization tramite URL diretto.\n"
@@ -315,7 +228,7 @@ TESTS = [
      "12. Ripristinare il luogo vuoto nelle impostazioni (cleanup).",
      "La pagina impostazioni calendario è accessibile. Se il campo luogo è presente, il valore viene salvato e letto nel form del nuovo evento. L'impostazione viene ripristinata al termine."),
 
-    (20, "Impostazioni", "test_impostazioni_calendari.py", "test_impostazioni_visualizzazione_predefinita",
+    (14, "Impostazioni", "test_impostazioni_calendari.py", "test_impostazioni_visualizzazione_predefinita",
      "S2: Cambia la visualizzazione predefinita del calendario e verifica che il calendario si apra con quella vista.",
      "1. Accedere con credenziali valide.\n"
      "2. Navigare a /settings/calendars/customization tramite URL diretto.\n"
@@ -339,7 +252,7 @@ MODULE_STYLE = {
 
 MODULE_DESCRIPTIONS = {
     "Login":        "Test di autenticazione: verifica logout e login con credenziali errate.",
-    "Calendario":   "Test sul modulo Calendario PEL: creazione/modifica eventi, ricorrenze, viste, navigazione, giornata intera, promemoria, ricerca, luogo, rich text, calendario assegnato e disponibilità.",
+    "Calendario":   "Test sul modulo Calendario PEL: creazione/modifica eventi, ricorrenze, invitati, import/export ICS, giornata intera, promemoria, disponibilità occupato/libero e vista pianificazione multi-invitati.",
     "Impostazioni": "Test sulle impostazioni del calendario PEL: luogo predefinito (S1) e visualizzazione predefinita (S2).",
 }
 
