@@ -103,7 +103,7 @@ TESTS = [
      "12. Scattare screenshot.",
      "L'evento è creato con il titolo base. Dopo la modifica, il calendario mostra il nuovo titolo. Il cleanup elimina correttamente l'evento."),
 
-    (5, "Calendario", "test_calendario_03.py", "test_creazione_invio_evento",
+    (5, "Calendario", "test_calendario_03.py", "test_evento_con_invitati",
      "Verifica la creazione di un evento con invito a partecipanti e la visualizzazione nel calendario.",
      "1. Accedere con credenziali valide.\n"
      "2. Navigare nella sezione Calendario.\n"
