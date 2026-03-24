@@ -44,8 +44,17 @@ class LoginPel:
 
         self.page.wait_for_load_state("load", timeout=20_000)
 
-        url_pattern = config["pel"].get("inbox_url_pattern", "INBOX")
+        # Accetta sia INBOX/messages sia management/home come destinazione post-login
+        url_pattern = config["pel"].get("inbox_url_pattern", "INBOX|management|messages")
         expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=20_000)
+
+        # Se atterrati su management/home, naviga esplicitamente all'inbox PEL
+        if "management" in self.page.url:
+            login_url = config["pel"]["url"].rstrip("/")
+            base_url = login_url.split("/auth/")[0] if "/auth/" in login_url else login_url
+            self.page.goto(f"{base_url}/messages/INBOX", timeout=20_000)
+            self.page.wait_for_load_state("load", timeout=20_000)
+            self.page.wait_for_timeout(1500)
 
         # Chiudi modale iniziale (se presente)
         try:
