@@ -82,7 +82,7 @@ jobs:
           PEL_URL: >-
             ${{ inputs.ambiente == 'prod-domini' && 'https://webmail.aruba.it/new/auth/login'
              || 'https://webmaildominitest.aruba.it/new/auth/login' }}
-          PEL_INBOX_URL_PATTERN: "INBOX"
+          PEL_INBOX_URL_PATTERN: "INBOX|management|messages"
           PEL_USERNAME: >-
             ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_USERNAME
              || secrets.TEST_PEL_USERNAME }}
@@ -113,7 +113,7 @@ jobs:
           PEL_URL: >-
             ${{ inputs.ambiente == 'prod-domini' && 'https://webmail.aruba.it/new/auth/login'
              || 'https://webmaildominitest.aruba.it/new/auth/login' }}
-          PEL_INBOX_URL_PATTERN: "INBOX"
+          PEL_INBOX_URL_PATTERN: "INBOX|management|messages"
           PEL_USERNAME: >-
             ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_USERNAME
              || secrets.TEST_PEL_USERNAME }}
