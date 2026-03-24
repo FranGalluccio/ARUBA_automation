@@ -37,36 +37,41 @@ def test_modifica_contatto(page):
         page.get_by_placeholder("Inserisci email").fill(unique_email)
         page.get_by_role("button", name="Salva").click()
 
+        # Attendi che il salvataggio si completi (toast o chiusura form)
+        page.wait_for_timeout(2000)
+
+        # Chiudi cookie banner se apparso dopo il salvataggio
+        try:
+            page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=2000)
+            page.wait_for_timeout(500)
+        except Exception:
+            pass
+
         # Cerca il contatto appena creato
         search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
         search.click()
         search.fill("DaModificare")
+        page.wait_for_timeout(1500)  # attendi che i risultati si aggiornino
 
         # Trova il contatto nella lista
         row = page.locator('div.frame-record-desktop').filter(has_text="DaModificare").first
-        row.wait_for(state="visible", timeout=8000)
+        row.wait_for(state="visible", timeout=10000)
 
-        # Hover per far apparire il checkbox e selezionarlo
-        row.hover()
-        row.locator('aru-input-choice, input[type="checkbox"]').first.click(force=True)
-        page.wait_for_timeout(500)
+        # Apri il contatto in modifica: prova dblclick direttamente (più affidabile della toolbar)
+        row.dblclick()
 
-        # Cerca pulsante Modifica nella toolbar, poi verifica che il form si apra
-        try:
-            modifica_btn = page.locator('button[title="Modifica"], aru-symbol[title="Modifica"]').first
-            modifica_btn.wait_for(state="visible", timeout=5000)
-            modifica_btn.click()
-            page.wait_for_timeout(1000)
-        except Exception:
-            pass
-
-        # Se il form non è aperto, prova dblclick sulla riga (ri-localizza per evitare stale reference)
-        if page.get_by_placeholder("Inserisci cognome").count() == 0:
-            page.locator('div.frame-record-desktop').filter(has_text="DaModificare").first.dblclick()
-
-        # Modifica il cognome
+        # Se il dblclick ha aperto la vista dettaglio invece del form modifica,
+        # clicca il pulsante Modifica nel pannello dettaglio
         cognome_input = page.get_by_placeholder("Inserisci cognome")
-        cognome_input.wait_for(state="visible", timeout=30000)
+        try:
+            cognome_input.wait_for(state="visible", timeout=5000)
+        except Exception:
+            try:
+                page.locator('aru-button:has-text("Modifica"), button:has-text("Modifica")').first.click(timeout=5000)
+            except Exception:
+                pass
+
+        cognome_input.wait_for(state="visible", timeout=15000)
         cognome_input.click(click_count=3)
         cognome_input.fill("Modificato")
 
