@@ -60,9 +60,9 @@ def test_modifica_contatto(page):
         except Exception:
             pass
 
-        # Se il form non è aperto, prova dblclick sulla riga
+        # Se il form non è aperto, prova dblclick sulla riga (ri-localizza per evitare stale reference)
         if page.get_by_placeholder("Inserisci cognome").count() == 0:
-            row.dblclick()
+            page.locator('div.frame-record-desktop').filter(has_text="DaModificare").first.dblclick()
 
         # Modifica il cognome
         cognome_input = page.get_by_placeholder("Inserisci cognome")

@@ -30,6 +30,13 @@ def test_import_export_calendario(page: Page):
         page.get_by_role("button", name="Calendario").click()
         page.wait_for_load_state("load")
 
+        # Chiudi cookie banner se presente (blocca click su Importa)
+        try:
+            page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=3000)
+            page.wait_for_timeout(500)
+        except Exception:
+            pass
+
         # --- Importa calendario (.ics) ---
         page.get_by_role("button", name="Importa").first.click()
         page.locator("#hidden_input").wait_for(state="attached", timeout=5000)
@@ -57,6 +64,13 @@ def test_import_export_calendario(page: Page):
         page.reload()
         page.wait_for_load_state("load")
         page.wait_for_timeout(2000)
+
+        # Chiudi cookie banner se riapparso dopo reload
+        try:
+            page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=2000)
+            page.wait_for_timeout(500)
+        except Exception:
+            pass
 
         # Screenshot dopo import
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_post_import_{datetime.now():%H-%M-%S}.png"))

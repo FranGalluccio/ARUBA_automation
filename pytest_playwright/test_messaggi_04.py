@@ -25,6 +25,13 @@ def test_messaggio_importato(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
+    # Chiudi cookie banner se presente
+    try:
+        page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=3000)
+        page.wait_for_timeout(500)
+    except Exception:
+        pass
+
     # Clicca su importa messaggi
     page.locator('button[title="Importa"]').click()
     

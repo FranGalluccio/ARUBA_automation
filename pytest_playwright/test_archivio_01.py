@@ -27,6 +27,14 @@ def test_configurazione_archivio(page):
     #  la feature è verificata controllando che la pagina si carichi con l'h1 atteso)
     page.goto(ARCHIVE_URL, timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
+
+    # Chiudi cookie banner se presente (può bloccare l'h1 e causare skip errato)
+    try:
+        page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=3000)
+        page.wait_for_timeout(500)
+    except Exception:
+        pass
+
     try:
         page.locator("h1").filter(has_text="Archivio").wait_for(state="visible", timeout=10000)
     except Exception:
