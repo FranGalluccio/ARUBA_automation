@@ -118,6 +118,16 @@ def elimina_evento_pel(page, testo: str, max_iter: int = 20):
     """Elimina tutti gli eventi PEL che contengono 'testo' nella vista Eventi.
     Chiamare dal blocco finally del test per garantire il cleanup."""
     try:
+        # Chiudi eventuali dialog/overlay aperti prima di navigare
+        for _ in range(4):
+            try:
+                if page.locator('.cdk-overlay-backdrop').count() > 0:
+                    page.keyboard.press("Escape")
+                    page.wait_for_timeout(400)
+                else:
+                    break
+            except Exception:
+                break
         # exact=True evita strict mode violation con "Gestione calendario" visibile
         page.get_by_role("button", name="Calendario", exact=True).click()
         page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)

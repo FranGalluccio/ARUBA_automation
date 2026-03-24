@@ -138,14 +138,13 @@ def test_disponibilita_libero(page):
             "Slot risulta 'Occupato' anche con 'Mostrati come occupato' disattivato — comportamento errato"
         print("test_calendario_16 PASSED — slot non occupato con 'Mostrati come occupato' OFF")
 
-        # Chiudi dialog pianificazione e annulla evento B
-        page.keyboard.press("Escape")
-        page.wait_for_timeout(500)
+    finally:
+        # Chiudi dialog pianificazione/evento se ancora aperto (necessario se test fallisce)
         try:
+            page.keyboard.press("Escape")
+            page.wait_for_timeout(400)
             page.get_by_role("button", name="Annulla").first.click(timeout=2000)
         except Exception:
             pass
-
-    finally:
         elimina_evento_pel(page, titolo_a)
         elimina_evento_pel(page, titolo_b)

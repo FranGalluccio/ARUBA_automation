@@ -51,6 +51,33 @@ def test_import_export_calendario(page):
         page.reload()
         page.wait_for_load_state("load")
         page.wait_for_timeout(2000)
+
+        # Chiudi banner cookie se riapparso dopo reload
+        try:
+            page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=2000)
+            page.wait_for_timeout(500)
+        except Exception:
+            pass
+
+        # Chiudi wizard onboarding "Ti diamo il benvenuto" se presente (può avere più step)
+        for _ in range(5):
+            try:
+                if page.locator('.cdk-overlay-backdrop').count() == 0:
+                    break
+                # Prova "Inizia ora" (step finale) o "Prosegui" (step intermedio)
+                btn = page.locator(
+                    'button:has-text("Inizia ora"), button:has-text("Prosegui")'
+                ).first
+                if btn.count() > 0 and btn.is_visible():
+                    btn.click(timeout=2000)
+                    page.wait_for_timeout(600)
+                else:
+                    page.keyboard.press("Escape")
+                    page.wait_for_timeout(500)
+                    break
+            except Exception:
+                break
+
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_post_import_{datetime.now():%H-%M-%S}.png"))
 
         # --- Esporta ---

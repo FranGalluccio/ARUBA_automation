@@ -14,11 +14,11 @@ on:
       ambiente:
         description: "Ambiente da testare"
         required: true
-        default: "test-domini"
+        default: "test-staff"
         type: choice
         options:
-          - test-domini
-          - prod-domini
+          - test-staff
+          - prod-staff
       runner:
         description: "Runner da usare"
         required: true
@@ -80,17 +80,17 @@ jobs:
         continue-on-error: true
         env:
           PEL_URL: >-
-            ${{ inputs.ambiente == 'prod-domini' && 'https://webmail.aruba.it/new/auth/login'
-             || 'https://webmaildominitest.aruba.it/new/auth/login' }}
+            ${{ inputs.ambiente == 'prod-staff' && 'https://webmail.aruba.it/new/auth/login'
+             || 'https://webmailstafftest.aruba.it/new/auth/login' }}
           PEL_INBOX_URL_PATTERN: "INBOX|management|messages"
           PEL_USERNAME: >-
-            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_USERNAME
+            ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_USERNAME
              || secrets.TEST_PEL_USERNAME }}
           PEL_PASSWORD: >-
-            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_PASSWORD
+            ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_PASSWORD
              || secrets.TEST_PEL_PASSWORD }}
           PEL_DESTINATARIO_SECONDARIO: >-
-            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_DESTINATARIO_SECONDARIO
+            ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_DESTINATARIO_SECONDARIO
              || secrets.TEST_PEL_DESTINATARIO_SECONDARIO }}
         run: |
           $reportDir = "pytest_pel/test-results"
@@ -111,17 +111,17 @@ jobs:
         continue-on-error: true
         env:
           PEL_URL: >-
-            ${{ inputs.ambiente == 'prod-domini' && 'https://webmail.aruba.it/new/auth/login'
-             || 'https://webmaildominitest.aruba.it/new/auth/login' }}
+            ${{ inputs.ambiente == 'prod-staff' && 'https://webmail.aruba.it/new/auth/login'
+             || 'https://webmailstafftest.aruba.it/new/auth/login' }}
           PEL_INBOX_URL_PATTERN: "INBOX|management|messages"
           PEL_USERNAME: >-
-            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_USERNAME
+            ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_USERNAME
              || secrets.TEST_PEL_USERNAME }}
           PEL_PASSWORD: >-
-            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_PASSWORD
+            ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_PASSWORD
              || secrets.TEST_PEL_PASSWORD }}
           PEL_DESTINATARIO_SECONDARIO: >-
-            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_DESTINATARIO_SECONDARIO
+            ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_DESTINATARIO_SECONDARIO
              || secrets.TEST_PEL_DESTINATARIO_SECONDARIO }}
         run: |
           reportDir="pytest_pel/test-results"

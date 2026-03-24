@@ -26,6 +26,13 @@ def test_evento_con_promemoria(page):
         page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
         page.get_by_placeholder("Inserisci un titolo").fill(titolo)
 
+        # Chiudi banner cookie se presente
+        try:
+            page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=3000)
+            page.wait_for_timeout(500)
+        except Exception:
+            pass
+
         # Link "Aggiungi promemoria" nel pannello destro (fullscreen) o come link/button
         try:
             page.get_by_text("Aggiungi promemoria").first.click(timeout=5000)
