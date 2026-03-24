@@ -126,6 +126,13 @@ def test_form_multiutente_pec(page):
                 pass
             break
 
+    # Screenshot finale (form ancora aperto)
+    screenshot_path = os.path.join(
+        REPORT_FOLDER,
+        f"test_accessi_02___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
     assert form_found, "Form di aggiunta Multiutente PEC non si è aperto"
 
     # --- Chiudi il form senza inviare (nessun side-effect) ---
@@ -147,11 +154,3 @@ def test_form_multiutente_pec(page):
     else:
         # Fallback: tasto Escape
         page.keyboard.press("Escape")
-
-    # Screenshot finale
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_accessi_02___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")

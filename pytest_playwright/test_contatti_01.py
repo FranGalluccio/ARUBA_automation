@@ -50,7 +50,6 @@ def test_aggiungere_nuovo_contatto(page):
         search.fill(unique_email)
         row = page.locator('div.frame-record-desktop').filter(has_text="Test").first
         row.wait_for(state="visible", timeout=8000)
-        assert row.is_visible(), f"Contatto con email '{unique_email}' non trovato dopo il salvataggio"
 
         # Percorso screenshot dinamico
         screenshot_path = os.path.join(
@@ -59,6 +58,7 @@ def test_aggiungere_nuovo_contatto(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
+        assert row.is_visible(), f"Contatto con email '{unique_email}' non trovato dopo il salvataggio"
 
     finally:
         # Cleanup: seleziona tutti i contatti ed elimina

@@ -49,7 +49,6 @@ def test_messaggio_alta_priorita(page):
 
     # Verifica che il simbolo "important" sia visibile nel messaggio aperto
     important_symbol = page.locator('aru-symbol[symbol="important"]').first
-    expect(important_symbol).to_be_visible()
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -57,5 +56,5 @@ def test_messaggio_alta_priorita(page):
         f"test_messaggi_10___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
+    expect(important_symbol).to_be_visible()

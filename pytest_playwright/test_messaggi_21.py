@@ -63,7 +63,6 @@ def test_salva_e_usa_modello(page):
 
     # Verifica che il modello salvato con il nome univoco sia visibile nella lista
     modello_row = page.locator('div.frame-record-desktop').filter(has_text=oggetto_modello).first
-    assert modello_row.is_visible(), f"Il modello '{oggetto_modello}' non è visibile nella cartella Modelli"
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -72,6 +71,7 @@ def test_salva_e_usa_modello(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert modello_row.is_visible(), f"Il modello '{oggetto_modello}' non è visibile nella cartella Modelli"
 
     # Cleanup: elimina il modello salvato
     try:

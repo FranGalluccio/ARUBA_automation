@@ -173,6 +173,13 @@ def test_import_fattura_ricevute(page):
 
     pages_after = page.context.pages
 
+    screenshot_path = os.path.join(
+        REPORT_FOLDER,
+        f"test_fatture_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
+
     if len(pages_after) > pages_before:
         viewer_page = pages_after[-1]
         try:
@@ -188,13 +195,6 @@ def test_import_fattura_ricevute(page):
         assert page.locator('iframe, [class*="viewer"], [class*="preview"], [class*="pdf"]').count() > 0, \
             "Visualizza fattura non ha aperto una nuova tab né un viewer nella pagina"
     print("Visualizza fattura: OK")
-
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_fatture_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")
 
     # --- Torna alla lista Fatture ricevute per il cleanup ---
     # Chiudi la tab del viewer se aperta

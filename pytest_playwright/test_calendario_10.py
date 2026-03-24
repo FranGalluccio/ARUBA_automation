@@ -78,8 +78,6 @@ def test_ricerca_nel_calendario(page):
             page.wait_for_timeout(3000)
             evento_trovato = page.get_by_text(titolo_evento, exact=False).count() > 0
 
-        assert evento_trovato, f"L'evento '{titolo_evento}' non è stato trovato"
-
         # Screenshot
         screenshot_path = os.path.join(
             REPORT_FOLDER,
@@ -87,6 +85,7 @@ def test_ricerca_nel_calendario(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
+        assert evento_trovato, f"L'evento '{titolo_evento}' non è stato trovato"
 
     finally:
         # Cleanup: elimina l'evento (eseguito anche in caso di fallimento)

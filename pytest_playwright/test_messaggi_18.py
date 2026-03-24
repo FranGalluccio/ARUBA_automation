@@ -64,6 +64,14 @@ def test_filtri_inbox(page):
         option_texts = [t for t in options_js if t]
         print(f"JS options: {option_texts}")
 
+    # Screenshot finale (prima delle verifiche condizionali)
+    screenshot_path = os.path.join(
+        REPORT_FOLDER,
+        f"test_messaggi_18___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
+
     # Se non ci sono opzioni visibili, verifica solo che il componente sia presente e cliccabile
     if not option_texts:
         print("Nessuna opzione trovata - verifica solo che il componente filtro sia presente")
@@ -94,11 +102,3 @@ def test_filtri_inbox(page):
             assert dropdown_closed or filter_label_visible, (
                 f"Il filtro '{clicked_option_text}' non sembra essere stato applicato"
             )
-
-    # Screenshot finale
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_messaggi_18___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")

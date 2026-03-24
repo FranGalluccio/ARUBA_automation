@@ -48,7 +48,6 @@ def test_verifica_cartella_inviati(page):
     page.locator('div.frame-record-desktop').first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
     oggetto_visibile = page.locator("div.message-header-title-subject").inner_text().strip()
-    assert oggetto_inviato in oggetto_visibile, f"Oggetto inatteso: {oggetto_visibile}"
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -57,3 +56,4 @@ def test_verifica_cartella_inviati(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert oggetto_inviato in oggetto_visibile, f"Oggetto inatteso: {oggetto_visibile}"

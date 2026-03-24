@@ -59,10 +59,10 @@ def test_crea_calendario_personalizzato(page):
         # Verifica che il calendario sia visibile nella sidebar
         page.locator('[title="I miei calendari"]').first.click()
         page.wait_for_timeout(500)
-        assert page.get_by_text(nome_cal, exact=False).count() > 0, \
-            f"Calendario '{nome_cal}' non trovato nella sidebar"
 
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_05___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
+        assert page.get_by_text(nome_cal, exact=False).count() > 0, \
+            f"Calendario '{nome_cal}' non trovato nella sidebar"
         print(f"test_calendario_05 PASSED — calendario: {nome_cal}")
 
     finally:

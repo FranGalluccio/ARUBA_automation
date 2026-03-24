@@ -46,9 +46,6 @@ def test_esporta_contatti(page):
 
     download.save_as(download_path)
 
-    # Verifica effettiva del file
-    assert os.path.exists(download_path), "Il file CSV NON è stato scaricato!"
-
     # Screenshot (per debug)
     screenshot_path = os.path.join(
         REPORT_FOLDER,
@@ -58,3 +55,5 @@ def test_esporta_contatti(page):
 
     print(f"File scaricato in: {download_path}")
     print(f"Screenshot salvato in: {screenshot_path}")
+    # Verifica effettiva del file
+    assert os.path.exists(download_path), "Il file CSV NON è stato scaricato!"

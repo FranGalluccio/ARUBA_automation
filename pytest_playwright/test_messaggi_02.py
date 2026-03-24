@@ -57,7 +57,6 @@ def test_messaggio_inoltrato(page):
 
     # Verifica oggetto
     oggetto = page.locator("div.message-header-title-subject").inner_text().strip()
-    assert oggetto_inoltro in oggetto, f"Oggetto inatteso: {oggetto}"
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -66,3 +65,4 @@ def test_messaggio_inoltrato(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert oggetto_inoltro in oggetto, f"Oggetto inatteso: {oggetto}"

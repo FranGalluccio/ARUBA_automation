@@ -133,10 +133,9 @@ def test_disponibilita_libero(page):
         if not occupato_visibile:
             occupato_visibile = page.get_by_text("Occupato", exact=True).count() > 0
 
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_16___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         assert not occupato_visibile, \
             "Slot risulta 'Occupato' anche con 'Mostrati come occupato' disattivato — comportamento errato"
-
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_16___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         print("test_calendario_16 PASSED — slot non occupato con 'Mostrati come occupato' OFF")
 
         # Chiudi dialog pianificazione e annulla evento B

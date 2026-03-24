@@ -40,7 +40,6 @@ def test_impostazioni_cestino(page):
 
     # Verifica che ci sia almeno un'opzione di configurazione
     opzioni = page.locator('select, input[type="radio"], input[type="checkbox"], aru-input-choice').count()
-    assert opzioni > 0, "Nessuna opzione di configurazione trovata nella sezione Cestino"
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -49,3 +48,4 @@ def test_impostazioni_cestino(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert opzioni > 0, "Nessuna opzione di configurazione trovata nella sezione Cestino"

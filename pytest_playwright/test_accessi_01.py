@@ -112,12 +112,12 @@ def test_panoramica_accessi_altri_account(page):
             page.wait_for_load_state("load", timeout=8000)
         except Exception:
             pass
-        content = page.content().lower()
-        assert "supervisore" in content or "supervisor" in content, \
-            "Sotto-pagina Supervisore360 non si è caricata"
         page.screenshot(path=os.path.join(
             REPORT_FOLDER, f"test_accessi_01_supervisore_{datetime.now():%H-%M-%S}.png"
         ))
+        content = page.content().lower()
+        assert "supervisore" in content or "supervisor" in content, \
+            "Sotto-pagina Supervisore360 non si è caricata"
 
     # Screenshot finale
     screenshot_path = os.path.join(

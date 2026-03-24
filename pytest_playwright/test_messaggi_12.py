@@ -35,7 +35,6 @@ def test_invio_messaggio_semplice(page):
     toast = page.locator("div.aru-toast__message").first
     toast.wait_for(state="visible", timeout=8000)
     expect(toast).to_be_visible()
-    assert "Il messaggio è stato inviato" in toast.text_content()
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -44,3 +43,4 @@ def test_invio_messaggio_semplice(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert "Il messaggio è stato inviato" in toast.text_content()

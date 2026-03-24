@@ -15,6 +15,9 @@ def test_navigazione_calendario_mobile(page):
 
     screenshot(page, "test_calendario_01_sezione")
 
+    screenshot(page, "test_navigazione_calendario_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+    print(f"Navigazione Calendario mobile OK — URL: {page.url}")
+
     assert "calendar" in page.url.lower() or "calendario" in page.url.lower() or \
            page.locator('h1, [class*="title"]').filter(has_text="Calendario").count() > 0, \
         f"Navigazione a Calendario non riuscita — URL: {page.url}"
@@ -26,9 +29,6 @@ def test_navigazione_calendario_mobile(page):
         or page.locator('button[title="Nuovo evento"]').count() > 0
     )
     assert cal_visible, "Nessun elemento calendario riconoscibile su mobile"
-
-    screenshot(page, "test_navigazione_calendario_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-    print(f"Navigazione Calendario mobile OK — URL: {page.url}")
 
 
 def test_crea_elimina_evento_mobile(page):
@@ -67,6 +67,10 @@ def test_crea_elimina_evento_mobile(page):
     error_toast = page.locator(
         '[class*="toast"][class*="error"], [class*="toast"][class*="danger"]'
     ).count()
+
+    screenshot(page, "test_crea_elimina_evento_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+    print(f"Crea/elimina evento mobile OK — titolo: {titolo}")
+
     assert error_toast == 0, "Toast di errore dopo il salvataggio dell'evento mobile"
 
     # --- Cleanup: elimina l'evento ---
@@ -93,6 +97,3 @@ def test_crea_elimina_evento_mobile(page):
                 pass
     except Exception:
         pass
-
-    screenshot(page, "test_crea_elimina_evento_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-    print(f"Crea/elimina evento mobile OK — titolo: {titolo}")

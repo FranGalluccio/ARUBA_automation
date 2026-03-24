@@ -71,6 +71,14 @@ def test_import_export_calendario(page: Page):
         dialog = page.locator('.cdk-overlay-pane button').filter(has_text="Esporta").first
         dialog.wait_for(state="visible", timeout=5000)
 
+        # Screenshot finale (dialog esporta visibile)
+        screenshot_path = os.path.join(
+            REPORT_FOLDER,
+            f"test_calendario_04___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+        )
+        page.screenshot(path=screenshot_path, full_page=True)
+        print(f"Screenshot salvato in: {screenshot_path}")
+
         # Clicca "Esporta" nel dialog; l'app può avviare il download tramite blob URL
         # (Playwright non sempre cattura i download da blob), quindi verifichiamo
         # che il dialog si chiuda come indicatore che l'export è stato avviato.
@@ -85,14 +93,6 @@ def test_import_export_calendario(page: Page):
             assert page.locator('.cdk-overlay-pane button').filter(has_text="Annulla").count() == 0, \
                 "Il dialog 'Esporta calendario' è ancora aperto dopo il click su Esporta"
             print("Export: dialog chiuso, export avviato (download via blob)")
-
-        # Screenshot finale
-        screenshot_path = os.path.join(
-            REPORT_FOLDER,
-            f"test_calendario_04___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-        )
-        page.screenshot(path=screenshot_path, full_page=True)
-        print(f"Screenshot salvato in: {screenshot_path}")
 
     finally:
         # --- Cleanup: elimina eventi importati (eseguito anche in caso di fallimento) ---

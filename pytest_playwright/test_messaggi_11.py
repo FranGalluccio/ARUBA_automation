@@ -53,7 +53,6 @@ def test_risposta_messaggio(page):
 
     # Verifica prefisso "Re:" nell'oggetto
     soggetto = page.locator("div.message-header-title-subject").inner_text().strip()
-    assert "Re:" in soggetto, f"Oggetto inatteso: {soggetto}"
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -61,5 +60,5 @@ def test_risposta_messaggio(page):
         f"test_messaggi_11___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert "Re:" in soggetto, f"Oggetto inatteso: {soggetto}"

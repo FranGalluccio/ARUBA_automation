@@ -47,7 +47,6 @@ def test_messaggio_importato(page):
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
-    assert "1 nuovo messaggio da leggere" in toast.text_content()
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -55,8 +54,8 @@ def test_messaggio_importato(page):
         f"test_messaggi_04___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert "1 nuovo messaggio da leggere" in toast.text_content()
     
 
     

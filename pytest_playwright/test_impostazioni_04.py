@@ -38,7 +38,6 @@ def test_risposta_automatica(page):
         page.get_by_role("heading", name="Avvisi e report").count() > 0 or
         page.locator('aru-tab-group, aru-table').first.is_visible()
     )
-    assert avvisi_loaded, "La pagina Avvisi e report non si è caricata"
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -47,3 +46,4 @@ def test_risposta_automatica(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert avvisi_loaded, "La pagina Avvisi e report non si è caricata"

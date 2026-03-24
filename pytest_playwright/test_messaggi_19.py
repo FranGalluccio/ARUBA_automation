@@ -53,7 +53,6 @@ def test_invio_messaggio_con_cc(page):
     # Aspetta toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
-    assert "Il messaggio è stato inviato" in toast.text_content()
 
     # Aspetta ricezione, aggiorna e apri il primo messaggio
     page.wait_for_timeout(10000)
@@ -63,8 +62,6 @@ def test_invio_messaggio_con_cc(page):
     page.locator('div.frame-record-desktop').first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
-    
-
     # Screenshot
     screenshot_path = os.path.join(
         REPORT_FOLDER,
@@ -72,3 +69,4 @@ def test_invio_messaggio_con_cc(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert "Il messaggio è stato inviato" in toast.text_content()

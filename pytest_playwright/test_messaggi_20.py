@@ -74,10 +74,6 @@ def test_scarica_allegato_ricevuto(page):
     download_path = os.path.join(REPORT_FOLDER, f"allegato_scaricato_{datetime.now():%Y-%m-%d_%H-%M-%S}_{nome_file}")
     download.save_as(download_path)
 
-    # Verifica che il file sia stato scaricato
-    assert os.path.exists(download_path), f"Il file non è stato scaricato: {download_path}"
-    assert os.path.getsize(download_path) > 0, "Il file scaricato è vuoto"
-
     # Screenshot
     screenshot_path = os.path.join(
         REPORT_FOLDER,
@@ -86,3 +82,6 @@ def test_scarica_allegato_ricevuto(page):
     new_page.screenshot(path=screenshot_path, full_page=True)
     print(f"File scaricato in: {download_path}")
     print(f"Screenshot salvato in: {screenshot_path}")
+    # Verifica che il file sia stato scaricato
+    assert os.path.exists(download_path), f"Il file non è stato scaricato: {download_path}"
+    assert os.path.getsize(download_path) > 0, "Il file scaricato è vuoto"

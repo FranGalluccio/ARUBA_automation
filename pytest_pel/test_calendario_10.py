@@ -55,9 +55,8 @@ def test_ricerca_nel_calendario(page):
             page.wait_for_timeout(1000)
             trovato = page.get_by_text(titolo, exact=False).count() > 0
 
-        assert trovato, f"Evento '{titolo}' non trovato dopo la ricerca"
-
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_10___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
+        assert trovato, f"Evento '{titolo}' non trovato dopo la ricerca"
         print(f"test_calendario_10 PASSED — trovato: {trovato}")
 
     finally:

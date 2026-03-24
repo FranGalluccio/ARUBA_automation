@@ -75,9 +75,6 @@ def test_elimina_contatto(page):
         search2.click(force=True)
         search2.fill(cognome)
 
-        assert page.locator('div.frame-record-desktop').filter(has_text=cognome).count() == 0, \
-            f"Il contatto '{cognome}' è ancora presente dopo l'eliminazione"
-
         # Screenshot
         screenshot_path = os.path.join(
             REPORT_FOLDER,
@@ -85,6 +82,8 @@ def test_elimina_contatto(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
+        assert page.locator('div.frame-record-desktop').filter(has_text=cognome).count() == 0, \
+            f"Il contatto '{cognome}' è ancora presente dopo l'eliminazione"
 
     finally:
         # Cleanup: seleziona tutti i contatti ed elimina (safety net)

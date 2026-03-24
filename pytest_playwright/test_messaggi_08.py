@@ -77,7 +77,6 @@ def test_etichetta(page):
     # Verifica toast di conferma eliminazione etichetta
     toast = page.locator("div.aru-toast__message").filter(has_text="L'etichetta è stata eliminata.").first
     expect(toast).to_be_visible()
-    assert "L'etichetta è stata eliminata." in toast.text_content()
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -85,5 +84,5 @@ def test_etichetta(page):
         f"test_messaggi_08___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert "L'etichetta è stata eliminata." in toast.text_content()

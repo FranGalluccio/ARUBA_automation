@@ -40,11 +40,12 @@ def test_inbox_navigation_mobile(page):
     # --- Ritorna a Messaggi via bottom tab ---
     nav.nav_tab("messaggi")
     page.wait_for_timeout(1000)
-    assert "INBOX" in page.url or "messages" in page.url, \
-        f"Bottom tab 'Messaggi' non ha navigato all'inbox — URL: {page.url}"
 
     screenshot(page, "test_messaggi_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     print("Navigazione inbox mobile OK")
+
+    assert "INBOX" in page.url or "messages" in page.url, \
+        f"Bottom tab 'Messaggi' non ha navigato all'inbox — URL: {page.url}"
 
 
 def test_apri_messaggio_mobile(page):
@@ -78,11 +79,11 @@ def test_apri_messaggio_mobile(page):
 
     screenshot(page, "test_apri_msg_02_dettaglio")
 
-    # Verifica che la pagina non sia crashata (su mobile l'URL rimane nella webmail)
-    assert "webmail" in page.url, f"URL inatteso dopo apertura messaggio: {page.url}"
-
     screenshot(page, "test_apri_messaggio_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     print("Apertura messaggio mobile OK")
+
+    # Verifica che la pagina non sia crashata (su mobile l'URL rimane nella webmail)
+    assert "webmail" in page.url, f"URL inatteso dopo apertura messaggio: {page.url}"
 
 
 def test_componi_invia_mobile(page):
@@ -143,8 +144,9 @@ def test_componi_invia_mobile(page):
 
     # Verifica toast di conferma
     toast = page.locator("div.aru-toast__message, [class*='toast']").first
-    assert toast.is_visible() or page.locator("div.aru-toast__message").count() > 0, \
-        "Nessun toast di conferma dopo l'invio del messaggio mobile"
 
     screenshot(page, "test_componi_invia_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     print(f"Composizione e invio mobile OK — oggetto: {oggetto}")
+
+    assert toast.is_visible() or page.locator("div.aru-toast__message").count() > 0, \
+        "Nessun toast di conferma dopo l'invio del messaggio mobile"

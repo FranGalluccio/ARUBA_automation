@@ -46,7 +46,6 @@ def test_ricerca_contatto(page):
         # Verifica che il contatto sia visibile nei risultati
         result = page.locator('div.frame-record-desktop, [class*="contact-row"]').filter(has_text=nome_univoco).first
         result.wait_for(state="visible", timeout=8000)
-        assert result.is_visible(), f"Il contatto '{nome_univoco}' non è stato trovato nella ricerca"
 
         # Screenshot
         screenshot_path = os.path.join(
@@ -55,6 +54,7 @@ def test_ricerca_contatto(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
+        assert result.is_visible(), f"Il contatto '{nome_univoco}' non è stato trovato nella ricerca"
 
     finally:
         # Cleanup: seleziona tutti i contatti ed elimina

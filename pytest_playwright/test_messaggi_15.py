@@ -82,7 +82,6 @@ def test_sposta_messaggio_in_cartella(page):
     # Verifica: apri la cartella e controlla che il messaggio sia presente
     page.locator(f'button[title="{nome_cartella}"]').first.click(force=True)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
-    assert page.locator('div.frame-record-desktop').count() > 0, "Il messaggio non è stato trovato nella cartella di destinazione"
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -91,6 +90,7 @@ def test_sposta_messaggio_in_cartella(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert page.locator('div.frame-record-desktop').count() > 0, "Il messaggio non è stato trovato nella cartella di destinazione"
 
     # Cleanup: elimina la cartella
     page.locator(f'button[title="{nome_cartella}"]').first.click(button="right")

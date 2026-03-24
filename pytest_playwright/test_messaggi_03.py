@@ -53,16 +53,15 @@ def test_messaggio_in_bozza(page):
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").filter(has_text="Il messaggio è stato inviato").first
     expect(toast).to_be_visible()
-    assert "Il messaggio è stato inviato" in toast.text_content()
-    
+
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
         REPORT_FOLDER,
         f"test_messaggi_03___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert "Il messaggio è stato inviato" in toast.text_content()
     
     
     

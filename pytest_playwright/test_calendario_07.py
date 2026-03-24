@@ -41,8 +41,6 @@ def test_naviga_periodi_calendario(page):
     page.wait_for_timeout(500)
     header_tornato = header.inner_text().strip()
     print(f"Header dopo Prev: '{header_tornato}'")
-    assert header_tornato == header_iniziale, \
-        f"L'header non è tornato a quello iniziale: '{header_tornato}' != '{header_iniziale}'"
 
     # Vai alla settimana corrente con "Oggi" (può essere disabilitato se già su oggi)
     try:
@@ -58,3 +56,5 @@ def test_naviga_periodi_calendario(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert header_tornato == header_iniziale, \
+        f"L'header non è tornato a quello iniziale: '{header_tornato}' != '{header_iniziale}'"

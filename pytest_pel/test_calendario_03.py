@@ -46,10 +46,10 @@ def test_evento_con_invitati(page):
         page.locator(".fc-event").filter(has_text=titolo).first.wait_for(
             state="visible", timeout=8000
         )
-        assert page.locator(".fc-event").filter(has_text=titolo).count() > 0, \
-            f"Evento con invitato '{titolo}' non trovato in calendario dopo invio"
 
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_03___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
+        assert page.locator(".fc-event").filter(has_text=titolo).count() > 0, \
+            f"Evento con invitato '{titolo}' non trovato in calendario dopo invio"
         print(f"test_calendario_03 PASSED — invito inviato per: {titolo}")
 
     finally:

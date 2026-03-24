@@ -30,6 +30,14 @@ def test_posta_indesiderata(page):
         page.locator('button[title="Posta indesiderata"]').first.wait_for(state="visible", timeout=5000)
     page.locator('button[title="Posta indesiderata"]').click(force=True)
 
+    # Screenshot
+    screenshot_path = os.path.join(
+        REPORT_FOLDER,
+        f"test_impostazioni_05___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
+
     # Verifica che la sezione sia caricata
     assert "INBOX" not in page.url or page.locator('h1, h2').filter(has_text="Posta indesiderata").count() > 0 or \
            page.locator('[class*="spam"], [class*="blocklist"]').count() > 0, \
@@ -51,14 +59,6 @@ def test_posta_indesiderata(page):
         )
     except Exception as e:
         print(f"Aggiunta alla blocklist non disponibile: {e}")
-
-    # Screenshot
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_impostazioni_05___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")
 
     # Cleanup: rimuove il mittente dalla lista
     try:

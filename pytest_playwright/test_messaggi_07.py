@@ -107,9 +107,6 @@ def test_messaggi_preferiti_pinnati(page):
         'div.frame-record-desktop[class*="evidenza"], '
         'div.frame-record-desktop[class*="flagged"]'
     ).count()
-    assert highlighted == 0, (
-        f"Trovati {highlighted} messaggi ancora marcati come 'in evidenza' dopo la rimozione"
-    )
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -117,5 +114,7 @@ def test_messaggi_preferiti_pinnati(page):
         f"test_messaggi_07___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert highlighted == 0, (
+        f"Trovati {highlighted} messaggi ancora marcati come 'in evidenza' dopo la rimozione"
+    )

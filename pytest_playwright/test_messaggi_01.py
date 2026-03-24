@@ -57,6 +57,14 @@ def test_messaggio_con_allegato(page):
     new_page = popup_info.value
     new_page.wait_for_load_state("networkidle", timeout=15000)
 
+    # Percorso screenshot dinamico
+    screenshot_path = os.path.join(
+        REPORT_FOLDER,
+        f"test_messaggi_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    new_page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
+
     # Verifica pagina esterna
     assert "external-message" in new_page.url
 
@@ -68,11 +76,3 @@ def test_messaggio_con_allegato(page):
     # Mostra anteprima
     new_page.locator('text="Mostra anteprima"').first.click()
     new_page.wait_for_timeout(2000)
-
-    # Percorso screenshot dinamico
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_messaggi_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    new_page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")

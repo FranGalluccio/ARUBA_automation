@@ -61,8 +61,8 @@ def test_navigazione_periodi_calendario(page):
     page.wait_for_timeout(800)
     day_oggi = get_main_first_day()
     print(f"  Main view primo giorno dopo Oggi: {day_oggi!r}")
-    assert day_oggi == day_iniziale, \
-        f"Il pulsante Oggi non ha riportato alla settimana corrente (atteso {day_iniziale!r}, trovato {day_oggi!r})"
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_07___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
+    assert day_oggi == day_iniziale, \
+        f"Il pulsante Oggi non ha riportato alla settimana corrente (atteso {day_iniziale!r}, trovato {day_oggi!r})"
     print("test_calendario_07 PASSED")

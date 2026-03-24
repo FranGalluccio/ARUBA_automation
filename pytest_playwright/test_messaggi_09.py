@@ -59,9 +59,6 @@ def test_segna_come_letto_da_leggere(page):
     # il titolo della pagina mostra "(N)" davanti quando ci sono N messaggi non letti
     page.wait_for_timeout(2000)
     title = page.title()
-    assert title.startswith("("), (
-        f"Dopo 'Segna tutti come da leggere' il titolo non mostra messaggi non letti: '{title}'"
-    )
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -70,6 +67,9 @@ def test_segna_come_letto_da_leggere(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert title.startswith("("), (
+        f"Dopo 'Segna tutti come da leggere' il titolo non mostra messaggi non letti: '{title}'"
+    )
     
     
 

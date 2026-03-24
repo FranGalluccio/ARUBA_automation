@@ -49,7 +49,6 @@ def test_regole_messaggi(page):
         page.get_by_text("Condizioni", exact=False).count() > 0 or
         page.get_by_text("Azioni", exact=False).count() > 0
     )
-    assert form_visible, "Il form di creazione regola non si è aperto"
 
     # Compila nome regola se c'è un input disponibile
     nome_regola = f"Regola test playwright {int(time.time())}"
@@ -68,6 +67,7 @@ def test_regole_messaggi(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert form_visible, "Il form di creazione regola non si è aperto"
 
     # Cleanup: elimina la regola
     try:

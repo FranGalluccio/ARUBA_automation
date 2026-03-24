@@ -57,13 +57,16 @@ def test_navigazione_impostazioni_mobile(page):
         page.wait_for_timeout(1000)
         settings_reached = "settings" in page.url.lower() or "impostazioni" in page.url.lower()
 
-    assert settings_reached, \
-        f"Impossibile raggiungere le Impostazioni su mobile — URL: {page.url}"
-
     screenshot(page, "test_impostazioni_04_pagina")
 
     # Aspetta che Angular carichi il contenuto della pagina impostazioni
     page.wait_for_timeout(3000)
+
+    screenshot(page, "test_navigazione_impostazioni_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+    print(f"Navigazione Impostazioni mobile OK — URL: {page.url}")
+
+    assert settings_reached, \
+        f"Impossibile raggiungere le Impostazioni su mobile — URL: {page.url}"
 
     # Verifica contenuto impostazioni
     content_ok = (
@@ -74,9 +77,6 @@ def test_navigazione_impostazioni_mobile(page):
     )
     assert content_ok, \
         "La pagina Impostazioni non mostra il contenuto atteso su mobile"
-
-    screenshot(page, "test_navigazione_impostazioni_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-    print(f"Navigazione Impostazioni mobile OK — URL: {page.url}")
 
 
 def test_accesso_sezione_impostazioni_mobile(page):
@@ -103,9 +103,6 @@ def test_accesso_sezione_impostazioni_mobile(page):
         if page.locator(f'text="{sezione}"').count() > 0:
             sezioni_trovate.append(sezione)
 
-    assert len(sezioni_trovate) >= 2, \
-        f"Trovate solo {len(sezioni_trovate)} sezioni impostazioni su mobile: {sezioni_trovate}"
-
     # Clicca su "Casella PEC" (o "Account e sicurezza") per verificare navigazione interna
     try:
         page.locator('text="Casella PEC"').first.click(timeout=3000)
@@ -116,3 +113,6 @@ def test_accesso_sezione_impostazioni_mobile(page):
 
     screenshot(page, "test_accesso_sezione_impostazioni_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
     print(f"Sezioni impostazioni trovate su mobile: {sezioni_trovate}")
+
+    assert len(sezioni_trovate) >= 2, \
+        f"Trovate solo {len(sezioni_trovate)} sezioni impostazioni su mobile: {sezioni_trovate}"

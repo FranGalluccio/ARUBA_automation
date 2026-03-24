@@ -58,10 +58,6 @@ def test_aggiungere_nuovo_gruppo(page):
         page.get_by_role("button", name="Salva").wait_for(state="visible", timeout=5000)
         page.get_by_role("button", name="Salva").click()
 
-        expect(
-            page.get_by_label("sidebar").get_by_role("button", name=group_name)
-        ).to_be_visible()
-
         # Percorso screenshot dinamico
         screenshot_path = os.path.join(
             REPORT_FOLDER,
@@ -69,6 +65,9 @@ def test_aggiungere_nuovo_gruppo(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
+        expect(
+            page.get_by_label("sidebar").get_by_role("button", name=group_name)
+        ).to_be_visible()
 
     finally:
         # Cleanup: elimina il gruppo creato

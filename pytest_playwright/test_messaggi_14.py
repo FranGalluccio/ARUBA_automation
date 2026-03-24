@@ -48,7 +48,6 @@ def test_elimina_messaggio(page):
     page.locator('button[title="Cestino"]').click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
     testo_primo = page.locator('div.frame-record-desktop').first.inner_text()
-    assert str(ts) in testo_primo, f"Il primo messaggio nel Cestino non è quello eliminato (ts={ts}): {testo_primo}"
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -57,3 +56,4 @@ def test_elimina_messaggio(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert str(ts) in testo_primo, f"Il primo messaggio nel Cestino non è quello eliminato (ts={ts}): {testo_primo}"

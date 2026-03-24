@@ -62,10 +62,9 @@ def test_evento_luogo_indirizzo(page):
         page.wait_for_timeout(1000)
 
         # Verifica il luogo nel popup dell'evento
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_11___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         assert page.get_by_text(indirizzo, exact=False).count() > 0, \
             f"Luogo '{indirizzo}' non trovato nel popup evento"
-
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_11___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         print(f"test_calendario_11 PASSED — luogo: {indirizzo}")
 
     finally:

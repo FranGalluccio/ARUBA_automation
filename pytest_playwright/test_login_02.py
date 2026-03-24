@@ -46,8 +46,6 @@ def test_login_credenziali_errate(page):
     expect(error_message).to_be_visible()
     # Messaggio di errore varia per ambiente/lingua (IT: "dati inseriti", EN: "details correctly")
     err_text = error_message.inner_text()
-    assert "dati inseriti" in err_text.lower() or "details" in err_text.lower() or "incorrect" in err_text.lower() or "not correct" in err_text.lower() or "correttamente" in err_text.lower(), \
-        f"Messaggio di errore login inatteso: '{err_text}'"
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -56,3 +54,5 @@ def test_login_credenziali_errate(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert "dati inseriti" in err_text.lower() or "details" in err_text.lower() or "incorrect" in err_text.lower() or "not correct" in err_text.lower() or "correttamente" in err_text.lower(), \
+        f"Messaggio di errore login inatteso: '{err_text}'"

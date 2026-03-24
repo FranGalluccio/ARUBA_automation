@@ -53,7 +53,6 @@ def test_risposta_a_tutti(page):
 
     # Verifica prefisso "Re:" nell'oggetto
     soggetto = page.locator("div.message-header-title-subject").inner_text().strip()
-    assert "Re:" in soggetto, f"Oggetto inatteso (manca 'Re:'): {soggetto}"
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -62,3 +61,4 @@ def test_risposta_a_tutti(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert "Re:" in soggetto, f"Oggetto inatteso (manca 'Re:'): {soggetto}"

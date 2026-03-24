@@ -108,11 +108,6 @@ def test_elimina_gruppo(page):
         # Aspetta che il gruppo scompaia
         page.locator(f'button[title="{group_name}"]').wait_for(state="hidden", timeout=5000)
 
-        # Verifica che il gruppo non sia più presente nella sidebar
-        remaining = page.locator(f'button[title="{group_name}"]').count()
-        assert remaining == 0, \
-            f"Il gruppo '{group_name}' è ancora presente dopo l'eliminazione"
-
         # Screenshot
         screenshot_path = os.path.join(
             REPORT_FOLDER,
@@ -120,6 +115,10 @@ def test_elimina_gruppo(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
+        # Verifica che il gruppo non sia più presente nella sidebar
+        remaining = page.locator(f'button[title="{group_name}"]').count()
+        assert remaining == 0, \
+            f"Il gruppo '{group_name}' è ancora presente dopo l'eliminazione"
 
     finally:
         # Cleanup: elimina il gruppo se ancora presente

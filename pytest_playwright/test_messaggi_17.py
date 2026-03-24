@@ -47,7 +47,6 @@ def test_ricerca_messaggi(page):
     # Verifica che almeno un risultato sia presente
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
     count = page.locator('div.frame-record-desktop').count()
-    assert count > 0, f"Nessun risultato trovato per la ricerca: {oggetto_univoco}"
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -56,3 +55,4 @@ def test_ricerca_messaggi(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert count > 0, f"Nessun risultato trovato per la ricerca: {oggetto_univoco}"

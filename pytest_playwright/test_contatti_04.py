@@ -46,8 +46,6 @@ def test_importa_contatti(page):
         # Verifica toast di conferma invio
         toast = page.locator("div.aru-toast__message").first
         toast.wait_for(state="visible", timeout=8000)
-        assert toast.is_visible()
-        assert "I contatti sono stati importati." in toast.text_content()
 
         # Screenshot finale per debug
         screenshot_path = os.path.join(
@@ -56,6 +54,8 @@ def test_importa_contatti(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot import rubrica salvato in: {screenshot_path}")
+        assert toast.is_visible()
+        assert "I contatti sono stati importati." in toast.text_content()
 
     finally:
         # Cleanup: seleziona tutti i contatti ed elimina

@@ -136,6 +136,13 @@ def test_form_supervisore360(page):
                 pass
             break
 
+    # Screenshot finale (form ancora aperto)
+    screenshot_path = os.path.join(
+        REPORT_FOLDER,
+        f"test_accessi_03___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
     assert form_found, "Form di aggiunta Supervisore360 non si è aperto"
 
     # --- Chiudi senza inviare ---
@@ -156,11 +163,3 @@ def test_form_supervisore360(page):
             pass
     else:
         page.keyboard.press("Escape")
-
-    # Screenshot finale
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_accessi_03___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")

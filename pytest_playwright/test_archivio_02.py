@@ -194,12 +194,6 @@ def test_archivio_messaggio_inviato(page):
             pass
         found = _messaggio_trovato()
 
-    assert found, (
-        f"Messaggio '{oggetto_univoco}' non trovato nell'Archivio. "
-        "Verificare che la configurazione 'Archivia tutti' sia attiva e che il messaggio sia stato recapitato."
-    )
-    print(f"Messaggio trovato in Archivio: {oggetto_univoco}")
-
     # Screenshot finale
     screenshot_path = os.path.join(
         REPORT_FOLDER,
@@ -207,3 +201,8 @@ def test_archivio_messaggio_inviato(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert found, (
+        f"Messaggio '{oggetto_univoco}' non trovato nell'Archivio. "
+        "Verificare che la configurazione 'Archivia tutti' sia attiva e che il messaggio sia stato recapitato."
+    )
+    print(f"Messaggio trovato in Archivio: {oggetto_univoco}")

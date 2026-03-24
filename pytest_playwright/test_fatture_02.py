@@ -61,13 +61,6 @@ def test_leggi_fatture_settings(page):
     # --- Verifica h1 ---
     h1 = page.locator("h1").filter(has_text="Leggi fatture").first
     h1.wait_for(state="visible", timeout=8000)
-    assert h1.is_visible(), "h1 'Leggi fatture' non visibile"
-
-    # --- Verifica contenuto informativo ---
-    content = page.content().lower()
-    keywords = ["fattur", "cassetto fiscale", "fatturazione", "invoice"]
-    assert any(k in content for k in keywords), \
-        "Contenuto informativo sulla fatturazione non trovato nella pagina"
 
     # Screenshot finale
     screenshot_path = os.path.join(
@@ -77,3 +70,10 @@ def test_leggi_fatture_settings(page):
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
     print(f"URL Leggi fatture: {page.url}")
+    assert h1.is_visible(), "h1 'Leggi fatture' non visibile"
+
+    # --- Verifica contenuto informativo ---
+    content = page.content().lower()
+    keywords = ["fattur", "cassetto fiscale", "fatturazione", "invoice"]
+    assert any(k in content for k in keywords), \
+        "Contenuto informativo sulla fatturazione non trovato nella pagina"

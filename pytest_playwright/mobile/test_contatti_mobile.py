@@ -15,6 +15,9 @@ def test_navigazione_contatti_mobile(page):
 
     screenshot(page, "test_contatti_01_sezione")
 
+    screenshot(page, "test_navigazione_contatti_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+    print(f"Navigazione Contatti mobile OK — URL: {page.url}")
+
     # Verifica URL o heading
     assert "contacts" in page.url.lower() or "contatti" in page.url.lower() or \
            page.locator('h1, [class*="title"]').filter(has_text="Contatti").count() > 0, \
@@ -26,9 +29,6 @@ def test_navigazione_contatti_mobile(page):
         or page.locator('div.frame-record-desktop, [class*="contact-row"]').count() >= 0
     )
     assert lista_o_search, "Nessun elemento riconoscibile nella sezione Contatti mobile"
-
-    screenshot(page, "test_navigazione_contatti_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-    print(f"Navigazione Contatti mobile OK — URL: {page.url}")
 
 
 def test_crea_cerca_elimina_contatto_mobile(page):
@@ -92,9 +92,12 @@ def test_crea_cerca_elimina_contatto_mobile(page):
         page.get_by_text(nome, exact=False).count() > 0
         or page.locator('div.frame-record-desktop').filter(has_text=nome).count() > 0
     )
-    assert found, f"Contatto '{nome}' non trovato dopo la creazione su mobile"
 
     screenshot(page, "test_contatto_03_trovato")
+    screenshot(page, "test_crea_cerca_elimina_contatto_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
+    print(f"Crea/cerca/elimina contatto mobile OK — nome: {nome}")
+
+    assert found, f"Contatto '{nome}' non trovato dopo la creazione su mobile"
 
     # --- Cleanup: elimina il contatto ---
     try:
@@ -112,6 +115,3 @@ def test_crea_cerca_elimina_contatto_mobile(page):
         page.wait_for_timeout(1000)
     except Exception:
         pass
-
-    screenshot(page, "test_crea_cerca_elimina_contatto_mobile___" + datetime.now().strftime("%Y-%m-%d_%H-%M-%S"))
-    print(f"Crea/cerca/elimina contatto mobile OK — nome: {nome}")

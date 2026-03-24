@@ -79,6 +79,12 @@ def test_invio_allegati_multipli(page):
     allegati_count = composer.locator("[class*='attachment-chip']").count()
     if allegati_count == 0:
         allegati_count = composer.locator("aru-attachment-item, .attachment-item").count()
+
+    screenshot_path = os.path.join(
+        REPORT_FOLDER, f"test_messaggi_25___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
     assert allegati_count >= 2, (
         f"Attesi almeno 2 allegati nel composer (uno per file caricato), trovati {allegati_count}. "
         "Verificare che il campo 'file_allegato' in config.json punti a un file valido."
@@ -91,9 +97,3 @@ def test_invio_allegati_multipli(page):
     # Verifica che il messaggio sia stato inviato (naviga agli inviati)
     page.locator('aru-symbol[title="Aggiorna"]').click()
     page.wait_for_timeout(2000)
-
-    screenshot_path = os.path.join(
-        REPORT_FOLDER, f"test_messaggi_25___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")

@@ -81,11 +81,10 @@ def test_evento_corpo_rich_text(page):
         page.wait_for_timeout(1000)
 
         # Verifica che il corpo contenga il testo inserito (almeno in parte)
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_13___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         assert page.get_by_text(testo_grassetto, exact=False).count() > 0 or \
                page.locator("strong, b").filter(has_text=testo_grassetto).count() > 0, \
             f"Testo '{testo_grassetto}' non trovato nel popup evento"
-
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_13___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         print(f"test_calendario_13 PASSED — corpo rich text salvato")
 
     finally:

@@ -51,7 +51,6 @@ def test_login_credenziali_errate(page):
     # Verifica che il form di login sia ancora visibile (siamo rimasti sulla pagina di login)
     login_form = page.locator("input[name='text'], input[name='username']").first
     login_form.wait_for(state="visible", timeout=10000)
-    expect(login_form).to_be_visible()
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -60,3 +59,4 @@ def test_login_credenziali_errate(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    expect(login_form).to_be_visible()

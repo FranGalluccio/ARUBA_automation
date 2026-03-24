@@ -82,13 +82,12 @@ def test_selezione_multipla_batch(page):
         or page.locator('button:has-text("Elimina"), button:has-text("Segna")').count() > 0
     )
 
-    assert batch_visible, (
-        "La toolbar azioni batch non è apparsa dopo la selezione multipla dei messaggi. "
-        "Verificare che i checkbox nei messaggi siano cliccabili."
-    )
-
     screenshot_path = os.path.join(
         REPORT_FOLDER, f"test_messaggi_26___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert batch_visible, (
+        "La toolbar azioni batch non è apparsa dopo la selezione multipla dei messaggi. "
+        "Verificare che i checkbox nei messaggi siano cliccabili."
+    )

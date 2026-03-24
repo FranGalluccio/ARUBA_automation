@@ -61,6 +61,7 @@ def test_import_export_calendario(page):
         dialog_esporta = page.locator('.cdk-overlay-pane button').filter(has_text="Esporta").first
         dialog_esporta.wait_for(state="visible", timeout=5000)
 
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         try:
             with page.expect_download(timeout=8000) as dl:
                 dialog_esporta.click()
@@ -72,7 +73,6 @@ def test_import_export_calendario(page):
                 "Dialog Esporta ancora aperto dopo il click su Esporta"
             print("Export: dialog chiuso (blob download)")
 
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         print("test_calendario_04 PASSED")
 
     finally:

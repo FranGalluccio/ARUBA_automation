@@ -37,7 +37,6 @@ def test_creazione_calendario(page):
     # Verifica creazione calendario — aspetta la toast (scompare rapidamente)
     toast = page.locator("div.aru-toast__message").first
     toast.wait_for(state="visible", timeout=8000)
-    assert "Il calendario è stato creato." in toast.text_content()
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -46,6 +45,7 @@ def test_creazione_calendario(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert "Il calendario è stato creato." in toast.text_content()
 
     # Cleanup: elimina calendario creato
     try:

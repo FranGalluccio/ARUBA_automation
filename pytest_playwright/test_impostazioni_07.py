@@ -32,7 +32,6 @@ def test_storico_accessi(page):
     # Storico accessi si apre in una nuova scheda/finestra (link esterno)
     # Verifica che il bottone/link sia visibile e cliccabile
     storico_btn = page.locator('button[title="Storico accessi"], a[title="Storico accessi"], button:has-text("Apri"), a:has-text("Apri")').first
-    expect(storico_btn).to_be_visible()
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -41,3 +40,4 @@ def test_storico_accessi(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    expect(storico_btn).to_be_visible()

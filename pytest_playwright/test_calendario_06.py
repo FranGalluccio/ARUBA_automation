@@ -23,6 +23,14 @@ def test_cambio_vista_calendario(page):
     page.get_by_role("button", name="Calendario").click()
     page.locator('button[title="Giorno"]').wait_for(state="visible", timeout=8000)
 
+    # Screenshot finale (calendario visibile con tutti i bottoni vista)
+    screenshot_path = os.path.join(
+        REPORT_FOLDER,
+        f"test_calendario_06___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
+
     # Vista Giorno
     page.locator('button[title="Giorno"]').click()
     page.wait_for_timeout(500)
@@ -44,11 +52,3 @@ def test_cambio_vista_calendario(page):
     # Torna alla vista Settimana (default)
     page.locator('button[title="Settimana"]').click()
     page.wait_for_timeout(500)
-
-    # Screenshot finale
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_calendario_06___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")

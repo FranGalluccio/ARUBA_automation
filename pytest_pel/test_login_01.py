@@ -54,7 +54,6 @@ def test_logout(page):
     # Il form PEL usa name='text' per il campo username
     login_field = page.locator("input[name='text'], input[name='username'], input#username").first
     login_field.wait_for(state="visible", timeout=15000)
-    expect(login_field).to_be_visible()
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -63,3 +62,4 @@ def test_logout(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    expect(login_field).to_be_visible()

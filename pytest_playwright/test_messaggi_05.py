@@ -58,7 +58,6 @@ def test_cartella(page):
         # Verifica toast di conferma modifica
         toast = page.locator("div.aru-toast__message").filter(has_text="La cartella è stata modificata.").first
         expect(toast).to_be_visible()
-        assert "La cartella è stata modificata." in toast.text_content()
 
         # Screenshot
         screenshot_path = os.path.join(
@@ -67,6 +66,7 @@ def test_cartella(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
+        assert "La cartella è stata modificata." in toast.text_content()
 
     finally:
         # Cleanup: elimina la cartella (con nome originale o modificato)

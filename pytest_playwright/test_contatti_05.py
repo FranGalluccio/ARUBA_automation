@@ -80,7 +80,6 @@ def test_modifica_contatto(page):
 
         result = page.locator('div.frame-record-desktop').filter(has_text="Modificato").first
         result.wait_for(state="visible", timeout=5000)
-        assert result.is_visible(), "Il contatto modificato non è visibile"
 
         # Screenshot
         screenshot_path = os.path.join(
@@ -89,6 +88,7 @@ def test_modifica_contatto(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
+        assert result.is_visible(), "Il contatto modificato non è visibile"
 
     finally:
         # Cleanup: seleziona tutti i contatti ed elimina

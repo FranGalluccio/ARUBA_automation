@@ -44,6 +44,15 @@ def test_cartella_da_conservare(page):
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_conservazione_01_click_{datetime.now():%H-%M-%S}.png"))
 
+    # Screenshot finale
+    screenshot_path = os.path.join(
+        REPORT_FOLDER,
+        f"test_conservazione_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
+    print(f"URL cartella Da conservare: {page.url}")
+
     # --- Verifica URL ---
     assert "CONSERVAZIONE" in page.url, \
         f"URL atteso contenere 'CONSERVAZIONE', trovato: {page.url}"
@@ -67,12 +76,3 @@ def test_cartella_da_conservare(page):
     # Il bottone "Impostazioni." (con punto) potrebbe essere fuori viewport ma presente nel DOM
     assert impostazioni_btn.count() > 0, \
         "Pulsante/link alle impostazioni di conservazione non trovato"
-
-    # Screenshot finale
-    screenshot_path = os.path.join(
-        REPORT_FOLDER,
-        f"test_conservazione_01___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
-    )
-    page.screenshot(path=screenshot_path, full_page=True)
-    print(f"Screenshot salvato in: {screenshot_path}")
-    print(f"URL cartella Da conservare: {page.url}")

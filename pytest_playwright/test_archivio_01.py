@@ -113,10 +113,6 @@ def test_configurazione_archivio(page):
     page.reload()
     page.wait_for_load_state("load", timeout=15000)
 
-    # Verifica che la pagina sia ancora quella giusta
-    assert "archive" in page.url or page.locator("h1").filter(has_text="Archivio").count() > 0, \
-        "Dopo reload la pagina Archivio non si è ricaricata correttamente"
-
     # Screenshot finale
     screenshot_path = os.path.join(
         REPORT_FOLDER,
@@ -124,6 +120,9 @@ def test_configurazione_archivio(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    # Verifica che la pagina sia ancora quella giusta
+    assert "archive" in page.url or page.locator("h1").filter(has_text="Archivio").count() > 0, \
+        "Dopo reload la pagina Archivio non si è ricaricata correttamente"
 
     # --- Cleanup: ripristina "Archivia tutti" ---
     try:

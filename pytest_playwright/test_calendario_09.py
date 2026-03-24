@@ -98,8 +98,6 @@ def test_evento_con_promemoria(page):
         # Verifica che l'evento sia presente
         evento_trovato = page.get_by_text(titolo_evento, exact=False).count() > 0
 
-        assert evento_trovato, f"L'evento con promemoria '{titolo_evento}' non è stato trovato nel calendario"
-
         # Screenshot
         screenshot_path = os.path.join(
             REPORT_FOLDER,
@@ -107,6 +105,7 @@ def test_evento_con_promemoria(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
+        assert evento_trovato, f"L'evento con promemoria '{titolo_evento}' non è stato trovato nel calendario"
 
     finally:
         # Cleanup: elimina l'evento (eseguito anche in caso di fallimento)

@@ -62,11 +62,10 @@ def test_evento_luogo_link(page):
         page.wait_for_timeout(1000)
 
         # Verifica l'URL nel popup evento
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_12___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         assert page.get_by_text("meet.example.com", exact=False).count() > 0 or \
                page.get_by_text(url_meeting, exact=False).count() > 0, \
             f"URL meeting '{url_meeting}' non trovato nel popup evento"
-
-        page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_12___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"), full_page=True)
         print(f"test_calendario_12 PASSED — luogo link: {url_meeting}")
 
     finally:

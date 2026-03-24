@@ -72,7 +72,6 @@ def test_ripristino_messaggi(page):
     # Verifica toast di conferma ripristino
     toast = page.locator("div.aru-toast__message").filter(has_text="I messaggi selezionati sono stati spostati in In arrivo").first
     toast.wait_for(state="visible", timeout=8000)
-    assert "I messaggi selezionati sono stati spostati in In arrivo" in toast.text_content()
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -80,5 +79,5 @@ def test_ripristino_messaggi(page):
         f"test_messaggi_06___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
-
     print(f"Screenshot salvato in: {screenshot_path}")
+    assert "I messaggi selezionati sono stati spostati in In arrivo" in toast.text_content()

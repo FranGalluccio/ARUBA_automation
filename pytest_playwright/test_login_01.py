@@ -51,7 +51,6 @@ def test_logout(page):
 
     # Verifica che il campo username sia visibile (siamo tornati al login)
     login_field = page.locator("input[name='username'], input#username, input[type='email']").first
-    expect(login_field).to_be_visible()
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -60,3 +59,4 @@ def test_logout(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
+    expect(login_field).to_be_visible()
