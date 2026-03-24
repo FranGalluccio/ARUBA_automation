@@ -52,10 +52,10 @@ TESTS = [
      "1. Accedere con credenziali valide su viewport mobile.\n"
      "2. Attendere il caricamento della webmail.\n"
      "3. Verificare che l'URL contenga 'INBOX', 'messages' o 'mail'.\n"
-     "4. Verificare la visibilità della bottom navigation bar.\n"
-     "5. Verificare la presenza del bottone hamburger (≡) nell'header.\n"
-     "6. Verificare la presenza di un'intestazione di sezione (h1 o equivalente).\n"
-     "7. Scattare screenshot.",
+     "4. Scattare screenshot.\n"
+     "5. Verificare la visibilità della bottom navigation bar (assert).\n"
+     "6. Verificare la presenza del bottone hamburger (≡) nell'header (assert).\n"
+     "7. Verificare la presenza di un'intestazione di sezione (h1 o equivalente, assert).",
      "L'URL è relativo all'inbox. La bottom navigation bar e il bottone hamburger sono visibili, confermando che la UI mobile è caricata correttamente."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -67,8 +67,8 @@ TESTS = [
      "2. Cliccare il tab 'Calendario' nella bottom navigation bar.\n"
      "3. Attendere il caricamento della sezione.\n"
      "4. Verificare che l'URL contenga 'calendar'/'calendario' oppure che l'heading 'Calendario' sia visibile.\n"
-     "5. Verificare la presenza di elementi calendario (griglia, controlli, pulsante 'Nuovo evento').\n"
-     "6. Scattare screenshot.",
+     "5. Scattare screenshot.\n"
+     "6. Verificare la presenza di elementi calendario (griglia, controlli, pulsante 'Nuovo evento', assert).",
      "La sezione Calendario è raggiunta tramite bottom tab. L'URL o l'heading confermano il caricamento. Almeno un elemento UI del calendario è visibile."),
 
     (3, "Calendario", "test_calendario_mobile.py", "test_crea_elimina_evento_mobile",
@@ -81,9 +81,9 @@ TESTS = [
      "6. Inserire un titolo univoco (con timestamp).\n"
      "7. Cliccare 'Salva'.\n"
      "8. Scattare screenshot post-salvataggio.\n"
-     "9. Verificare che NON appaia un toast di errore.\n"
-     "10. Cleanup: eliminare l'evento dalla vista Eventi.\n"
-     "11. Scattare screenshot finale.",
+     "9. Verificare che NON appaia un toast di errore (assert).\n"
+     "10. Scattare screenshot finale.\n"
+     "11. Cleanup: eliminare l'evento dalla vista Eventi.",
      "Il form 'Nuovo evento' si apre correttamente. Dopo il salvataggio nessun toast di errore appare. Il cleanup elimina l'evento dalla vista Events."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -95,8 +95,8 @@ TESTS = [
      "2. Cliccare il tab 'Contatti' nella bottom navigation bar.\n"
      "3. Attendere il caricamento della sezione.\n"
      "4. Verificare che l'URL contenga 'contacts'/'contatti' oppure che l'heading 'Contatti' sia visibile.\n"
-     "5. Verificare la presenza di un campo ricerca o lista contatti.\n"
-     "6. Scattare screenshot.",
+     "5. Scattare screenshot.\n"
+     "6. Verificare la presenza di un campo ricerca o lista contatti (assert).",
      "La sezione Contatti è raggiunta tramite bottom tab. L'URL o l'heading confermano il caricamento. Il campo ricerca o la lista contatti è presente."),
 
     (5, "Contatti", "test_contatti_mobile.py", "test_crea_cerca_elimina_contatto_mobile",
@@ -110,8 +110,8 @@ TESTS = [
      "7. Aprire la barra di ricerca e cercare il nome del contatto.\n"
      "8. Verificare che il contatto sia trovato (via testo o frame-record-desktop).\n"
      "9. Scattare screenshot del risultato.\n"
-     "10. Cleanup: selezionare e eliminare il contatto.\n"
-     "11. Scattare screenshot finale.",
+     "10. Scattare screenshot finale.\n"
+     "11. Cleanup: selezionare e eliminare il contatto.",
      "Il contatto è creato, trovato tramite ricerca e visibile nella lista. Il cleanup elimina il contatto correttamente."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -128,8 +128,8 @@ TESTS = [
      "6. Verificare la presenza delle voci 'In arrivo' e 'Inviati' nel drawer.\n"
      "7. Cliccare 'Inviati' e verificare navigazione.\n"
      "8. Tornare all'inbox via bottom tab 'Messaggi'.\n"
-     "9. Verificare che l'URL sia relativo all'inbox (INBOX o messages).\n"
-     "10. Scattare screenshot finale.",
+     "9. Scattare screenshot finale.\n"
+     "10. Verificare che l'URL sia relativo all'inbox (INBOX o messages, assert).",
      "Il drawer mostra le voci 'In arrivo' e 'Inviati'. La navigazione a Inviati funziona. Il ritorno all'inbox via bottom tab è confermato dall'URL."),
 
     (7, "Messaggi", "test_messaggi_mobile.py", "test_apri_messaggio_mobile",
@@ -141,8 +141,8 @@ TESTS = [
      "5. Fallback: click alle coordinate centro-alto del viewport.\n"
      "6. Attendere il caricamento del dettaglio.\n"
      "7. Scattare screenshot del dettaglio.\n"
-     "8. Verificare che l'URL contenga 'webmail'.\n"
-     "9. Scattare screenshot finale.",
+     "8. Scattare screenshot finale.\n"
+     "9. Verificare che l'URL contenga 'webmail' (assert).",
      "Il messaggio viene aperto (o tentato l'apertura). L'URL rimane nell'ambito della webmail, confermando che non si è verificato un crash o redirect inatteso."),
 
     (8, "Messaggi", "test_messaggi_mobile.py", "test_componi_invia_mobile",
@@ -154,8 +154,8 @@ TESTS = [
      "5. Scattare screenshot del form compilato.\n"
      "6. Cliccare 'Invia'.\n"
      "7. Attendere 3 secondi.\n"
-     "8. Verificare la presenza del toast di conferma (aru-toast__message).\n"
-     "9. Scattare screenshot finale.",
+     "8. Scattare screenshot finale.\n"
+     "9. Verificare la presenza del toast di conferma (aru-toast__message, assert).",
      "La finestra di composizione si apre correttamente. Dopo l'invio appare il toast di conferma, confermando che il messaggio è stato inviato."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -171,8 +171,8 @@ TESTS = [
      "5. Scattare screenshot della pagina impostazioni.\n"
      "6. Attendere il caricamento Angular.\n"
      "7. Verificare settings_reached (URL o impostazioni nel titolo).\n"
-     "8. Verificare il contenuto (h1 Impostazioni, sezioni Casella PEC, ecc.).\n"
-     "9. Scattare screenshot finale.",
+     "8. Scattare screenshot finale.\n"
+     "9. Verificare il contenuto (h1 Impostazioni, sezioni Casella PEC, ecc., assert).",
      "Le Impostazioni sono raggiunte tramite almeno uno dei tre metodi. La pagina mostra il contenuto atteso (heading o sezioni configurazione)."),
 
     (10, "Impostazioni", "test_impostazioni_mobile.py", "test_accesso_sezione_impostazioni_mobile",
@@ -185,8 +185,8 @@ TESTS = [
      "5. Verificare la presenza di almeno 2 sezioni tra: Casella PEC, Messaggi e scrittura, Account e sicurezza, Aspetto.\n"
      "6. Cliccare 'Casella PEC' per verificare la navigazione interna.\n"
      "7. Scattare screenshot.\n"
-     "8. Verificare che almeno 2 sezioni su 4 siano trovate.\n"
-     "9. Scattare screenshot finale.",
+     "8. Scattare screenshot finale.\n"
+     "9. Verificare che almeno 2 sezioni su 4 siano trovate (assert).",
      "La pagina Impostazioni mostra almeno 2 sezioni principali. La navigazione interna a 'Casella PEC' funziona correttamente su mobile."),
 ]
 

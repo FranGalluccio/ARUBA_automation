@@ -66,8 +66,8 @@ TESTS = [
      "3. Cliccare il pulsante dell'account (username).\n"
      "4. Cliccare il pulsante 'Esci' dal menu dropdown.\n"
      "5. Attendere il reindirizzamento alla pagina di login.\n"
-     "6. Verificare che il campo username sia visibile.\n"
-     "7. Scattare screenshot della pagina di login.",
+     "6. Scattare screenshot della pagina di login.\n"
+     "7. Verificare che il campo username sia visibile (assert).",
      "L'URL non contiene più 'INBOX'. Il campo di input username è visibile nella pagina di login."),
 
     (2, "Login", "test_login_02.py", "test_login_credenziali_errate",
@@ -79,8 +79,8 @@ TESTS = [
      "5. Cliccare il pulsante Login.\n"
      "6. Attendere 2 secondi.\n"
      "7. Verificare che l'URL non contenga 'INBOX'.\n"
-     "8. Verificare la visibilità del messaggio di errore.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare la visibilità del messaggio di errore (assert).",
      "L'URL rimane sulla pagina di login (no 'INBOX'). Il div 'errorWeb' è visibile e contiene testo di errore relativo alle credenziali errate."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -96,8 +96,8 @@ TESTS = [
      "6. Inviare il messaggio.\n"
      "7. Attendere la ricezione nella cartella In arrivo.\n"
      "8. Aprire il messaggio ricevuto.\n"
-     "9. Verificare la presenza dell'allegato nel messaggio.\n"
-     "10. Scattare screenshot.",
+     "9. Scattare screenshot.\n"
+     "10. Verificare la presenza dell'allegato nel messaggio (assert).",
      "Il messaggio è presente in In arrivo. L'allegato è visibile all'interno del messaggio ricevuto."),
 
     (4, "Messaggi", "test_messaggi_02.py", "test_messaggio_inoltrato",
@@ -109,8 +109,8 @@ TESTS = [
      "5. Cliccare il pulsante 'Inoltra'.\n"
      "6. Inserire il destinatario dell'inoltro.\n"
      "7. Inviare il messaggio inoltrato.\n"
-     "8. Verificare la comparsa del toast di conferma.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare la comparsa del toast di conferma (assert).",
      "Il messaggio inoltrato è inviato correttamente. Il toast di conferma è visibile. L'oggetto contiene il prefisso di inoltro ('Fwd:', 'I:', ecc.)."),
 
     (5, "Messaggi", "test_messaggi_03.py", "test_messaggio_in_bozza",
@@ -132,8 +132,8 @@ TESTS = [
      "3. Selezionare il file da importare.\n"
      "4. Avviare il processo di importazione.\n"
      "5. Attendere il completamento dell'importazione.\n"
-     "6. Verificare il messaggio di conferma.\n"
-     "7. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Verificare il messaggio di conferma (assert).",
      "Il processo di importazione si completa senza errori. Viene mostrato un messaggio di successo o conferma."),
 
     (7, "Messaggi", "test_messaggi_05.py", "test_cartella",
@@ -144,8 +144,8 @@ TESTS = [
      "4. Rinominare la cartella con un nuovo nome.\n"
      "5. Verificare il toast di conferma della modifica.\n"
      "6. Eliminare la cartella.\n"
-     "7. Verificare il toast di conferma dell'eliminazione.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Verificare il toast di conferma dell'eliminazione (assert).",
      "La cartella è creata, rinominata ed eliminata con successo. Per ogni operazione compare un toast di conferma."),
 
     (8, "Messaggi", "test_messaggi_06.py", "test_ripristino_messaggi",
@@ -156,8 +156,8 @@ TESTS = [
      "4. Selezionare il/i messaggio/i da ripristinare.\n"
      "5. Cliccare 'Ripristina' o 'Sposta in In arrivo'.\n"
      "6. Verificare che i messaggi non siano più nel cestino.\n"
-     "7. Navigare in In arrivo e verificare la presenza dei messaggi.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Navigare in In arrivo e verificare la presenza dei messaggi (assert).",
      "I messaggi ripristinati non sono più nel cestino e sono visibili nella cartella In arrivo."),
 
     (9, "Messaggi", "test_messaggi_07.py", "test_messaggi_preferiti_pinnati",
@@ -167,8 +167,8 @@ TESTS = [
      "3. Aggiungere il messaggio ai preferiti (stella).\n"
      "4. Verificare che il messaggio compaia nella cartella Preferiti/Speciali.\n"
      "5. Selezionare un messaggio e cliccare 'Pinna messaggio'.\n"
-     "6. Verificare la presenza del messaggio pinnato.\n"
-     "7. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Verificare la presenza del messaggio pinnato (assert).",
      "Il messaggio è aggiunto ai preferiti e compare nella sezione Preferiti. Il messaggio pinnato è visibile in cima alla lista."),
 
     (10, "Messaggi", "test_messaggi_08.py", "test_etichetta",
@@ -179,8 +179,8 @@ TESTS = [
      "4. Tornare in In arrivo e selezionare un messaggio.\n"
      "5. Applicare l'etichetta appena creata al messaggio.\n"
      "6. Verificare che l'etichetta sia visibile sul messaggio.\n"
-     "7. Eliminare l'etichetta.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Eliminare l'etichetta (cleanup).",
      "L'etichetta è creata e applicata con successo al messaggio. Dopo l'eliminazione dell'etichetta, essa non è più visibile."),
 
     (11, "Messaggi", "test_messaggi_09.py", "test_segna_come_letto_da_leggere",
@@ -190,8 +190,8 @@ TESTS = [
      "3. Cliccare 'Segna come letto'.\n"
      "4. Verificare che il messaggio non sia più in grassetto (letto).\n"
      "5. Cliccare 'Segna come da leggere' sullo stesso messaggio.\n"
-     "6. Verificare che il messaggio torni in grassetto (non letto).\n"
-     "7. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Verificare che il messaggio torni in grassetto (non letto, assert).",
      "I pulsanti 'Segna come letto' e 'Segna come da leggere' sono visibili e funzionanti. Lo stato del messaggio cambia correttamente."),
 
     (12, "Messaggi", "test_messaggi_10.py", "test_messaggio_alta_priorita",
@@ -203,8 +203,8 @@ TESTS = [
      "5. Inviare il messaggio.\n"
      "6. Attendere la ricezione in In arrivo.\n"
      "7. Aprire il messaggio ricevuto.\n"
-     "8. Verificare la presenza dell'indicatore di alta priorità.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare la presenza dell'indicatore di alta priorità (assert).",
      "Il messaggio è ricevuto con l'indicatore di alta priorità visibile (simbolo '!' o equivalente)."),
 
     (13, "Messaggi", "test_messaggi_11.py", "test_risposta_messaggio",
@@ -226,8 +226,8 @@ TESTS = [
      "3. Inserire l'indirizzo del destinatario.\n"
      "4. Inserire oggetto e corpo del messaggio.\n"
      "5. Cliccare 'Invia'.\n"
-     "6. Verificare la comparsa del toast di conferma invio.\n"
-     "7. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Verificare la comparsa del toast di conferma invio (assert).",
      "Il messaggio è inviato con successo. Appare un toast di conferma dell'invio."),
 
     (15, "Messaggi", "test_messaggi_13.py", "test_risposta_a_tutti",
@@ -250,8 +250,8 @@ TESTS = [
      "3. Attendere la ricezione del messaggio.\n"
      "4. Selezionare il messaggio e cliccare 'Elimina'.\n"
      "5. Navigare nella cartella Cestino.\n"
-     "6. Verificare che il messaggio eliminato sia presente nel cestino.\n"
-     "7. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Verificare che il messaggio eliminato sia presente nel cestino (assert).",
      "Il messaggio eliminato non è più in In arrivo ma è visibile nella cartella Cestino."),
 
     (17, "Messaggi", "test_messaggi_15.py", "test_sposta_messaggio_in_cartella",
@@ -263,8 +263,8 @@ TESTS = [
      "5. Selezionare il messaggio e cliccare 'Sposta in...'.\n"
      "6. Selezionare la cartella di destinazione.\n"
      "7. Verificare che il messaggio non sia più in In arrivo.\n"
-     "8. Navigare nella cartella di destinazione e verificare la presenza del messaggio.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Navigare nella cartella di destinazione e verificare la presenza del messaggio (assert).",
      "Il messaggio è spostato correttamente nella cartella di destinazione e non è più visibile in In arrivo."),
 
     (18, "Messaggi", "test_messaggi_16.py", "test_copia_messaggio_in_cartella",
@@ -275,8 +275,8 @@ TESTS = [
      "4. Selezionare 'Copia in...' dal menu azioni.\n"
      "5. Selezionare la cartella di destinazione.\n"
      "6. Verificare che il messaggio originale sia ancora in In arrivo.\n"
-     "7. Navigare nella cartella di destinazione e verificare la copia.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Navigare nella cartella di destinazione e verificare la copia (assert).",
      "Il messaggio è copiato nella cartella di destinazione. Il messaggio originale rimane in In arrivo."),
 
     (19, "Messaggi", "test_messaggi_17.py", "test_ricerca_messaggi",
@@ -286,8 +286,8 @@ TESTS = [
      "3. Attendere la ricezione del messaggio.\n"
      "4. Inserire il testo univoco nella barra di ricerca.\n"
      "5. Avviare la ricerca.\n"
-     "6. Verificare che il messaggio cercato appaia nei risultati.\n"
-     "7. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Verificare che il messaggio cercato appaia nei risultati (assert).",
      "Il messaggio con l'oggetto univoco è trovato e visibile nei risultati di ricerca."),
 
     (20, "Messaggi", "test_messaggi_18.py", "test_filtri_inbox",
@@ -297,8 +297,8 @@ TESTS = [
      "3. Individuare il pulsante/dropdown filtri.\n"
      "4. Cliccare sul filtro per aprire le opzioni.\n"
      "5. Selezionare un'opzione di filtro (es. 'Non letti').\n"
-     "6. Verificare che la lista messaggi sia filtrata correttamente.\n"
-     "7. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Verificare che la lista messaggi sia filtrata correttamente (assert).",
      "Il componente filtri è visibile. Dopo la selezione di un filtro, la lista messaggi mostra solo i messaggi corrispondenti."),
 
     (21, "Messaggi", "test_messaggi_19.py", "test_invio_messaggio_con_cc",
@@ -309,8 +309,8 @@ TESTS = [
      "4. Aggiungere un destinatario in CC.\n"
      "5. Inserire oggetto e corpo del messaggio.\n"
      "6. Cliccare 'Invia'.\n"
-     "7. Verificare la conferma di invio.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Verificare la conferma di invio (assert).",
      "Il messaggio è inviato con successo con entrambi i destinatari (To e CC). Appare il toast di conferma."),
 
     (22, "Messaggi", "test_messaggi_20.py", "test_scarica_allegato_ricevuto",
@@ -322,8 +322,8 @@ TESTS = [
      "5. Cliccare sul pulsante di download dell'allegato.\n"
      "6. Gestire il download tramite Playwright expect_download.\n"
      "7. Salvare il file nella cartella test-results.\n"
-     "8. Verificare che il file scaricato esista e abbia dimensione > 0.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare che il file scaricato esista e abbia dimensione > 0 (assert).",
      "Il file allegato viene scaricato correttamente. Il file esiste nella directory di destinazione e ha dimensione maggiore di 0 byte."),
 
     (23, "Messaggi", "test_messaggi_21.py", "test_salva_e_usa_modello",
@@ -345,8 +345,8 @@ TESTS = [
      "3. Attendere la conferma di invio.\n"
      "4. Navigare nella cartella Inviati.\n"
      "5. Cercare il messaggio con l'oggetto univoco.\n"
-     "6. Verificare che il messaggio sia presente con il corretto oggetto.\n"
-     "7. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Verificare che il messaggio sia presente con il corretto oggetto (assert).",
      "Il messaggio inviato è visibile nella cartella Inviati con l'oggetto corretto."),
 
     (25, "Messaggi", "test_messaggi_23.py", "test_ricevuta_accettazione",
@@ -357,8 +357,8 @@ TESTS = [
      "4. Attendere l'arrivo della Ricevuta di Accettazione (15+ secondi).\n"
      "5. Aggiornare la vista messaggi.\n"
      "6. Cercare il messaggio con prefisso 'ACCETTAZIONE'.\n"
-     "7. Verificare la presenza della RA.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Verificare la presenza della RA (assert).",
      "La Ricevuta di Accettazione (RA) è presente in In arrivo entro i tempi attesi. L'oggetto contiene il prefisso 'ACCETTAZIONE'."),
 
     (26, "Messaggi", "test_messaggi_24.py", "test_ricevuta_consegna",
@@ -369,8 +369,8 @@ TESTS = [
      "4. Attendere l'arrivo della Ricevuta di Consegna (25+ secondi).\n"
      "5. Aggiornare la vista messaggi.\n"
      "6. Cercare il messaggio con prefisso 'CONSEGNA'.\n"
-     "7. Verificare la presenza della RD.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Verificare la presenza della RD (assert).",
      "La Ricevuta di Consegna (RD) è presente in In arrivo entro i tempi attesi. L'oggetto contiene il prefisso 'CONSEGNA'."),
 
     (27, "Messaggi", "test_messaggi_25.py", "test_invio_allegati_multipli",
@@ -393,8 +393,8 @@ TESTS = [
      "4. Passare il mouse sulla prima riga messaggio per rivelare il checkbox.\n"
      "5. Selezionare il checkbox della prima riga.\n"
      "6. Passare il mouse sulla seconda riga e selezionare il suo checkbox.\n"
-     "7. Verificare la comparsa della toolbar azioni batch (Elimina, Segna, ecc.).\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Verificare la comparsa della toolbar azioni batch (Elimina, Segna, ecc., assert).",
      "Dopo la selezione di almeno 2 messaggi, la toolbar delle azioni batch è visibile. I pulsanti batch (Elimina, Segna come letto, ecc.) sono presenti."),
 
     (29, "Messaggi", "test_messaggi_27.py", "test_anomalia_invio_non_pec",
@@ -405,8 +405,8 @@ TESTS = [
      "4. Inserire oggetto e corpo del messaggio.\n"
      "5. Inviare il messaggio.\n"
      "6. Attendere la ricezione della notifica di anomalia.\n"
-     "7. Verificare la presenza della notifica nell'inbox o come avviso UI.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Verificare la presenza della notifica nell'inbox o come avviso UI (assert).",
      "Viene generata e ricevuta una notifica di anomalia per l'invio a un indirizzo non-PEC. L'oggetto contiene la parola 'anomalia'."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -421,8 +421,8 @@ TESTS = [
      "5. Abilitare la ricorrenza e configurare la regola (es. settimanale).\n"
      "6. Salvare l'evento.\n"
      "7. Verificare la presenza dell'evento ricorrente nel calendario.\n"
-     "8. Eliminare l'evento (singolo o tutti).\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Eliminare l'evento (singolo o tutti, cleanup).",
      "L'evento ricorrente è creato e visibile nel calendario. Al momento dell'eliminazione è possibile scegliere di eliminare il singolo evento o tutti gli eventi della serie."),
 
     (31, "Calendario", "test_calendario_02.py", "test_creazione_modifica_evento",
@@ -436,8 +436,8 @@ TESTS = [
      "7. Modificare il titolo con uno nuovo.\n"
      "8. Salvare la modifica.\n"
      "9. Verificare che il nuovo titolo sia visibile nel calendario.\n"
-     "10. Eliminare l'evento.\n"
-     "11. Scattare screenshot.",
+     "10. Scattare screenshot.\n"
+     "11. Eliminare l'evento (cleanup).",
      "L'evento è creato con il titolo originale. Dopo la modifica, il calendario mostra il nuovo titolo. L'eliminazione completa il cleanup."),
 
     (32, "Calendario", "test_calendario_03.py", "test_creazione_invio_evento",
@@ -448,8 +448,8 @@ TESTS = [
      "4. Aggiungere un partecipante come invitato.\n"
      "5. Salvare e inviare l'invito.\n"
      "6. Navigare in In arrivo messaggi.\n"
-     "7. Verificare l'arrivo dell'invito come messaggio PEC.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Verificare l'arrivo dell'invito come messaggio PEC (assert).",
      "L'evento è creato e l'invito viene inviato come messaggio PEC al partecipante. L'invito è visibile in In arrivo."),
 
     (33, "Calendario", "test_calendario_04.py", "test_import_export_calendario",
@@ -461,8 +461,8 @@ TESTS = [
      "5. Selezionare il file ICS tramite il file picker.\n"
      "6. Confermare l'importazione.\n"
      "7. Tentare l'esportazione del calendario (via pulsante o menu contestuale).\n"
-     "8. Eliminare gli eventi importati.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Eliminare gli eventi importati (cleanup).",
      "Il file ICS è importato senza errori. Il calendario mostra gli eventi importati. L'esportazione (se disponibile) genera un file ICS."),
 
     (34, "Calendario", "test_calendario_05.py", "test_creazione_calendario",
@@ -474,8 +474,8 @@ TESTS = [
      "5. Confermare la creazione.\n"
      "6. Verificare la comparsa del toast di conferma.\n"
      "7. Verificare che il nuovo calendario sia visibile nella sidebar.\n"
-     "8. Eliminare il calendario creato.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Eliminare il calendario creato (cleanup).",
      "Il nuovo calendario è creato con successo e appare nella sidebar. Il toast di conferma è visibile. Il calendario può essere eliminato."),
 
     (35, "Calendario", "test_calendario_06.py", "test_cambio_vista_calendario",
@@ -499,8 +499,8 @@ TESTS = [
      "4. Cliccare il pulsante 'Successivo' (>).\n"
      "5. Verificare che l'header sia cambiato rispetto al valore iniziale.\n"
      "6. Cliccare il pulsante 'Precedente' (<).\n"
-     "7. Verificare il ritorno al periodo iniziale.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Verificare il ritorno al periodo iniziale (assert).",
      "L'header del calendario cambia correttamente dopo la navigazione avanti/indietro tra i periodi."),
 
     (37, "Calendario", "test_calendario_08.py", "test_evento_tutto_il_giorno",
@@ -512,8 +512,8 @@ TESTS = [
      "5. Abilitare il toggle/checkbox 'Giornata intera'.\n"
      "6. Salvare l'evento.\n"
      "7. Verificare la presenza dell'evento nel calendario come evento giornaliero.\n"
-     "8. Eliminare l'evento.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Eliminare l'evento (cleanup).",
      "L'evento è creato come evento 'Giornata intera' ed è visibile nella banda dedicata agli eventi a tutto giorno nel calendario."),
 
     (38, "Calendario", "test_calendario_09.py", "test_evento_con_promemoria",
@@ -526,8 +526,8 @@ TESTS = [
      "6. Salvare l'evento.\n"
      "7. Riaprire l'evento.\n"
      "8. Verificare che il promemoria sia presente e configurato.\n"
-     "9. Eliminare l'evento.\n"
-     "10. Scattare screenshot.",
+     "9. Scattare screenshot.\n"
+     "10. Eliminare l'evento (cleanup).",
      "Il promemoria è configurato e salvato correttamente nell'evento. Alla riapertura dell'evento il promemoria è visibile con la corretta configurazione."),
 
     (39, "Calendario", "test_calendario_10.py", "test_ricerca_nel_calendario",
@@ -540,8 +540,8 @@ TESTS = [
      "6. Inserire il titolo univoco dell'evento.\n"
      "7. Avviare la ricerca.\n"
      "8. Verificare che l'evento sia trovato nei risultati.\n"
-     "9. Eliminare l'evento.\n"
-     "10. Scattare screenshot.",
+     "9. Scattare screenshot.\n"
+     "10. Eliminare l'evento (cleanup).",
      "L'evento con il titolo univoco è trovato e visualizzato nei risultati di ricerca del calendario."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -555,8 +555,8 @@ TESTS = [
      "4. Inserire nome, cognome e indirizzo email.\n"
      "5. Salvare il contatto.\n"
      "6. Verificare la presenza del contatto nella rubrica.\n"
-     "7. Eliminare il contatto.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Eliminare il contatto (cleanup).",
      "Il contatto è creato e visibile nella rubrica con nome, cognome e email corretti. Può essere eliminato correttamente."),
 
     (41, "Contatti", "test_contatti_02.py", "test_aggiungere_nuovo_gruppo",
@@ -568,8 +568,8 @@ TESTS = [
      "5. Salvare il gruppo.\n"
      "6. Aggiungere uno o più contatti al gruppo.\n"
      "7. Verificare che il gruppo sia visibile nella sidebar.\n"
-     "8. Verificare che i contatti siano nel gruppo.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare che i contatti siano nel gruppo (assert).",
      "Il gruppo è creato e visibile nella sidebar. I contatti aggiunti sono visibili nel gruppo."),
 
     (42, "Contatti", "test_contatti_03.py", "test_esporta_contatti",
@@ -580,8 +580,8 @@ TESTS = [
      "4. Selezionare 'Esporta' o 'Esporta come CSV'.\n"
      "5. Gestire il download del file tramite Playwright expect_download.\n"
      "6. Verificare che il file CSV sia scaricato.\n"
-     "7. Verificare che il file abbia dimensione > 0.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Verificare che il file abbia dimensione > 0 (assert).",
      "Il file CSV della rubrica è scaricato correttamente. Il file esiste nella directory di destinazione e ha dimensione maggiore di 0 byte."),
 
     (43, "Contatti", "test_contatti_04.py", "test_importa_contatti",
@@ -593,8 +593,8 @@ TESTS = [
      "5. Selezionare il file CSV di test tramite il file picker.\n"
      "6. Confermare l'importazione.\n"
      "7. Verificare il messaggio di successo.\n"
-     "8. Verificare che i contatti importati siano nella rubrica.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare che i contatti importati siano nella rubrica (assert).",
      "I contatti del file CSV sono importati con successo nella rubrica. Il messaggio di conferma è visibile."),
 
     (44, "Contatti", "test_contatti_05.py", "test_modifica_contatto",
@@ -607,8 +607,8 @@ TESTS = [
      "6. Cambiare il cognome con un valore nuovo univoco.\n"
      "7. Salvare le modifiche.\n"
      "8. Cercare il contatto con il nuovo cognome.\n"
-     "9. Verificare che il contatto sia trovato con i dati aggiornati.\n"
-     "10. Scattare screenshot.",
+     "9. Scattare screenshot.\n"
+     "10. Verificare che il contatto sia trovato con i dati aggiornati (assert).",
      "Il contatto è modificato correttamente. La ricerca con il nuovo cognome restituisce il contatto aggiornato."),
 
     (45, "Contatti", "test_contatti_06.py", "test_elimina_contatto",
@@ -620,8 +620,8 @@ TESTS = [
      "5. Cliccare 'Elimina contatto'.\n"
      "6. Confermare l'eliminazione.\n"
      "7. Cercare il contatto eliminato.\n"
-     "8. Verificare che non sia più presente nella rubrica.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare che non sia più presente nella rubrica (assert).",
      "Il contatto eliminato non è più presente nella rubrica. La ricerca per nome non restituisce risultati."),
 
     (46, "Contatti", "test_contatti_07.py", "test_ricerca_contatto",
@@ -632,8 +632,8 @@ TESTS = [
      "4. Inserire il nome univoco nella barra di ricerca.\n"
      "5. Avviare la ricerca.\n"
      "6. Verificare che il contatto cercato sia nei risultati.\n"
-     "7. Eliminare il contatto.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Eliminare il contatto (cleanup).",
      "Il contatto con il nome univoco è trovato e visibile nei risultati di ricerca della rubrica."),
 
     (47, "Contatti", "test_contatti_08.py", "test_contatto_preferito",
@@ -644,8 +644,8 @@ TESTS = [
      "4. Cliccare il pulsante stella (preferito).\n"
      "5. Navigare nella sezione 'Contatti preferiti' nella sidebar.\n"
      "6. Verificare che il contatto sia presente nella sezione Preferiti.\n"
-     "7. Rimuovere il contatto dai preferiti.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Rimuovere il contatto dai preferiti (cleanup).",
      "Il contatto aggiunto ai preferiti è visibile nella sezione Contatti preferiti nella sidebar."),
 
     (48, "Contatti", "test_contatti_09.py", "test_scrivi_email_da_contatto",
@@ -655,8 +655,8 @@ TESTS = [
      "3. Selezionare un contatto dalla rubrica.\n"
      "4. Cliccare il pulsante 'Scrivi email' o 'Invia email'.\n"
      "5. Verificare che la finestra di composizione si apra.\n"
-     "6. Verificare che il campo destinatario sia pre-compilato con l'email del contatto.\n"
-     "7. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Verificare che il campo destinatario sia pre-compilato con l'email del contatto (assert).",
      "La finestra di composizione si apre correttamente con il campo destinatario pre-compilato con l'indirizzo email del contatto selezionato."),
 
     (49, "Contatti", "test_contatti_10.py", "test_elimina_gruppo",
@@ -668,8 +668,8 @@ TESTS = [
      "5. Selezionare il gruppo.\n"
      "6. Cliccare 'Elimina gruppo'.\n"
      "7. Confermare l'eliminazione.\n"
-     "8. Verificare che il gruppo non sia più nella sidebar.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare che il gruppo non sia più nella sidebar (assert).",
      "Il gruppo è eliminato correttamente e non è più visibile nella sidebar dei contatti."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -684,8 +684,8 @@ TESTS = [
      "5. Inserire il testo della firma.\n"
      "6. Salvare la firma.\n"
      "7. Verificare che la firma sia visibile nell'elenco firme.\n"
-     "8. Eliminare la firma.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Eliminare la firma (cleanup).",
      "La firma è creata e visibile nell'elenco firme. Può essere eliminata correttamente."),
 
     (51, "Impostazioni", "test_impostazioni_02.py", "test_riquadro_di_lettura",
@@ -697,8 +697,8 @@ TESTS = [
      "5. Salvare le impostazioni.\n"
      "6. Verificare l'applicazione della modifica.\n"
      "7. Selezionare l'opzione 'In basso'.\n"
-     "8. Verificare l'applicazione.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare l'applicazione (assert).",
      "Le opzioni del riquadro di lettura sono disponibili e selezionabili. La modifica viene salvata e applicata correttamente."),
 
     (52, "Impostazioni", "test_impostazioni_03.py", "test_regole_messaggi",
@@ -710,8 +710,8 @@ TESTS = [
      "5. Configurare le condizioni della regola (mittente, oggetto, ecc.).\n"
      "6. Configurare l'azione (sposta in cartella, elimina, ecc.).\n"
      "7. Salvare la regola.\n"
-     "8. Verificare la presenza della regola nell'elenco.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare la presenza della regola nell'elenco (assert).",
      "La sezione Regole messaggi è accessibile. Il form di creazione nuova regola si apre correttamente."),
 
     (53, "Impostazioni", "test_impostazioni_04.py", "test_risposta_automatica",
@@ -720,8 +720,8 @@ TESTS = [
      "2. Navigare nella sezione Impostazioni.\n"
      "3. Aprire la sotto-sezione 'Avvisi e report' o 'Risposta automatica'.\n"
      "4. Verificare che la pagina sia caricata correttamente.\n"
-     "5. Verificare la presenza dei controlli di configurazione.\n"
-     "6. Scattare screenshot.",
+     "5. Scattare screenshot.\n"
+     "6. Verificare la presenza dei controlli di configurazione (assert).",
      "La sezione Avvisi e report è accessibile e la pagina si carica correttamente con i controlli di configurazione visibili."),
 
     (54, "Impostazioni", "test_impostazioni_05.py", "test_posta_indesiderata",
@@ -732,8 +732,8 @@ TESTS = [
      "4. Aggiungere un indirizzo email alla lista di blocco.\n"
      "5. Salvare le impostazioni.\n"
      "6. Verificare che l'indirizzo sia nella lista di blocco.\n"
-     "7. Rimuovere l'indirizzo dalla lista.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Rimuovere l'indirizzo dalla lista (cleanup).",
      "La sezione Posta indesiderata è accessibile. È possibile aggiungere e rimuovere indirizzi dalla lista di blocco."),
 
     (55, "Impostazioni", "test_impostazioni_06.py", "test_impostazioni_cestino",
@@ -744,8 +744,8 @@ TESTS = [
      "4. Verificare la presenza delle opzioni di configurazione (svuotamento automatico, ecc.).\n"
      "5. Modificare un'impostazione.\n"
      "6. Salvare.\n"
-     "7. Verificare il salvataggio.\n"
-     "8. Scattare screenshot.",
+     "7. Scattare screenshot.\n"
+     "8. Verificare il salvataggio (assert).",
      "La sezione Cestino nelle Impostazioni è accessibile e le opzioni di configurazione sono presenti e modificabili."),
 
     (56, "Impostazioni", "test_impostazioni_07.py", "test_storico_accessi",
@@ -755,8 +755,8 @@ TESTS = [
      "3. Aprire la sotto-sezione 'Storico accessi' o 'Accessi recenti'.\n"
      "4. Verificare che la pagina si carichi correttamente.\n"
      "5. Verificare la presenza del pulsante/link per visualizzare lo storico.\n"
-     "6. Cliccare il pulsante e verificare la visualizzazione della lista accessi.\n"
-     "7. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Cliccare il pulsante e verificare la visualizzazione della lista accessi (assert).",
      "La sezione Storico accessi è accessibile. Il pulsante per visualizzare lo storico è visibile e funzionante."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -777,8 +777,8 @@ TESTS = [
      "10. Salvare con il pulsante primario.\n"
      "11. Verificare il toast di conferma salvataggio.\n"
      "12. Ricaricare la pagina e verificare che la selezione sia mantenuta.\n"
-     "13. Cleanup: ripristinare il primo radio button e salvare.\n"
-     "14. Scattare screenshot.",
+     "13. Scattare screenshot.\n"
+     "14. Cleanup: ripristinare il primo radio button e salvare.",
      "La pagina di configurazione Archivio mostra la struttura attesa. Il salvataggio di una configurazione personalizzata persiste dopo reload. Il cleanup ripristina lo stato iniziale."),
 
     (58, "Archivio", "test_archivio_02.py", "test_archivio_messaggio_inviato",
@@ -793,8 +793,8 @@ TESTS = [
      "7. Navigare a /new/messages/INBOX.\n"
      "8. Aprire la sezione Archivio tramite il menu waffle (9 punti nell'header).\n"
      "9. Verificare che il messaggio con l'oggetto univoco sia presente in Archivio.\n"
-     "10. Fallback: se il waffle non funziona, verificare l'accesso via settings URL.\n"
-     "11. Scattare screenshot.",
+     "10. Scattare screenshot.\n"
+     "11. Fallback: se il waffle non funziona, verificare l'accesso via settings URL (assert).",
      "Il messaggio inviato a se stessi compare nella sezione Archivio. La configurazione 'Archivia tutti' funziona correttamente."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -810,8 +810,8 @@ TESTS = [
      "5. Cliccare il pulsante 'Da conservare'.\n"
      "6. Verificare che l'URL contenga 'CONSERVAZIONE'.\n"
      "7. Verificare la presenza di testo informativo sulla conservazione.\n"
-     "8. Verificare la presenza del link alle Impostazioni.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare la presenza del link alle Impostazioni (assert).",
      "La cartella 'Da conservare' e' accessibile dalla sidebar. L'URL contiene 'CONSERVAZIONE' e la pagina mostra contenuti informativi sulla conservazione a norma."),
 
     (60, "Conservazione", "test_conservazione_02.py", "test_conservazione_da_waffle",
@@ -824,8 +824,8 @@ TESTS = [
      "5. Cercare la voce 'Conservazione' nel dropdown del waffle.\n"
      "6. Cliccare la voce (gestire eventuale apertura in nuova tab).\n"
      "7. Verificare che la pagina di Conservazione si carichi correttamente.\n"
-     "8. Fallback: se il waffle non funziona, navigare direttamente alla URL di Conservazione e verificare.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Fallback: se il waffle non funziona, navigare direttamente alla URL di Conservazione e verificare (assert).",
      "La sezione Conservazione e' accessibile tramite il menu waffle. La pagina di Conservazione si carica e mostra i contenuti attesi."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -844,8 +844,8 @@ TESTS = [
      "8. Attendere il file input (#hidden_input) e impostare il file EML di test.\n"
      "9. Attendere il messaggio di conferma importazione.\n"
      "10. Navigare a 'Fatture ricevute'.\n"
-     "11. Verificare che sia presente almeno un messaggio con riferimento a SDI o FatturaPA.\n"
-     "12. Scattare screenshot.",
+     "11. Scattare screenshot.\n"
+     "12. Verificare che sia presente almeno un messaggio con riferimento a SDI o FatturaPA (assert).",
      "La fattura EML viene importata correttamente. La sezione 'Fatture ricevute' mostra il messaggio importato proveniente dall'SDI."),
 
     (62, "Fatture", "test_fatture_02.py", "test_impostazioni_leggi_fatture",
@@ -858,8 +858,8 @@ TESTS = [
      "5. Navigare direttamente a /new/settings/read-invoices.\n"
      "6. Verificare che la pagina si carichi (stato domcontentloaded).\n"
      "7. Verificare la presenza dell'h1 o testo 'Leggi fatture'.\n"
-     "8. Verificare la presenza di contenuto informativo (cassetto fiscale, AdE, ecc.).\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare la presenza di contenuto informativo (cassetto fiscale, AdE, ecc., assert).",
      "La sezione 'Leggi fatture' e' accessibile nelle Impostazioni. La pagina mostra informazioni sul servizio di collegamento al cassetto fiscale dell'Agenzia delle Entrate."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -877,8 +877,8 @@ TESTS = [
      "7. Verificare la presenza di almeno 2 pulsanti 'Gestisci'.\n"
      "8. Navigare alla sotto-sezione Multiutente PEC e verificare il contenuto.\n"
      "9. Tornare alla panoramica e navigare a Supervisore360.\n"
-     "10. Verificare il contenuto della sezione Supervisore360.\n"
-     "11. Scattare screenshot.",
+     "10. Scattare screenshot.\n"
+     "11. Verificare il contenuto della sezione Supervisore360 (assert).",
      "La pagina di panoramica 'Accessi altri account' mostra le card Multiutente PEC e Supervisore360 con i relativi pulsanti 'Gestisci'. La navigazione alle sotto-sezioni funziona correttamente."),
 
     (64, "Accessi", "test_accessi_02.py", "test_form_multiutente_pec",
@@ -892,8 +892,8 @@ TESTS = [
      "6. Cercare e cliccare il pulsante 'Aggiungi' (multi-fallback selectors).\n"
      "7. Skip se il pulsante non e' trovato (pytest.skip).\n"
      "8. Verificare che il form o dialog si sia aperto con campi input.\n"
-     "9. Chiudere il form senza inviare (tasto Annulla o Escape).\n"
-     "10. Scattare screenshot.",
+     "9. Scattare screenshot.\n"
+     "10. Chiudere il form senza inviare (tasto Annulla o Escape).",
      "Il form di aggiunta Multiutente PEC si apre correttamente e mostra i campi di input. La chiusura senza invio non produce side-effect."),
 
     (65, "Accessi", "test_accessi_03.py", "test_form_supervisore360",
@@ -908,8 +908,8 @@ TESTS = [
      "7. Cercare e cliccare il pulsante 'Aggiungi' o 'Nuova delega' (multi-fallback selectors).\n"
      "8. Skip se il pulsante non e' trovato (pytest.skip).\n"
      "9. Verificare che il form o dialog si sia aperto con campi email/input.\n"
-     "10. Chiudere il form senza inviare (tasto Annulla o Escape).\n"
-     "11. Scattare screenshot.",
+     "10. Scattare screenshot.\n"
+     "11. Chiudere il form senza inviare (tasto Annulla o Escape).",
      "Il form di aggiunta delega Supervisore360 si apre e mostra i campi input attesi. La chiusura senza invio non produce side-effect reali (nessuna delega viene inviata)."),
 ]
 

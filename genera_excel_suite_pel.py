@@ -53,8 +53,8 @@ TESTS = [
      "3. Cliccare il pulsante dell'account (username) in alto a destra.\n"
      "4. Cliccare il pulsante 'Esci' dal menu dropdown.\n"
      "5. Attendere il reindirizzamento alla pagina di login.\n"
-     "6. Verificare che il campo username sia visibile.\n"
-     "7. Scattare screenshot della pagina di login.",
+     "6. Scattare screenshot della pagina di login.\n"
+     "7. Verificare che il campo username sia visibile (assert).",
      "L'URL non contiene più 'INBOX'. Il campo di input username è visibile nella pagina di login."),
 
     (2, "Login", "test_login_02.py", "test_login_credenziali_errate",
@@ -64,9 +64,9 @@ TESTS = [
      "3. Inserire una password errata nel campo password.\n"
      "4. Cliccare il pulsante Login.\n"
      "5. Attendere 2 secondi.\n"
-     "6. Verificare che l'URL non contenga 'INBOX'.\n"
-     "7. Verificare la visibilità del form di login.\n"
-     "8. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Verificare che l'URL non contenga 'INBOX' (assert).\n"
+     "8. Verificare la visibilità del form di login (assert).",
      "L'URL rimane sulla pagina di login (no 'INBOX'). Il form di login è ancora visibile, confermando che l'accesso con credenziali errate non è avvenuto."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -83,8 +83,8 @@ TESTS = [
      "7. Salvare la regola di ricorrenza.\n"
      "8. Salvare l'evento.\n"
      "9. Verificare la presenza dell'evento ricorrente nel calendario.\n"
-     "10. Eliminare l'evento (singolo o tutti).\n"
-     "11. Scattare screenshot.",
+     "10. Scattare screenshot.\n"
+     "11. Eliminare l'evento (singolo o tutti, cleanup).",
      "L'evento ricorrente è creato con la regola personalizzata e visibile nel calendario. Il cleanup rimuove correttamente l'evento dalla griglia."),
 
     (4, "Calendario", "test_calendario_02.py", "test_creazione_modifica_evento",
@@ -99,8 +99,8 @@ TESTS = [
      "8. Modificare il titolo con uno nuovo univoco.\n"
      "9. Salvare la modifica.\n"
      "10. Verificare che il nuovo titolo sia visibile nel calendario.\n"
-     "11. Eliminare l'evento.\n"
-     "12. Scattare screenshot.",
+     "11. Scattare screenshot.\n"
+     "12. Eliminare l'evento (cleanup).",
      "L'evento è creato con il titolo base. Dopo la modifica, il calendario mostra il nuovo titolo. Il cleanup elimina correttamente l'evento."),
 
     (5, "Calendario", "test_calendario_03.py", "test_evento_con_invitati",
@@ -112,8 +112,8 @@ TESTS = [
      "5. Aggiungere un partecipante come invitato (email username).\n"
      "6. Salvare e inviare l'invito.\n"
      "7. Verificare che l'evento sia visibile nel calendario (.fc-event).\n"
-     "8. Eliminare l'evento.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Eliminare l'evento (cleanup).",
      "L'evento è creato con invito e appare nella griglia del calendario. Il cleanup rimuove l'evento."),
 
     (6, "Calendario", "test_calendario_04.py", "test_import_export_calendario",
@@ -138,8 +138,8 @@ TESTS = [
      "7. Salvare il calendario.\n"
      "8. Verificare il toast di conferma.\n"
      "9. Verificare che il calendario sia visibile nella sidebar.\n"
-     "10. Eliminare il calendario (click destro → Elimina calendario).\n"
-     "11. Scattare screenshot.",
+     "10. Scattare screenshot.\n"
+     "11. Eliminare il calendario (click destro → Elimina calendario, cleanup).",
      "Il nuovo calendario è creato e appare nella sidebar. Il toast di conferma è visibile. Il calendario viene eliminato correttamente nel cleanup."),
 
     (8, "Calendario", "test_calendario_06.py", "test_cambio_vista_calendario",
@@ -165,8 +165,8 @@ TESTS = [
      "5. Cliccare il primo giorno disponibile del mese successivo.\n"
      "6. Verificare che la main view si sia aggiornata (primo giorno diverso).\n"
      "7. Cliccare il pulsante 'Oggi'.\n"
-     "8. Verificare il ritorno alla settimana corrente (primo giorno uguale all'iniziale).\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Verificare il ritorno alla settimana corrente (primo giorno uguale all'iniziale, assert).",
      "La navigazione tramite mini-calendar aggiorna la main view. Il pulsante 'Oggi' riporta correttamente alla settimana corrente."),
 
     (10, "Calendario", "test_calendario_08.py", "test_evento_giornata_intera",
@@ -178,8 +178,8 @@ TESTS = [
      "5. Attivare il toggle/checkbox 'Giornata intera'.\n"
      "6. Salvare l'evento.\n"
      "7. Verificare la presenza dell'evento nella griglia del calendario.\n"
-     "8. Eliminare l'evento.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Eliminare l'evento (cleanup).",
      "L'evento è creato come evento 'Giornata intera' ed è visibile nel calendario (nella banda all-day o nella griglia). Il cleanup elimina l'evento correttamente."),
 
     (11, "Calendario", "test_calendario_09.py", "test_evento_con_promemoria",
@@ -193,8 +193,8 @@ TESTS = [
      "7. Salvare il dialog promemoria.\n"
      "8. Salvare l'evento.\n"
      "9. Verificare che l'evento sia visibile nel calendario (.fc-event).\n"
-     "10. Eliminare l'evento.\n"
-     "11. Scattare screenshot.",
+     "10. Scattare screenshot.\n"
+     "11. Eliminare l'evento (cleanup).",
      "Il promemoria è configurato e l'evento è salvato correttamente. L'evento è visibile nella griglia del calendario. Il cleanup elimina l'evento."),
 
     (12, "Calendario", "test_calendario_10.py", "test_ricerca_nel_calendario",
@@ -207,8 +207,8 @@ TESTS = [
      "6. Premere Enter per avviare la ricerca.\n"
      "7. Verificare che il testo univoco sia trovato.\n"
      "8. Fallback: se la ricerca restituisce spinner, verificare tramite vista Eventi.\n"
-     "9. Eliminare l'evento.\n"
-     "10. Scattare screenshot.",
+     "9. Scattare screenshot.\n"
+     "10. Eliminare l'evento (cleanup).",
      "L'evento con il titolo univoco è trovato tramite ricerca o visibile nella vista Eventi. Il cleanup elimina l'evento."),
 
     (13, "Calendario", "test_calendario_11.py", "test_evento_luogo_indirizzo",
@@ -220,8 +220,8 @@ TESTS = [
      "5. Inserire un indirizzo fisico nel campo luogo (es. 'Via Roma 1, Milano').\n"
      "6. Salvare l'evento.\n"
      "7. Aprire l'evento dalla griglia e verificare che l'indirizzo sia presente nel popup.\n"
-     "8. Eliminare l'evento.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Eliminare l'evento (cleanup).",
      "Il luogo 'Via Roma 1, Milano' è salvato correttamente e visibile nel popup dell'evento. Il cleanup elimina l'evento."),
 
     (14, "Calendario", "test_calendario_12.py", "test_evento_luogo_link",
@@ -233,8 +233,8 @@ TESTS = [
      "5. Inserire un URL meeting nel campo luogo (es. 'https://meet.example.com/test-room').\n"
      "6. Salvare l'evento.\n"
      "7. Aprire l'evento dalla griglia e verificare che l'URL sia presente nel popup.\n"
-     "8. Eliminare l'evento.\n"
-     "9. Scattare screenshot.",
+     "8. Scattare screenshot.\n"
+     "9. Eliminare l'evento (cleanup).",
      "L'URL meeting è salvato correttamente e visibile (parzialmente o intero) nel popup dell'evento. Il cleanup elimina l'evento."),
 
     (15, "Calendario", "test_calendario_13.py", "test_evento_corpo_rich_text",
@@ -249,8 +249,8 @@ TESTS = [
      "8. Aggiungere una voce di lista.\n"
      "9. Salvare l'evento.\n"
      "10. Aprire l'evento e verificare che il testo in grassetto sia visibile nel popup.\n"
-     "11. Eliminare l'evento.\n"
-     "12. Scattare screenshot.",
+     "11. Scattare screenshot.\n"
+     "12. Eliminare l'evento (cleanup).",
      "Il testo in grassetto inserito tramite rich text editor è salvato e visibile nel popup evento. Il cleanup elimina l'evento."),
 
     (16, "Calendario", "test_calendario_14.py", "test_assegna_calendario_specifico",
@@ -264,8 +264,8 @@ TESTS = [
      "7. Selezionare un'opzione diversa dall'attuale se disponibile.\n"
      "8. Salvare l'evento.\n"
      "9. Verificare che l'evento sia visibile nel calendario.\n"
-     "10. Eliminare l'evento.\n"
-     "11. Scattare screenshot.",
+     "10. Scattare screenshot.\n"
+     "11. Eliminare l'evento (cleanup).",
      "L'evento è creato e assegnato al calendario selezionato. L'evento è visibile nella griglia del calendario. Il cleanup elimina l'evento correttamente."),
 
     (17, "Calendario", "test_calendario_15.py", "test_disponibilita_occupato",
@@ -279,9 +279,9 @@ TESTS = [
      "7. Riaprire l'evento dalla griglia.\n"
      "8. Cliccare 'Modifica'.\n"
      "9. Verificare che il toggle 'Mostrati come occupato' risulti checked.\n"
-     "10. Chiudere senza salvare.\n"
-     "11. Eliminare l'evento nel finally.\n"
-     "12. Scattare screenshot.",
+     "10. Scattare screenshot.\n"
+     "11. Chiudere senza salvare.\n"
+     "12. Eliminare l'evento nel finally (cleanup).",
      "Il toggle 'Mostrati come occupato' è checked (ON) alla riapertura dell'evento, confermando che la preferenza è stata salvata correttamente."),
 
     (18, "Calendario", "test_calendario_16.py", "test_disponibilita_libero",
@@ -291,9 +291,9 @@ TESTS = [
      "3. Creare evento B alla stessa ora aggiungendo se stesso come invitato.\n"
      "4. Aprire la vista di pianificazione disponibilità (aru-button.planning-button).\n"
      "5. Verificare che lo slot 14:00-15:00 NON risulti 'Occupato' (exact=True).\n"
-     "6. Chiudere la vista pianificazione e annullare l'evento B.\n"
-     "7. Eliminare entrambi gli eventi nel finally.\n"
-     "8. Scattare screenshot.",
+     "6. Scattare screenshot.\n"
+     "7. Chiudere la vista pianificazione e annullare l'evento B.\n"
+     "8. Eliminare entrambi gli eventi nel finally (cleanup).",
      "Lo slot 14:00-15:00 non risulta 'Occupato' nella vista pianificazione, confermando che l'evento con 'Mostrati come occupato' OFF non impatta la disponibilità."),
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -310,9 +310,9 @@ TESTS = [
      "7. Salvare le impostazioni.\n"
      "8. Navigare al calendario e creare un nuovo evento.\n"
      "9. Leggere il valore del campo luogo nel form evento.\n"
-     "10. Chiudere il form senza salvare.\n"
-     "11. Ripristinare il luogo vuoto nelle impostazioni.\n"
-     "12. Scattare screenshot.",
+     "10. Scattare screenshot.\n"
+     "11. Chiudere il form senza salvare.\n"
+     "12. Ripristinare il luogo vuoto nelle impostazioni (cleanup).",
      "La pagina impostazioni calendario è accessibile. Se il campo luogo è presente, il valore viene salvato e letto nel form del nuovo evento. L'impostazione viene ripristinata al termine."),
 
     (20, "Impostazioni", "test_impostazioni_calendari.py", "test_impostazioni_visualizzazione_predefinita",
@@ -325,8 +325,8 @@ TESTS = [
      "6. Cercare e cliccare l'opzione 'Mese' (via Playwright o JS shadow DOM traversal).\n"
      "7. Salvare le impostazioni.\n"
      "8. Navigare al calendario e verificare che la vista Mese sia attiva.\n"
-     "9. Ripristinare la visualizzazione predefinita originale.\n"
-     "10. Scattare screenshot.",
+     "9. Scattare screenshot.\n"
+     "10. Ripristinare la visualizzazione predefinita originale (cleanup).",
      "Se la selezione della vista 'Mese' è riuscita: il calendario si apre in vista Mese. Se il combobox usa shadow DOM non interagibile: la pagina impostazioni è accessibile (PASS con fallback)."),
 ]
 
