@@ -92,9 +92,6 @@ jobs:
           PEL_DESTINATARIO_SECONDARIO: >-
             ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_DESTINATARIO_SECONDARIO
              || secrets.TEST_PEL_DESTINATARIO_SECONDARIO }}
-          PEL_SALA_RIUNIONI: >-
-            ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_SALA_RIUNIONI
-             || secrets.TEST_PEL_SALA_RIUNIONI }}
         run: |
           $reportDir = "pytest_pel/test-results"
           if (!(Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
@@ -126,9 +123,6 @@ jobs:
           PEL_DESTINATARIO_SECONDARIO: >-
             ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_DESTINATARIO_SECONDARIO
              || secrets.TEST_PEL_DESTINATARIO_SECONDARIO }}
-          PEL_SALA_RIUNIONI: >-
-            ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_SALA_RIUNIONI
-             || secrets.TEST_PEL_SALA_RIUNIONI }}
         run: |
           reportDir="pytest_pel/test-results"
           mkdir -p "$reportDir"
