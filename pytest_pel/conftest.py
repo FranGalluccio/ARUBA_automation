@@ -22,6 +22,7 @@ if _pel_url:
         "test_folder": "pytest_pel",
         "report_folder": "pytest_pel/test-results",
         "file_allegato": "dati_test/allegato-test.pdf",
+        "sala_riunioni": os.environ.get("PEL_SALA_RIUNIONI", ""),
     }
     _config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
     with open(_config_path, "w", encoding="utf-8") as _f:
