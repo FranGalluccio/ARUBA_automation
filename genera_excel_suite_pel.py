@@ -209,10 +209,49 @@ TESTS = [
      "10. Nel finally: chiudere dialog aperti, eliminare l'evento (cleanup).",
      "La vista pianificazione mostra entrambi gli invitati nella griglia. Il cleanup chiude il dialog e rimuove l'evento correttamente."),
 
+    (13, "Calendario", "test_calendario_11.py", "test_conflitto_sala_riunioni",
+     "Verifica che la sala riunioni risulti non selezionabile quando è già prenotata nello stesso orario.",
+     "1. Accedere con credenziali valide.\n"
+     "2. Creare Evento A con sala riunioni disponibile (orario futuro +3h).\n"
+     "3. Leggere il nome della sala auto-selezionata per Evento A.\n"
+     "4. Salvare Evento A.\n"
+     "5. Creare Evento B allo stesso orario e selezionare il tipo 'Sala riunioni'.\n"
+     "6. Verificare che la sala sia read-only, disabilitata o assente (conflitto rilevato).\n"
+     "7. Scattare screenshot.\n"
+     "8. Nel finally: chiudere form aperti, eliminare Evento A ed Evento B (cleanup).",
+     "Il sistema rileva il conflitto: la sala prenotata in Evento A risulta non selezionabile (read-only, disabled o non proposta) in Evento B allo stesso orario."),
+
+    (14, "Calendario", "test_calendario_12.py", "test_invitati_aggiungi_rimuovi",
+     "Verifica che sia possibile aggiungere due invitati a un evento e successivamente rimuoverne uno.",
+     "1. Accedere con credenziali valide.\n"
+     "2. Creare un evento con invitato_1 e invitato_2 → Invia.\n"
+     "3. Riaprire l'evento dal calendario → form di modifica fullscreen.\n"
+     "4. Verificare che entrambi gli invitati siano presenti nella lista.\n"
+     "5. Rimuovere invitato_1 tramite il pulsante × (hover + click, più strategie).\n"
+     "6. Verificare nella lista invitati che invitato_1 sia assente e invitato_2 ancora presente.\n"
+     "7. Salvare e gestire il dialogo 'Vuoi informare gli invitati?' → Non inviare.\n"
+     "8. Scattare screenshot.\n"
+     "9. Nel finally: chiudere form aperti, eliminare l'evento (cleanup).",
+     "Dopo la rimozione, la lista invitati nel form contiene solo invitato_2. Il salvataggio avviene senza errori. Il cleanup elimina l'evento correttamente."),
+
+    (15, "Calendario", "test_calendario_13.py", "test_sposta_evento_drag",
+     "Verifica che un evento possa essere spostato su un altro giorno tramite drag-and-drop nella vista Settimana.",
+     "1. Accedere con credenziali valide.\n"
+     "2. Navigare alla vista Settimana del calendario.\n"
+     "3. Creare un evento semplice (nessun invitato) alle 10:00-11:00 oggi.\n"
+     "4. Calcolare il giorno target (±2 giorni, nella stessa settimana visualizzata).\n"
+     "5. Trovare l'evento nella griglia (.fc-event).\n"
+     "6. Eseguire il drag lento (25 passi, 30 ms/passo) verso la colonna del giorno target.\n"
+     "7. Attendere che FullCalendar aggiorni la posizione dell'evento.\n"
+     "8. Verificare tramite bounding box che il centro X dell'evento ricada nella colonna target.\n"
+     "9. Scattare screenshot pre/post drag.\n"
+     "10. Nel finally: chiudere overlay aperti, eliminare l'evento (cleanup).",
+     "Dopo il drag, il centro X dell'evento è compreso nei limiti della colonna del giorno target. Il test PASSED conferma che FullCalendar ha registrato lo spostamento."),
+
     # ══════════════════════════════════════════════════════════════════════════
     # IMPOSTAZIONI
     # ══════════════════════════════════════════════════════════════════════════
-    (13, "Impostazioni", "test_impostazioni_calendari.py", "test_impostazioni_luogo_predefinito",
+    (16, "Impostazioni", "test_impostazioni_calendari.py", "test_impostazioni_luogo_predefinito",
      "S1: Imposta un luogo predefinito nelle impostazioni calendario e verifica che venga pre-compilato alla creazione di un nuovo evento.",
      "1. Accedere con credenziali valide.\n"
      "2. Navigare a /settings/calendars/customization tramite URL diretto.\n"
@@ -228,7 +267,7 @@ TESTS = [
      "12. Ripristinare il luogo vuoto nelle impostazioni (cleanup).",
      "La pagina impostazioni calendario è accessibile. Se il campo luogo è presente, il valore viene salvato e letto nel form del nuovo evento. L'impostazione viene ripristinata al termine."),
 
-    (14, "Impostazioni", "test_impostazioni_calendari.py", "test_impostazioni_visualizzazione_predefinita",
+    (17, "Impostazioni", "test_impostazioni_calendari.py", "test_impostazioni_visualizzazione_predefinita",
      "S2: Cambia la visualizzazione predefinita del calendario e verifica che il calendario si apra con quella vista.",
      "1. Accedere con credenziali valide.\n"
      "2. Navigare a /settings/calendars/customization tramite URL diretto.\n"
@@ -252,7 +291,7 @@ MODULE_STYLE = {
 
 MODULE_DESCRIPTIONS = {
     "Login":        "Test di autenticazione: verifica logout e login con credenziali errate.",
-    "Calendario":   "Test sul modulo Calendario PEL: creazione/modifica eventi, ricorrenze, invitati, import/export ICS, giornata intera, promemoria, disponibilità occupato/libero e vista pianificazione multi-invitati.",
+    "Calendario":   "Test sul modulo Calendario PEL: creazione/modifica eventi, ricorrenze, invitati, import/export ICS, giornata intera, promemoria, disponibilità, pianificazione multi-invitati, conflitto sala riunioni, gestione invitati e drag-and-drop.",
     "Impostazioni": "Test sulle impostazioni del calendario PEL: luogo predefinito (S1) e visualizzazione predefinita (S2).",
 }
 
