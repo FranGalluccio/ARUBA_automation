@@ -57,21 +57,37 @@ def test_modifica_contatto(page):
         row = page.locator('div.frame-record-desktop').filter(has_text="DaModificare").first
         row.wait_for(state="visible", timeout=10000)
 
-        # Apri il contatto in modifica: prova dblclick direttamente (più affidabile della toolbar)
-        row.dblclick()
+        # Apri il contatto in modifica.
+        # Step 1: click singolo per aprire il pannello dettaglio a destra
+        row.click()
+        page.wait_for_timeout(1200)
 
-        # Se il dblclick ha aperto la vista dettaglio invece del form modifica,
-        # clicca il pulsante Modifica nel pannello dettaglio
         cognome_input = page.get_by_placeholder("Inserisci cognome")
-        try:
-            cognome_input.wait_for(state="visible", timeout=5000)
-        except Exception:
+
+        # Step 2: il pannello dettaglio si è aperto → clicca il pulsante "Modifica"
+        # Usa filter(has_text=) che attraversa lo shadow DOM di aru-button.
+        if not (cognome_input.count() > 0 and cognome_input.first.is_visible()):
             try:
-                page.locator('aru-button:has-text("Modifica"), button:has-text("Modifica")').first.click(timeout=5000)
+                btn = page.locator('aru-button').filter(has_text="Modifica").first
+                btn.wait_for(state="visible", timeout=5000)
+                btn.click()
+                page.wait_for_timeout(1000)
             except Exception:
                 pass
 
-        cognome_input.wait_for(state="visible", timeout=15000)
+        # Fallback: get_by_role e dblclick
+        if not (cognome_input.count() > 0 and cognome_input.first.is_visible()):
+            try:
+                page.get_by_role("button", name="Modifica").first.click(timeout=3000)
+                page.wait_for_timeout(1000)
+            except Exception:
+                try:
+                    row.dblclick()
+                    page.wait_for_timeout(1000)
+                except Exception:
+                    pass
+
+        cognome_input.wait_for(state="visible", timeout=20000)
         cognome_input.click(click_count=3)
         cognome_input.fill("Modificato")
 
