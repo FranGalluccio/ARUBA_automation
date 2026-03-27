@@ -41,6 +41,14 @@ def test_creazione_evento_ricorrente(page):
     .click()
 
     page.wait_for_timeout(500)
+
+    # Chiudi banner cookie se riappare dopo il dialog ricorrenza
+    try:
+        page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=3000)
+        page.wait_for_timeout(500)
+    except Exception:
+        pass
+
     page.get_by_role("button", name="Salva").click()
 
     try:
