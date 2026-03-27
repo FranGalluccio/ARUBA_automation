@@ -47,12 +47,15 @@ def test_messaggio_inoltrato(page):
     # Invia
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta ricezione, aggiorna e apri il primo messaggio
-    page.wait_for_timeout(10000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
-    page.wait_for_timeout(2000)
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    page.locator('div.frame-record-desktop').first.click()
+    # Polling: cerca il messaggio inoltrato per oggetto (non aprire il primo in assoluto)
+    msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto_inoltro)
+    for _ in range(20):
+        page.wait_for_timeout(3000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(1000)
+        if msg.count() > 0:
+            break
+    msg.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Verifica oggetto

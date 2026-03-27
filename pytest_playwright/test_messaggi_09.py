@@ -35,17 +35,17 @@ def test_segna_come_letto_da_leggere(page):
     # Invia
     page.locator('span[title="Invia"]').click()
 
-    # Polling: aspetta che il messaggio arrivi in inbox (fino a 40s)
+    # Polling: aspetta che il messaggio arrivi in inbox (fino a 90s)
     messaggio_arrivato = False
-    for _ in range(13):
-        page.wait_for_timeout(3000)
+    for _ in range(22):
+        page.wait_for_timeout(4000)
         page.locator('aru-symbol[title="Aggiorna"]').click()
         page.wait_for_timeout(1000)
         if page.locator('div.frame-record-desktop').filter(has_text=oggetto).count() > 0:
             messaggio_arrivato = True
             break
 
-    assert messaggio_arrivato, f"Il messaggio '{oggetto}' non è arrivato in inbox entro 40s"
+    assert messaggio_arrivato, f"Il messaggio '{oggetto}' non è arrivato in inbox entro 90s"
 
     # Segna tutti come già letti (force perché il bottone può essere parzialmente fuori viewport)
     page.locator('button:has(aru-symbol[title="Segna tutti come già letti"])').first.click(force=True)

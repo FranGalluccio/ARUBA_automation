@@ -29,12 +29,15 @@ def test_risposta_a_tutti(page):
     Helper.crea_messaggio(page, config, oggetto=oggetto, corpo="Corpo del messaggio originale")
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta ricezione, aggiorna e apri il primo messaggio
-    page.wait_for_timeout(10000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
-    page.wait_for_timeout(2000)
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    page.locator('div.frame-record-desktop').first.click()
+    # Polling: cerca il messaggio originale per oggetto
+    msg_orig = page.locator('div.frame-record-desktop').filter(has_text=oggetto)
+    for _ in range(20):
+        page.wait_for_timeout(3000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(1000)
+        if msg_orig.count() > 0:
+            break
+    msg_orig.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Rispondi a tutti
@@ -43,12 +46,16 @@ def test_risposta_a_tutti(page):
     page.locator("div[contenteditable='true']").first.fill("Risposta a tutti automatica tramite Playwright")
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta ricezione risposta, aggiorna e apri il primo messaggio
-    page.wait_for_timeout(10000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
-    page.wait_for_timeout(2000)
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    page.locator('div.frame-record-desktop').first.click()
+    # Polling: cerca la risposta (Re: <oggetto>) per oggetto specifico
+    oggetto_reply = f"Re: {oggetto}"
+    msg_reply = page.locator('div.frame-record-desktop').filter(has_text=oggetto_reply)
+    for _ in range(20):
+        page.wait_for_timeout(3000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(1000)
+        if msg_reply.count() > 0:
+            break
+    msg_reply.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Verifica prefisso "Re:" nell'oggetto

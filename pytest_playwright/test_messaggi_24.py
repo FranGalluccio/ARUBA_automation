@@ -31,16 +31,12 @@ def test_ricevuta_consegna(page):
     )
     page.locator('span[title="Invia"]').click()
 
-    # Vai alla inbox e aggiorna (la RD richiede più tempo della RA)
+    # Vai alla inbox e aggiorna con polling attivo (RD richiede più tempo della RA)
     page.wait_for_timeout(5000)
     page.locator("#messages").get_by_label("Messaggi").first.click()
-    page.wait_for_timeout(50000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
     page.wait_for_timeout(5000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
-    page.wait_for_timeout(3000)
 
-    # Mostra le ricevute se il banner è presente (in alcuni ambienti sono nascoste per default)
+    # Mostra le ricevute se il banner è presente
     try:
         mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
         if mostra_btn.is_visible():
@@ -49,11 +45,25 @@ def test_ricevuta_consegna(page):
     except Exception:
         pass
 
-    # Cerca la RC tramite l'icona aru-symbol con title="Ricevuta di consegna"
-    # e filtra per il soggetto univoco del messaggio inviato
-    found_rd = page.locator(
-        'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di consegna"])'
-    ).filter(has_text=oggetto).count() > 0
+    # Polling fino a 120s per la RD (più lenta della RA)
+    found_rd = False
+    for _ in range(20):
+        page.wait_for_timeout(6000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(2000)
+        # Riprova mostra ricevute se necessario
+        try:
+            mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
+            if mostra_btn.is_visible():
+                mostra_btn.click()
+                page.wait_for_timeout(1000)
+        except Exception:
+            pass
+        if page.locator(
+            'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di consegna"])'
+        ).filter(has_text=oggetto).count() > 0:
+            found_rd = True
+            break
 
     # Nascondi nuovamente le ricevute per non interferire con i test successivi
     try:
