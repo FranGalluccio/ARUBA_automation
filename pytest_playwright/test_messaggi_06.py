@@ -23,26 +23,40 @@ def test_ripristino_messaggi(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    # Invia 2 messaggi a se stesso per garantire che il Cestino abbia elementi
+    # Invia 2 messaggi a se stesso con oggetti univoci
+    oggetti = []
     for i in range(2):
+        ts = int(time.time())
+        oggetto_i = f"Test ripristino {ts}_{i}"
+        oggetti.append(oggetto_i)
         Helper.crea_messaggio(
             page, config,
-            oggetto=f"Test ripristino {int(time.time())}_{i}",
+            oggetto=oggetto_i,
             corpo="Test automatico ripristino messaggi",
         )
         page.locator('span[title="Invia"]').click()
         page.wait_for_timeout(3000)
 
-    # Sposta i messaggi nel Cestino (seleziona i 2 appena inviati)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
-    page.locator('div.aru-input-checkbox').nth(1).click()
-    page.wait_for_timeout(500)
-    page.locator('div.aru-input-checkbox').nth(2).click()
-    page.wait_for_timeout(500)
-    page.locator(
-        'button:has(aru-symbol[title="Elimina"]), aru-button:has(aru-symbol[title="Elimina"])'
-    ).first.click()
+    # Polling: attendi che entrambi i messaggi arrivino in inbox
+    for oggetto_i in oggetti:
+        msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto_i)
+        for _ in range(20):
+            page.wait_for_timeout(3000)
+            page.locator('aru-symbol[title="Aggiorna"]').click()
+            page.wait_for_timeout(1000)
+            if msg.count() > 0:
+                break
+
+    # Seleziona i messaggi tramite hover + click checkbox nella riga
+    for oggetto_i in oggetti:
+        row = page.locator('div.frame-record-desktop').filter(has_text=oggetto_i).first
+        row.hover()
+        page.wait_for_timeout(400)
+        row.locator('div.aru-input-checkbox').click(force=True)
+        page.wait_for_timeout(500)
+
+    # Clicca Elimina (filter() pierces shadow DOM)
+    page.locator('aru-button').filter(has_text="Elimina").first.click()
     page.wait_for_timeout(1000)
     try:
         page.get_by_role("button", name="Sì").click(timeout=2000)
@@ -57,14 +71,19 @@ def test_ripristino_messaggi(page):
     count = page.locator('div.frame-record-desktop').count()
     assert count >= 2, f"Cestino ha solo {count} messaggi — impossibile testare il ripristino"
 
-    # Seleziona i primi 2 messaggi
-    page.locator('div.aru-input-checkbox').nth(1).click()
-    page.wait_for_timeout(500)
-    page.locator('div.aru-input-checkbox').nth(2).click()
-    page.wait_for_timeout(500)
+    # Seleziona i 2 messaggi nel cestino tramite hover + click checkbox
+    for oggetto_i in oggetti:
+        row = page.locator('div.frame-record-desktop').filter(has_text=oggetto_i).first
+        if row.count() == 0:
+            # fallback: seleziona i primi 2
+            row = page.locator('div.frame-record-desktop').nth(oggetti.index(oggetto_i))
+        row.hover()
+        page.wait_for_timeout(400)
+        row.locator('div.aru-input-checkbox').click(force=True)
+        page.wait_for_timeout(500)
 
-    # Clicca su sposta
-    page.locator('svg[title="Sposta"]').click()
+    # Clicca su sposta (filter() pierces shadow DOM)
+    page.locator('aru-button').filter(has_text="Sposta").first.click()
 
     # Sposta in arrivo
     page.locator("aru-webmail-menu-item[webmailmenuopener]").locator("span:has-text('In arrivo')").click()

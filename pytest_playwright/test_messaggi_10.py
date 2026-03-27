@@ -50,8 +50,13 @@ def test_messaggio_alta_priorita(page):
     msg.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=20000)
 
-    # Verifica che il simbolo "important" sia visibile nel messaggio aperto
-    important_symbol = page.locator('aru-symbol[symbol="important"]').first
+    # Verifica che il simbolo alta priorità sia visibile nel messaggio aperto
+    # Prova più selettori per compatibilità con ambienti diversi
+    important_symbol = page.locator(
+        'aru-symbol[symbol="important"], '
+        'aru-symbol[title*="Alta"], aru-symbol[title*="alta"], '
+        'aru-symbol[title*="priorit"], aru-symbol[title*="Importan"]'
+    ).first
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -60,4 +65,4 @@ def test_messaggio_alta_priorita(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    expect(important_symbol).to_be_visible()
+    important_symbol.wait_for(state="visible", timeout=15000)

@@ -49,12 +49,13 @@ def test_messaggio_inoltrato(page):
 
     # Polling: cerca il messaggio inoltrato per oggetto (non aprire il primo in assoluto)
     msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto_inoltro)
-    for _ in range(20):
-        page.wait_for_timeout(3000)
+    for _ in range(30):
+        page.wait_for_timeout(4000)
         page.locator('aru-symbol[title="Aggiorna"]').click()
         page.wait_for_timeout(1000)
         if msg.count() > 0:
             break
+    assert msg.count() > 0, f"Messaggio inoltrato '{oggetto_inoltro}' non trovato in inbox entro 120s"
     msg.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
