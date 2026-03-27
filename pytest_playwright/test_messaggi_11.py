@@ -29,12 +29,16 @@ def test_risposta_messaggio(page):
     Helper.crea_messaggio(page, config, oggetto=oggetto, corpo="Corpo del messaggio originale")
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta ricezione, aggiorna e apri il primo messaggio
-    page.wait_for_timeout(10000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
-    page.wait_for_timeout(2000)
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    page.locator('div.frame-record-desktop').first.click()
+    # Polling: cerca il messaggio originale per oggetto (fino a 80s)
+    msg_orig = page.locator('div.frame-record-desktop').filter(has_text=oggetto)
+    for _ in range(20):
+        page.wait_for_timeout(4000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(1000)
+        if msg_orig.count() > 0:
+            break
+    assert msg_orig.count() > 0, f"Messaggio originale '{oggetto}' non trovato in inbox entro 80s"
+    msg_orig.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Rispondi
@@ -43,12 +47,17 @@ def test_risposta_messaggio(page):
     page.locator("div[contenteditable='true']").first.fill("Risposta automatica tramite Playwright")
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta ricezione risposta, aggiorna e apri il primo messaggio
-    page.wait_for_timeout(10000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
-    page.wait_for_timeout(2000)
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    page.locator('div.frame-record-desktop').first.click()
+    # Polling: cerca la risposta Re: per oggetto specifico (fino a 120s)
+    oggetto_reply = f"Re: {oggetto}"
+    msg_reply = page.locator('div.frame-record-desktop').filter(has_text=oggetto_reply)
+    for _ in range(30):
+        page.wait_for_timeout(4000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(1000)
+        if msg_reply.count() > 0:
+            break
+    assert msg_reply.count() > 0, f"Risposta '{oggetto_reply}' non trovata in inbox entro 120s"
+    msg_reply.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Verifica prefisso "Re:" nell'oggetto

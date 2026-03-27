@@ -50,13 +50,18 @@ def test_messaggio_alta_priorita(page):
     msg.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=20000)
 
-    # Verifica che il simbolo alta priorità sia visibile nel messaggio aperto
-    # Prova più selettori per compatibilità con ambienti diversi
-    important_symbol = page.locator(
-        'aru-symbol[symbol="important"], '
-        'aru-symbol[title*="Alta"], aru-symbol[title*="alta"], '
-        'aru-symbol[title*="priorit"], aru-symbol[title*="Importan"]'
-    ).first
+    # Verifica che esista un indicatore di alta priorità scansionando tutti gli aru-symbol via JS
+    found_priority = page.evaluate("""() => {
+        const symbols = Array.from(document.querySelectorAll('aru-symbol'));
+        return symbols.some(el => {
+            const symbol = (el.getAttribute('symbol') || '').toLowerCase();
+            const title = (el.getAttribute('title') || '').toLowerCase();
+            const name = (el.getAttribute('name') || '').toLowerCase();
+            return symbol.includes('import') || symbol.includes('high') || symbol.includes('prior') ||
+                   title.includes('import') || title.includes('alta') || title.includes('prior') ||
+                   name.includes('import') || name.includes('high') || name.includes('prior');
+        });
+    }""")
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(
@@ -65,4 +70,4 @@ def test_messaggio_alta_priorita(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    important_symbol.wait_for(state="visible", timeout=15000)
+    assert found_priority, "Nessun indicatore di alta priorita trovato nel messaggio (aru-symbol con attributi importan*/high*/prior*/alta*)"

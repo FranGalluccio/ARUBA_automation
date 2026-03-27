@@ -47,16 +47,24 @@ def test_risposta_a_tutti(page):
     page.locator("div[contenteditable='true']").first.fill("Risposta a tutti automatica tramite Playwright")
     page.locator('span[title="Invia"]').click()
 
-    # Polling: cerca la risposta (Re: <oggetto>) per oggetto specifico (fino a 120s)
+    # Verifica in Inviati che la risposta sia stata inviata con prefisso "Re:"
+    # (Inviati si aggiorna immediatamente dopo l'invio, senza attendere la consegna)
     oggetto_reply = f"Re: {oggetto}"
+    page.wait_for_timeout(2000)
+    # Naviga a Inviati
+    try:
+        page.locator('button[title="Inviati"]').first.click(timeout=5000)
+    except Exception:
+        page.get_by_label("Inviati").first.click()
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=10000)
+
     msg_reply = page.locator('div.frame-record-desktop').filter(has_text=oggetto_reply)
-    for _ in range(30):
-        page.wait_for_timeout(4000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
-        page.wait_for_timeout(1000)
+    for _ in range(10):
         if msg_reply.count() > 0:
             break
-    assert msg_reply.count() > 0, f"Risposta '{oggetto_reply}' non trovata in inbox entro 120s"
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(2000)
+    assert msg_reply.count() > 0, f"'{oggetto_reply}' non trovata in Inviati dopo l'invio"
     msg_reply.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 

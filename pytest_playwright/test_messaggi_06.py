@@ -47,16 +47,19 @@ def test_ripristino_messaggi(page):
             if msg.count() > 0:
                 break
 
-    # Seleziona i messaggi tramite hover + click checkbox nella riga
+    # Seleziona i messaggi tramite hover + JS click su checkbox (bypassa shadow DOM)
     for oggetto_i in oggetti:
         row = page.locator('div.frame-record-desktop').filter(has_text=oggetto_i).first
+        row.scroll_into_view_if_needed()
         row.hover()
-        page.wait_for_timeout(400)
-        row.locator('div.aru-input-checkbox').click(force=True)
-        page.wait_for_timeout(500)
+        page.wait_for_timeout(600)
+        row.locator('div.aru-input-checkbox').first.evaluate('el => el.click()')
+        page.wait_for_timeout(600)
 
-    # Clicca Elimina (filter() pierces shadow DOM)
-    page.locator('aru-button').filter(has_text="Elimina").first.click()
+    # Clicca Elimina (attendi toolbar visibile)
+    elimina_btn = page.locator('aru-button:has(aru-symbol[title="Elimina"])')
+    elimina_btn.first.wait_for(state="visible", timeout=10000)
+    elimina_btn.first.click()
     page.wait_for_timeout(1000)
     try:
         page.get_by_role("button", name="Sì").click(timeout=2000)
@@ -71,19 +74,20 @@ def test_ripristino_messaggi(page):
     count = page.locator('div.frame-record-desktop').count()
     assert count >= 2, f"Cestino ha solo {count} messaggi — impossibile testare il ripristino"
 
-    # Seleziona i 2 messaggi nel cestino tramite hover + click checkbox
-    for oggetto_i in oggetti:
-        row = page.locator('div.frame-record-desktop').filter(has_text=oggetto_i).first
-        if row.count() == 0:
-            # fallback: seleziona i primi 2
-            row = page.locator('div.frame-record-desktop').nth(oggetti.index(oggetto_i))
+    # Seleziona i 2 messaggi nel cestino tramite hover + JS click su checkbox
+    for idx, oggetto_i in enumerate(oggetti):
+        rows_match = page.locator('div.frame-record-desktop').filter(has_text=oggetto_i)
+        row = rows_match.first if rows_match.count() > 0 else page.locator('div.frame-record-desktop').nth(idx)
+        row.scroll_into_view_if_needed()
         row.hover()
-        page.wait_for_timeout(400)
-        row.locator('div.aru-input-checkbox').click(force=True)
-        page.wait_for_timeout(500)
+        page.wait_for_timeout(600)
+        row.locator('div.aru-input-checkbox').first.evaluate('el => el.click()')
+        page.wait_for_timeout(600)
 
-    # Clicca su sposta (filter() pierces shadow DOM)
-    page.locator('aru-button').filter(has_text="Sposta").first.click()
+    # Clicca su sposta (attendi toolbar visibile)
+    sposta_btn = page.locator('aru-button:has(aru-symbol[title="Sposta"])')
+    sposta_btn.first.wait_for(state="visible", timeout=10000)
+    sposta_btn.first.click()
 
     # Sposta in arrivo
     page.locator("aru-webmail-menu-item[webmailmenuopener]").locator("span:has-text('In arrivo')").click()

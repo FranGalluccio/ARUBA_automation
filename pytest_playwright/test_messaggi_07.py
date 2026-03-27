@@ -38,61 +38,47 @@ def test_messaggi_preferiti_pinnati(page):
     count = page.locator('div.frame-record-desktop').count()
     assert count >= 2, f"Inbox ha solo {count} messaggi — impossibile testare preferiti/pinnati"
 
-    # Seleziona i primi 2 messaggi
-    page.locator('div.aru-input-checkbox').nth(1).click()
-    page.wait_for_timeout(500)
-    page.locator('div.aru-input-checkbox').nth(2).click()
-    page.wait_for_timeout(500)
+    def _seleziona_prime_due(page):
+        """Seleziona le prime 2 righe tramite hover + JS click su checkbox."""
+        for i in range(2):
+            row = page.locator('div.frame-record-desktop').nth(i)
+            row.scroll_into_view_if_needed()
+            row.hover()
+            page.wait_for_timeout(600)
+            row.locator('div.aru-input-checkbox').first.evaluate('el => el.click()')
+            page.wait_for_timeout(600)
 
-    # Clicca su altro
-    page.locator('svg[title="Altro"]').click()
+    def _clicca_altro(page):
+        """Clicca il pulsante Altro nella toolbar (attende visibilità)."""
+        altro_btn = page.locator('[title="Altro"]').first
+        altro_btn.wait_for(state="visible", timeout=10000)
+        altro_btn.click()
+
+    # Seleziona e aggiungi ai preferiti
+    _seleziona_prime_due(page)
+    _clicca_altro(page)
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).wait_for(state="visible", timeout=5000)
-
-    # Aggiungi ai preferiti
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).click()
     page.wait_for_timeout(1000)
 
-    # Seleziona i primi 2 messaggi
-    page.locator('div.aru-input-checkbox').nth(1).click()
-    page.wait_for_timeout(500)
-    page.locator('div.aru-input-checkbox').nth(2).click()
-    page.wait_for_timeout(500)
-
-    # Clicca su altro
-    page.locator('svg[title="Altro"]').click()
+    # Seleziona e rimuovi dai preferiti
+    _seleziona_prime_due(page)
+    _clicca_altro(page)
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).wait_for(state="visible", timeout=5000)
-
-    # Rimuovi dai preferiti
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).click()
     page.wait_for_timeout(1000)
 
-    # Seleziona i primi 2 messaggi
-    page.locator('div.aru-input-checkbox').nth(1).click()
-    page.wait_for_timeout(500)
-    page.locator('div.aru-input-checkbox').nth(2).click()
-    page.wait_for_timeout(500)
-
-    # Clicca su altro
-    page.locator('svg[title="Altro"]').click()
+    # Seleziona e aggiungi in evidenza
+    _seleziona_prime_due(page)
+    _clicca_altro(page)
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).wait_for(state="visible", timeout=5000)
-
-    # Aggiungi in evidenza
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
     page.wait_for_timeout(1000)
 
-    # Passa sopra la prima riga (hover) e poi clicca sul checkbox
-    page.locator('div.frame-record-desktop-row-content').nth(0).hover()
-    page.locator('div.frame-record-desktop-row-content').nth(0).locator('div.aru-input-checkbox').click(force=True)
-
-    # Passa sopra la seconda riga (hover) e poi clicca sul checkbox
-    page.locator('div.frame-record-desktop-row-content').nth(1).hover()
-    page.locator('div.frame-record-desktop-row-content').nth(1).locator('div.aru-input-checkbox').click(force=True)
-
-    # Clicca su altro
-    page.locator('svg[title="Altro"]').click()
+    # Seleziona e rimuovi da in evidenza
+    _seleziona_prime_due(page)
+    _clicca_altro(page)
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).wait_for(state="visible", timeout=5000)
-
-    # Rimuovi da in evidenza
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
 
     # Verifica toast di conferma che i messaggi non sono più in evidenza
