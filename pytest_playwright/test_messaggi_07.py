@@ -39,18 +39,18 @@ def test_messaggi_preferiti_pinnati(page):
     assert count >= 2, f"Inbox ha solo {count} messaggi — impossibile testare preferiti/pinnati"
 
     def _seleziona_prime_due(page):
-        """Seleziona le prime 2 righe tramite hover + JS click su checkbox."""
+        """Seleziona le prime 2 righe tramite hover + force click su checkbox."""
         for i in range(2):
-            row = page.locator('div.frame-record-desktop').nth(i)
-            row.scroll_into_view_if_needed()
-            row.hover()
+            row_content = page.locator('div.frame-record-desktop-row-content').nth(i)
+            row_content.scroll_into_view_if_needed()
+            row_content.hover()
             page.wait_for_timeout(600)
-            row.locator('div.aru-input-checkbox').first.evaluate('el => el.click()')
+            row_content.locator('div.aru-input-checkbox').first.click(force=True)
             page.wait_for_timeout(600)
 
     def _clicca_altro(page):
         """Clicca il pulsante Altro nella toolbar (attende visibilità)."""
-        altro_btn = page.locator('[title="Altro"]').first
+        altro_btn = page.locator('svg[title="Altro"]').first
         altro_btn.wait_for(state="visible", timeout=10000)
         altro_btn.click()
 

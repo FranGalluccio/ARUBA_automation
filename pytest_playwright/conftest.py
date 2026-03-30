@@ -35,6 +35,19 @@ if _pec_url:
         json.dump(_config, _f, indent=2)
 
 
+@pytest.fixture(autouse=True)
+def dismiss_cookiebot(page):
+    """Auto-dismisses CybotCookiebotDialog whenever it intercepts pointer events."""
+    try:
+        page.add_locator_handler(
+            page.locator("#CybotCookiebotDialog"),
+            lambda: page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click()
+        )
+    except AttributeError:
+        pass  # Playwright < 1.44, nessun locator_handler disponibile
+    yield
+
+
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args):
     return {
