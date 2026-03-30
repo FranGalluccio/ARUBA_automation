@@ -58,14 +58,21 @@ def test_risposta_a_tutti(page):
         page.get_by_label("Inviati").first.click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=10000)
 
-    msg_reply = page.locator('div.frame-record-desktop').filter(has_text=oggetto_reply)
-    for _ in range(10):
-        if msg_reply.count() > 0:
+    # Cerca prima "Re: {oggetto}", poi "{oggetto}" come fallback
+    # (il list view Inviati potrebbe mostrare il soggetto senza prefisso "Re:")
+    found_msg = None
+    for search_text in [oggetto_reply, oggetto]:
+        msg = page.locator('div.frame-record-desktop').filter(has_text=search_text)
+        for _ in range(10):
+            if msg.count() > 0:
+                found_msg = msg
+                break
+            page.locator('aru-symbol[title="Aggiorna"]').click()
+            page.wait_for_timeout(2000)
+        if found_msg is not None:
             break
-        page.locator('aru-symbol[title="Aggiorna"]').click()
-        page.wait_for_timeout(2000)
-    assert msg_reply.count() > 0, f"'{oggetto_reply}' non trovata in Inviati dopo l'invio"
-    msg_reply.first.click()
+    assert found_msg is not None, f"'{oggetto_reply}' non trovata in Inviati dopo l'invio"
+    found_msg.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Verifica prefisso "Re:" nell'oggetto
