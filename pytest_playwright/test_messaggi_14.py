@@ -32,22 +32,28 @@ def test_elimina_messaggio(page):
     )
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta consegna e apri il messaggio
-    page.wait_for_timeout(10000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
-    page.wait_for_timeout(2000)
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
-    page.locator('div.frame-record-desktop').first.click()
+    # Polling: aspetta consegna e apri il messaggio specifico per oggetto (fino a 80s)
+    oggetto_msg = f"Test elimina playwright {ts}"
+    msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto_msg)
+    for _ in range(20):
+        page.wait_for_timeout(4000)
+        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(1000)
+        if msg.count() > 0:
+            break
+    assert msg.count() > 0, f"Messaggio '{oggetto_msg}' non trovato in inbox entro 80s"
+    msg.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Clicca Elimina
     page.locator('aru-symbol[title="Elimina"]').first.click()
     page.wait_for_timeout(2000)
 
-    # Verifica: il messaggio con il nostro timestamp è il primo nel Cestino
+    # Verifica: il messaggio eliminato è nel Cestino (cerca per oggetto specifico)
     page.locator('button[title="Cestino"]').click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
-    testo_primo = page.locator('div.frame-record-desktop').first.inner_text()
+    msg_cestino = page.locator('div.frame-record-desktop').filter(has_text=oggetto_msg)
+    testo_primo = msg_cestino.first.inner_text() if msg_cestino.count() > 0 else ""
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -56,4 +62,4 @@ def test_elimina_messaggio(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert str(ts) in testo_primo, f"Il primo messaggio nel Cestino non è quello eliminato (ts={ts}): {testo_primo}"
+    assert str(ts) in testo_primo, f"Messaggio eliminato (ts={ts}) non trovato nel Cestino. Trovato: {testo_primo!r}"

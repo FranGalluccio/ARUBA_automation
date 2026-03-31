@@ -48,11 +48,19 @@ def test_segna_come_letto_da_leggere(page):
     assert messaggio_arrivato, f"Il messaggio '{oggetto}' non è arrivato in inbox entro 90s"
 
     # Segna tutti come già letti (force perché il bottone può essere parzialmente fuori viewport)
-    page.locator('button:has(aru-symbol[title="Segna tutti come già letti"])').first.click(force=True)
-    page.wait_for_timeout(1000)
+    page.locator(
+        'button:has(aru-symbol[title="Segna tutti come già letti"]), '
+        'aru-button:has(aru-symbol[title="Segna tutti come già letti"])'
+    ).first.click(force=True)
+    page.wait_for_timeout(2000)
 
-    # Segna tutti come da leggere
-    page.locator('button:has(aru-symbol[title="Segna tutti come da leggere"])').first.click(force=True)
+    # Segna tutti come da leggere (attendi visibilità, prova sia button che aru-button)
+    da_leggere = page.locator(
+        'button:has(aru-symbol[title="Segna tutti come da leggere"]), '
+        'aru-button:has(aru-symbol[title="Segna tutti come da leggere"])'
+    )
+    da_leggere.first.wait_for(state="visible", timeout=10000)
+    da_leggere.first.click(force=True)
     page.wait_for_timeout(1500)
 
     # Verifica che almeno un messaggio risulti non letto:
