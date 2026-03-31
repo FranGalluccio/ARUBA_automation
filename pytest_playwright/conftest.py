@@ -37,11 +37,25 @@ if _pec_url:
 
 @pytest.fixture(autouse=True)
 def dismiss_cookiebot(page):
-    """Auto-dismisses CybotCookiebotDialog whenever it intercepts pointer events."""
+    """Auto-dismisses CybotCookiebotDialog whenever it intercepts pointer events.
+
+    Usa evaluate() invece di .click() per evitare attese di visibilità:
+    il banner può essere in DOM ma non ancora visibile (animazione) oppure
+    già in dismissal — il click JS bypassa tutti i check di actionability.
+    """
+    def _dismiss():
+        page.evaluate("""() => {
+            const btn = document.getElementById(
+                'CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll'
+            );
+            if (btn) btn.click();
+        }""")
+
     try:
         page.add_locator_handler(
             page.locator("#CybotCookiebotDialog"),
-            lambda: page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click()
+            _dismiss,
+            no_wait_after=True,
         )
     except AttributeError:
         pass  # Playwright < 1.44, nessun locator_handler disponibile
