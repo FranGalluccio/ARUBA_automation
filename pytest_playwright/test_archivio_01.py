@@ -2,7 +2,7 @@ import os
 import json
 import pytest
 from datetime import datetime
-from base_pec import LoginPec
+from base_pec import LoginPec, get_app_base_url
 from playwright.sync_api import expect
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
@@ -13,19 +13,17 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
-ARCHIVE_URL = config["pec"]["url"].rstrip("/") + "/new/settings/archive"
-
-
 def test_configurazione_archivio(page):
     """Verifica la pagina di configurazione archivio: struttura, radio button,
     checkbox opzioni. Modifica la selezione, salva e verifica il persist."""
 
     LoginPec(page).login_pec(config)
+    app_base = get_app_base_url(page)
 
     # --- Verifica disponibilità feature navigando direttamente all'URL ---
     # (il button[title="Archivio"] esiste nel DOM ma è sempre hidden:
     #  la feature è verificata controllando che la pagina si carichi con l'h1 atteso)
-    page.goto(ARCHIVE_URL, timeout=20000)
+    page.goto(app_base + "/new/settings/archive", timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
 
     # Chiudi cookie banner se presente (può bloccare l'h1 e causare skip errato)

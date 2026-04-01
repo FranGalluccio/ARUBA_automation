@@ -2,7 +2,7 @@ import os
 import json
 import pytest
 from datetime import datetime
-from base_pec import LoginPec
+from base_pec import LoginPec, get_app_base_url
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 with open(CONFIG_FILE) as f:
@@ -12,10 +12,6 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
-ACCESSI_URL = config["pec"]["url"].rstrip("/") + "/new/settings/other-accounts/overview"
-SETTINGS_URL = config["pec"]["url"].rstrip("/") + "/new/settings/home"
-
-
 def test_panoramica_accessi_altri_account(page):
     """Verifica la sezione 'Accessi altri account' nelle impostazioni:
     struttura pagina (h1, h2, h3), presenza card Multiutente PEC e Supervisore360,
@@ -23,6 +19,7 @@ def test_panoramica_accessi_altri_account(page):
     Skip se la feature non è disponibile nell'ambiente."""
 
     LoginPec(page).login_pec(config)
+    app_base = get_app_base_url(page)
 
     try:
         page.locator('button:has-text("Ricordarmelo"), button:has-text("Non ora"), button[aria-label="Chiudi"]').first.click(timeout=2000)
@@ -30,7 +27,7 @@ def test_panoramica_accessi_altri_account(page):
         pass
 
     # --- Verifica disponibilità feature ---
-    page.goto(SETTINGS_URL, timeout=20000)
+    page.goto(app_base + "/new/settings/home", timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
 
     try:
@@ -98,7 +95,7 @@ def test_panoramica_accessi_altri_account(page):
             REPORT_FOLDER, f"test_accessi_01_multiutente_{datetime.now():%H-%M-%S}.png"
         ))
         # Torna indietro
-        page.goto(ACCESSI_URL, timeout=20000)
+        page.goto(app_base + "/new/settings/other-accounts/overview", timeout=20000)
         try:
             page.wait_for_load_state("load", timeout=8000)
         except Exception:

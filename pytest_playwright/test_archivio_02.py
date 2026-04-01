@@ -3,7 +3,7 @@ import json
 import time
 import pytest
 from datetime import datetime
-from base_pec import LoginPec, Helper
+from base_pec import LoginPec, Helper, get_app_base_url
 from playwright.sync_api import expect
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
@@ -13,9 +13,6 @@ with open(CONFIG_FILE) as f:
 TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__)))
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
-
-ARCHIVE_SETTINGS_URL = config["pec"]["url"].rstrip("/") + "/new/settings/archive"
-
 
 def _click_waffle_menu(page):
     """Apre il menu a 9 punti (waffle / servizi) nell'header."""
@@ -44,11 +41,12 @@ def test_archivio_messaggio_inviato(page):
     a se stesso, poi apre la sezione Archivio e verifica la presenza del messaggio."""
 
     LoginPec(page).login_pec(config)
+    app_base = get_app_base_url(page)
 
     # --- Verifica disponibilità + Step 1: naviga all'URL archivio ---
     # (button[title="Archivio"] è sempre hidden; la feature è confermata
     #  dal caricamento dell'h1 sulla pagina di configurazione)
-    page.goto(ARCHIVE_SETTINGS_URL, timeout=20000)
+    page.goto(app_base + "/new/settings/archive", timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
 
     # Chiudi cookie banner se presente (può bloccare h1 e pulsante Salva)
@@ -80,7 +78,7 @@ def test_archivio_messaggio_inviato(page):
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_config_{datetime.now():%H-%M-%S}.png"))
 
     # --- Step 2: torna a INBOX prima di creare il messaggio ---
-    page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
+    page.goto(app_base + "/new/messages/INBOX", timeout=20000)
     try:
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
@@ -107,7 +105,7 @@ def test_archivio_messaggio_inviato(page):
 
     # --- Step 3: apri sezione Archivio (mailbox, non impostazioni) ---
     # Torna a INBOX per avere il nav pulito
-    page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
+    page.goto(app_base + "/new/messages/INBOX", timeout=20000)
     try:
         page.wait_for_load_state("load", timeout=15000)
     except Exception:
