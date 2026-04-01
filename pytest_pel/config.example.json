@@ -1,0 +1,14 @@
+{
+  "pel": {
+    "url": "https://your-pel-instance.aruba.it/new/auth/login",
+    "username": "utente@testperstaff.it",
+    "password": "password"
+  },
+  "destinatari": {
+    "destinatario_principale": "utente@testperstaff.it",
+    "destinatario_secondario": "altro@testperstaff.it"
+  },
+  "test_folder": "pytest_pel",
+  "report_folder": "pytest_pel/test-results",
+  "file_allegato": "dati_test/allegato-test.pdf"
+}

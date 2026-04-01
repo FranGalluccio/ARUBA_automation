@@ -27,6 +27,7 @@ report.html
 
 # Config con credenziali (usa config.example.json come template)
 pytest_playwright/config.json
+pytest_playwright/mobile/config.json
 pytest_pel/config.json
 
 # Pytest cache
