@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-from base_pec import LoginPec
+from base_pec import LoginPec, get_app_base_url
 from playwright.sync_api import expect
 
 
@@ -15,15 +15,12 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
-SETTINGS_URL = config["pec"]["url"].rstrip("/") + "/new/settings"
-
-
 def test_impostazioni_cestino(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    # Vai alle impostazioni → Cestino (sotto accordion "Messaggi e scrittura")
-    page.goto(SETTINGS_URL + "/home", timeout=20000)
+    # Vai alle impostazioni → Cestino (URL calcolato dopo il login per supportare prod-aruba)
+    page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
     if not page.locator('button[title="Cestino"]').is_visible():
         page.locator('button[title="Messaggi e scrittura"]').click(force=True)
         page.locator('button[title="Cestino"]').first.wait_for(state="visible", timeout=5000)

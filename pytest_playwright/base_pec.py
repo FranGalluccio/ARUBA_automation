@@ -2,6 +2,7 @@ import os
 import time
 import re
 import json
+from urllib.parse import urlparse
 from playwright.sync_api import Page, expect
 
 
@@ -17,6 +18,14 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 # --- Root del repo (parent di pytest_playwright/) ---
 GIT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def get_app_base_url(page: Page) -> str:
+    """Restituisce schema+host dell'app webmail dalla pagina corrente.
+    Funziona sia in ambienti test (es. webmail.test.pec.aruba.it)
+    sia in prod-aruba dove l'URL di login è su login.aruba.it."""
+    parsed = urlparse(page.url)
+    return f"{parsed.scheme}://{parsed.netloc}"
 
 
 def _resolve_path(raw):
@@ -62,7 +71,7 @@ class LoginPec:
 
     # Gestisci redirect smart-login (sessione residua che intercetta il login)
         if "smart-login" in self.page.url:
-            inbox_url = config["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
+            inbox_url = get_app_base_url(self.page) + "/new/messages/INBOX"
             self.page.goto(inbox_url, timeout=60_000, wait_until="domcontentloaded")
             self.page.wait_for_timeout(3000)
 
@@ -76,7 +85,7 @@ class LoginPec:
             self.page.wait_for_load_state("load", timeout=30_000)
             self.page.wait_for_timeout(5000)
             if "smart-login" in self.page.url:
-                inbox_url = config["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
+                inbox_url = get_app_base_url(self.page) + "/new/messages/INBOX"
                 self.page.goto(inbox_url, timeout=60_000, wait_until="domcontentloaded")
                 self.page.wait_for_timeout(3000)
 

@@ -2,7 +2,7 @@ import os
 import json
 import time
 from datetime import datetime
-from base_pec import LoginPec
+from base_pec import LoginPec, get_app_base_url
 from playwright.sync_api import expect
 
 
@@ -16,16 +16,13 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
-SETTINGS_URL = config["pec"]["url"].rstrip("/") + "/new/settings"
-SIGNATURES_URL = SETTINGS_URL + "/messages-writing/signatures"
-
-
 def test_crea_firma(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    # Naviga direttamente alla pagina Firme
-    page.goto(SIGNATURES_URL, timeout=20000)
+    # Naviga direttamente alla pagina Firme (URL calcolato dopo il login per supportare prod-aruba)
+    signatures_url = get_app_base_url(page) + "/new/settings/messages-writing/signatures"
+    page.goto(signatures_url, timeout=20000)
 
     # Verifica che la pagina Firme sia caricata
     firme_header = page.locator('h1').filter(has_text="Firme").first
