@@ -2,7 +2,7 @@ import os
 import json
 import pytest
 from datetime import datetime
-from base_pec import LoginPec
+from base_pec import LoginPec, get_app_base_url
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 with open(CONFIG_FILE) as f:
@@ -19,9 +19,6 @@ FILE_FATTURA = os.environ.get(
     os.path.join(_project_root, config.get("file_fattura", "dati_test/fattura-reale-02.eml"))
 )
 
-FATTURE_URL = config["pec"]["url"].rstrip("/") + "/new/messages/ArubaVrtSearch/Fatturazione%20Elettronica"
-
-
 def _count_fatture(page):
     """Conta le righe visibili in Fatture ricevute."""
     return page.locator('div.frame-record-desktop').count()
@@ -36,6 +33,8 @@ def test_import_fattura_ricevute(page):
         f"File fattura di test non trovato: {FILE_FATTURA}"
 
     LoginPec(page).login_pec(config)
+    app_base = get_app_base_url(page)
+    fatture_url = app_base + "/new/messages/ArubaVrtSearch/Fatturazione%20Elettronica"
 
     try:
         page.locator('button:has-text("Ricordarmelo"), button:has-text("Non ora"), button[aria-label="Chiudi"]').first.click(timeout=2000)
@@ -48,7 +47,7 @@ def test_import_fattura_ricevute(page):
         pytest.skip("Feature 'Fatture ricevute' non disponibile in questo ambiente")
 
     # --- Naviga in Fatture ricevute e conta messaggi prima dell'import ---
-    page.goto(FATTURE_URL, timeout=20000)
+    page.goto(fatture_url, timeout=20000)
     try:
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
@@ -59,7 +58,7 @@ def test_import_fattura_ricevute(page):
     print(f"Fatture prima dell'import: {count_before}")
 
     # --- Torna in INBOX per aprire Gestione messaggi → Importa ---
-    page.goto(config["pec"]["url"].rstrip("/") + "/new/messages/INBOX", timeout=20000)
+    page.goto(app_base + "/new/messages/INBOX", timeout=20000)
     try:
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
@@ -127,7 +126,7 @@ def test_import_fattura_ricevute(page):
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_post_import_{datetime.now():%H-%M-%S}.png"))
 
     # --- Vai in Fatture ricevute e attendi che il nuovo messaggio appaia ---
-    page.goto(FATTURE_URL, timeout=20000)
+    page.goto(fatture_url, timeout=20000)
     try:
         page.wait_for_load_state("load", timeout=10000)
     except Exception:
@@ -142,7 +141,7 @@ def test_import_fattura_ricevute(page):
             break
         # A metà polling ricarica la pagina per forzare aggiornamento (utile in CI)
         if attempt == 9:
-            page.goto(FATTURE_URL, timeout=20000)
+            page.goto(fatture_url, timeout=20000)
             try:
                 page.wait_for_load_state("load", timeout=10000)
             except Exception:
@@ -204,7 +203,7 @@ def test_import_fattura_ricevute(page):
         except Exception:
             pass
     # Naviga nuovamente alla lista per uscire dalla visualizzazione dettaglio
-    page.goto(FATTURE_URL, timeout=20000)
+    page.goto(fatture_url, timeout=20000)
     try:
         page.wait_for_load_state("load", timeout=10000)
     except Exception:

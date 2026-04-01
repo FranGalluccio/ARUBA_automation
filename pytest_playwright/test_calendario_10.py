@@ -3,7 +3,7 @@ import json
 import warnings
 from datetime import datetime
 import time
-from base_pec import LoginPec, elimina_evento_pec
+from base_pec import LoginPec, elimina_evento_pec, get_app_base_url
 from playwright.sync_api import expect
 
 
@@ -21,6 +21,7 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 def test_ricerca_nel_calendario(page):
     # Login PEC
     LoginPec(page).login_pec(config)
+    app_base = get_app_base_url(page)
 
     titolo_evento = f"evento ricerca playwright {int(time.time())}"
 
@@ -68,7 +69,7 @@ def test_ricerca_nel_calendario(page):
                 page.locator('button[aria-label*="hiudi"], button[aria-label*="ancella"]').first.click(timeout=2000)
             except Exception:
                 pass
-            page.goto(config["pec"]["url"].rstrip("/") + "/new/calendar", timeout=20000)
+            page.goto(app_base + "/new/calendar", timeout=20000)
             try:
                 page.wait_for_load_state("load", timeout=10000)
             except Exception:

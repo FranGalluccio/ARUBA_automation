@@ -1,5 +1,6 @@
 from datetime import datetime
 from base_mobile import LoginPecMobile, MobileNav, config, REPORT_FOLDER, screenshot
+from base_pec import get_app_base_url
 
 
 def test_navigazione_impostazioni_mobile(page):
@@ -48,7 +49,7 @@ def test_navigazione_impostazioni_mobile(page):
 
     # --- Metodo 3: naviga direttamente via URL ---
     if not settings_reached:
-        settings_url = config["pec"]["url"].rstrip("/") + "/new/settings/home"
+        settings_url = get_app_base_url(page) + "/new/settings/home"
         page.goto(settings_url, timeout=20000)
         try:
             page.wait_for_load_state("load", timeout=10000)
@@ -87,7 +88,7 @@ def test_accesso_sezione_impostazioni_mobile(page):
     page.wait_for_timeout(1000)
 
     # Naviga direttamente alle impostazioni
-    settings_url = config["pec"]["url"].rstrip("/") + "/new/settings/home"
+    settings_url = get_app_base_url(page) + "/new/settings/home"
     page.goto(settings_url, timeout=20000)
     try:
         page.wait_for_load_state("load", timeout=10000)

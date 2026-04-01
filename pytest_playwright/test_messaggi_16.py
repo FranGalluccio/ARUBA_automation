@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 import time
-from base_pec import LoginPec, Helper
+from base_pec import LoginPec, Helper, get_app_base_url
 from playwright.sync_api import expect
 
 
@@ -36,7 +36,7 @@ def test_copia_messaggio_in_cartella(page):
         pass
     page.wait_for_timeout(500)
     # Naviga direttamente all'inbox per bypassare eventuali backdrop residui
-    inbox_url = config["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
+    inbox_url = get_app_base_url(page) + "/new/messages/INBOX"
     page.goto(inbox_url, timeout=20000)
     page.wait_for_load_state("load")
 
