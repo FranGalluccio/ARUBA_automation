@@ -138,18 +138,21 @@ jobs:
         with:
           name: junit-report-pel
           path: pytest_pel/test-results/report.xml
+          retention-days: 30
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
           name: html-report-pel
           path: pytest_pel/test-results/report.html
+          retention-days: 30
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-pel
           path: pytest_pel/test-results/**/*.png
+          retention-days: 30
 
       - name: Upload failure diagnostics
         if: always()
@@ -158,3 +161,4 @@ jobs:
           name: failures-pel
           path: pytest_pel/test-results/failures/
           if-no-files-found: ignore
+          retention-days: 30

@@ -147,18 +147,21 @@ jobs:
         with:
           name: junit-report-mobile
           path: pytest_playwright/test-results/mobile/report.xml
+          retention-days: 30
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
           name: html-report-mobile
           path: pytest_playwright/test-results/mobile/report.html
+          retention-days: 30
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
           name: screenshots-mobile
           path: pytest_playwright/test-results/mobile/**/*.png
+          retention-days: 30
 
       - name: Upload failure diagnostics
         if: always()
@@ -167,3 +170,4 @@ jobs:
           name: failures-mobile
           path: pytest_playwright/test-results/failures/mobile/
           if-no-files-found: ignore
+          retention-days: 30
