@@ -65,6 +65,35 @@ def test_ricevuta_consegna(page):
             found_rd = True
             break
 
+    # Apri la ricevuta in nuova finestra e verifica il tipo (evita falsi positivi da icona)
+    body_ok = False
+    if found_rd:
+        rd_row = page.locator(
+            'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di consegna"])'
+        ).filter(has_text=oggetto).first
+        rd_row.click()
+
+        # Apri in nuova finestra
+        apri_btn = page.locator('aru-symbol[title="Apri in una nuova finestra"]').first
+        apri_btn.wait_for(state="visible", timeout=10000)
+        with page.expect_popup() as popup_info:
+            apri_btn.click()
+        new_page = popup_info.value
+        new_page.wait_for_load_state("networkidle", timeout=15000)
+        new_page.wait_for_timeout(1000)
+
+        # Il tipo di ricevuta è nel shadow DOM di aru-text#pecMessage
+        pec_label = new_page.evaluate(
+            "() => document.querySelector('aru-text#pecMessage')?.shadowRoot?.textContent?.trim() || ''"
+        )
+        body_ok = "consegna" in pec_label.lower()
+        new_page.close()
+
+        assert body_ok, (
+            f"La ricevuta non contiene 'consegna'. "
+            f"Tipo trovato: {pec_label!r}"
+        )
+
     # Nascondi nuovamente le ricevute per non interferire con i test successivi
     try:
         nascondi_btn = page.locator('button:has-text("Nascondi ricevute")').first
