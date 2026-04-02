@@ -63,10 +63,10 @@ def test_scarica_allegato_ricevuto(page):
     new_page.wait_for_load_state("load")
     assert "external-message" in new_page.url
 
-    # Clicca sull'allegato
+    # Clicca sull'allegato (button o altro elemento con title)
     nome_file = os.path.basename(file_allegato)
-    attachment_btn = new_page.locator(f'button[title="{nome_file}"]')
-    attachment_btn.wait_for(state="visible", timeout=15000)
+    attachment_btn = new_page.locator(f'[title="{nome_file}"]').first
+    attachment_btn.wait_for(state="visible", timeout=20000)
     attachment_btn.click()
 
     # Scarica l'allegato

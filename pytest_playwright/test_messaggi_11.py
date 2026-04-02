@@ -41,8 +41,19 @@ def test_risposta_messaggio(page):
     msg_orig.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
-    # Rispondi
-    page.locator('aru-symbol[title="Rispondi"]').first.click()
+    # Chiudi eventuali dialog (Novità, Ricordamelo, ecc.)
+    try:
+        page.locator(
+            'button:has-text("Ricordarmelo"), button:has-text("Non ora"), '
+            'button[aria-label="Chiudi"], button:has-text("Ho capito")'
+        ).first.click(timeout=2000)
+    except Exception:
+        pass
+
+    # Rispondi (aru-symbol in Aruba, button in SMB/white-label)
+    page.locator(
+        'aru-symbol[title="Rispondi"], button[title="Rispondi"], [aria-label="Rispondi"]'
+    ).first.click(timeout=30000)
     page.locator("div[contenteditable='true']").first.wait_for(state="visible", timeout=5000)
     page.locator("div[contenteditable='true']").first.fill("Risposta automatica tramite Playwright")
     page.locator('span[title="Invia"]').click()

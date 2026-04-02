@@ -68,10 +68,11 @@ def test_messaggio_con_allegato(page):
     # Verifica pagina esterna
     assert "external-message" in new_page.url
 
-    # Aspetta che il bottone allegato sia visibile
+    # Aspetta che il bottone allegato sia visibile (button o altro elemento con title)
     nome_allegato = os.path.basename(file_allegato)
-    new_page.locator(f'button[title="{nome_allegato}"]').wait_for(state="visible", timeout=15000)
-    new_page.locator(f'button[title="{nome_allegato}"]').click()
+    attachment_loc = new_page.locator(f'[title="{nome_allegato}"]').first
+    attachment_loc.wait_for(state="visible", timeout=20000)
+    attachment_loc.click()
 
     # Mostra anteprima
     new_page.locator('text="Mostra anteprima"').first.click()

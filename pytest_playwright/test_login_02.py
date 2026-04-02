@@ -42,9 +42,21 @@ def test_login_credenziali_errate(page):
     assert "INBOX" not in page.url, f"Il login con credenziali errate ha avuto successo inaspettatamente. URL: {page.url}"
 
     # Verifica che il messaggio di errore sia visibile
-    error_message = page.locator("div.errorWeb")
-    expect(error_message).to_be_visible()
-    # Messaggio di errore varia per ambiente/lingua (IT: "dati inseriti", EN: "details correctly")
+    # - Aruba test: div.errorWeb
+    # - Keycloak (SMB prod): #input-error, div.alert-error, .pf-c-alert, span[class*="feedback"]
+    error_message = page.locator(
+        "div.errorWeb, "
+        "#input-error, "
+        "span#input-error, "
+        "div.alert-error, "
+        "[class*='alert-error'], "
+        "[class*='kc-feedback'], "
+        "[class*='login-alert'], "
+        ".pf-c-alert__description, "
+        "div[aria-live='polite']:not(:empty)"
+    ).first
+    expect(error_message).to_be_visible(timeout=8000)
+    # Messaggio di errore varia per ambiente/lingua
     err_text = error_message.inner_text()
 
     # Percorso screenshot dinamico
@@ -54,5 +66,7 @@ def test_login_credenziali_errate(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert "dati inseriti" in err_text.lower() or "details" in err_text.lower() or "incorrect" in err_text.lower() or "not correct" in err_text.lower() or "correttamente" in err_text.lower(), \
-        f"Messaggio di errore login inatteso: '{err_text}'"
+    assert any(kw in err_text.lower() for kw in [
+        "dati inseriti", "details", "incorrect", "not correct",
+        "correttamente", "invalid", "non valid", "errat", "credenziali"
+    ]), f"Messaggio di errore login inatteso: '{err_text}'"

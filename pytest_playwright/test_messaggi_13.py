@@ -41,8 +41,19 @@ def test_risposta_a_tutti(page):
     msg_orig.first.click()
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
-    # Rispondi a tutti
-    page.locator('aru-symbol[title="Rispondi a tutti"]').first.click()
+    # Chiudi eventuali dialog (Novità, Ricordamelo, ecc.)
+    try:
+        page.locator(
+            'button:has-text("Ricordarmelo"), button:has-text("Non ora"), '
+            'button[aria-label="Chiudi"], button:has-text("Ho capito")'
+        ).first.click(timeout=2000)
+    except Exception:
+        pass
+
+    # Rispondi a tutti (aru-symbol in Aruba, button in SMB/white-label)
+    page.locator(
+        'aru-symbol[title="Rispondi a tutti"], button[title="Rispondi a tutti"], [aria-label="Rispondi a tutti"]'
+    ).first.click(timeout=30000)
     page.locator("div[contenteditable='true']").first.wait_for(state="visible", timeout=5000)
     page.locator("div[contenteditable='true']").first.fill("Risposta a tutti automatica tramite Playwright")
     page.locator('span[title="Invia"]').click()
