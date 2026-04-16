@@ -124,9 +124,15 @@ class LoginPecMobile:
         if "smart-login" in self.page.url:
             inbox_url = cfg["pec"]["url"].rstrip("/") + "/new/messages/INBOX"
             self.page.goto(inbox_url, timeout=30_000)
-            self.page.wait_for_load_state("load", timeout=20_000)
-            self.page.wait_for_timeout(3000)
-            if "login-actions/authenticate" in self.page.url:
+            # Attendi URL finale: il redirect può passare per auth → INBOX
+            try:
+                self.page.wait_for_url("**/messages/INBOX**", timeout=15_000)
+            except Exception:
+                pass
+            self.page.wait_for_timeout(1000)
+            if "INBOX" in self.page.url:
+                pass  # già loggato, niente da fare
+            elif "login-actions/authenticate" in self.page.url:
                 # Token Keycloak scaduto — ricomincia il login da capo
                 self.page.goto(cfg["pec"]["url"], timeout=60_000)
                 self.page.wait_for_load_state("load", timeout=30_000)

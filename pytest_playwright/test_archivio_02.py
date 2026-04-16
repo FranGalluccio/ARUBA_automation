@@ -79,10 +79,7 @@ def test_archivio_messaggio_inviato(page):
 
     # --- Step 2: torna a INBOX prima di creare il messaggio ---
     page.goto(app_base + "/new/messages/INBOX", timeout=20000)
-    try:
-        page.wait_for_load_state("load", timeout=10000)
-    except Exception:
-        pass
+    page.wait_for_timeout(1500)
 
     oggetto_univoco = f"Test archivio playwright {int(time.time())}"
     # Invia sempre a se stessi (indirizzo PEC dell'account corrente) per garantire l'archiviazione
@@ -106,10 +103,7 @@ def test_archivio_messaggio_inviato(page):
     # --- Step 3: apri sezione Archivio (mailbox, non impostazioni) ---
     # Torna a INBOX per avere il nav pulito
     page.goto(app_base + "/new/messages/INBOX", timeout=20000)
-    try:
-        page.wait_for_load_state("load", timeout=15000)
-    except Exception:
-        pass
+    page.wait_for_timeout(1500)
 
     # Dismetti eventuale overlay
     try:
@@ -131,11 +125,7 @@ def test_archivio_messaggio_inviato(page):
             ).first
             archivio_btn.wait_for(state="visible", timeout=5000)
             archivio_btn.click()
-            try:
-                page.wait_for_load_state("load", timeout=15000)
-            except Exception:
-                pass
-            page.wait_for_timeout(1000)
+            page.wait_for_timeout(2000)
             archivio_opened = True
         except Exception as e:
             print(f"Click Archivio da waffle fallito: {e}")

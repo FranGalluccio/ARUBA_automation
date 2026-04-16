@@ -83,13 +83,10 @@ def test_configurazione_archivio(page):
         # Fallback: cerca per label text vicino
         page.get_by_text("Scegli quali messaggi archiviare", exact=False).first.click()
 
-    # Abilita checkbox "ricevute di accettazione"
-    try:
-        ra_checkbox = page.locator("input[type='checkbox']").first
-        if ra_checkbox.is_visible():
-            ra_checkbox.check()
-    except Exception:
-        pass
+    # Abilita checkbox "ricevute di accettazione" (opzionale: appare solo se radio "Scegli" è selezionato)
+    ra_checkbox = page.locator("input[type='checkbox']").first
+    if ra_checkbox.count() > 0 and ra_checkbox.is_visible():
+        ra_checkbox.check()
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_01_scegli_{datetime.now():%H-%M-%S}.png"))
 
@@ -99,13 +96,10 @@ def test_configurazione_archivio(page):
         save_btn.wait_for(state="visible", timeout=5000)
         save_btn.click()
     except Exception:
-        # Fallback: cerca qualsiasi aru-button o button visibile con testo Salva
-        try:
-            btn = page.locator('aru-button:has-text("Salva"), button:has-text("Salva")').first
-            btn.wait_for(state="attached", timeout=5000)
-            btn.dispatch_event("click")
-        except Exception:
-            pass
+        # Fallback: cerca per testo Salva
+        btn = page.locator('aru-button:has-text("Salva"), button:has-text("Salva")').first
+        btn.wait_for(state="attached", timeout=5000)
+        btn.dispatch_event("click")
 
     # Verifica toast di conferma
     toast = page.locator("div.aru-toast__message, aru-toast, [class*='toast'], [class*='snack']").first

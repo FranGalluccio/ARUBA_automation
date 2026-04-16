@@ -1091,9 +1091,17 @@ for test in TESTS:
             c.font = Font(name="Calibri", italic=True, size=9.5, color="1A3A1A")
             c.alignment = align("left", "top", True)
 
-    # Row height based on step count
-    step_count = passi.count("\n") + 1
-    ws.row_dimensions[row_num].height = max(40, step_count * 14)
+    # Row height based on estimated visual lines (considers text wrap per column)
+    def vlines(text, col_w):
+        if not text:
+            return 1
+        return sum(max(1, (len(line) // col_w) + 1) for line in str(text).split("\n"))
+    max_vl = max(
+        vlines(passi, col_widths[5]),       # Passi (width 50)
+        vlines(desc, col_widths[4]),         # Descrizione (width 60)
+        vlines(risultato, col_widths[6]),    # Risultato Atteso (width 60)
+    )
+    ws.row_dimensions[row_num].height = max(40, min(max_vl * 14, 409))
 
 
 # ── ONE SHEET PER MODULE ───────────────────────────────────────────────────────
@@ -1161,8 +1169,17 @@ for mod_name in ["Login", "Messaggi", "Calendario", "Contatti", "Impostazioni",
                 c.font = Font(name="Calibri", size=9, color="808080")
                 c.alignment = align("left", "top", True)
 
-        step_count = passi.count("\n") + 1
-        ws_m.row_dimensions[row_num].height = max(45, step_count * 14)
+        def vlines_m(text, col_w):
+            if not text:
+                return 1
+            return sum(max(1, (len(line) // col_w) + 1) for line in str(text).split("\n"))
+        max_vl_m = max(
+            vlines_m(passi, col_widths_m[3]),       # Passi (width 58)
+            vlines_m(desc, col_widths_m[2]),         # Descrizione (width 38)
+            vlines_m(risultato, col_widths_m[4]),    # Risultato Atteso (width 52)
+            vlines_m(file_func, col_widths_m[1]),    # File/Funzione (width 32)
+        )
+        ws_m.row_dimensions[row_num].height = max(45, min(max_vl_m * 14, 409))
 
 
 # ── SAVE ──────────────────────────────────────────────────────────────────────
