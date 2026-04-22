@@ -44,19 +44,30 @@ def test_login_credenziali_errate(page):
     # Verifica che il messaggio di errore sia visibile
     # - Aruba test: div.errorWeb
     # - Keycloak (SMB prod): #input-error, div.alert-error, .pf-c-alert, span[class*="feedback"]
-    error_message = page.locator(
-        "div.errorWeb, "
-        "#input-error, "
-        "span#input-error, "
-        "div.alert-error, "
-        "[class*='alert-error'], "
-        "[class*='kc-feedback'], "
-        "[class*='login-alert'], "
-        ".pf-c-alert__description, "
-        "div[aria-live='polite']:not(:empty)"
-    ).first
-    expect(error_message).to_be_visible(timeout=8000)
-    # Messaggio di errore varia per ambiente/lingua
+    # Aruba test: div.errorWeb
+    # Keycloak standard: #input-error, .pf-c-alert__description, div[aria-live='polite']
+    # SMB Keycloak (layout francese): span.px-2 dentro #kc-content-wrapper
+    error_selectors = [
+        "div.errorWeb",
+        "#input-error",
+        "span#input-error",
+        "div.alert-error",
+        "[class*='alert-error']",
+        "[class*='kc-feedback']",
+        "[class*='login-alert']",
+        ".pf-c-alert__description",
+        "div[aria-live='polite']:not(:empty)",
+        "#kc-content-wrapper span.px-2",
+    ]
+    error_message = None
+    for sel in error_selectors:
+        el = page.locator(sel).first
+        if el.count() > 0 and el.is_visible():
+            error_message = el
+            break
+
+    assert error_message is not None, "Nessun messaggio di errore login trovato nella pagina"
+
     err_text = error_message.inner_text()
 
     # Percorso screenshot dinamico
@@ -68,5 +79,7 @@ def test_login_credenziali_errate(page):
     print(f"Screenshot salvato in: {screenshot_path}")
     assert any(kw in err_text.lower() for kw in [
         "dati inseriti", "details", "incorrect", "not correct",
-        "correttamente", "invalid", "non valid", "errat", "credenziali"
+        "correttamente", "invalid", "non valid", "errat", "credenziali",
+        # francese (SMB Keycloak)
+        "informations", "saisies", "incorrectes", "verifier", "reessayer",
     ]), f"Messaggio di errore login inatteso: '{err_text}'"
