@@ -20,6 +20,40 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 GIT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+def dismiss_overlay(page: Page):
+    """Chiude qualsiasi CDK overlay backdrop attivo (welcome wizard, dialog).
+    Da chiamare prima di click force=True su elementi potenzialmente bloccati."""
+    for _ in range(5):
+        try:
+            page.wait_for_function(
+                "!document.querySelector('.cdk-overlay-backdrop-showing')",
+                timeout=500,
+            )
+            break
+        except Exception:
+            pass
+        try:
+            page.evaluate("""() => {
+                const dismissTexts = ['Chiudi', 'Non ora', 'Ricordarmelo', 'Capito', 'Ho capito', 'Ok'];
+                const pane = document.querySelector('.cdk-overlay-pane');
+                if (!pane) { return; }
+                const closeBtn = pane.querySelector(
+                    'button[aria-label="Chiudi"], button[title="Chiudi"]'
+                );
+                if (closeBtn) { closeBtn.click(); return; }
+                for (const btn of pane.querySelectorAll('button')) {
+                    if (dismissTexts.includes(btn.textContent.trim())) { btn.click(); return; }
+                }
+            }""")
+        except Exception:
+            pass
+        try:
+            page.keyboard.press("Escape")
+        except Exception:
+            pass
+        page.wait_for_timeout(500)
+
+
 def get_app_base_url(page: Page) -> str:
     """Restituisce schema+host dell'app webmail dalla pagina corrente.
     Funziona sia in ambienti test (es. webmail.test.pec.aruba.it)
@@ -119,6 +153,9 @@ class LoginPec:
             self.page.locator('button[aria-label="Chiudi"]').first.click(timeout=3000)
         except Exception:
             pass
+
+    # Chiudi qualsiasi CDK overlay backdrop (welcome wizard, ecc.) rimasto dopo il login
+        dismiss_overlay(self.page)
 
             
 class Helper:

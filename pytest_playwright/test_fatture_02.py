@@ -2,7 +2,7 @@ import os
 import json
 import pytest
 from datetime import datetime
-from base_pec import LoginPec, get_app_base_url
+from base_pec import LoginPec, get_app_base_url, dismiss_overlay
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 with open(CONFIG_FILE) as f:
@@ -42,6 +42,7 @@ def test_leggi_fatture_settings(page):
         pytest.skip("Feature 'Leggi fatture' non disponibile in questo ambiente")
 
     # --- Naviga alla pagina Leggi fatture ---
+    dismiss_overlay(page)
     leggi_fatture_btn.click(force=True)
     try:
         page.wait_for_load_state("load", timeout=10000)

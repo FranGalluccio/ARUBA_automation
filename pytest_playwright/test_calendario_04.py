@@ -1,7 +1,7 @@
 import os
 import json
 from playwright.sync_api import Page
-from base_pec import LoginPec, elimina_evento_pec
+from base_pec import LoginPec, elimina_evento_pec, dismiss_overlay
 from datetime import datetime
 
 
@@ -65,12 +65,13 @@ def test_import_export_calendario(page: Page):
         page.wait_for_load_state("load")
         page.wait_for_timeout(2000)
 
-        # Chiudi cookie banner se riapparso dopo reload
+        # Chiudi cookie banner e overlay CDK se riapparsi dopo reload
         try:
             page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=2000)
             page.wait_for_timeout(500)
         except Exception:
             pass
+        dismiss_overlay(page)
 
         # Screenshot dopo import
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_post_import_{datetime.now():%H-%M-%S}.png"))
@@ -78,7 +79,7 @@ def test_import_export_calendario(page: Page):
         # --- Esporta calendario ---
         # Click sidebar "Esporta" → apre dialog "Esporta calendario"
         esporta_btn = page.get_by_role("button", name="Esporta").first
-        esporta_btn.wait_for(state="visible", timeout=8000)
+        esporta_btn.wait_for(state="visible", timeout=15000)
         esporta_btn.click(timeout=5000)
 
         # Aspetta che il dialog sia visibile

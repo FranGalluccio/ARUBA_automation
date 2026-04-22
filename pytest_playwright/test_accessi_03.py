@@ -2,7 +2,7 @@ import os
 import json
 import pytest
 from datetime import datetime
-from base_pec import LoginPec, get_app_base_url
+from base_pec import LoginPec, get_app_base_url, dismiss_overlay
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 with open(CONFIG_FILE) as f:
@@ -42,6 +42,7 @@ def test_form_supervisore360(page):
         pytest.skip("Feature 'Accessi altri account' non disponibile in questo ambiente")
 
     # --- Naviga alla panoramica tramite click sul bottone (goto diretto reindirizza a INBOX) ---
+    dismiss_overlay(page)
     accessi_btn.click(force=True)
     try:
         page.wait_for_load_state("load", timeout=10000)

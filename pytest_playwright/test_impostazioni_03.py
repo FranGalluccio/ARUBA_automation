@@ -2,7 +2,7 @@ import os
 import json
 import time
 from datetime import datetime
-from base_pec import LoginPec, get_app_base_url
+from base_pec import LoginPec, get_app_base_url, dismiss_overlay
 from playwright.sync_api import expect
 
 
@@ -22,10 +22,12 @@ def test_regole_messaggi(page):
 
     # Vai alle impostazioni → Regole messaggi (URL calcolato dopo il login per supportare prod-aruba)
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
+    dismiss_overlay(page)
     # Espandi l'accordion "Messaggi e scrittura" se necessario
     if not page.locator('button[title="Regole messaggi"]').is_visible():
         page.locator('button[title="Messaggi e scrittura"]').first.click(force=True)
-        page.locator('button[title="Regole messaggi"]').first.wait_for(state="visible", timeout=5000)
+        page.locator('button[title="Regole messaggi"]').first.wait_for(state="visible", timeout=8000)
+    dismiss_overlay(page)
     page.locator('button[title="Regole messaggi"]').click(force=True)
 
     # Verifica che la pagina Regole messaggi sia caricata

@@ -62,6 +62,39 @@ def dismiss_cookiebot(page):
     yield
 
 
+@pytest.fixture(autouse=True)
+def dismiss_cdk_overlay(page):
+    """Auto-dismisses CDK overlay backdrops (welcome wizard, dialog) che bloccano i click.
+
+    Registra un locator_handler su .cdk-overlay-backdrop-showing: Playwright lo
+    chiama automaticamente prima di qualsiasi azione non-force quando il backdrop
+    è visibile, evitando timeout da intercettazione pointer-events.
+    """
+    def _dismiss():
+        page.evaluate("""() => {
+            const dismissTexts = ['Chiudi', 'Non ora', 'Ricordarmelo', 'Capito', 'Ho capito', 'Ok', 'Close'];
+            const pane = document.querySelector('.cdk-overlay-pane');
+            if (!pane) return;
+            const closeBtn = pane.querySelector(
+                'button[aria-label="Chiudi"], button[title="Chiudi"]'
+            );
+            if (closeBtn) { closeBtn.click(); return; }
+            for (const btn of pane.querySelectorAll('button')) {
+                if (dismissTexts.includes(btn.textContent.trim())) { btn.click(); return; }
+            }
+        }""")
+
+    try:
+        page.add_locator_handler(
+            page.locator('.cdk-overlay-backdrop-showing'),
+            _dismiss,
+            no_wait_after=True,
+        )
+    except (AttributeError, Exception):
+        pass
+    yield
+
+
 @pytest.fixture(scope="session")
 def browser_context_args(browser_context_args):
     return {
