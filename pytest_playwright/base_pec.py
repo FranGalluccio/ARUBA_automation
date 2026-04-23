@@ -103,6 +103,17 @@ class LoginPec:
         self.page.wait_for_load_state("load", timeout=30_000)
         self.page.wait_for_timeout(5000)
 
+    # Gestisci errore 500 dell'ambiente: riprova il login da capo
+        if "500" in self.page.title() or "Internal Server Error" in self.page.title() or "ajaxmail" in self.page.url:
+            self.page.wait_for_timeout(3000)
+            self.page.goto(config["pec"]["url"], timeout=60_000)
+            self.page.wait_for_load_state("load", timeout=30_000)
+            self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(username)
+            self.page.locator("input[name='password'], input#password, input[type='password']").first.fill(password)
+            self.page.locator("button[type='submit'], button:has-text('Login')").first.click()
+            self.page.wait_for_load_state("load", timeout=30_000)
+            self.page.wait_for_timeout(5000)
+
     # Gestisci redirect smart-login (sessione residua che intercetta il login)
         if "smart-login" in self.page.url:
             inbox_url = get_app_base_url(self.page) + "/new/messages/INBOX"
