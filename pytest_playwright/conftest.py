@@ -71,18 +71,21 @@ def dismiss_cdk_overlay(page):
     è visibile, evitando timeout da intercettazione pointer-events.
     """
     def _dismiss():
-        page.evaluate("""() => {
-            const dismissTexts = ['Chiudi', 'Non ora', 'Ricordarmelo', 'Capito', 'Ho capito', 'Ok', 'Close'];
-            const pane = document.querySelector('.cdk-overlay-pane');
-            if (!pane) return;
-            const closeBtn = pane.querySelector(
-                'button[aria-label="Chiudi"], button[title="Chiudi"]'
-            );
-            if (closeBtn) { closeBtn.click(); return; }
-            for (const btn of pane.querySelectorAll('button')) {
-                if (dismissTexts.includes(btn.textContent.trim())) { btn.click(); return; }
-            }
-        }""")
+        try:
+            page.evaluate("""() => {
+                const dismissTexts = ['Chiudi', 'Non ora', 'Ricordarmelo', 'Capito', 'Ho capito', 'Ok', 'Close'];
+                const pane = document.querySelector('.cdk-overlay-pane');
+                if (!pane) return;
+                const closeBtn = pane.querySelector(
+                    'button[aria-label="Chiudi"], button[title="Chiudi"]'
+                );
+                if (closeBtn) { closeBtn.click(); return; }
+                for (const btn of pane.querySelectorAll('button')) {
+                    if (dismissTexts.includes(btn.textContent.trim())) { btn.click(); return; }
+                }
+            }""")
+        except Exception:
+            pass
 
     try:
         page.add_locator_handler(
