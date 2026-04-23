@@ -50,9 +50,9 @@ def test_invio_messaggio_con_cc(page):
     # Invia
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta toast di conferma invio
+    # Aspetta toast di conferma invio (timeout più lungo per SMB)
     toast = page.locator("div.aru-toast__message").first
-    expect(toast).to_be_visible()
+    expect(toast).to_be_visible(timeout=15000)
     toast_text = toast.text_content()
 
     # Aspetta ricezione, aggiorna e apri il primo messaggio
@@ -70,4 +70,7 @@ def test_invio_messaggio_con_cc(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert "Il messaggio è stato inviato" in toast_text
+    # Il testo del toast varia per ambiente (IT/FR)
+    assert any(kw in toast_text.lower() for kw in [
+        "inviato", "envoyé", "sent", "succès", "success"
+    ]), f"Toast invio inatteso: '{toast_text}'"

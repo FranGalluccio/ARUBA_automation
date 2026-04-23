@@ -41,14 +41,15 @@ def test_scarica_allegato_ricevuto(page):
     page.locator('span[title="Invia"]').click()
 
     # Polling: cerca il messaggio specifico per oggetto (non il primo in assoluto)
+    # 40 iterazioni * ~4s = ~160s per ambienti lenti (SMB con inbox piena)
     msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto)
-    for _ in range(20):
+    for _ in range(40):
         page.wait_for_timeout(3000)
         page.locator('aru-symbol[title="Aggiorna"]').click()
         page.wait_for_timeout(1000)
         if msg.count() > 0:
             break
-    msg.first.click()
+    msg.first.click(timeout=15000)
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Apri in nuova finestra
