@@ -81,24 +81,14 @@ class LoginPec:
         password = config["pec"]["password"]
 
     # Vai alla pagina di login (retry su errori di rete transitori)
-    # Se dopo il goto siamo su login-actions/authenticate (token Keycloak stale),
-    # ripartiamo dall'URL base per ottenere un token fresco.
         for _attempt in range(3):
             try:
                 self.page.goto(config["pec"]["url"], timeout=60_000)
-                self.page.wait_for_load_state("load", timeout=20_000)
+                break
             except Exception:
                 if _attempt == 2:
                     raise
                 self.page.wait_for_timeout(5000)
-                continue
-
-            # Se Keycloak ha reindirizzato su un execution token stale, torna all'URL base
-            if "login-actions/authenticate" in self.page.url:
-                self.page.wait_for_timeout(1000)
-                continue  # riprova goto al prossimo tentativo
-
-            break
 
     # Compila username
         self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(username)
