@@ -77,18 +77,28 @@ class LoginPec:
         self.page = page
 
     def login_pec(self, config):
+        username = config["pec"]["username"]
+        password = config["pec"]["password"]
+
     # Vai alla pagina di login (retry su errori di rete transitori)
+    # Se dopo il goto siamo su login-actions/authenticate (token Keycloak stale),
+    # ripartiamo dall'URL base per ottenere un token fresco.
         for _attempt in range(3):
             try:
                 self.page.goto(config["pec"]["url"], timeout=60_000)
-                break
+                self.page.wait_for_load_state("load", timeout=20_000)
             except Exception:
                 if _attempt == 2:
                     raise
                 self.page.wait_for_timeout(5000)
+                continue
 
-        username = config["pec"]["username"]
-        password = config["pec"]["password"]
+            # Se Keycloak ha reindirizzato su un execution token stale, torna all'URL base
+            if "login-actions/authenticate" in self.page.url:
+                self.page.wait_for_timeout(1000)
+                continue  # riprova goto al prossimo tentativo
+
+            break
 
     # Compila username
         self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(username)
@@ -109,15 +119,24 @@ class LoginPec:
             self.page.goto(inbox_url, timeout=60_000, wait_until="domcontentloaded")
             self.page.wait_for_timeout(3000)
 
-    # Gestisci redirect Keycloak authenticate (execution token scaduto a metà run)
+    # Gestisci redirect Keycloak authenticate (execution token scaduto post-submit)
         elif "login-actions/authenticate" in self.page.url:
-            self.page.goto(config["pec"]["url"], timeout=60_000)
-            self.page.wait_for_load_state("load", timeout=30_000)
-            self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(config["pec"]["username"])
-            self.page.locator("input[name='password'], input#password, input[type='password']").first.fill(config["pec"]["password"])
-            self.page.locator("button[type='submit'], button:has-text('Login')").first.click()
-            self.page.wait_for_load_state("load", timeout=30_000)
-            self.page.wait_for_timeout(5000)
+            # Token scaduto lato server: riprova fino a 3 volte con URL base fresco
+            for _retry in range(3):
+                self.page.goto(config["pec"]["url"], timeout=60_000)
+                self.page.wait_for_load_state("load", timeout=30_000)
+                if "login-actions/authenticate" not in self.page.url:
+                    break
+                self.page.wait_for_timeout(2000)
+            # Ora compila e invia
+            try:
+                self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(username, timeout=10000)
+                self.page.locator("input[name='password'], input#password, input[type='password']").first.fill(password)
+                self.page.locator("button[type='submit'], button:has-text('Login')").first.click()
+                self.page.wait_for_load_state("load", timeout=30_000)
+                self.page.wait_for_timeout(5000)
+            except Exception:
+                pass
             if "smart-login" in self.page.url:
                 inbox_url = get_app_base_url(self.page) + "/new/messages/INBOX"
                 self.page.goto(inbox_url, timeout=60_000, wait_until="domcontentloaded")

@@ -38,6 +38,13 @@ def test_login_credenziali_errate(page):
     # Clicca login
     page.locator("button[type='submit'], button:has-text('Login')").first.click()
 
+    # Attendi che la pagina risponda (errore o redirect)
+    try:
+        page.wait_for_load_state("load", timeout=10000)
+    except Exception:
+        pass
+    page.wait_for_timeout(2000)
+
     # Verifica che l'URL non contenga INBOX (login fallito, nessun redirect alla casella)
     assert "INBOX" not in page.url, f"Il login con credenziali errate ha avuto successo inaspettatamente. URL: {page.url}"
 
@@ -57,7 +64,9 @@ def test_login_credenziali_errate(page):
         "[class*='login-alert']",
         ".pf-c-alert__description",
         "div[aria-live='polite']:not(:empty)",
+        # Keycloak SMB (con #kc-content-wrapper) e main PEC (span.px-2 standalone)
         "#kc-content-wrapper span.px-2",
+        "span.px-2",
     ]
     error_message = None
     for sel in error_selectors:

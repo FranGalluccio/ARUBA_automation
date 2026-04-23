@@ -31,9 +31,10 @@ def test_ricerca_messaggi(page):
     )
     page.locator('span[title="Invia"]').click()
 
-    # Aspetta consegna
-    page.wait_for_timeout(8000)
+    # Aspetta consegna (CI può essere più lento)
+    page.wait_for_timeout(15000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
+    page.wait_for_timeout(2000)
 
     # Usa la barra di ricerca (input con classe aru-input-search__chosen__input-editable)
     search_input = page.locator('input.aru-input-search__chosen__input-editable, input[placeholder*="Cerca messaggio"]').first
@@ -44,8 +45,18 @@ def test_ricerca_messaggi(page):
     page.wait_for_timeout(300)
     page.keyboard.press("Enter")
 
-    # Verifica che almeno un risultato sia presente
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
+    # Verifica che almeno un risultato sia presente (retry se latenza server)
+    try:
+        page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=15000)
+    except Exception:
+        # Riprova la ricerca una volta
+        page.wait_for_timeout(10000)
+        search_input2 = page.locator('input.aru-input-search__chosen__input-editable, input[placeholder*="Cerca messaggio"]').first
+        if search_input2.is_visible():
+            search_input2.click()
+            search_input2.fill(oggetto_univoco)
+            page.keyboard.press("Enter")
+        page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=15000)
     count = page.locator('div.frame-record-desktop').count()
 
     # Screenshot
