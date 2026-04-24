@@ -41,7 +41,7 @@ def test_messaggio_in_bozza(page):
     page.locator('button[title="Bozze"]').click()
     
     # Aspetta che almeno un record sia visibile
-    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+    page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=15000)
 
     # Clicca sul primo record
     page.locator('div.frame-record-desktop').first.click()

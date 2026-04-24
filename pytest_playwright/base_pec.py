@@ -104,7 +104,11 @@ class LoginPec:
         self.page.wait_for_timeout(5000)
 
     # Gestisci errore 500 dell'ambiente: riprova il login da capo
-        if "500" in self.page.title() or "Internal Server Error" in self.page.title() or "ajaxmail" in self.page.url:
+        try:
+            _title = self.page.title()
+        except Exception:
+            _title = ""
+        if "500" in _title or "Internal Server Error" in _title or "ajaxmail" in self.page.url:
             self.page.wait_for_timeout(3000)
             self.page.goto(config["pec"]["url"], timeout=60_000)
             self.page.wait_for_load_state("load", timeout=30_000)
