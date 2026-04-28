@@ -76,11 +76,12 @@ def test_configurazione_archivio(page):
             f"Opzione non trovata: '{opt}'"
 
     # --- Seleziona "Scegli quali messaggi archiviare" ---
-    # force=True bypassa il cdk-overlay-backdrop-showing con custom-backdrop-class
+    # Clicca il secondo radio button (Scegli quali)
     try:
-        page.locator("input[type='radio']").nth(1).click(force=True)
+        page.locator("input[type='radio']").nth(1).click()
     except Exception:
-        page.get_by_text("Scegli quali messaggi archiviare", exact=False).first.click(force=True)
+        # Fallback: cerca per label text vicino
+        page.get_by_text("Scegli quali messaggi archiviare", exact=False).first.click()
 
     # Abilita checkbox "ricevute di accettazione" (opzionale: appare solo se radio "Scegli" è selezionato)
     ra_checkbox = page.locator("input[type='checkbox']").first
@@ -125,8 +126,8 @@ def test_configurazione_archivio(page):
 
     # --- Cleanup: ripristina "Archivia tutti" ---
     try:
-        page.locator("input[type='radio']").first.click(force=True)
-        page.locator('aru-button[skin="primary"], button[type="submit"]').first.click(force=True)
+        page.locator("input[type='radio']").first.click()
+        page.locator('aru-button[skin="primary"], button[type="submit"]').first.click()
         page.wait_for_timeout(500)
     except Exception:
         pass

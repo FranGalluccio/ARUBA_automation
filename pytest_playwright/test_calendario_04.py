@@ -72,8 +72,6 @@ def test_import_export_calendario(page: Page):
         except Exception:
             pass
         dismiss_overlay(page)
-        page.wait_for_timeout(2000)
-        dismiss_overlay(page)
 
         # Screenshot dopo import
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_post_import_{datetime.now():%H-%M-%S}.png"))
@@ -81,8 +79,8 @@ def test_import_export_calendario(page: Page):
         # --- Esporta calendario ---
         # Click sidebar "Esporta" → apre dialog "Esporta calendario"
         esporta_btn = page.get_by_role("button", name="Esporta").first
-        esporta_btn.wait_for(state="visible", timeout=20000)
-        esporta_btn.click(force=True, timeout=5000)
+        esporta_btn.wait_for(state="visible", timeout=15000)
+        esporta_btn.click(timeout=5000)
 
         # Aspetta che il dialog sia visibile
         dialog = page.locator('.cdk-overlay-pane button').filter(has_text="Esporta").first
