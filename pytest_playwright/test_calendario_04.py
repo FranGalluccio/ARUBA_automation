@@ -72,6 +72,11 @@ def test_import_export_calendario(page: Page):
         except Exception:
             pass
         dismiss_overlay(page)
+        # Attendi che l'overlay sparisca prima di cercare il bottone Esporta
+        try:
+            page.wait_for_function("!document.querySelector('.cdk-overlay-backdrop-showing')", timeout=10000)
+        except Exception:
+            pass
 
         # Screenshot dopo import
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_post_import_{datetime.now():%H-%M-%S}.png"))

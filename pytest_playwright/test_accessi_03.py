@@ -45,9 +45,15 @@ def test_form_supervisore360(page):
     dismiss_overlay(page)
     accessi_btn.click(force=True)
     try:
-        page.wait_for_load_state("load", timeout=10000)
+        page.wait_for_url(
+            lambda url: "other-accounts" in url or "accessi" in url.lower(),
+            timeout=10000
+        )
     except Exception:
-        pass
+        try:
+            page.wait_for_load_state("load", timeout=5000)
+        except Exception:
+            pass
     page.wait_for_timeout(1500)
 
     # --- Verifica che Supervisore360 sia presente nella panoramica ---

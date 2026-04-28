@@ -56,6 +56,12 @@ def test_archivio_messaggio_inviato(page):
     except Exception:
         pass
 
+    # Attendi che eventuali overlay CDK (spinner, dialog post-login) spariscano
+    try:
+        page.wait_for_function("!document.querySelector('.cdk-overlay-backdrop-showing')", timeout=10000)
+    except Exception:
+        pass
+
     try:
         page.locator("h1").filter(has_text="Archivio").wait_for(state="visible", timeout=10000)
     except Exception:

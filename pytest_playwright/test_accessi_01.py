@@ -45,9 +45,15 @@ def test_panoramica_accessi_altri_account(page):
     dismiss_overlay(page)
     accessi_btn.click(force=True)
     try:
-        page.wait_for_load_state("load", timeout=10000)
+        page.wait_for_url(
+            lambda url: "other-accounts" in url or "accessi" in url.lower(),
+            timeout=10000
+        )
     except Exception:
-        pass
+        try:
+            page.wait_for_load_state("load", timeout=5000)
+        except Exception:
+            pass
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_accessi_01_panoramica_{datetime.now():%H-%M-%S}.png"))
 
