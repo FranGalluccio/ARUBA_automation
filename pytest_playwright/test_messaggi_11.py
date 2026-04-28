@@ -42,10 +42,12 @@ def test_risposta_messaggio(page):
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Chiudi eventuali dialog (Novità, Ricordamelo, ecc.)
+    # Nota: button[aria-label="Chiudi"] è scoped a .cdk-overlay-pane per evitare
+    # di chiudere accidentalmente il pannello lettura su BNL
     try:
         page.locator(
             'button:has-text("Ricordarmelo"), button:has-text("Non ora"), '
-            'button[aria-label="Chiudi"], button:has-text("Ho capito")'
+            '.cdk-overlay-pane button[aria-label="Chiudi"], button:has-text("Ho capito")'
         ).first.click(timeout=2000)
     except Exception:
         pass
