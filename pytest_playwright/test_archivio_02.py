@@ -61,19 +61,20 @@ def test_archivio_messaggio_inviato(page):
     except Exception:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
 
-    # Seleziona "Archivia tutti i messaggi ricevuti o inviati" cercando per testo della label
+    # Seleziona "Archivia tutti i messaggi ricevuti o inviati"
+    # force=True bypassa il cdk-overlay-backdrop-showing con custom-backdrop-class
     try:
-        page.get_by_text("Archivia tutti i messaggi ricevuti o inviati", exact=False).first.click()
+        page.get_by_text("Archivia tutti i messaggi ricevuti o inviati", exact=False).first.click(force=True)
     except Exception:
-        page.locator("input[type='radio']").first.click()
+        page.locator("input[type='radio']").first.click(force=True)
 
     # Salva
     try:
         salva = page.locator('aru-button[skin="primary"]').first
         salva.wait_for(state="visible", timeout=10000)
-        salva.click()
+        salva.click(force=True)
     except Exception:
-        page.get_by_role("button", name="Salva").first.click(timeout=15000)
+        page.get_by_role("button", name="Salva").first.click(force=True, timeout=15000)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_config_{datetime.now():%H-%M-%S}.png"))
 
