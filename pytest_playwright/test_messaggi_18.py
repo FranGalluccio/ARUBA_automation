@@ -102,3 +102,27 @@ def test_filtri_inbox(page):
             assert dropdown_closed or filter_label_visible, (
                 f"Il filtro '{clicked_option_text}' non sembra essere stato applicato"
             )
+
+    # Cleanup: se "Mostra ricevute" è rimasto attivo, clicca per tornare a "Nascondi ricevute"
+    try:
+        page.evaluate("""() => {
+            function resetFilter(root) {
+                const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+                let node;
+                while (node = walker.nextNode()) {
+                    if (node.tagName === 'LABEL' &&
+                        node.getAttribute('aria-label') === 'Mostra ricevute') {
+                        let btn = node;
+                        while (btn && btn.tagName !== 'BUTTON') btn = btn.parentElement;
+                        if (btn) { btn.click(); return true; }
+                    }
+                    if (node.shadowRoot) {
+                        if (resetFilter(node.shadowRoot)) return true;
+                    }
+                }
+                return false;
+            }
+            return resetFilter(document);
+        }""")
+    except Exception:
+        pass
