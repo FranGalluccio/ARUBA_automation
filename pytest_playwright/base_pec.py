@@ -181,41 +181,7 @@ class LoginPec:
     # Chiudi qualsiasi CDK overlay backdrop (welcome wizard, ecc.) rimasto dopo il login
         dismiss_overlay(self.page)
 
-    # Chiudi banner inline tipo "Adegua la tua PEC" (non CDK overlay)
-        try:
-            self.page.locator(
-                'button:has-text("Ricordarmelo"), button:has-text("Non ora")'
-            ).first.click(timeout=2000)
-        except Exception:
-            pass
-
-    # Se "Mostra ricevute" è attivo clicca una volta → "Nascondi ricevute"
-    # (con "Mostra ricevute" i messaggi normali sono nascosti e i test non li trovano)
-        try:
-            self.page.evaluate("""() => {
-                function clickMostra(root) {
-                    const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
-                    let node;
-                    while (node = walker.nextNode()) {
-                        if (node.tagName === 'LABEL' &&
-                            node.getAttribute('aria-label') === 'Mostra ricevute') {
-                            let btn = node;
-                            while (btn && btn.tagName !== 'BUTTON') btn = btn.parentElement;
-                            if (btn) { btn.click(); return true; }
-                        }
-                        if (node.shadowRoot) {
-                            if (clickMostra(node.shadowRoot)) return true;
-                        }
-                    }
-                    return false;
-                }
-                return clickMostra(document);
-            }""")
-            self.page.wait_for_timeout(500)
-        except Exception:
-            pass
-
-
+            
 class Helper:
 
     def crea_messaggio(
