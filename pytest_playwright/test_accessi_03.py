@@ -69,13 +69,17 @@ def test_form_supervisore360(page):
         assert False, "Supervisore360 non trovato nella pagina 'Accessi altri account'"
 
     # --- Naviga a Supervisore360 ---
-    supervisore_nav = page.locator('[title*="Supervisore"], [aria-label*="Supervisore"]').first
+    supervisore_nav = page.locator(
+        '[title*="Supervisore"], [aria-label*="Supervisore"], '
+        'button:has-text("Supervisore"), aru-button:has-text("Supervisore"), '
+        'a:has-text("Supervisore")'
+    ).first
     if supervisore_nav.count() > 0:
         supervisore_nav.click(force=True)
         page.wait_for_timeout(1000)
     else:
-        if "bnl" in page.url.lower():
-            pytest.skip("Nessun percorso verso Supervisore360 su BNL")
+        if "bnl" in page.url.lower() or page.get_by_text("Pro e Premium", exact=False).count() > 0:
+            pytest.skip("Nessun percorso verso Supervisore360 — non disponibile su questo ambiente/account")
         assert False, "Nessun percorso verso Supervisore360 trovato"
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_accessi_03_supervisore_{datetime.now():%H-%M-%S}.png"))

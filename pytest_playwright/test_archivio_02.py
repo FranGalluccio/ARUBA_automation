@@ -56,9 +56,18 @@ def test_archivio_messaggio_inviato(page):
     except Exception:
         pass
 
-    # Attendi che eventuali overlay CDK (spinner, dialog post-login) spariscano
+    # Attendi che eventuali overlay CDK spariscano (incluso custom-backdrop-class)
     try:
-        page.wait_for_function("!document.querySelector('.cdk-overlay-backdrop-showing')", timeout=10000)
+        page.wait_for_function(
+            """() => {
+                const bs = document.querySelectorAll('.cdk-overlay-backdrop');
+                return [...bs].every(b => {
+                    const s = window.getComputedStyle(b);
+                    return s.opacity === '0' || s.display === 'none' || s.visibility === 'hidden';
+                });
+            }""",
+            timeout=10000,
+        )
     except Exception:
         pass
 
@@ -67,11 +76,23 @@ def test_archivio_messaggio_inviato(page):
     except Exception:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
 
+    # Verifica che la configurazione sia attiva (non solo la pagina marketing)
+    h2_config = page.locator("h2").filter(has_text="Configurazione Archivio").first
+    try:
+        h2_config.wait_for(state="visible", timeout=3000)
+    except Exception:
+        pass
+    if not h2_config.is_visible():
+        pytest.skip("Feature 'Archivio' non attiva su questo account — configurazione non disponibile")
+
     # Seleziona "Archivia tutti i messaggi ricevuti o inviati" cercando per testo della label
     try:
         page.get_by_text("Archivia tutti i messaggi ricevuti o inviati", exact=False).first.click()
     except Exception:
-        page.locator("input[type='radio']").first.click()
+        try:
+            page.locator("input[type='radio']").first.click()
+        except Exception:
+            page.locator("input[type='radio']").first.click(force=True)
 
     # Salva
     try:

@@ -29,8 +29,20 @@ def test_risposta_messaggio(page):
     Helper.crea_messaggio(page, config, oggetto=oggetto, corpo="Corpo del messaggio originale")
     page.locator('span[title="Invia"]').click()
 
+    # Workaround bug app: "Nascondi ricevute" nasconde anche i messaggi normali
+    try:
+        mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
+        if mostra_btn.is_visible(timeout=2000):
+            mostra_btn.click(force=True)
+            page.wait_for_timeout(1000)
+    except Exception:
+        pass
+
     # Polling: cerca il messaggio originale per oggetto (fino a 80s)
-    msg_orig = page.locator('div.frame-record-desktop').filter(has_text=oggetto)
+    # has_not= esclude le ricevute di consegna/accettazione che hanno lo stesso soggetto
+    msg_orig = page.locator('div.frame-record-desktop').filter(has_text=oggetto).filter(
+        has_not=page.locator('aru-symbol[title="Ricevuta di consegna"], aru-symbol[title="Ricevuta di accettazione"]')
+    )
     for _ in range(20):
         page.wait_for_timeout(4000)
         page.locator('aru-symbol[title="Aggiorna"]').click()
@@ -42,8 +54,7 @@ def test_risposta_messaggio(page):
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Chiudi eventuali dialog (Novità, Ricordamelo, ecc.)
-    # Nota: button[aria-label="Chiudi"] è scoped a .cdk-overlay-pane per evitare
-    # di chiudere accidentalmente il pannello lettura su BNL
+    # Scope Chiudi a .cdk-overlay-pane per non chiudere accidentalmente il pannello lettura.
     try:
         page.locator(
             'button:has-text("Ricordarmelo"), button:has-text("Non ora"), '

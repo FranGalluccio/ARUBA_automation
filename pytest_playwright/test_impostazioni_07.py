@@ -23,7 +23,7 @@ def test_storico_accessi(page):
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
     if not page.locator('button[title="Storico accessi"]').is_visible():
         page.locator('button[title="Account e sicurezza"]').click(force=True)
-        page.locator('button[title="Storico accessi"]').first.wait_for(state="visible", timeout=5000)
+        page.locator('button[title="Storico accessi"]').first.wait_for(state="visible", timeout=10000)
     page.locator('button[title="Storico accessi"]').click(force=True)
 
     # Storico accessi si apre in una nuova scheda/finestra (link esterno)

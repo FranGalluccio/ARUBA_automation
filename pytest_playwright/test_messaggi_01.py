@@ -72,9 +72,14 @@ def test_messaggio_con_allegato(page):
     # Verifica pagina esterna
     assert "external-message" in new_page.url
 
-    # Aspetta che il bottone allegato sia visibile (button o altro elemento con title)
+    # Aspetta che il bottone allegato sia visibile (selettori multipli per versioni diverse)
     nome_allegato = os.path.basename(file_allegato)
-    attachment_loc = new_page.locator(f'[title="{nome_allegato}"]').first
+    attachment_loc = new_page.locator(
+        f'[title="{nome_allegato}"], '
+        f'button:has-text("{nome_allegato}"), '
+        f'[aria-label="{nome_allegato}"], '
+        f'span:has-text("{nome_allegato}")'
+    ).first
     attachment_loc.wait_for(state="visible", timeout=20000)
     attachment_loc.click()
 

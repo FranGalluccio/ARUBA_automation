@@ -64,9 +64,14 @@ def test_scarica_allegato_ricevuto(page):
     new_page.wait_for_load_state("load")
     assert "external-message" in new_page.url
 
-    # Clicca sull'allegato (button o altro elemento con title)
+    # Clicca sull'allegato (selettori multipli per versioni diverse)
     nome_file = os.path.basename(file_allegato)
-    attachment_btn = new_page.locator(f'[title="{nome_file}"]').first
+    attachment_btn = new_page.locator(
+        f'[title="{nome_file}"], '
+        f'button:has-text("{nome_file}"), '
+        f'[aria-label="{nome_file}"], '
+        f'span:has-text("{nome_file}")'
+    ).first
     attachment_btn.wait_for(state="visible", timeout=20000)
     attachment_btn.click()
 

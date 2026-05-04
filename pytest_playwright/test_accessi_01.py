@@ -83,6 +83,14 @@ def test_panoramica_accessi_altri_account(page):
     gestisci_btns = page.locator(
         'button:has-text("Gestisci"), aru-button:has-text("Gestisci")'
     )
+    # Attendi lazy-load delle card prima del count
+    try:
+        gestisci_btns.first.wait_for(state="visible", timeout=5000)
+    except Exception:
+        pass
+    if gestisci_btns.count() == 0:
+        if page.get_by_text("Pro e Premium", exact=False).count() > 0:
+            pytest.skip("Multiutente PEC e Supervisore360 richiedono account PEC Pro/Premium — non disponibili su questo account")
     assert gestisci_btns.count() >= 1, \
         f"Nessun pulsante 'Gestisci' trovato: {gestisci_btns.count()}"
 
