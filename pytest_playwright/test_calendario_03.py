@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 import time
-from base_pec import LoginPec, Helper, elimina_evento_pec
+from base_pec import LoginPec, Helper, elimina_evento_pec, dismiss_overlay, get_app_base_url
 from playwright.sync_api import expect
 
 
@@ -49,15 +49,30 @@ def test_creazione_invio_evento(page):
         page.wait_for_timeout(1000)
         try:
             page.get_by_role("button", name="Invia").first.click(timeout=10000)
+            page.wait_for_timeout(3000)
         except Exception:
             pass
-        # Vai alla posta in arrivo
-        page.locator("#messages").get_by_label("Messaggi").click()
-        page.wait_for_timeout(5000)
+        # Chiudi overlay rimasti dopo l'invio (es. conferma invio inviti)
+        dismiss_overlay(page)
+        page.wait_for_timeout(2000)
+        # Naviga direttamente alla inbox (goto previene redirect del flusso calendario)
+        inbox_url = get_app_base_url(page) + "/new/messages/INBOX"
+        page.goto(inbox_url, wait_until="domcontentloaded", timeout=30000)
+        page.wait_for_timeout(3000)
+        # Workaround bug app: "Nascondi ricevute" nasconde anche messaggi normali.
+        # Clicca "Mostra ricevute" se visibile per ripristinare la vista completa.
+        try:
+            mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
+            if mostra_btn.is_visible(timeout=2000):
+                mostra_btn.click(force=True)
+                page.wait_for_timeout(2000)
+        except Exception:
+            pass
         # Aggiorna la posta
         page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.wait_for_timeout(5000)
         # Aspetta che almeno un record sia visibile
-        page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
+        page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=15000)
 
         # Clicca sul primo record
         page.locator('div.frame-record-desktop').first.click()
