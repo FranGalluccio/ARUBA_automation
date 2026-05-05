@@ -27,7 +27,7 @@ def test_import_export_calendario(page: Page):
 
     try:
         # --- Vai al calendario ---
-        page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
+        page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
         page.wait_for_load_state("load")
 
         # Chiudi cookie banner se presente (blocca click su Importa)

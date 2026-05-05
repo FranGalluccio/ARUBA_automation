@@ -25,7 +25,7 @@ def test_evento_con_promemoria(page):
     titolo_evento = f"evento con promemoria playwright {ts}"
 
     try:
-        page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
+        page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
 
         # Crea nuovo evento
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
@@ -88,7 +88,7 @@ def test_evento_con_promemoria(page):
 
         # Vai alla vista "Events" per trovare l'evento più facilmente
         try:
-            page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
+            page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
             page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
             page.get_by_role("button", name="Eventi").click(force=True)
             page.wait_for_timeout(8000)

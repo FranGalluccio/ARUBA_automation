@@ -33,7 +33,7 @@ def test_creazione_evento_ricorrente(page):
     titolo_evento = f"nuovo evento ricorrente playwright {ts}"
 
     # Crea nuovo evento ricorrente
-    page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
+    page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
     page.get_by_role("button", name="Nuovo evento", exact=True).click()
     page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
     page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)

@@ -31,7 +31,7 @@ def test_creazione_modifica_evento(page):
     titolo_modificato = f"evento test automatico modificato {ts}"
 
     # Crea nuovo evento
-    page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
+    page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
     page.get_by_role("button", name="Nuovo evento").click()
     page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
     page.get_by_placeholder("Inserisci un titolo").fill(titolo_base)

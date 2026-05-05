@@ -26,7 +26,7 @@ def test_creazione_calendario(page):
     LoginPec(page).login_pec(config)
 
     # Crea nuovo calendario
-    page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
+    page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
     page.get_by_role("button", name="Nuovo calendario").click()
     page.get_by_role("textbox", name="input field").wait_for(state="visible", timeout=5000)
     page.get_by_role("textbox", name="input field").click()

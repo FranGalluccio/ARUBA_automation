@@ -31,7 +31,7 @@ def test_creazione_invio_evento(page):
 
     try:
         # Crea nuovo evento
-        page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
+        page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
         page.locator("button").filter(has_text="Nuovo evento").click()
         page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
         page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
@@ -48,7 +48,7 @@ def test_creazione_invio_evento(page):
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
         page.wait_for_timeout(1000)
         try:
-            page.locator('button:has-text("Invia"), button:has-text("Envoyer")').first.first.click(timeout=10000)
+            page.locator('button:has-text("Invia"), button:has-text("Envoyer"), [aria-label="Invia"], [aria-label="Envoyer"]').first.first.click(timeout=10000)
             page.wait_for_timeout(3000)
         except Exception:
             pass

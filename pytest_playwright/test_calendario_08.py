@@ -25,7 +25,7 @@ def test_evento_tutto_il_giorno(page):
     titolo_evento = f"evento tutto il giorno playwright {ts}"
 
     try:
-        page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
+        page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
 
         # Crea nuovo evento
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
