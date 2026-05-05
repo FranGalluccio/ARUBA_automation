@@ -38,14 +38,14 @@ def test_scarica_allegato_ricevuto(page):
         corpo="Messaggio con allegato da scaricare",
         path_allegato=file_allegato,
     )
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Polling: cerca il messaggio specifico per oggetto (non il primo in assoluto)
     # 40 iterazioni * ~4s = ~160s per ambienti lenti (SMB con inbox piena)
     msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto)
     for _ in range(40):
         page.wait_for_timeout(3000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
         page.wait_for_timeout(1000)
         if msg.count() > 0:
             break
@@ -53,7 +53,7 @@ def test_scarica_allegato_ricevuto(page):
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Apri in nuova finestra
-    link_external_button = page.locator('aru-symbol[title="Apri in una nuova finestra"]').first
+    link_external_button = page.locator('aru-symbol[title="Apri in una nuova finestra"], aru-symbol[title="Ouvrir dans une nouvelle fenêtre"]').first
     link_external_button.wait_for(state="visible", timeout=10000)
 
     with page.expect_popup() as popup_info:

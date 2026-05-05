@@ -16,10 +16,10 @@ def _click_waffle_menu(page):
     """Apre il menu a 9 punti (waffle / servizi) nell'header.
     Ritorna True se aperto, False altrimenti."""
     waffle_selectors = [
-        'button[aria-label="Servizi"]',
-        '[aria-label="Servizi"]',
+        'button[aria-label="Servizi"], [aria-label="Services"]',
+        '[aria-label="Servizi"], [aria-label="Services"]',
         'button[aria-label*="Servi"]',
-        'button[title="Servizi"]',
+        'button[title="Servizi"], button[title="Services"]',
         '[title="Servizi"]',
         'aru-button:has(aru-symbol[href*="grid"])',
         'aru-button:has(aru-symbol[href*="apps"])',
@@ -46,7 +46,7 @@ def test_conservazione_waffle_menu(page):
     app_base = get_app_base_url(page)
 
     try:
-        page.locator('button:has-text("Ricordarmelo"), button:has-text("Non ora"), button[aria-label="Chiudi"]').first.click(timeout=2000)
+        page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Non ora"), button:has-text("Pas maintenant"), button[aria-label="Chiudi"], [aria-label="Fermer"]').first.click(timeout=2000)
     except Exception:
         pass
 
@@ -54,12 +54,12 @@ def test_conservazione_waffle_menu(page):
     waffle_opened = _click_waffle_menu(page)
 
     if not waffle_opened:
-        # Fallback: button[title="Conservazione"] è nel DOM ma hidden (dropdown chiuso)
+        # Fallback: button[title="Conservazione"], button[title="Conservation"] è nel DOM ma hidden (dropdown chiuso)
         # Usa dispatch_event per forzare il click senza verificare la visibilità
         page.goto(app_base + "/new/settings/home", timeout=20000)
         page.wait_for_load_state("load", timeout=15000)
         try:
-            conservazione_btn = page.locator('button[title="Conservazione"]').first
+            conservazione_btn = page.locator('button[title="Conservazione"], button[title="Conservation"]').first
             conservazione_btn.wait_for(state="attached", timeout=5000)
             conservazione_btn.dispatch_event("click")
             try:
@@ -81,8 +81,8 @@ def test_conservazione_waffle_menu(page):
     else:
         # Waffle menu aperto — cerca la voce "Conservazione"
         conservazione_item = page.locator(
-            'button:has-text("Conservazione"), a:has-text("Conservazione"), '
-            'aru-menu-item:has-text("Conservazione"), [role="menuitem"]:has-text("Conservazione")'
+            'button:has-text("Conservazione"), button:has-text("Conservation"), a:has-text("Conservazione"), button:has-text("Conservation"), '
+            'aru-menu-item:has-text("Conservazione"), button:has-text("Conservation"), [role="menuitem"]:has-text("Conservazione"), button:has-text("Conservation")'
         ).first
 
         if not conservazione_item.is_visible():

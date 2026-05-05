@@ -21,7 +21,7 @@ def test_configurazione_archivio(page):
     app_base = get_app_base_url(page)
 
     # --- Verifica disponibilità feature navigando direttamente all'URL ---
-    # (il button[title="Archivio"] esiste nel DOM ma è sempre hidden:
+    # (il button[title="Archivio"], button[title="Archive"] esiste nel DOM ma è sempre hidden:
     #  la feature è verificata controllando che la pagina si carichi con l'h1 atteso)
     page.goto(app_base + "/new/settings/archive", timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
@@ -117,7 +117,7 @@ def test_configurazione_archivio(page):
         save_btn.click()
     except Exception:
         # Fallback: cerca per testo Salva
-        btn = page.locator('aru-button:has-text("Salva"), button:has-text("Salva")').first
+        btn = page.locator('aru-button:has-text("Salva"), button:has-text("Salva"), button:has-text("Enregistrer")').first
         btn.wait_for(state="attached", timeout=5000)
         btn.dispatch_event("click")
 

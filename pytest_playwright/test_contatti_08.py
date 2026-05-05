@@ -36,7 +36,7 @@ def test_contatto_preferito(page):
         page.get_by_placeholder("Inserisci nome").fill(nome_pref)
         page.get_by_placeholder("Inserisci cognome").fill("Test")
         page.get_by_placeholder("Inserisci email").fill(unique_email)
-        page.get_by_role("button", name="Salva").click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Cerca il contatto
         search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
@@ -69,7 +69,7 @@ def test_contatto_preferito(page):
         print(f"Screenshot salvato in: {screenshot_path}")
 
         # Verifica in "Contatti preferiti"
-        page.locator('button[title="Contatti preferiti"]').first.click()
+        page.locator('button[title="Contatti preferiti"], button[title="Contacts favoris"]').first.click()
         try:
             page.locator('div.frame-record-desktop').filter(has_text=nome_pref).first.wait_for(state="visible", timeout=10000)
         except Exception:
@@ -86,8 +86,8 @@ def test_contatto_preferito(page):
             page.wait_for_timeout(2000)
             page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
-            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.wait_for(state="visible", timeout=5000)
-            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click()
+            page.locator('aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"], button[title="Elimina"]').first.click()
+            page.locator('.cdk-overlay-pane button:has-text("Elimina"), button:has-text("Supprimer")').first.wait_for(state="visible", timeout=5000)
+            page.locator('.cdk-overlay-pane button:has-text("Elimina"), button:has-text("Supprimer")').first.click()
         except Exception:
             pass

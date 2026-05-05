@@ -26,13 +26,13 @@ def test_ricerca_nel_calendario(page):
     titolo_evento = f"evento ricerca playwright {int(time.time())}"
 
     try:
-        page.get_by_role("button", name="Calendario").click()
+        page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
 
         # Crea un evento con titolo univoco
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
         page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
         page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
-        page.get_by_role("button", name="Salva").click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
         page.wait_for_timeout(5000)
 
         # Usa la barra di ricerca del calendario

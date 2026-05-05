@@ -31,20 +31,20 @@ def test_creazione_modifica_evento(page):
     titolo_modificato = f"evento test automatico modificato {ts}"
 
     # Crea nuovo evento
-    page.get_by_role("button", name="Calendario").click()
+    page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
     page.get_by_role("button", name="Nuovo evento").click()
     page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
     page.get_by_placeholder("Inserisci un titolo").fill(titolo_base)
-    page.get_by_role("button", name="Salva").click()
+    page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
     page.locator("a").filter(has_text=titolo_base).filter(has_not_text="modificato").first.wait_for(state="visible", timeout=8000)
     page.locator("a").filter(has_text=titolo_base).filter(has_not_text="modificato").first.click()
-    page.get_by_role("button", name="Modifica").wait_for(state="visible", timeout=5000)
-    page.get_by_role("button", name="Modifica").click()
+    page.locator('button:has-text("Modifica"), button:has-text("Modifier")').first.wait_for(state="visible", timeout=5000)
+    page.locator('button:has-text("Modifica"), button:has-text("Modifier")').first.click()
     page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=5000)
     page.get_by_placeholder("Inserisci un titolo").click()
     page.get_by_placeholder("Inserisci un titolo").fill("")
     page.get_by_placeholder("Inserisci un titolo").fill(titolo_modificato)
-    page.get_by_role("button", name="Salva").click()
+    page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
     try:
         page.wait_for_timeout(1000)

@@ -32,9 +32,9 @@ def test_etichetta(page):
     page.locator("input[placeholder='Es. Lavoro']").wait_for(state="visible", timeout=5000)
     page.locator("input[placeholder='Es. Lavoro']").fill(nome_etichetta)
     # Salva nuova etichetta
-    page.get_by_role("button", name="Salva").click()
+    page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
-    chiudi = page.get_by_role("button", name="Chiudi")
+    chiudi = page.locator('button:has-text("Chiudi"), button:has-text("Fermer")').first
 
     try:
         chiudi.wait_for(state="visible", timeout=3000)
@@ -68,11 +68,11 @@ def test_etichetta(page):
     page.locator(f'button[title="{nome_etichetta}"]').click(button="right")
 
     # Elimina etichetta
-    page.locator('button:has-text("Elimina etichetta")').wait_for(state="visible", timeout=5000)
-    page.locator('button:has-text("Elimina etichetta")').click()
+    page.locator('button:has-text("Elimina etichetta"), button:has-text("Supprimer l\'étiquette")').wait_for(state="visible", timeout=5000)
+    page.locator('button:has-text("Elimina etichetta"), button:has-text("Supprimer l\'étiquette")').click()
 
     # Conferma elimina etichetta
-    page.locator('button[title="Si"]').click()
+    page.locator('button[title="Si"], button[title="Oui"]').click()
 
     # Verifica toast di conferma eliminazione etichetta
     toast = page.locator("div.aru-toast__message").filter(has_text="L'etichetta è stata eliminata.").first

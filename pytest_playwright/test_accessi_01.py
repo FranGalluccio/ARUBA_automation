@@ -22,7 +22,7 @@ def test_panoramica_accessi_altri_account(page):
     app_base = get_app_base_url(page)
 
     try:
-        page.locator('button:has-text("Ricordarmelo"), button:has-text("Non ora"), button[aria-label="Chiudi"]').first.click(timeout=2000)
+        page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Non ora"), button:has-text("Pas maintenant"), button[aria-label="Chiudi"], [aria-label="Fermer"]').first.click(timeout=2000)
     except Exception:
         pass
 
@@ -31,13 +31,13 @@ def test_panoramica_accessi_altri_account(page):
     page.wait_for_load_state("load", timeout=15000)
 
     try:
-        if not page.locator('button[title="Accessi altri account"]').is_visible():
-            page.locator('button[title="Account e sicurezza"]').first.click(force=True)
-            page.locator('button[title="Accessi altri account"]').first.wait_for(state="visible", timeout=5000)
+        if not page.locator('button[title="Accessi altri account"], button[title="Accès autres comptes"]').is_visible():
+            page.locator('button[title="Account e sicurezza"], button[title="Compte et sécurité"]').first.click(force=True)
+            page.locator('button[title="Accessi altri account"], button[title="Accès autres comptes"]').first.wait_for(state="visible", timeout=5000)
     except Exception:
         pass
 
-    accessi_btn = page.locator('button[title="Accessi altri account"]').first
+    accessi_btn = page.locator('button[title="Accessi altri account"], button[title="Accès autres comptes"]').first
     if not accessi_btn.is_visible():
         pytest.skip("Feature 'Accessi altri account' non disponibile in questo ambiente")
 

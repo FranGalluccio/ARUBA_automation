@@ -61,7 +61,7 @@ def test_crea_firma(page):
 
     # Salva la firma
     try:
-        save_btn = page.locator('button[title="Salva"], aru-button[skin="primary"]').first
+        save_btn = page.locator('button[title="Salva"], button[title="Enregistrer"], aru-button[skin="primary"]').first
         save_btn.wait_for(state="visible", timeout=3000)
         save_btn.click()
     except Exception:

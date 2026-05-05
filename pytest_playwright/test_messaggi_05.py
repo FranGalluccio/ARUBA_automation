@@ -35,7 +35,7 @@ def test_cartella(page):
         page.locator('input[placeholder="Nome cartella"]').fill(nome_cartella)
 
         # Salva usando il bottone nel dialog overlay
-        page.locator('.cdk-overlay-pane button:has-text("Salva")').first.click()
+        page.locator('.cdk-overlay-pane button:has-text("Salva"), .cdk-overlay-pane button:has-text("Enregistrer")').first.click()
 
         # Verifica toast di conferma creazione (wait senza filter — il toast è veloce)
         toast = page.locator("div.aru-toast__message").first
@@ -45,15 +45,15 @@ def test_cartella(page):
         # Rinomina cartella via tasto destro
         page.locator(f'button[title="{nome_cartella}"]').wait_for(state="visible", timeout=5000)
         page.locator(f'button[title="{nome_cartella}"]').click(button="right")
-        page.locator('button:has-text("Modifica cartella")').wait_for(state="visible", timeout=5000)
-        page.locator('button:has-text("Modifica cartella")').click()
+        page.locator('button:has-text("Modifica cartella"), button:has-text("Modifier le dossier")').wait_for(state="visible", timeout=5000)
+        page.locator('button:has-text("Modifica cartella"), button:has-text("Modifier le dossier")').click()
 
         # Modifica nome cartella
         page.locator('input[aria-label="input field"]').wait_for(state="visible", timeout=5000)
         page.locator('input[aria-label="input field"]').fill(nuovo_nome_cartella)
 
         # Salva modifica
-        page.locator('.cdk-overlay-pane button:has-text("Salva")').first.click()
+        page.locator('.cdk-overlay-pane button:has-text("Salva"), .cdk-overlay-pane button:has-text("Enregistrer")').first.click()
 
         # Verifica toast di conferma modifica
         toast = page.locator("div.aru-toast__message").filter(has_text="La cartella è stata modificata.").first
@@ -75,9 +75,9 @@ def test_cartella(page):
                 btn = page.locator(f'button[title="{nome}"]').first
                 if btn.count() > 0 and btn.is_visible():
                     btn.click(button="right")
-                    page.locator('button:has-text("Elimina cartella")').wait_for(state="visible", timeout=3000)
-                    page.locator('button:has-text("Elimina cartella")').click()
-                    page.locator('span[title="Elimina"]').click()
+                    page.locator('button:has-text("Elimina cartella"), button:has-text("Supprimer le dossier")').wait_for(state="visible", timeout=3000)
+                    page.locator('button:has-text("Elimina cartella"), button:has-text("Supprimer le dossier")').click()
+                    page.locator('span[title="Elimina"], span[title="Supprimer"]').click()
                     page.wait_for_timeout(500)
             except Exception:
                 pass

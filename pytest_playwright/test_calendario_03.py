@@ -31,24 +31,24 @@ def test_creazione_invio_evento(page):
 
     try:
         # Crea nuovo evento
-        page.get_by_role("button", name="Calendario").click()
+        page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
         page.locator("button").filter(has_text="Nuovo evento").click()
         page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
         page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
-        page.get_by_role("button", name="Salva").click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
         page.locator("a").filter(has_text=titolo_evento).first.wait_for(state="visible", timeout=15000)
         page.locator("a").filter(has_text=titolo_evento).first.click()
         # Modifica evento
-        page.get_by_role("button", name="Modifica").wait_for(state="visible", timeout=5000)
-        page.get_by_role("button", name="Modifica").click()
+        page.locator('button:has-text("Modifica"), button:has-text("Modifier")').first.wait_for(state="visible", timeout=5000)
+        page.locator('button:has-text("Modifica"), button:has-text("Modifier")').first.click()
         page.locator('input[aria-label="input chosen"]').nth(1).wait_for(state="visible", timeout=5000)
         page.locator('input[aria-label="input chosen"]').nth(1).fill(config["destinatari"]["destinatario_principale"])
         page.get_by_role("textbox", name="input chosen").press("Enter")
         page.wait_for_timeout(1000)
-        page.get_by_role("button", name="Salva").click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
         page.wait_for_timeout(1000)
         try:
-            page.get_by_role("button", name="Invia").first.click(timeout=10000)
+            page.locator('button:has-text("Invia"), button:has-text("Envoyer")').first.first.click(timeout=10000)
             page.wait_for_timeout(3000)
         except Exception:
             pass
@@ -62,14 +62,14 @@ def test_creazione_invio_evento(page):
         # Workaround bug app: "Nascondi ricevute" nasconde anche messaggi normali.
         # Clicca "Mostra ricevute" se visibile per ripristinare la vista completa.
         try:
-            mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
+            mostra_btn = page.locator('button:has-text("Mostra ricevute"), button:has-text("Afficher")').first
             if mostra_btn.is_visible(timeout=2000):
                 mostra_btn.click(force=True)
                 page.wait_for_timeout(2000)
         except Exception:
             pass
         # Aggiorna la posta
-        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
         page.wait_for_timeout(5000)
         # Aspetta che almeno un record sia visibile
         page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=15000)

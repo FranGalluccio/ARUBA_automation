@@ -29,7 +29,7 @@ def test_invio_messaggio_semplice(page):
     )
 
     # Invia
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Aspetta toast di conferma
     toast = page.locator("div.aru-toast__message").first
@@ -43,4 +43,6 @@ def test_invio_messaggio_semplice(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert "Il messaggio è stato inviato" in toast.text_content()
+    toast_text = toast.text_content()
+    assert "Il messaggio è stato inviato" in toast_text or "envoyé" in toast_text.lower(), \
+        f"Toast di conferma invio non trovato: {toast_text!r}"

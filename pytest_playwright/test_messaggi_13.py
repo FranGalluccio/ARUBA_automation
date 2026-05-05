@@ -27,11 +27,11 @@ def test_risposta_a_tutti(page):
 
     # Invia messaggio a se stessi come base per il reply all
     Helper.crea_messaggio(page, config, oggetto=oggetto, corpo="Corpo del messaggio originale")
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Workaround bug app: "Nascondi ricevute" nasconde anche i messaggi normali
     try:
-        mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
+        mostra_btn = page.locator('button:has-text("Mostra ricevute"), button:has-text("Afficher")').first
         if mostra_btn.is_visible(timeout=2000):
             mostra_btn.click(force=True)
             page.wait_for_timeout(1000)
@@ -41,11 +41,11 @@ def test_risposta_a_tutti(page):
     # Polling: cerca il messaggio originale per oggetto (fino a 80s)
     # has_not= esclude le ricevute di consegna/accettazione che hanno lo stesso soggetto
     msg_orig = page.locator('div.frame-record-desktop').filter(has_text=oggetto).filter(
-        has_not=page.locator('aru-symbol[title="Ricevuta di consegna"], aru-symbol[title="Ricevuta di accettazione"]')
+        has_not=page.locator('aru-symbol[title="Ricevuta di consegna"], aru-symbol[title="Ricevuta di accettazione"], aru-symbol[title="Accusé de livraison"], aru-symbol[title="Accusé de réception"]')
     )
     for _ in range(20):
         page.wait_for_timeout(4000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
         page.wait_for_timeout(1000)
         if msg_orig.count() > 0:
             break
@@ -57,19 +57,20 @@ def test_risposta_a_tutti(page):
     # Scope Chiudi a .cdk-overlay-pane per non chiudere accidentalmente il pannello lettura.
     try:
         page.locator(
-            'button:has-text("Ricordarmelo"), button:has-text("Non ora"), '
-            '.cdk-overlay-pane button[aria-label="Chiudi"], button:has-text("Ho capito")'
+            'button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Non ora"), button:has-text("Pas maintenant"), '
+            '.cdk-overlay-pane button[aria-label="Chiudi"], .cdk-overlay-pane button[aria-label="Fermer"], button:has-text("Ho capito")'
         ).first.click(timeout=2000)
     except Exception:
         pass
 
     # Rispondi a tutti (aru-symbol in Aruba, button in SMB/white-label)
     page.locator(
-        'aru-symbol[title="Rispondi a tutti"], button[title="Rispondi a tutti"], [aria-label="Rispondi a tutti"]'
+        'aru-symbol[title="Rispondi a tutti"], button[title="Rispondi a tutti"], [aria-label="Rispondi a tutti"], '
+        'aru-symbol[title="Répondre à tous"], button[title="Répondre à tous"], [aria-label="Répondre à tous"]'
     ).first.click(timeout=30000)
     page.locator("div[contenteditable='true']").first.wait_for(state="visible", timeout=5000)
     page.locator("div[contenteditable='true']").first.fill("Risposta a tutti automatica tramite Playwright")
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Verifica in Inviati che la risposta sia stata inviata con prefisso "Re:"
     # (Inviati si aggiorna immediatamente dopo l'invio, senza attendere la consegna)
@@ -77,9 +78,12 @@ def test_risposta_a_tutti(page):
     page.wait_for_timeout(2000)
     # Naviga a Inviati
     try:
-        page.locator('button[title="Inviati"]').first.click(timeout=5000)
+        page.locator('button[title="Inviati"], button[title="Messages envoyés"]').first.click(timeout=5000)
     except Exception:
-        page.get_by_label("Inviati").first.click()
+        try:
+            page.get_by_label("Inviati").first.click()
+        except Exception:
+            page.get_by_label("Messages envoyés").first.click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=10000)
 
     # Cerca prima "Re: {oggetto}", poi "{oggetto}" come fallback
@@ -91,7 +95,7 @@ def test_risposta_a_tutti(page):
             if msg.count() > 0:
                 found_msg = msg
                 break
-            page.locator('aru-symbol[title="Aggiorna"]').click()
+            page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
             page.wait_for_timeout(2000)
         if found_msg is not None:
             break

@@ -37,13 +37,13 @@ def test_messaggio_alta_priorita(page):
     page.locator('aru-button#high-priority').click()
 
     # Invia
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Polling: cerca il messaggio specifico per oggetto (non il primo in assoluto)
     msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto)
     for _ in range(20):
         page.wait_for_timeout(3000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
         page.wait_for_timeout(1000)
         if msg.count() > 0:
             break

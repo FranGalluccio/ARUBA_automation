@@ -51,12 +51,12 @@ def test_elimina_gruppo(page):
         cb = page.get_by_role("checkbox").first
         if cb.count() > 0:
             cb.click()
-        page.get_by_role("button", name="Aggiungi contatti").click()
-        page.get_by_role("button", name="Salva").wait_for(state="visible", timeout=3000)
+        page.locator('button:has-text("Aggiungi contatti"), button:has-text("Ajouter des contacts")').first.click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.wait_for(state="visible", timeout=3000)
     except Exception:
         pass
 
-    page.get_by_role("button", name="Salva").click()
+    page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
     try:
         # Verifica che il gruppo sia stato creato nella sidebar
@@ -71,11 +71,11 @@ def test_elimina_gruppo(page):
         # Cerca voci del menu contestuale
         menu_item_found = False
         for selector in [
-            'aru-menu-item:has-text("Elimina")',
-            'button:has-text("Elimina gruppo")',
-            'button:has-text("Elimina")',
-            '[role="menuitem"]:has-text("Elimina")',
-            'li:has-text("Elimina")',
+            'aru-menu-item:has-text("Elimina"), button:has-text("Supprimer")',
+            'button:has-text("Elimina gruppo"), button:has-text("Supprimer le groupe")',
+            'button:has-text("Elimina"), button:has-text("Supprimer")',
+            '[role="menuitem"]:has-text("Elimina"), button:has-text("Supprimer")',
+            'li:has-text("Elimina"), button:has-text("Supprimer")',
         ]:
             try:
                 item = page.locator(selector).first
@@ -90,12 +90,12 @@ def test_elimina_gruppo(page):
 
         # Conferma eliminazione
         try:
-            confirm_btn = page.locator('.cdk-overlay-pane button:has-text("Elimina")').first
+            confirm_btn = page.locator('.cdk-overlay-pane button:has-text("Elimina"), button:has-text("Supprimer")').first
             confirm_btn.wait_for(state="visible", timeout=3000)
             confirm_btn.click()
         except Exception:
             for confirm_sel in [
-                'button[title="Si"]', 'button:has-text("Sì")', 'button:has-text("Si")',
+                'button[title="Si"], button[title="Oui"]', 'button:has-text("Sì")', 'button:has-text("Si")',
             ]:
                 try:
                     btn = page.locator(confirm_sel).first
@@ -127,18 +127,18 @@ def test_elimina_gruppo(page):
             if group_btn.count() > 0:
                 group_btn.click(button="right")
                 for sel in [
-                    'aru-menu-item:has-text("Elimina")',
-                    'button:has-text("Elimina gruppo")',
-                    'button:has-text("Elimina")',
-                    '[role="menuitem"]:has-text("Elimina")',
+                    'aru-menu-item:has-text("Elimina"), button:has-text("Supprimer")',
+                    'button:has-text("Elimina gruppo"), button:has-text("Supprimer le groupe")',
+                    'button:has-text("Elimina"), button:has-text("Supprimer")',
+                    '[role="menuitem"]:has-text("Elimina"), button:has-text("Supprimer")',
                 ]:
                     item = page.locator(sel).first
                     if item.is_visible():
                         item.click()
                         break
                 for confirm_sel in [
-                    '.cdk-overlay-pane button:has-text("Elimina")',
-                    'button[title="Si"]', 'button:has-text("Sì")',
+                    '.cdk-overlay-pane button:has-text("Elimina"), button:has-text("Supprimer")',
+                    'button[title="Si"], button[title="Oui"]', 'button:has-text("Sì")',
                 ]:
                     try:
                         btn = page.locator(confirm_sel).first

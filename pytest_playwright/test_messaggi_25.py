@@ -35,7 +35,7 @@ def test_invio_allegati_multipli(page):
             if not page.locator('.cdk-overlay-backdrop').is_visible():
                 break
             try:
-                btn = page.locator('button:has-text("Ricordarmelo"), button:has-text("Chiudi"), button:has-text("Non ora")').first
+                btn = page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Chiudi"), button:has-text("Non ora"), button:has-text("Pas maintenant")').first
                 if btn.is_visible():
                     btn.click(force=True)
                     page.wait_for_timeout(300)
@@ -46,13 +46,13 @@ def test_invio_allegati_multipli(page):
                 break
 
     destinatario = config["destinatari"]["destinatario_principale"]
-    page.locator("button:has-text('Nuovo messaggio')").click(force=True)
+    page.locator("button:has-text('Nuovo messaggio'), button:has-text('Nouveau message')").click(force=True)
 
     try:
-        page.locator("input[placeholder='Destinatari']").fill(destinatario, timeout=2000)
+        page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']").fill(destinatario, timeout=2000)
     except Exception:
         page.locator('input[aria-label="input field"]').click()
-        page.locator("input[placeholder='Destinatari']").fill(destinatario)
+        page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']").fill(destinatario)
 
     page.locator('input[aria-label="input field"]').fill(oggetto)
     page.locator("div[contenteditable='true']").fill("Test automatico invio con allegati multipli")
@@ -60,14 +60,14 @@ def test_invio_allegati_multipli(page):
     # Allega primo file
     page.locator("aru-button-menu:has(use[href*='attachments-outline'])").click()
     with page.expect_file_chooser() as fc_info:
-        page.locator("aru-menu-item", has_text="Carica da dispositivo").first.click()
+        page.locator("aru-menu-item:has-text('Carica da dispositivo'), aru-menu-item:has-text('appareil'), aru-menu-item:has-text('dispositivo')").first.click()
     fc_info.value.set_files([path_allegato])
     page.wait_for_timeout(3000)
 
     # Allega secondo file (stesso file, nome diverso non necessario per il test)
     page.locator("aru-button-menu:has(use[href*='attachments-outline'])").click()
     with page.expect_file_chooser() as fc_info2:
-        page.locator("aru-menu-item", has_text="Carica da dispositivo").first.click()
+        page.locator("aru-menu-item:has-text('Carica da dispositivo'), aru-menu-item:has-text('appareil'), aru-menu-item:has-text('dispositivo')").first.click()
     fc_info2.value.set_files([path_allegato])
     page.wait_for_timeout(3000)
 
@@ -91,9 +91,9 @@ def test_invio_allegati_multipli(page):
     )
 
     # Invia il messaggio
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
     page.wait_for_timeout(5000)
 
     # Verifica che il messaggio sia stato inviato (naviga agli inviati)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
     page.wait_for_timeout(2000)

@@ -27,7 +27,7 @@ def test_import_export_calendario(page: Page):
 
     try:
         # --- Vai al calendario ---
-        page.get_by_role("button", name="Calendario").click()
+        page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
         page.wait_for_load_state("load")
 
         # Chiudi cookie banner se presente (blocca click su Importa)

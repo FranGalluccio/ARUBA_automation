@@ -24,11 +24,11 @@ def test_regole_messaggi(page):
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
     dismiss_overlay(page)
     # Espandi l'accordion "Messaggi e scrittura" se necessario
-    if not page.locator('button[title="Regole messaggi"]').is_visible():
-        page.locator('button[title="Messaggi e scrittura"]').first.click(force=True)
-        page.locator('button[title="Regole messaggi"]').first.wait_for(state="visible", timeout=8000)
+    if not page.locator('button[title="Regole messaggi"], button[title="Règles des messages"]').is_visible():
+        page.locator('button[title="Messaggi e scrittura"], button[title="Messages et rédaction"]').first.click(force=True)
+        page.locator('button[title="Regole messaggi"], button[title="Règles des messages"]').first.wait_for(state="visible", timeout=8000)
     dismiss_overlay(page)
-    page.locator('button[title="Regole messaggi"]').click(force=True)
+    page.locator('button[title="Regole messaggi"], button[title="Règles des messages"]').click(force=True)
 
     # Verifica che la pagina Regole messaggi sia caricata
     page.locator('h1, [class*="filter"], [class*="rule"]').first.wait_for(state="visible", timeout=8000)
@@ -71,7 +71,7 @@ def test_regole_messaggi(page):
     # Cleanup: elimina la regola
     try:
         row = page.locator('[class*="rule"], [class*="regola"], tr, li').filter(has_text=nome_regola).first
-        row.locator('button[title="Elimina"], aru-symbol[title="Elimina"]').click()
-        page.locator('button[title="Si"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=2000)
+        row.locator('button[title="Elimina"], aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"]').click()
+        page.locator('button[title="Si"], button[title="Oui"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=2000)
     except Exception:
         pass

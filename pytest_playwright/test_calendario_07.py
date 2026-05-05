@@ -20,7 +20,7 @@ def test_naviga_periodi_calendario(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    page.get_by_role("button", name="Calendario").click()
+    page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
 
     # Leggi il testo dell'header corrente dal mini-calendar sidebar ("Marzo 2026")
     header = page.locator('div.vanilla-calendar-header__content').first

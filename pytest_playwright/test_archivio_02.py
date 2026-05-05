@@ -19,9 +19,9 @@ def _click_waffle_menu(page):
     waffle_selectors = [
         'aru-button:has(aru-symbol[symbol="services2"])',
         'button:has(aru-symbol[symbol="services2"])',
-        'button[aria-label="Servizi"]',
-        'button[title="Servizi"]',
-        '[aria-label="Servizi"]',
+        'button[aria-label="Servizi"], [aria-label="Services"]',
+        'button[title="Servizi"], button[title="Services"]',
+        '[aria-label="Servizi"], [aria-label="Services"]',
     ]
     for sel in waffle_selectors:
         try:
@@ -44,7 +44,7 @@ def test_archivio_messaggio_inviato(page):
     app_base = get_app_base_url(page)
 
     # --- Verifica disponibilità + Step 1: naviga all'URL archivio ---
-    # (button[title="Archivio"] è sempre hidden; la feature è confermata
+    # (button[title="Archivio"], button[title="Archive"] è sempre hidden; la feature è confermata
     #  dal caricamento dell'h1 sulla pagina di configurazione)
     page.goto(app_base + "/new/settings/archive", timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
@@ -100,7 +100,7 @@ def test_archivio_messaggio_inviato(page):
         salva.wait_for(state="visible", timeout=10000)
         salva.click()
     except Exception:
-        page.get_by_role("button", name="Salva").first.click(timeout=15000)
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.first.click(timeout=15000)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_config_{datetime.now():%H-%M-%S}.png"))
 
@@ -118,7 +118,7 @@ def test_archivio_messaggio_inviato(page):
     )
 
     # Invia il messaggio (stesso pattern usato negli altri test)
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
     page.wait_for_timeout(2000)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_inviato_{datetime.now():%H-%M-%S}.png"))
@@ -134,7 +134,7 @@ def test_archivio_messaggio_inviato(page):
 
     # Dismetti eventuale overlay
     try:
-        page.locator('button:has-text("Ricordarmelo"), button:has-text("Non ora"), button[aria-label="Chiudi"]').first.click(timeout=2000)
+        page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Non ora"), button:has-text("Pas maintenant"), button[aria-label="Chiudi"], [aria-label="Fermer"]').first.click(timeout=2000)
     except Exception:
         pass
 
@@ -148,7 +148,7 @@ def test_archivio_messaggio_inviato(page):
     if _click_waffle_menu(page):
         try:
             archivio_btn = page.locator(
-                'aru-button[title="Archivio"], button[title="Archivio"]'
+                'aru-button[title="Archivio"], button[title="Archive"], button[title="Archivio"], button[title="Archive"]'
             ).first
             archivio_btn.wait_for(state="visible", timeout=5000)
             archivio_btn.click()
@@ -166,7 +166,7 @@ def test_archivio_messaggio_inviato(page):
     # --- Step 4: cerca il messaggio nella barra di ricerca dell'archivio ---
     # Dismetti eventuale overlay/cookie
     try:
-        archivio_page.locator('button:has-text("Accetta tutti"), button:has-text("Ricordarmelo"), button[aria-label="Chiudi"]').first.click(timeout=2000)
+        archivio_page.locator('button:has-text("Accetta tutti"), button:has-text("Accepter tout"), button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button[aria-label="Chiudi"], [aria-label="Fermer"]').first.click(timeout=2000)
     except Exception:
         pass
 

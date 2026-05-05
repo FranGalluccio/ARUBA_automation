@@ -217,12 +217,12 @@ class Helper:
                     break
 
     # --- Nuovo messaggio ---
-        page.locator("button:has-text('Nuovo messaggio')").click(force=True)
+        page.locator("button:has-text('Nuovo messaggio'), button:has-text('Nouveau message')").click(force=True)
         try:
-            page.locator("input[placeholder='Destinatari']").fill(destinatario, timeout=2000)
+            page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']").fill(destinatario, timeout=2000)
         except:
             page.locator('input[aria-label="input field"]').click()
-            page.locator("input[placeholder='Destinatari']").fill(destinatario)
+            page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']").fill(destinatario)
     # Oggetto e corpo
         page.locator('input[aria-label="input field"]').fill(oggetto)
         page.locator("div[contenteditable='true']").fill(corpo)
@@ -231,7 +231,7 @@ class Helper:
         if path_allegato:
                 page.locator("aru-button-menu:has(use[href*='attachments-outline'])").click()
                 with page.expect_file_chooser() as fc_info:
-                    page.locator("aru-menu-item", has_text="Carica da dispositivo").first.click()
+                    page.locator("aru-menu-item:has-text('Carica da dispositivo'), aru-menu-item:has-text('appareil'), aru-menu-item:has-text('dispositivo')").first.click()
                 file_chooser = fc_info.value
                 file_chooser.set_files([path_allegato])
                 page.wait_for_timeout(5000)

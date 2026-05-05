@@ -37,12 +37,12 @@ def test_import_fattura_ricevute(page):
     fatture_url = app_base + "/new/messages/ArubaVrtSearch/Fatturazione%20Elettronica"
 
     try:
-        page.locator('button:has-text("Ricordarmelo"), button:has-text("Non ora"), button[aria-label="Chiudi"]').first.click(timeout=2000)
+        page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Non ora"), button:has-text("Pas maintenant"), button[aria-label="Chiudi"], [aria-label="Fermer"]').first.click(timeout=2000)
     except Exception:
         pass
 
     # --- Verifica disponibilità feature ---
-    fatture_btn = page.locator('button[title="Fatture ricevute"]').first
+    fatture_btn = page.locator('button[title="Fatture ricevute"], button[title="Factures reçues"]').first
     if not fatture_btn.is_visible():
         pytest.skip("Feature 'Fatture ricevute' non disponibile in questo ambiente")
 
@@ -211,13 +211,13 @@ def test_import_fattura_ricevute(page):
 
     # --- Cleanup: elimina tutte le fatture (2 passaggi) ---
     ELIMINA_BTN = (
-        'button:has(aru-symbol[title="Elimina"]), '
-        'aru-button:has(aru-symbol[title="Elimina"]), '
+        'button:has(aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"]), '
+        'aru-button:has(aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"]), '
         'button[title="Elimina"]'
     )
     ELIMINA_DEF = (
-        'button:has-text("Elimina definitivamente"), '
-        'aru-button:has-text("Elimina definitivamente")'
+        'button:has-text("Elimina definitivamente"), button:has-text("Supprimer définitivement"), '
+        'aru-button:has-text("Elimina definitivamente"), button:has-text("Supprimer définitivement")'
     )
     try:
         # Step 1: seleziona → Elimina (sposta nel Cestino)
@@ -226,7 +226,7 @@ def test_import_fattura_ricevute(page):
         page.locator(ELIMINA_BTN).first.click()
         page.wait_for_timeout(1000)
         try:
-            page.get_by_role("button", name="Sì").click(timeout=2000)
+            page.locator('button:has-text("Sì"), button:has-text("Oui")').first.click(timeout=2000)
             page.wait_for_timeout(1000)
         except Exception:
             pass

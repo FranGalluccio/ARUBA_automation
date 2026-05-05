@@ -39,26 +39,26 @@ def test_salva_e_usa_modello(page):
 
     # Salva come modello usando il menu a tendina accanto al pulsante Invia
     page.locator("#new-message\\.save-menu").click(force=True)
-    page.locator('button[title="Salva come modello"]').wait_for(state="visible", timeout=5000)
-    page.locator('button[title="Salva come modello"]').click()
+    page.locator('button[title="Salva come modello"], button[title="Enregistrer comme modèle"]').wait_for(state="visible", timeout=5000)
+    page.locator('button[title="Salva come modello"], button[title="Enregistrer comme modèle"]').click()
     page.wait_for_timeout(500)
 
     # Chiudi il dialog del messaggio (pulsante Chiudi nella toolbar del compose)
     try:
-        page.locator('button[title="Chiudi"]').last.click(force=True)
+        page.locator('button[title="Chiudi"], [title="Fermer"], button[title="Fermer"]').last.click(force=True)
         page.wait_for_timeout(500)
     except Exception:
         pass
 
     # Se compare dialog di conferma chiusura, conferma
     try:
-        page.locator('button[title="Si"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=2000)
+        page.locator('button[title="Si"], button[title="Oui"], button:has-text("Sì"), button:has-text("Si")').first.click(timeout=2000)
         page.wait_for_timeout(500)
     except Exception:
         pass
 
     # Apri la cartella Modelli e verifica che il modello sia presente
-    page.locator('button[title="Modelli"]').click()
+    page.locator('button[title="Modelli"], button[title="Modèles"]').click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     # Verifica che il modello salvato con il nome univoco sia visibile nella lista
@@ -78,11 +78,11 @@ def test_salva_e_usa_modello(page):
         modello_row.click()
         page.wait_for_timeout(500)
         page.locator(
-            'button:has(aru-symbol[title="Elimina"]), aru-button:has(aru-symbol[title="Elimina"]), button[title="Elimina"]'
+            'button:has(aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"]), aru-button:has(aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"]), button[title="Elimina"]'
         ).first.click()
         page.wait_for_timeout(500)
         try:
-            page.get_by_role("button", name="Sì").first.click(timeout=2000)
+            page.locator('button:has-text("Sì"), button:has-text("Oui")').first.first.click(timeout=2000)
             page.wait_for_timeout(500)
         except Exception:
             pass

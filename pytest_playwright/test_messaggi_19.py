@@ -27,10 +27,10 @@ def test_invio_messaggio_con_cc(page):
     destinatario = config["destinatari"]["destinatario_principale"]
 
     # Apri nuovo messaggio
-    page.locator("button:has-text('Nuovo messaggio')").click()
+    page.locator("button:has-text('Nuovo messaggio'), button:has-text('Nouveau message')").click()
 
     # Compila destinatario principale
-    to_input = page.locator("input[placeholder='Destinatari']").first
+    to_input = page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']").first
     to_input.wait_for(state="visible", timeout=5000)
     to_input.fill(destinatario)
     to_input.press("Enter")
@@ -39,8 +39,8 @@ def test_invio_messaggio_con_cc(page):
     page.locator('button[title="CC"]').click()
     page.wait_for_timeout(1000)
     cc_destinatario = config["destinatari"].get("destinatario_secondario", destinatario)
-    cc_inputs = page.locator("input[placeholder='Destinatari']").all()
-    cc_input = cc_inputs[-1] if len(cc_inputs) >= 2 else page.locator("input[placeholder='Destinatari']").first
+    cc_inputs = page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']").all()
+    cc_input = cc_inputs[-1] if len(cc_inputs) >= 2 else page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']").first
     cc_input.fill(cc_destinatario)
 
     # Compila oggetto e corpo
@@ -48,7 +48,7 @@ def test_invio_messaggio_con_cc(page):
     page.locator("div[contenteditable='true']").fill("Corpo del messaggio con CC")
 
     # Invia
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Aspetta toast di conferma invio (timeout più lungo per SMB)
     toast = page.locator("div.aru-toast__message").first
@@ -57,7 +57,7 @@ def test_invio_messaggio_con_cc(page):
 
     # Aspetta ricezione, aggiorna e apri il primo messaggio
     page.wait_for_timeout(10000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
     page.wait_for_timeout(2000)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
     page.locator('div.frame-record-desktop').first.click()

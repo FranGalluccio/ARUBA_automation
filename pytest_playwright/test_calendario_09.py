@@ -25,7 +25,7 @@ def test_evento_con_promemoria(page):
     titolo_evento = f"evento con promemoria playwright {ts}"
 
     try:
-        page.get_by_role("button", name="Calendario").click()
+        page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
 
         # Crea nuovo evento
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
@@ -33,7 +33,7 @@ def test_evento_con_promemoria(page):
         page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
 
         # Aggiungi promemoria - apre un dialog con "Salva" e "Annulla"
-        page.locator('button[title="Aggiungi promemoria"]').click()
+        page.locator('button[title="Aggiungi promemoria"], button[title="Ajouter un rappel"]').click()
         page.wait_for_timeout(500)
 
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_reminder_{datetime.now():%H-%M-%S}.png"))
@@ -77,7 +77,7 @@ def test_evento_con_promemoria(page):
         page.wait_for_timeout(1000)
 
         # Ora salva l'evento (il "Salva" nel pannello laterale del form evento)
-        page.get_by_role("button", name="Salva").first.click(force=True)
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.first.click(force=True)
         # Attendi la toast di conferma salvataggio (scompare rapidamente)
         try:
             page.locator("div.aru-toast__message").wait_for(state="visible", timeout=10000)
@@ -88,7 +88,7 @@ def test_evento_con_promemoria(page):
 
         # Vai alla vista "Events" per trovare l'evento più facilmente
         try:
-            page.get_by_role("button", name="Calendario").click()
+            page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
             page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
             page.get_by_role("button", name="Eventi").click(force=True)
             page.wait_for_timeout(8000)

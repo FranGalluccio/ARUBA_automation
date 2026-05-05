@@ -30,15 +30,17 @@ def test_verifica_cartella_inviati(page):
         oggetto=oggetto_inviato,
         corpo="Corpo del messaggio per verifica cartella inviati",
     )
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Aspetta toast conferma
     toast = page.locator("div.aru-toast__message").first
     expect(toast).to_be_visible()
-    assert "Il messaggio è stato inviato" in toast.text_content()
+    toast_text = toast.text_content()
+    assert "Il messaggio è stato inviato" in toast_text or "envoyé" in toast_text.lower(), \
+        f"Toast di conferma invio non rilevato: {toast_text}"
 
     # Apri cartella Inviati
-    page.locator('button[title="Inviati"]').click()
+    page.locator('button[title="Inviati"], button[title="Messages envoyés"]').click()
 
     # Verifica che ci siano messaggi nella cartella Inviati
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)

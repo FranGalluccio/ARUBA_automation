@@ -22,10 +22,10 @@ def test_risposta_automatica(page):
     # Vai alle impostazioni → Avvisi e report (URL calcolato dopo il login per supportare prod-aruba)
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
     # Espandi l'accordion "Messaggi e scrittura" se necessario
-    if not page.locator('button[title="Avvisi e report"]').is_visible():
-        page.locator('button[title="Messaggi e scrittura"]').first.click(force=True)
-        page.locator('button[title="Avvisi e report"]').first.wait_for(state="visible", timeout=5000)
-    page.locator('button[title="Avvisi e report"]').click(force=True)
+    if not page.locator('button[title="Avvisi e report"], button[title="Alertes et rapports"]').is_visible():
+        page.locator('button[title="Messaggi e scrittura"], button[title="Messages et rédaction"]').first.click(force=True)
+        page.locator('button[title="Avvisi e report"], button[title="Alertes et rapports"]').first.wait_for(state="visible", timeout=5000)
+    page.locator('button[title="Avvisi e report"], button[title="Alertes et rapports"]').click(force=True)
 
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_impostazioni_04_pre_{datetime.now():%H-%M-%S}.png"))
 

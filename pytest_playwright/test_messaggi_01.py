@@ -37,13 +37,13 @@ def test_messaggio_con_allegato(page):
     )
 
     # Invia
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Aspetta ricezione del messaggio con allegato (poll per oggetto)
     msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto)
     for _ in range(20):
         page.wait_for_timeout(4000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
         page.wait_for_timeout(1000)
         if msg.count() > 0:
             break
@@ -52,7 +52,7 @@ def test_messaggio_con_allegato(page):
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Apri in nuova finestra
-    link_external_button = page.locator('aru-symbol[title="Apri in una nuova finestra"]').first
+    link_external_button = page.locator('aru-symbol[title="Apri in una nuova finestra"], aru-symbol[title="Ouvrir dans une nouvelle fenêtre"]').first
     link_external_button.wait_for(state="visible", timeout=10000)
 
     with page.expect_popup() as popup_info:
@@ -84,5 +84,5 @@ def test_messaggio_con_allegato(page):
     attachment_loc.click()
 
     # Mostra anteprima
-    new_page.locator('text="Mostra anteprima"').first.click()
+    new_page.locator('text="Mostra anteprima", text="Aperçu", text="Afficher l\'aperçu"').first.click()
     new_page.wait_for_timeout(2000)

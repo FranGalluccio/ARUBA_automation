@@ -33,13 +33,13 @@ def test_segna_come_letto_da_leggere(page):
     )
 
     # Invia
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Polling: aspetta che il messaggio arrivi in inbox (fino a 90s)
     messaggio_arrivato = False
     for _ in range(22):
         page.wait_for_timeout(4000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
         page.wait_for_timeout(1000)
         if page.locator('div.frame-record-desktop').filter(has_text=oggetto).count() > 0:
             messaggio_arrivato = True

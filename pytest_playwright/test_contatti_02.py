@@ -41,7 +41,7 @@ def test_aggiungere_nuovo_gruppo(page):
         page.get_by_role("button", name="Procedi").click()
         page.get_by_placeholder("Inserisci nome").fill(contact_name)
         page.get_by_placeholder("Inserisci email").fill(f"gruppocontact_{ts}@{TEST_EMAIL_DOMAIN}")
-        page.get_by_role("button", name="Salva").click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
         page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
         # Crea il gruppo
@@ -54,9 +54,9 @@ def test_aggiungere_nuovo_gruppo(page):
         page.get_by_role("textbox", name="input search").fill(contact_name)
         page.get_by_role("checkbox", name=contact_name).first.wait_for(state="visible", timeout=5000)
         page.get_by_role("checkbox", name=contact_name).first.click()
-        page.get_by_role("button", name="Aggiungi contatti").click()
-        page.get_by_role("button", name="Salva").wait_for(state="visible", timeout=5000)
-        page.get_by_role("button", name="Salva").click()
+        page.locator('button:has-text("Aggiungi contatti"), button:has-text("Ajouter des contacts")').first.click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.wait_for(state="visible", timeout=5000)
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Percorso screenshot dinamico
         screenshot_path = os.path.join(
@@ -75,20 +75,20 @@ def test_aggiungere_nuovo_gruppo(page):
             group_btn = page.locator(f'button[title="{group_name}"]').first
             if group_btn.count() > 0:
                 group_btn.click(button="right")
-                page.locator('aru-menu-item:has-text("Elimina"), button:has-text("Elimina gruppo"), button:has-text("Elimina"), [role="menuitem"]:has-text("Elimina")').first.wait_for(state="visible", timeout=3000)
+                page.locator('aru-menu-item:has-text("Elimina"), button:has-text("Supprimer"), button:has-text("Elimina gruppo"), button:has-text("Supprimer le groupe"), button:has-text("Elimina"), button:has-text("Supprimer"), [role="menuitem"]:has-text("Elimina"), button:has-text("Supprimer")').first.wait_for(state="visible", timeout=3000)
                 for sel in [
-                    'aru-menu-item:has-text("Elimina")',
-                    'button:has-text("Elimina gruppo")',
-                    'button:has-text("Elimina")',
-                    '[role="menuitem"]:has-text("Elimina")',
+                    'aru-menu-item:has-text("Elimina"), button:has-text("Supprimer")',
+                    'button:has-text("Elimina gruppo"), button:has-text("Supprimer le groupe")',
+                    'button:has-text("Elimina"), button:has-text("Supprimer")',
+                    '[role="menuitem"]:has-text("Elimina"), button:has-text("Supprimer")',
                 ]:
                     item = page.locator(sel).first
                     if item.is_visible():
                         item.click()
                         break
                 for confirm_sel in [
-                    '.cdk-overlay-pane button:has-text("Elimina")',
-                    'button[title="Si"]', 'button:has-text("Sì")',
+                    '.cdk-overlay-pane button:has-text("Elimina"), button:has-text("Supprimer")',
+                    'button[title="Si"], button[title="Oui"]', 'button:has-text("Sì")',
                 ]:
                     try:
                         btn = page.locator(confirm_sel).first
@@ -108,11 +108,11 @@ def test_aggiungere_nuovo_gruppo(page):
             page.wait_for_timeout(2000)
             page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
-            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
+            page.locator('aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"], button[title="Elimina"]').first.click()
             try:
-                page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.wait_for(state="visible", timeout=5000)
-                page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click()
+                page.locator('.cdk-overlay-pane button:has-text("Elimina"), button:has-text("Supprimer")').first.wait_for(state="visible", timeout=5000)
+                page.locator('.cdk-overlay-pane button:has-text("Elimina"), button:has-text("Supprimer")').first.click()
             except Exception:
-                page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
+                page.locator('button[title="Si"], button[title="Oui"], button:has-text("Sì")').first.click(timeout=2000)
         except Exception:
             pass

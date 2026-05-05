@@ -33,7 +33,7 @@ def test_creazione_evento_ricorrente(page):
     titolo_evento = f"nuovo evento ricorrente playwright {ts}"
 
     # Crea nuovo evento ricorrente
-    page.get_by_role("button", name="Calendario").click()
+    page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
     page.get_by_role("button", name="Nuovo evento", exact=True).click()
     page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
     page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
@@ -45,11 +45,11 @@ def test_creazione_evento_ricorrente(page):
     .filter(has_text="Personalizza") \
     .filter(has=page.locator("button", has_text="Salva")) \
     .last \
-    .get_by_role("button", name="Salva") \
+    .locator('button:has-text("Salva"), button:has-text("Enregistrer")').first \
     .click()
 
     page.wait_for_timeout(500)
-    page.get_by_role("button", name="Salva").click()
+    page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
     try:
         page.wait_for_timeout(1000)

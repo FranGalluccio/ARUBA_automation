@@ -25,7 +25,7 @@ def test_evento_tutto_il_giorno(page):
     titolo_evento = f"evento tutto il giorno playwright {ts}"
 
     try:
-        page.get_by_role("button", name="Calendario").click()
+        page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
 
         # Crea nuovo evento
         page.get_by_role("button", name="Nuovo evento", exact=True).click()
@@ -60,7 +60,7 @@ def test_evento_tutto_il_giorno(page):
             page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_08_allday_{datetime.now():%H-%M-%S}.png"))
 
         # Salva
-        page.get_by_role("button", name="Salva").click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Verifica che l'evento sia presente nel calendario
         page.locator('a, [class*="event"]').filter(has_text=titolo_evento).first.wait_for(

@@ -20,7 +20,7 @@ def test_cambio_vista_calendario(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    page.get_by_role("button", name="Calendario").click()
+    page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
     page.locator('button[title="Giorno"]').wait_for(state="visible", timeout=8000)
 
     # Screenshot finale (calendario visibile con tutti i bottoni vista)

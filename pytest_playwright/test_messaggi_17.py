@@ -29,11 +29,11 @@ def test_ricerca_messaggi(page):
         oggetto=oggetto_univoco,
         corpo="Corpo del messaggio per test ricerca",
     )
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Aspetta consegna (CI può essere più lento)
     page.wait_for_timeout(15000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
     page.wait_for_timeout(2000)
 
     # Usa la barra di ricerca (input con classe aru-input-search__chosen__input-editable)

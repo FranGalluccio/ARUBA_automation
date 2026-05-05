@@ -29,7 +29,7 @@ def test_anomalia_invio_non_pec(page):
             if not page.locator('.cdk-overlay-backdrop').is_visible():
                 break
             try:
-                btn = page.locator('button:has-text("Ricordarmelo"), button:has-text("Chiudi"), button:has-text("Non ora")').first
+                btn = page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Chiudi"), button:has-text("Non ora"), button:has-text("Pas maintenant")').first
                 if btn.is_visible():
                     btn.click(force=True)
                     page.wait_for_timeout(300)
@@ -43,17 +43,17 @@ def test_anomalia_invio_non_pec(page):
     oggetto = f"Test anomalia non-PEC {ts}"
 
     # Apri nuovo messaggio con destinatario non-PEC
-    page.locator("button:has-text('Nuovo messaggio')").click(force=True)
+    page.locator("button:has-text('Nuovo messaggio'), button:has-text('Nouveau message')").click(force=True)
     try:
-        page.locator("input[placeholder='Destinatari']").fill(TEST_EXTERNAL_EMAIL, timeout=2000)
+        page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']").fill(TEST_EXTERNAL_EMAIL, timeout=2000)
     except Exception:
         page.locator('input[aria-label="input field"]').click()
-        page.locator("input[placeholder='Destinatari']").fill(TEST_EXTERNAL_EMAIL)
+        page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']").fill(TEST_EXTERNAL_EMAIL)
 
     page.locator('input[aria-label="input field"]').fill(oggetto)
     page.locator("div[contenteditable='true']").fill("Test automatico anomalia PEC - destinatario non-PEC")
 
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Attendi eventuale avviso di anomalia nella UI
     page.wait_for_timeout(5000)
@@ -74,9 +74,9 @@ def test_anomalia_invio_non_pec(page):
         return
 
     # Altrimenti controlla la inbox: la ricevuta di anomalia arriva come messaggio
-    page.locator("#messages").get_by_label("Messaggi").click()
+    page.locator("#messages").locator('[aria-label="Messaggi"], [aria-label="Messages"]').first.click()
     page.wait_for_timeout(3000)
-    page.locator('aru-symbol[title="Aggiorna"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
     page.wait_for_timeout(3000)
 
     frames = page.locator('div.frame-record-desktop').all()

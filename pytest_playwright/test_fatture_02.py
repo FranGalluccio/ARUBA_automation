@@ -21,7 +21,7 @@ def test_leggi_fatture_settings(page):
     app_base = get_app_base_url(page)
 
     try:
-        page.locator('button:has-text("Ricordarmelo"), button:has-text("Non ora"), button[aria-label="Chiudi"]').first.click(timeout=2000)
+        page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Non ora"), button:has-text("Pas maintenant"), button[aria-label="Chiudi"], [aria-label="Fermer"]').first.click(timeout=2000)
     except Exception:
         pass
 
@@ -32,7 +32,7 @@ def test_leggi_fatture_settings(page):
     # Espandi accordion "Account e sicurezza" se necessario
     try:
         if not page.locator('button[title="Leggi fatture"]').is_visible():
-            page.locator('button[title="Account e sicurezza"]').first.click(force=True)
+            page.locator('button[title="Account e sicurezza"], button[title="Compte et sécurité"]').first.click(force=True)
             page.locator('button[title="Leggi fatture"]').first.wait_for(state="visible", timeout=5000)
     except Exception:
         pass

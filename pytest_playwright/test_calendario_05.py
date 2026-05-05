@@ -26,14 +26,14 @@ def test_creazione_calendario(page):
     LoginPec(page).login_pec(config)
 
     # Crea nuovo calendario
-    page.get_by_role("button", name="Calendario").click()
+    page.locator('button:has-text("Calendario"), button:has-text("Calendrier")').first.click()
     page.get_by_role("button", name="Nuovo calendario").click()
     page.get_by_role("textbox", name="input field").wait_for(state="visible", timeout=5000)
     page.get_by_role("textbox", name="input field").click()
     page.get_by_role("textbox", name="input field").fill("Lavoro")
     page.locator("aru-webmail-input-color").get_by_role("button").click()
     page.locator(".aru-webmail-color-dot").first.click()
-    page.get_by_role("button", name="Salva").click()
+    page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
     # Verifica creazione calendario — aspetta la toast (scompare rapidamente)
     toast = page.locator("div.aru-toast__message").first
     toast.wait_for(state="visible", timeout=8000)
@@ -51,9 +51,9 @@ def test_creazione_calendario(page):
     try:
         page.get_by_role("checkbox", name="Lavoro").first.wait_for(state="visible", timeout=5000)
         page.get_by_role("checkbox", name="Lavoro").first.click(button="right")
-        page.get_by_role("menuitem", name="Elimina").wait_for(state="visible", timeout=3000)
-        page.get_by_role("menuitem", name="Elimina").click()
-        page.get_by_role("button", name="Sì").wait_for(state="visible", timeout=3000)
-        page.get_by_role("button", name="Sì").click()
+        page.locator('[role="menuitem"]:has-text("Elimina"), [role="menuitem"]:has-text("Supprimer")').first.wait_for(state="visible", timeout=3000)
+        page.locator('[role="menuitem"]:has-text("Elimina"), [role="menuitem"]:has-text("Supprimer")').first.click()
+        page.locator('button:has-text("Sì"), button:has-text("Oui")').first.wait_for(state="visible", timeout=3000)
+        page.locator('button:has-text("Sì"), button:has-text("Oui")').first.click()
     except Exception:
         pass

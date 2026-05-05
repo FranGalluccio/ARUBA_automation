@@ -21,14 +21,17 @@ def test_storico_accessi(page):
 
     # Vai alle impostazioni → Storico accessi (URL calcolato dopo il login per supportare prod-aruba)
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
-    if not page.locator('button[title="Storico accessi"]').is_visible():
-        page.locator('button[title="Account e sicurezza"]').click(force=True)
-        page.locator('button[title="Storico accessi"]').first.wait_for(state="visible", timeout=10000)
-    page.locator('button[title="Storico accessi"]').click(force=True)
+    storico_sel = 'button[title="Storico accessi"], button[title="Historique des accès"], button[title="Historique des accès"], button[title="Historique de connexion"]'
+    if not page.locator(storico_sel).is_visible():
+        page.locator('button[title="Account e sicurezza"], button[title="Compte et sécurité"], button[title="Compte et sécurité"]').click(force=True)
+        page.locator(storico_sel).first.wait_for(state="visible", timeout=10000)
+    page.locator(storico_sel).click(force=True)
 
     # Storico accessi si apre in una nuova scheda/finestra (link esterno)
     # Verifica che il bottone/link sia visibile e cliccabile
-    storico_btn = page.locator('button[title="Storico accessi"], a[title="Storico accessi"], button:has-text("Apri"), a:has-text("Apri")').first
+    storico_btn = page.locator(
+        f'{storico_sel}, a[title="Storico accessi"], button:has-text("Apri"), a:has-text("Apri"), button:has-text("Ouvrir")'
+    ).first
 
     # Screenshot
     screenshot_path = os.path.join(

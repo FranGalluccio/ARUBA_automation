@@ -25,7 +25,7 @@ def test_cartella_da_conservare(page):
 
     # Dismetti overlay eventuale
     try:
-        page.locator('button:has-text("Ricordarmelo"), button:has-text("Non ora"), button[aria-label="Chiudi"]').first.click(timeout=2000)
+        page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Non ora"), button:has-text("Pas maintenant"), button[aria-label="Chiudi"], [aria-label="Fermer"]').first.click(timeout=2000)
     except Exception:
         pass
 
@@ -70,7 +70,7 @@ def test_cartella_da_conservare(page):
 
     # --- Verifica link/pulsante alle impostazioni conservazione ---
     impostazioni_btn = page.locator(
-        'button:has-text("Impostazioni"), a:has-text("Impostazioni"), '
+        'button:has-text("Impostazioni"), button:has-text("Paramètres"), a:has-text("Impostazioni"), button:has-text("Paramètres"), '
         '[title*="Impostazioni"], [aria-label*="Impostazioni"]'
     )
     # Il bottone "Impostazioni." (con punto) potrebbe essere fuori viewport ma presente nel DOM

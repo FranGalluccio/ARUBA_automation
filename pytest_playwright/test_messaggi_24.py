@@ -29,16 +29,16 @@ def test_ricevuta_consegna(page):
         oggetto=oggetto,
         corpo="Test automatico ricevuta di consegna PEC",
     )
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Vai alla inbox e aggiorna con polling attivo (RD richiede più tempo della RA)
     page.wait_for_timeout(5000)
-    page.locator("#messages").get_by_label("Messaggi").first.click()
+    page.locator("#messages").locator('[aria-label="Messaggi"], [aria-label="Messages"]').first.first.click()
     page.wait_for_timeout(5000)
 
     # Mostra le ricevute se il banner è presente
     try:
-        mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
+        mostra_btn = page.locator('button:has-text("Mostra ricevute"), button:has-text("Afficher")').first
         if mostra_btn.is_visible():
             mostra_btn.click()
             page.wait_for_timeout(2000)
@@ -49,18 +49,18 @@ def test_ricevuta_consegna(page):
     found_rd = False
     for _ in range(20):
         page.wait_for_timeout(6000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
         page.wait_for_timeout(2000)
         # Riprova mostra ricevute se necessario
         try:
-            mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
+            mostra_btn = page.locator('button:has-text("Mostra ricevute"), button:has-text("Afficher")').first
             if mostra_btn.is_visible():
                 mostra_btn.click()
                 page.wait_for_timeout(1000)
         except Exception:
             pass
         if page.locator(
-            'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di consegna"])'
+            'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di consegna"], aru-symbol[title="Accusé de livraison"])'
         ).filter(has_text=oggetto).count() > 0:
             found_rd = True
             break
@@ -69,12 +69,12 @@ def test_ricevuta_consegna(page):
     body_ok = False
     if found_rd:
         rd_row = page.locator(
-            'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di consegna"])'
+            'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di consegna"], aru-symbol[title="Accusé de livraison"])'
         ).filter(has_text=oggetto).first
         rd_row.click()
 
         # Apri in nuova finestra
-        apri_btn = page.locator('aru-symbol[title="Apri in una nuova finestra"]').first
+        apri_btn = page.locator('aru-symbol[title="Apri in una nuova finestra"], aru-symbol[title="Ouvrir dans une nouvelle fenêtre"]').first
         apri_btn.wait_for(state="visible", timeout=10000)
         with page.expect_popup() as popup_info:
             apri_btn.click()
@@ -86,7 +86,7 @@ def test_ricevuta_consegna(page):
         pec_label = new_page.evaluate(
             "() => document.querySelector('aru-text#pecMessage')?.shadowRoot?.textContent?.trim() || ''"
         )
-        body_ok = "consegna" in pec_label.lower()
+        body_ok = "consegna" in pec_label.lower() or "livraison" in pec_label.lower()
         new_page.close()
 
         assert body_ok, (
@@ -96,7 +96,7 @@ def test_ricevuta_consegna(page):
 
     # Nascondi nuovamente le ricevute per non interferire con i test successivi
     try:
-        nascondi_btn = page.locator('button:has-text("Nascondi ricevute")').first
+        nascondi_btn = page.locator('button:has-text("Nascondi ricevute"), button:has-text("Masquer")').first
         if nascondi_btn.is_visible():
             nascondi_btn.click()
             page.wait_for_timeout(1000)

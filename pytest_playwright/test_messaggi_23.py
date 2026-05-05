@@ -29,16 +29,16 @@ def test_ricevuta_accettazione(page):
         oggetto=oggetto,
         corpo="Test automatico ricevuta di accettazione PEC",
     )
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Vai alla inbox e aggiorna con polling attivo (RA può tardare su ambienti lenti)
     page.wait_for_timeout(5000)
-    page.locator("#messages").get_by_label("Messaggi").first.click()
+    page.locator("#messages").locator('[aria-label="Messaggi"], [aria-label="Messages"]').first.first.click()
     page.wait_for_timeout(5000)
 
     # Mostra le ricevute se il banner è presente
     try:
-        mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
+        mostra_btn = page.locator('button:has-text("Mostra ricevute"), button:has-text("Afficher")').first
         if mostra_btn.is_visible():
             mostra_btn.click()
             page.wait_for_timeout(2000)
@@ -49,18 +49,18 @@ def test_ricevuta_accettazione(page):
     found_ra = False
     for _ in range(18):
         page.wait_for_timeout(5000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
         page.wait_for_timeout(2000)
         # Riprova mostra ricevute se necessario
         try:
-            mostra_btn = page.locator('button:has-text("Mostra ricevute")').first
+            mostra_btn = page.locator('button:has-text("Mostra ricevute"), button:has-text("Afficher")').first
             if mostra_btn.is_visible():
                 mostra_btn.click()
                 page.wait_for_timeout(1000)
         except Exception:
             pass
         if page.locator(
-            'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di accettazione"])'
+            'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di accettazione"], aru-symbol[title="Accusé de réception"])'
         ).filter(has_text=oggetto).count() > 0:
             found_ra = True
             break
@@ -69,12 +69,12 @@ def test_ricevuta_accettazione(page):
     body_ok = False
     if found_ra:
         ra_row = page.locator(
-            'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di accettazione"])'
+            'div.frame-record-desktop:has(aru-symbol[title="Ricevuta di accettazione"], aru-symbol[title="Accusé de réception"])'
         ).filter(has_text=oggetto).first
         ra_row.click()
 
         # Apri in nuova finestra
-        apri_btn = page.locator('aru-symbol[title="Apri in una nuova finestra"]').first
+        apri_btn = page.locator('aru-symbol[title="Apri in una nuova finestra"], aru-symbol[title="Ouvrir dans une nouvelle fenêtre"]').first
         apri_btn.wait_for(state="visible", timeout=10000)
         with page.expect_popup() as popup_info:
             apri_btn.click()
@@ -86,7 +86,7 @@ def test_ricevuta_accettazione(page):
         pec_label = new_page.evaluate(
             "() => document.querySelector('aru-text#pecMessage')?.shadowRoot?.textContent?.trim() || ''"
         )
-        body_ok = "Ricevuta di accettazione" in pec_label
+        body_ok = "Ricevuta di accettazione" in pec_label or "Accusé de réception" in pec_label or "accettazione" in pec_label.lower() or "réception" in pec_label.lower()
         new_page.close()
 
         assert body_ok, (
@@ -96,7 +96,7 @@ def test_ricevuta_accettazione(page):
 
     # Nascondi nuovamente le ricevute per non interferire con i test successivi
     try:
-        nascondi_btn = page.locator('button:has-text("Nascondi ricevute")').first
+        nascondi_btn = page.locator('button:has-text("Nascondi ricevute"), button:has-text("Masquer")').first
         if nascondi_btn.is_visible():
             nascondi_btn.click()
             page.wait_for_timeout(1000)

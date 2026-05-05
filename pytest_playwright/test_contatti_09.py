@@ -37,7 +37,7 @@ def test_scrivi_email_da_contatto(page):
         page.get_by_placeholder("Inserisci nome").fill(nome_test)
         page.get_by_placeholder("Inserisci cognome").fill("Contact")
         page.get_by_placeholder("Inserisci email").fill(email_contatto)
-        page.get_by_role("button", name="Salva").click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Cerca il contatto
         search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
@@ -59,7 +59,7 @@ def test_scrivi_email_da_contatto(page):
                     page.wait_for_timeout(500)
             except Exception:
                 pass
-            return page.locator('span[title="Invia"]').count() > 0
+            return page.locator('span[title="Invia"], span[title="Envoyer"]').count() > 0
 
         email_clicked = False
 
@@ -111,9 +111,9 @@ def test_scrivi_email_da_contatto(page):
 
         # Chiudi il dialog senza inviare
         try:
-            page.locator('button[title="Chiudi"]').last.click(force=True)
+            page.locator('button[title="Chiudi"], [title="Fermer"], button[title="Fermer"]').last.click(force=True)
             page.wait_for_timeout(500)
-            page.locator('button[title="Si"], button:has-text("Sì")').first.click(timeout=2000)
+            page.locator('button[title="Si"], button[title="Oui"], button:has-text("Sì")').first.click(timeout=2000)
         except Exception:
             try:
                 page.keyboard.press("Escape")
@@ -129,8 +129,8 @@ def test_scrivi_email_da_contatto(page):
             page.wait_for_timeout(2000)
             page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
-            page.locator('aru-symbol[title="Elimina"], button[title="Elimina"]').first.click()
-            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.wait_for(state="visible", timeout=5000)
-            page.locator('.cdk-overlay-pane button:has-text("Elimina")').first.click()
+            page.locator('aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"], button[title="Elimina"]').first.click()
+            page.locator('.cdk-overlay-pane button:has-text("Elimina"), button:has-text("Supprimer")').first.wait_for(state="visible", timeout=5000)
+            page.locator('.cdk-overlay-pane button:has-text("Elimina"), button:has-text("Supprimer")').first.click()
         except Exception:
             pass

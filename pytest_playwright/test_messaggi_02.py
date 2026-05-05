@@ -45,13 +45,13 @@ def test_messaggio_inoltrato(page):
     page.locator("div[contenteditable='true']").fill("Corpo del messaggio inoltrato")
 
     # Invia
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Polling: cerca il messaggio inoltrato per oggetto (non aprire il primo in assoluto)
     msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto_inoltro)
     for _ in range(30):
         page.wait_for_timeout(4000)
-        page.locator('aru-symbol[title="Aggiorna"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
         page.wait_for_timeout(1000)
         if msg.count() > 0:
             break

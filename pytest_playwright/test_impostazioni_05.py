@@ -24,10 +24,10 @@ def test_posta_indesiderata(page):
 
     # Vai alle impostazioni → Posta indesiderata (URL calcolato dopo il login per supportare prod-aruba)
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
-    if not page.locator('button[title="Posta indesiderata"]').is_visible():
-        page.locator('button[title="Account e sicurezza"]').click(force=True)
-        page.locator('button[title="Posta indesiderata"]').first.wait_for(state="visible", timeout=5000)
-    page.locator('button[title="Posta indesiderata"]').click(force=True)
+    if not page.locator('button[title="Posta indesiderata"], button[title="Courrier indésirable"]').is_visible():
+        page.locator('button[title="Account e sicurezza"], button[title="Compte et sécurité"]').click(force=True)
+        page.locator('button[title="Posta indesiderata"], button[title="Courrier indésirable"]').first.wait_for(state="visible", timeout=5000)
+    page.locator('button[title="Posta indesiderata"], button[title="Courrier indésirable"]').click(force=True)
 
     # Screenshot
     screenshot_path = os.path.join(
@@ -45,12 +45,12 @@ def test_posta_indesiderata(page):
     # Aggiunge un mittente alla lista di blocco
     mittente_blocco = TEST_SPAM_EMAIL
     try:
-        page.get_by_role("button", name="Aggiungi").click()
+        page.locator('button:has-text("Aggiungi"), button:has-text("Ajouter")').first.click()
         page.locator('input[placeholder*="email"], input[placeholder*="mittente"], input[type="email"]').first.wait_for(
             state="visible", timeout=3000
         )
         page.locator('input[placeholder*="email"], input[placeholder*="mittente"], input[type="email"]').first.fill(mittente_blocco)
-        page.get_by_role("button", name="Salva").click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Verifica che il mittente sia nella lista
         page.locator('tr, li, [class*="row"]').filter(has_text=mittente_blocco).first.wait_for(
@@ -62,6 +62,6 @@ def test_posta_indesiderata(page):
     # Cleanup: rimuove il mittente dalla lista
     try:
         row = page.locator('tr, li, [class*="row"]').filter(has_text=mittente_blocco).first
-        row.locator('button[title="Elimina"], aru-symbol[title="Elimina"]').click()
+        row.locator('button[title="Elimina"], aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"]').click()
     except Exception:
         pass

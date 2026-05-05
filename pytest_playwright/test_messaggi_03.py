@@ -35,10 +35,10 @@ def test_messaggio_in_bozza(page):
     page.locator('#message-dialog aru-symbol[symbol="close"]').click(force=True)
     
     # Gestisci popup di conferma chiusura senza salvataggio
-    page.locator('button[title="Si"]').click()
+    page.locator('button[title="Si"], button[title="Oui"]').click()
 
     # Apri bozze
-    page.locator('button[title="Bozze"]').click()
+    page.locator('button[title="Bozze"], button[title="Brouillons"]').click()
     
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=15000)
@@ -47,8 +47,8 @@ def test_messaggio_in_bozza(page):
     page.locator('div.frame-record-desktop').first.click()
     
     # Trova il pulsante "Invia" e cliccalo
-    page.locator('span[title="Invia"]').wait_for(state="visible", timeout=10000)
-    page.locator('span[title="Invia"]').click()
+    page.locator('span[title="Invia"], span[title="Envoyer"]').wait_for(state="visible", timeout=10000)
+    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").filter(has_text="Il messaggio è stato inviato").first
@@ -61,7 +61,9 @@ def test_messaggio_in_bozza(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert "Il messaggio è stato inviato" in toast.text_content()
+    toast_text = toast.text_content()
+    assert "Il messaggio è stato inviato" in toast_text or "envoyé" in toast_text.lower(), \
+        f"Toast di conferma invio non trovato: {toast_text!r}"
     
     
     

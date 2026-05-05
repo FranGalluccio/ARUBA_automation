@@ -29,11 +29,11 @@ def test_selezione_multipla_batch(page):
             oggetto=f"Test batch {ts}",
             corpo="Messaggio per test selezione multipla",
         )
-        page.locator('span[title="Invia"]').click()
+        page.locator('span[title="Invia"], span[title="Envoyer"]').click()
         page.wait_for_timeout(3000)
 
     # Vai alla inbox e aggiorna
-    page.locator("#messages").get_by_label("Messaggi").first.click()
+    page.locator("#messages").locator('[aria-label="Messaggi"], [aria-label="Messages"]').first.first.click()
     page.wait_for_timeout(2000)
 
     # Dismiss CDK overlay se presente (modale "Adegua la tua PEC" ecc.)
@@ -42,7 +42,7 @@ def test_selezione_multipla_batch(page):
             if not page.locator('.cdk-overlay-backdrop').is_visible():
                 break
             try:
-                btn = page.locator('button:has-text("Ricordarmelo"), button:has-text("Chiudi"), button:has-text("Non ora")').first
+                btn = page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Chiudi"), button:has-text("Non ora"), button:has-text("Pas maintenant")').first
                 if btn.is_visible():
                     btn.click(force=True)
                     page.wait_for_timeout(500)
@@ -52,7 +52,7 @@ def test_selezione_multipla_batch(page):
             except Exception:
                 break
 
-    page.locator('aru-symbol[title="Aggiorna"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
     page.wait_for_timeout(3000)
 
     # Hover sul primo messaggio per rendere visibile il checkbox, poi clicca
@@ -79,7 +79,7 @@ def test_selezione_multipla_batch(page):
     page_content = page.content().lower()
     batch_visible = (
         "selezionat" in page_content
-        or page.locator('button:has-text("Elimina"), button:has-text("Segna")').count() > 0
+        or page.locator('button:has-text("Elimina"), button:has-text("Supprimer"), button:has-text("Segna"), button:has-text("Marquer")').count() > 0
     )
 
     screenshot_path = os.path.join(

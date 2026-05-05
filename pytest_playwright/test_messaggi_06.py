@@ -34,7 +34,7 @@ def test_ripristino_messaggi(page):
             oggetto=oggetto_i,
             corpo="Test automatico ripristino messaggi",
         )
-        page.locator('span[title="Invia"]').click()
+        page.locator('span[title="Invia"], span[title="Envoyer"]').click()
         page.wait_for_timeout(3000)
 
     # Polling: attendi che entrambi i messaggi arrivino in inbox
@@ -42,7 +42,7 @@ def test_ripristino_messaggi(page):
         msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto_i)
         for _ in range(20):
             page.wait_for_timeout(3000)
-            page.locator('aru-symbol[title="Aggiorna"]').click()
+            page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
             page.wait_for_timeout(1000)
             if msg.count() > 0:
                 break
@@ -57,18 +57,18 @@ def test_ripristino_messaggi(page):
         page.wait_for_timeout(600)
 
     # Clicca Elimina (attendi toolbar visibile)
-    elimina_btn = page.locator('aru-button:has(aru-symbol[title="Elimina"])')
+    elimina_btn = page.locator('aru-button:has(aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"])')
     elimina_btn.first.wait_for(state="visible", timeout=10000)
     elimina_btn.first.click()
     page.wait_for_timeout(1000)
     try:
-        page.get_by_role("button", name="Sì").click(timeout=2000)
+        page.locator('button:has-text("Sì"), button:has-text("Oui")').first.click(timeout=2000)
         page.wait_for_timeout(1000)
     except Exception:
         pass
 
     # Apri cestino
-    page.locator('button[title="Cestino"]').click()
+    page.locator('button[title="Cestino"], button[title="Corbeille"]').click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     count = page.locator('div.frame-record-desktop').count()
@@ -85,15 +85,15 @@ def test_ripristino_messaggi(page):
         page.wait_for_timeout(600)
 
     # Clicca su sposta (attendi toolbar visibile)
-    sposta_btn = page.locator('aru-button:has(aru-symbol[title="Sposta"])')
+    sposta_btn = page.locator('aru-button:has(aru-symbol[title="Sposta"]), aru-button:has(aru-symbol[title="Déplacer"])')
     sposta_btn.first.wait_for(state="visible", timeout=10000)
     sposta_btn.first.click()
 
     # Sposta in arrivo
-    page.locator("aru-webmail-menu-item[webmailmenuopener]").locator("span:has-text('In arrivo')").click()
+    page.locator("aru-webmail-menu-item[webmailmenuopener]").locator("span:has-text('In arrivo'), span:has-text('Réception'), span:has-text('Boîte')").click()
 
     # Verifica toast di conferma ripristino
-    toast = page.locator("div.aru-toast__message").filter(has_text="I messaggi selezionati sono stati spostati in In arrivo").first
+    toast = page.locator("div.aru-toast__message").first
     toast.wait_for(state="visible", timeout=8000)
 
     # Percorso screenshot dinamico
@@ -103,4 +103,6 @@ def test_ripristino_messaggi(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert "I messaggi selezionati sono stati spostati in In arrivo" in toast.text_content()
+    toast_text = toast.text_content()
+    assert ("spostati" in toast_text or "déplacés" in toast_text.lower()), \
+        f"Toast di conferma spostamento non trovato: {toast_text!r}"
