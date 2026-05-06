@@ -31,15 +31,15 @@ def test_elimina_contatto(page):
     cognome = f"DaEliminare{int(time.time())}"
 
     try:
-        page.get_by_role("button", name="Nuovo", exact=True).click()
-        page.get_by_role("button", name="Procedi").click()
-        page.get_by_placeholder("Inserisci nome").fill("Contatto")
-        page.get_by_placeholder("Inserisci cognome").fill(cognome)
-        page.get_by_placeholder("Inserisci email").fill(unique_email)
+        page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
+        page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first.fill("Contatto")
+        page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first.fill(cognome)
+        page.locator('input[placeholder*="email"]').first.fill(unique_email)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Cerca il contatto appena creato
-        search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="contacts"]').first
         search.click()
         search.fill(cognome)
 
@@ -71,7 +71,7 @@ def test_elimina_contatto(page):
         except Exception:
             pass
 
-        search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search2 = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="contacts"]').first
         search2.click(force=True)
         search2.fill(cognome)
 

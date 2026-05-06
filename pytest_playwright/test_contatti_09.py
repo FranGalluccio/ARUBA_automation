@@ -32,15 +32,15 @@ def test_scrivi_email_da_contatto(page):
 
     try:
         # Crea un contatto con email per il test
-        page.get_by_role("button", name="Nuovo", exact=True).click()
-        page.get_by_role("button", name="Procedi").click()
-        page.get_by_placeholder("Inserisci nome").fill(nome_test)
-        page.get_by_placeholder("Inserisci cognome").fill("Contact")
-        page.get_by_placeholder("Inserisci email").fill(email_contatto)
+        page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
+        page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first.fill(nome_test)
+        page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first.fill("Contact")
+        page.locator('input[placeholder*="email"]').first.fill(email_contatto)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Cerca il contatto
-        search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="contacts"]').first
         search.click()
         search.fill(nome_test)
 

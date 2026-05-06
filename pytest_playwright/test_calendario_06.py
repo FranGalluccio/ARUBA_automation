@@ -21,7 +21,7 @@ def test_cambio_vista_calendario(page):
     LoginPec(page).login_pec(config)
 
     page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
-    page.locator('button[title="Giorno"]').wait_for(state="visible", timeout=8000)
+    page.locator('button[title="Giorno"], button[title="Jour"]').first.wait_for(state="visible", timeout=8000)
 
     # Screenshot finale (calendario visibile con tutti i bottoni vista)
     screenshot_path = os.path.join(
@@ -32,23 +32,23 @@ def test_cambio_vista_calendario(page):
     print(f"Screenshot salvato in: {screenshot_path}")
 
     # Vista Giorno
-    page.locator('button[title="Giorno"]').click()
+    page.locator('button[title="Giorno"], button[title="Jour"]').first.click()
     page.wait_for_timeout(500)
-    assert page.locator('button[title="Giorno"]').is_visible(), "Bottone 'Giorno' non visibile"
+    assert page.locator('button[title="Giorno"], button[title="Jour"]').first.is_visible(), "Bottone Giorno/Jour non visibile"
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_06_giorno_{datetime.now():%H-%M-%S}.png"))
 
     # Vista Mese
-    page.locator('button[title="Mese"]').click()
+    page.locator('button[title="Mese"], button[title="Mois"]').first.click()
     page.wait_for_timeout(500)
-    assert page.locator('button[title="Mese"]').is_visible(), "Bottone 'Mese' non visibile"
+    assert page.locator('button[title="Mese"], button[title="Mois"]').first.is_visible(), "Bottone Mese/Mois non visibile"
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_06_mese_{datetime.now():%H-%M-%S}.png"))
 
     # Vista Lista eventi
-    page.locator('button[title="Eventi"]').click()
+    page.locator('button[title="Eventi"], button[title="Événements"]').first.click()
     page.wait_for_timeout(500)
-    assert page.locator('button[title="Eventi"]').is_visible(), "Bottone 'Eventi' non visibile"
+    assert page.locator('button[title="Eventi"], button[title="Événements"]').first.is_visible(), "Bottone Eventi/Événements non visibile"
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_06_eventi_{datetime.now():%H-%M-%S}.png"))
 
     # Torna alla vista Settimana (default)
-    page.locator('button[title="Settimana"]').click()
+    page.locator('button[title="Settimana"], button[title="Semaine"]').first.click()
     page.wait_for_timeout(500)

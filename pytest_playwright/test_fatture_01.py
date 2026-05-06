@@ -66,14 +66,14 @@ def test_import_fattura_ricevute(page):
 
     # Espandi "Gestione messaggi" se collassato
     try:
-        gm_btn = page.locator('button[title="Gestione messaggi"]').first
+        gm_btn = page.locator('button[title="Gestione messaggi"], button[title="Gestion des messages"]').first
         gm_btn.wait_for(state="visible", timeout=5000)
         gm_btn.click(force=True)
     except Exception:
         pass
 
     # Clicca "Importa"
-    importa_btn = page.locator('button[title="Importa"]').first
+    importa_btn = page.locator('button[title="Importa"], button[title="Importer"]').first
     try:
         importa_btn.wait_for(state="visible", timeout=4000)
         importa_btn.click()
@@ -102,7 +102,7 @@ def test_import_fattura_ricevute(page):
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_file_selezionato_{datetime.now():%H-%M-%S}.png"))
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_fatture_01_before_confirm_{datetime.now():%H-%M-%S}.png"))
     try:
-        all_importa = page.get_by_role("button", name="Importa", exact=True).all()
+        all_importa = page.locator('button:has-text("Importa"), button:has-text("Importer")').all()
         clicked = False
         for btn in reversed(all_importa):
             try:
@@ -116,7 +116,7 @@ def test_import_fattura_ricevute(page):
             # Fallback JS: clicca l'ultimo bottone Importa nel DOM
             page.evaluate("""() => {
                 const btns = [...document.querySelectorAll('button, aru-button')];
-                const importa = btns.filter(b => b.textContent.trim().includes('Importa'));
+                const importa = btns.filter(b => b.textContent.trim().includes('Importa') || b.textContent.trim().includes('Importer'));
                 if (importa.length > 0) importa[importa.length - 1].click();
             }""")
     except Exception:
@@ -213,7 +213,7 @@ def test_import_fattura_ricevute(page):
     ELIMINA_BTN = (
         'button:has(aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"]), '
         'aru-button:has(aru-symbol[title="Elimina"], aru-symbol[title="Supprimer"]), '
-        'button[title="Elimina"]'
+        'button[title="Elimina"], button[title="Supprimer"]'
     )
     ELIMINA_DEF = (
         'button:has-text("Elimina definitivamente"), button:has-text("Supprimer définitivement"), '

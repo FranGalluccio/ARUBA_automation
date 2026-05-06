@@ -23,9 +23,10 @@ def test_riquadro_di_lettura(page):
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
 
     # Verifica che le 3 opzioni di riquadro siano visibili
-    opzione_destra = page.locator('button, label, [class*="reading-pane"], [class*="layout"]').filter(has_text="A destra").first
-    opzione_basso = page.locator('button, label, [class*="reading-pane"], [class*="layout"]').filter(has_text="In basso").first
-    opzione_espandi = page.locator('button, label, [class*="reading-pane"], [class*="layout"]').filter(has_text="Espandi").first
+    _base = page.locator('button, label, [class*="reading-pane"], [class*="layout"]')
+    opzione_destra = _base.filter(has_text="A destra").or_(_base.filter(has_text="droite")).first
+    opzione_basso = _base.filter(has_text="In basso").or_(_base.filter(has_text="En bas")).first
+    opzione_espandi = _base.filter(has_text="Espandi").or_(_base.filter(has_text="Développer")).first
 
     expect(opzione_destra).to_be_visible()
     expect(opzione_basso).to_be_visible()

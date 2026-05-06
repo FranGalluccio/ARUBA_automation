@@ -29,9 +29,10 @@ def test_ricerca_nel_calendario(page):
         page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
 
         # Crea un evento con titolo univoco
-        page.get_by_role("button", name="Nuovo evento", exact=True).click()
-        page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
-        page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
+        page.locator('button:has-text("Nuovo evento"), button:has-text("Nouvel événement")').first.click()
+        titolo_input = page.locator('input[placeholder*=" titolo"], input[placeholder*=" titre"]').first
+        titolo_input.wait_for(state="visible", timeout=8000)
+        titolo_input.fill(titolo_evento)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
         page.wait_for_timeout(5000)
 
@@ -75,7 +76,7 @@ def test_ricerca_nel_calendario(page):
             except Exception:
                 pass
             page.wait_for_timeout(2000)
-            page.get_by_role("button", name="Eventi").click()
+            page.locator('button[title="Eventi"], button[title="Événements"]').first.click()
             page.wait_for_timeout(3000)
             evento_trovato = page.get_by_text(titolo_evento, exact=False).count() > 0
 

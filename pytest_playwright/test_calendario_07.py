@@ -44,7 +44,7 @@ def test_naviga_periodi_calendario(page):
 
     # Vai alla settimana corrente con "Oggi" (può essere disabilitato se già su oggi)
     try:
-        page.locator('button[title="Oggi"]').click(force=True)
+        page.locator("button[title='Oggi'], button[title=\"Aujourd'hui\"]").first.click(force=True)
         page.wait_for_timeout(500)
     except Exception:
         pass

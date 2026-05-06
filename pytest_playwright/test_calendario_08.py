@@ -28,18 +28,19 @@ def test_evento_tutto_il_giorno(page):
         page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
 
         # Crea nuovo evento
-        page.get_by_role("button", name="Nuovo evento", exact=True).click()
-        page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
-        page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
+        page.locator('button:has-text("Nuovo evento"), button:has-text("Nouvel événement")').first.click()
+        titolo_input = page.locator('input[placeholder*=" titolo"], input[placeholder*=" titre"]').first
+        titolo_input.wait_for(state="visible", timeout=8000)
+        titolo_input.fill(titolo_evento)
 
         # Attiva flag "Giornata intera" - può essere checkbox, label o toggle
         allday_clicked = False
         for selector in [
-            'button[title="Giornata intera"]',
+            'button[title="Giornata intera"], button[title="Toute la journée"]',
             'input[type="checkbox"][name*="allday"]',
             'input[type="checkbox"][name*="full"]',
-            'label:has-text("Giornata intera")',
-            'aru-input-choice:has-text("Giornata intera")',
+            'label:has-text("Giornata intera"), label:has-text("Toute la journée")',
+            'aru-input-choice:has-text("Giornata intera"), aru-input-choice:has-text("Toute la journée")',
             '[class*="allday"]',
             '[class*="all-day"]',
             '[class*="full-day"]',

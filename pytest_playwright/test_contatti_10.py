@@ -27,7 +27,7 @@ def test_elimina_gruppo(page):
     # Crea un gruppo da eliminare
     group_name = f"Gruppo test {int(time.time())}"
 
-    page.get_by_role("button", name="Nuovo", exact=True).click()
+    page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
     # Seleziona "Gruppo" nel dialog
     try:
         page.locator("#group").check()
@@ -36,7 +36,7 @@ def test_elimina_gruppo(page):
             page.locator('input[value="group"], label:has-text("Gruppo")').first.click()
         except Exception:
             pass
-    page.get_by_role("button", name="Procedi").click()
+    page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
     page.get_by_role("textbox", name="input field").wait_for(state="visible", timeout=5000)
 
     # Inserisci il nome del gruppo

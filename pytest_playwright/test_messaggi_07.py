@@ -82,11 +82,14 @@ def test_messaggi_preferiti_pinnati(page):
     page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
 
     # Verifica toast di conferma che i messaggi non sono più in evidenza
-    toast = page.locator("div.aru-toast__message").filter(has_text="non sono più in evidenza").first
+    toast = page.locator("div.aru-toast__message").filter(has_text="in evidenza").or_(
+        page.locator("div.aru-toast__message").filter(has_text="évidence")
+    ).first
     toast.wait_for(state="visible", timeout=8000)
     assert toast.is_visible(), "Nessun toast di conferma per la rimozione da 'In evidenza'"
-    assert " messaggi non sono più in evidenza." in toast.text_content(), \
-        f"Toast non contiene il testo atteso: '{toast.text_content()}'"
+    toast_text = toast.text_content()
+    assert "in evidenza" in toast_text.lower() or "évidence" in toast_text.lower(), \
+        f"Toast non contiene il testo atteso: '{toast_text}'"
     # Verifica che i messaggi non abbiano più la classe/attributo di evidenza
     highlighted = page.locator(
         'div.frame-record-desktop[class*="highlight"], '

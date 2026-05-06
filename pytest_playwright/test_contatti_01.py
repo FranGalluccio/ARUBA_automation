@@ -34,18 +34,21 @@ def test_aggiungere_nuovo_contatto(page):
     page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
 
     try:
-        page.get_by_role("button", name="Nuovo", exact=True).click()
-        page.get_by_role("button", name="Procedi").click()
-        page.get_by_placeholder("Inserisci nome").click()
-        page.get_by_placeholder("Inserisci nome").fill("Test")
-        page.get_by_placeholder("Inserisci cognome").click()
-        page.get_by_placeholder("Inserisci cognome").fill("Automatico")
-        page.get_by_placeholder("Inserisci email").click()
-        page.get_by_placeholder("Inserisci email").fill(unique_email)
+        page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
+        nome_input = page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first
+        nome_input.click()
+        nome_input.fill("Test")
+        cognome_input = page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first
+        cognome_input.click()
+        cognome_input.fill("Automatico")
+        email_input = page.locator('input[placeholder*="email"]').first
+        email_input.click()
+        email_input.fill(unique_email)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Verifica che il contatto sia stato creato (cerca per email univoca)
-        search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="contacts"]').first
         search.click()
         search.fill(unique_email)
         row = page.locator('div.frame-record-desktop').filter(has_text="Test").first

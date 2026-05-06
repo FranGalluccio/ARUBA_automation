@@ -30,11 +30,11 @@ def test_modifica_contatto(page):
     unique_email = f"testmod_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
 
     try:
-        page.get_by_role("button", name="Nuovo", exact=True).click()
-        page.get_by_role("button", name="Procedi").click()
-        page.get_by_placeholder("Inserisci nome").fill("Contatto")
-        page.get_by_placeholder("Inserisci cognome").fill("DaModificare")
-        page.get_by_placeholder("Inserisci email").fill(unique_email)
+        page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
+        page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first.fill("Contatto")
+        page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first.fill("DaModificare")
+        page.locator('input[placeholder*="email"]').first.fill(unique_email)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Attendi che il salvataggio si completi (toast o chiusura form)
@@ -48,7 +48,7 @@ def test_modifica_contatto(page):
             pass
 
         # Cerca il contatto appena creato
-        search = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="contacts"]').first
         search.click()
         search.fill("DaModificare")
         page.wait_for_timeout(1500)  # attendi che i risultati si aggiornino
@@ -62,7 +62,7 @@ def test_modifica_contatto(page):
         row.click()
         page.wait_for_timeout(1200)
 
-        cognome_input = page.get_by_placeholder("Inserisci cognome")
+        cognome_input = page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first
 
         # Step 2: il pannello dettaglio si è aperto → clicca il pulsante "Modifica"
         # Usa filter(has_text=) che attraversa lo shadow DOM di aru-button.
@@ -95,7 +95,7 @@ def test_modifica_contatto(page):
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Verifica che il cognome aggiornato sia presente
-        search2 = page.locator('input[placeholder*="Cerca tra i contatti"]').first
+        search2 = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="contacts"]').first
         search2.click(click_count=3)
         search2.fill("Modificato")
 

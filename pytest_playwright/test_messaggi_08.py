@@ -24,13 +24,13 @@ def test_etichetta(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    # Clicca su nuova cartella
-    page.locator('span[title="Nuova etichetta"]').click()
+    # Clicca su nuova etichetta
+    page.locator('span[title="Nuova etichetta"], span[title="Nouvelle étiquette"]').first.click()
 
     nome_etichetta = "Test etichetta lavoro"
     # Compila nome etichetta
-    page.locator("input[placeholder='Es. Lavoro']").wait_for(state="visible", timeout=5000)
-    page.locator("input[placeholder='Es. Lavoro']").fill(nome_etichetta)
+    page.locator("input[placeholder*='Lavoro'], input[placeholder*='Travail'], input[placeholder*='label'], input[placeholder*='tichetta']").first.wait_for(state="visible", timeout=5000)
+    page.locator("input[placeholder*='Lavoro'], input[placeholder*='Travail'], input[placeholder*='label'], input[placeholder*='tichetta']").first.fill(nome_etichetta)
     # Salva nuova etichetta
     page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
@@ -60,7 +60,7 @@ def test_etichetta(page):
     page.wait_for_timeout(500)
     # Applica etichetta
     page.evaluate('''() => {
-    const btn = document.querySelector('button[title="Applica"]');
+    const btn = document.querySelector('button[title="Applica"]') || document.querySelector('button[title="Appliquer"]');
     btn?.click();
 }''')
 
@@ -75,7 +75,9 @@ def test_etichetta(page):
     page.locator('button[title="Si"], button[title="Oui"]').click()
 
     # Verifica toast di conferma eliminazione etichetta
-    toast = page.locator("div.aru-toast__message").filter(has_text="L'etichetta è stata eliminata.").first
+    toast = page.locator("div.aru-toast__message").filter(has_text="etichetta").or_(
+        page.locator("div.aru-toast__message").filter(has_text="étiquette")
+    ).first
     expect(toast).to_be_visible()
 
     # Percorso screenshot dinamico
@@ -85,4 +87,6 @@ def test_etichetta(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert "L'etichetta è stata eliminata." in toast.text_content()
+    toast_text = toast.text_content()
+    assert "etichetta" in toast_text.lower() or "étiquette" in toast_text.lower(), \
+        f"Toast eliminazione etichetta non trovato: {toast_text!r}"

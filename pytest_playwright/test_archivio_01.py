@@ -49,16 +49,22 @@ def test_configurazione_archivio(page):
         pass
 
     try:
-        page.locator("h1").filter(has_text="Archivio").wait_for(state="visible", timeout=10000)
+        page.locator("h1").filter(has_text="Archivio").or_(
+            page.locator("h1").filter(has_text="Archive")
+        ).first.wait_for(state="visible", timeout=10000)
     except Exception:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
 
     # --- Verifica struttura pagina ---
-    h1 = page.locator("h1").filter(has_text="Archivio").first
+    h1 = page.locator("h1").filter(has_text="Archivio").or_(
+        page.locator("h1").filter(has_text="Archive")
+    ).first
     h1.wait_for(state="visible", timeout=8000)
-    assert h1.is_visible(), "h1 'Archivio' non visibile"
+    assert h1.is_visible(), "h1 'Archivio/Archive' non visibile"
 
-    h2 = page.locator("h2").filter(has_text="Configurazione Archivio").first
+    h2 = page.locator("h2").filter(has_text="Configurazione Archivio").or_(
+        page.locator("h2").filter(has_text="Configuration")
+    ).first
     try:
         h2.wait_for(state="visible", timeout=5000)
     except Exception:
@@ -141,7 +147,9 @@ def test_configurazione_archivio(page):
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
     # Verifica che la pagina sia ancora quella giusta
-    assert "archive" in page.url or page.locator("h1").filter(has_text="Archivio").count() > 0, \
+    assert "archive" in page.url or \
+        page.locator("h1").filter(has_text="Archivio").count() > 0 or \
+        page.locator("h1").filter(has_text="Archive").count() > 0, \
         "Dopo reload la pagina Archivio non si è ricaricata correttamente"
 
     # --- Cleanup: ripristina "Archivia tutti" ---

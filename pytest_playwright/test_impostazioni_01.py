@@ -25,9 +25,9 @@ def test_crea_firma(page):
     page.goto(signatures_url, timeout=20000)
 
     # Verifica che la pagina Firme sia caricata
-    firme_header = page.locator('h1').filter(has_text="Firme").first
+    firme_header = page.locator('h1:has-text("Firme"), h1:has-text("Signatures")').first
     firme_header.wait_for(state="visible", timeout=8000)
-    assert firme_header.is_visible(), "La pagina Firme non si è caricata"
+    assert firme_header.is_visible(), "La pagina Firme/Signatures non si è caricata"
 
     # Clicca il pulsante di creazione firma (aru-button kind="solid" skin="primary")
     create_btn = page.locator('aru-button[kind="solid"][skin="primary"]').first

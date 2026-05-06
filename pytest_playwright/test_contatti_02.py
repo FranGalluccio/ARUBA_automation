@@ -37,17 +37,17 @@ def test_aggiungere_nuovo_gruppo(page):
 
     try:
         # Crea un contatto temporaneo da aggiungere al gruppo
-        page.get_by_role("button", name="Nuovo", exact=True).click()
-        page.get_by_role("button", name="Procedi").click()
-        page.get_by_placeholder("Inserisci nome").fill(contact_name)
-        page.get_by_placeholder("Inserisci email").fill(f"gruppocontact_{ts}@{TEST_EMAIL_DOMAIN}")
+        page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
+        page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first.fill(contact_name)
+        page.locator('input[placeholder*="email"]').first.fill(f"gruppocontact_{ts}@{TEST_EMAIL_DOMAIN}")
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
         page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
         # Crea il gruppo
-        page.get_by_role("button", name="Nuovo", exact=True).click()
+        page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
         page.locator("#group").check()
-        page.get_by_role("button", name="Procedi").click()
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
         page.get_by_role("textbox", name="input field").click()
         page.get_by_role("textbox", name="input field").fill(group_name)
         page.get_by_role("textbox", name="input search").click()

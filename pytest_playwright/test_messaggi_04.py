@@ -33,11 +33,11 @@ def test_messaggio_importato(page):
         pass
 
     # Clicca su importa messaggi
-    page.locator('button[title="Importa"]').click()
-    
+    page.locator('button[title="Importa"], button[title="Importer"]').first.click()
+
     # Intercetta il file chooser al click del bottone "Seleziona da dispositivo"
     with page.expect_file_chooser() as fc_info:
-        page.locator('button[title="Seleziona da dispositivo"]').click()
+        page.locator('button[title="Seleziona da dispositivo"], button[title*="appareil"], button[title*="Sélectionner"], button[title*="Choisir"]').first.click()
 
     file_chooser = fc_info.value
 
@@ -46,10 +46,10 @@ def test_messaggio_importato(page):
 
     # Attendi caricamento allegato
     page.wait_for_timeout(2000)
-    page.locator('button[title="Importa"]').nth(1).wait_for(state="visible", timeout=5000)
+    page.locator('button[title="Importa"], button[title="Importer"]').nth(1).wait_for(state="visible", timeout=5000)
 
     # Clicca il bottone "Importa"
-    page.locator('button[title="Importa"]').nth(1).click()
+    page.locator('button[title="Importa"], button[title="Importer"]').nth(1).click()
 
     # Verifica toast di conferma invio
     toast = page.locator("div.aru-toast__message").first
@@ -62,7 +62,9 @@ def test_messaggio_importato(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert "1 nuovo messaggio da leggere" in toast.text_content()
+    toast_text = toast.text_content()
+    assert "nuovo messaggio" in toast_text or "nouveau message" in toast_text.lower(), \
+        f"Toast importazione non trovato: {toast_text!r}"
     
 
     

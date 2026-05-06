@@ -32,9 +32,10 @@ def test_creazione_invio_evento(page):
     try:
         # Crea nuovo evento
         page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
-        page.locator("button").filter(has_text="Nuovo evento").click()
-        page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
-        page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
+        page.locator('button:has-text("Nuovo evento"), button:has-text("Nouvel événement")').first.click()
+        titolo_input = page.locator('input[placeholder*=" titolo"], input[placeholder*=" titre"]').first
+        titolo_input.wait_for(state="visible", timeout=8000)
+        titolo_input.fill(titolo_evento)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
         page.locator("a").filter(has_text=titolo_evento).first.wait_for(state="visible", timeout=15000)
         page.locator("a").filter(has_text=titolo_evento).first.click()

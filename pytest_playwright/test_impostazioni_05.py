@@ -38,7 +38,9 @@ def test_posta_indesiderata(page):
     print(f"Screenshot salvato in: {screenshot_path}")
 
     # Verifica che la sezione sia caricata
-    assert "INBOX" not in page.url or page.locator('h1, h2').filter(has_text="Posta indesiderata").count() > 0 or \
+    assert "INBOX" not in page.url or \
+           page.locator('h1, h2').filter(has_text="Posta indesiderata").count() > 0 or \
+           page.locator('h1, h2').filter(has_text="Courrier").count() > 0 or \
            page.locator('[class*="spam"], [class*="blocklist"]').count() > 0, \
            "La sezione Posta indesiderata non si è caricata correttamente"
 

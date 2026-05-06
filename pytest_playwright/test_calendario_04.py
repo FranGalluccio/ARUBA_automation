@@ -38,14 +38,14 @@ def test_import_export_calendario(page: Page):
             pass
 
         # --- Importa calendario (.ics) ---
-        page.get_by_role("button", name="Importa").first.click()
+        page.locator('button:has-text("Importa"), button:has-text("Importer")').first.click()
         page.locator("#hidden_input").wait_for(state="attached", timeout=5000)
         page.locator("#hidden_input").set_input_files(FILE_ICS)
 
-        # Conferma import: click JS sul bottone "Importa" nel dialog (testo esatto)
+        # Conferma import: click JS sul bottone "Importa"/"Importer" nel dialog (testo esatto)
         page.evaluate("""() => {
             const btns = [...document.querySelectorAll('button')];
-            const btn = btns.find(b => b.textContent.trim() === 'Importa');
+            const btn = btns.find(b => b.textContent.trim() === 'Importa' || b.textContent.trim() === 'Importer');
             if (btn) btn.click();
         }""")
         page.wait_for_timeout(3000)
@@ -53,7 +53,9 @@ def test_import_export_calendario(page: Page):
         # Chiudi dialog se ancora aperto
         if page.locator('.cdk-overlay-pane').count() > 0:
             try:
-                page.locator('button').filter(has_text="Annulla").last.click(timeout=2000)
+                page.locator('button').filter(has_text="Annulla").or_(
+                    page.locator('button').filter(has_text="Annuler")
+                ).last.click(timeout=2000)
                 page.wait_for_timeout(500)
             except Exception:
                 pass
@@ -82,13 +84,15 @@ def test_import_export_calendario(page: Page):
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_04_post_import_{datetime.now():%H-%M-%S}.png"))
 
         # --- Esporta calendario ---
-        # Click sidebar "Esporta" → apre dialog "Esporta calendario"
-        esporta_btn = page.get_by_role("button", name="Esporta").first
+        # Click sidebar "Esporta"/"Exporter" → apre dialog "Esporta calendario"
+        esporta_btn = page.locator('button:has-text("Esporta"), button:has-text("Exporter")').first
         esporta_btn.wait_for(state="visible", timeout=15000)
         esporta_btn.click(timeout=5000)
 
         # Aspetta che il dialog sia visibile
-        dialog = page.locator('.cdk-overlay-pane button').filter(has_text="Esporta").first
+        dialog = page.locator('.cdk-overlay-pane button').filter(has_text="Esporta").or_(
+            page.locator('.cdk-overlay-pane button').filter(has_text="Exporter")
+        ).first
         dialog.wait_for(state="visible", timeout=5000)
 
         # Screenshot finale (dialog esporta visibile)
@@ -110,7 +114,8 @@ def test_import_export_calendario(page: Page):
         except Exception:
             # Dialog si chiude = export avviato (blob download non intercettabile)
             page.wait_for_timeout(2000)
-            assert page.locator('.cdk-overlay-pane button').filter(has_text="Annulla").count() == 0, \
+            assert (page.locator('.cdk-overlay-pane button').filter(has_text="Annulla").count() == 0 and
+                    page.locator('.cdk-overlay-pane button').filter(has_text="Annuler").count() == 0), \
                 "Il dialog 'Esporta calendario' è ancora aperto dopo il click su Esporta"
             print("Export: dialog chiuso, export avviato (download via blob)")
 

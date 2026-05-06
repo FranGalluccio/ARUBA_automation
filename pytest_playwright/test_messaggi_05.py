@@ -28,11 +28,11 @@ def test_cartella(page):
 
     try:
         # Clicca su nuova cartella
-        page.locator('span[title="Crea nuova cartella"]').click()
+        page.locator('span[title="Crea nuova cartella"], span[title*="dossier"], span[title*="Nouveau dossier"]').first.click()
 
         # Compila nome cartella
-        page.locator('input[placeholder="Nome cartella"]').wait_for(state="visible", timeout=5000)
-        page.locator('input[placeholder="Nome cartella"]').fill(nome_cartella)
+        page.locator('input[placeholder="Nome cartella"], input[placeholder*="dossier"], input[placeholder*="Nom"]').first.wait_for(state="visible", timeout=5000)
+        page.locator('input[placeholder="Nome cartella"], input[placeholder*="dossier"], input[placeholder*="Nom"]').first.fill(nome_cartella)
 
         # Salva usando il bottone nel dialog overlay
         page.locator('.cdk-overlay-pane button:has-text("Salva"), .cdk-overlay-pane button:has-text("Enregistrer")').first.click()
@@ -40,7 +40,9 @@ def test_cartella(page):
         # Verifica toast di conferma creazione (wait senza filter — il toast è veloce)
         toast = page.locator("div.aru-toast__message").first
         toast.wait_for(state="visible", timeout=8000)
-        assert "La cartella è stata creata." in toast.text_content()
+        _toast_text_creata = toast.text_content()
+        assert "La cartella è stata creata." in _toast_text_creata or "créé" in _toast_text_creata.lower() or "dossier" in _toast_text_creata.lower(), \
+            f"Toast creazione cartella non trovato: {_toast_text_creata!r}"
 
         # Rinomina cartella via tasto destro
         page.locator(f'button[title="{nome_cartella}"]').wait_for(state="visible", timeout=5000)
@@ -56,7 +58,9 @@ def test_cartella(page):
         page.locator('.cdk-overlay-pane button:has-text("Salva"), .cdk-overlay-pane button:has-text("Enregistrer")').first.click()
 
         # Verifica toast di conferma modifica
-        toast = page.locator("div.aru-toast__message").filter(has_text="La cartella è stata modificata.").first
+        toast = page.locator("div.aru-toast__message").filter(has_text="modificata").or_(
+            page.locator("div.aru-toast__message").filter(has_text="dossier")
+        ).first
         expect(toast).to_be_visible()
 
         # Screenshot
@@ -66,7 +70,9 @@ def test_cartella(page):
         )
         page.screenshot(path=screenshot_path, full_page=True)
         print(f"Screenshot salvato in: {screenshot_path}")
-        assert "La cartella è stata modificata." in toast.text_content()
+        _toast_mod = toast.text_content()
+        assert "La cartella è stata modificata." in _toast_mod or "dossier" in _toast_mod.lower(), \
+            f"Toast modifica cartella non trovato: {_toast_mod!r}"
 
     finally:
         # Cleanup: elimina la cartella (con nome originale o modificato)

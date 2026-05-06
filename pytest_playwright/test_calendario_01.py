@@ -34,19 +34,21 @@ def test_creazione_evento_ricorrente(page):
 
     # Crea nuovo evento ricorrente
     page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
-    page.get_by_role("button", name="Nuovo evento", exact=True).click()
-    page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
-    page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
-    page.get_by_role("combobox", name="Non ripetere").click()
-    page.get_by_role("button", name="Personalizza...").click()
-    page.get_by_role("radio", name="Dopo").check()
+    page.locator('button:has-text("Nuovo evento"), button:has-text("Nouvel événement")').first.click()
+    titolo_input = page.locator('input[placeholder*=" titolo"], input[placeholder*=" titre"]').first
+    titolo_input.wait_for(state="visible", timeout=8000)
+    titolo_input.fill(titolo_evento)
+    try:
+        page.get_by_role("combobox", name="Non ripetere").click()
+    except Exception:
+        page.get_by_role("combobox", name="Ne pas répéter").click()
+    page.locator('button:has-text("Personalizza"), button:has-text("Personnaliser")').first.click()
+    try:
+        page.get_by_role("radio", name="Dopo").check()
+    except Exception:
+        page.get_by_role("radio", name="Après").check()
     page.wait_for_timeout(500)
-    page.get_by_role("dialog") \
-    .filter(has_text="Personalizza") \
-    .filter(has=page.locator("button", has_text="Salva")) \
-    .last \
-    .locator('button:has-text("Salva"), button:has-text("Enregistrer")').first \
-    .click()
+    page.locator('.cdk-overlay-pane').last.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
     page.wait_for_timeout(500)
     page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()

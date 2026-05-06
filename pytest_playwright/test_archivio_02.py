@@ -72,12 +72,16 @@ def test_archivio_messaggio_inviato(page):
         pass
 
     try:
-        page.locator("h1").filter(has_text="Archivio").wait_for(state="visible", timeout=10000)
+        page.locator("h1").filter(has_text="Archivio").or_(
+            page.locator("h1").filter(has_text="Archive")
+        ).first.wait_for(state="visible", timeout=10000)
     except Exception:
         pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
 
     # Verifica che la configurazione sia attiva (non solo la pagina marketing)
-    h2_config = page.locator("h2").filter(has_text="Configurazione Archivio").first
+    h2_config = page.locator("h2").filter(has_text="Configurazione Archivio").or_(
+        page.locator("h2").filter(has_text="Configuration")
+    ).first
     try:
         h2_config.wait_for(state="visible", timeout=3000)
     except Exception:

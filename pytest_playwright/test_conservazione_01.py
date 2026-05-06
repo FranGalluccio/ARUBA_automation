@@ -30,7 +30,7 @@ def test_cartella_da_conservare(page):
         pass
 
     # --- Verifica disponibilità feature ---
-    btn_conservazione = page.locator('button[title="Da conservare"]').first
+    btn_conservazione = page.locator('button[title="Da conservare"], button[title="À conserver"]').first
     if not btn_conservazione.is_visible():
         pytest.skip("Feature 'Da conservare' non disponibile in questo ambiente")
 

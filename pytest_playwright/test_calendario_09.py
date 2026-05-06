@@ -28,9 +28,10 @@ def test_evento_con_promemoria(page):
         page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
 
         # Crea nuovo evento
-        page.get_by_role("button", name="Nuovo evento", exact=True).click()
-        page.get_by_placeholder("Inserisci un titolo").wait_for(state="visible", timeout=8000)
-        page.get_by_placeholder("Inserisci un titolo").fill(titolo_evento)
+        page.locator('button:has-text("Nuovo evento"), button:has-text("Nouvel événement")').first.click()
+        titolo_input = page.locator('input[placeholder*=" titolo"], input[placeholder*=" titre"]').first
+        titolo_input.wait_for(state="visible", timeout=8000)
+        titolo_input.fill(titolo_evento)
 
         # Aggiungi promemoria - apre un dialog con "Salva" e "Annulla"
         page.locator('button[title="Aggiungi promemoria"], button[title="Ajouter un rappel"]').click()
@@ -60,12 +61,12 @@ def test_evento_con_promemoria(page):
 
         # Salva il promemoria nella dialog - usa l'ultimo pane (topmost overlay)
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_before_dialog_save_{datetime.now():%H-%M-%S}.png"))
-        dialog_salva = page.locator('.cdk-overlay-pane').last.locator('button:has-text("Salva")').first
+        dialog_salva = page.locator('.cdk-overlay-pane').last.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first
         try:
             dialog_salva.wait_for(state="visible", timeout=5000)
             dialog_salva.click()
         except Exception:
-            page.locator('button:has-text("Salva")').last.click(force=True)
+            page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').last.click(force=True)
         page.wait_for_timeout(500)
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_after_dialog_save_{datetime.now():%H-%M-%S}.png"))
 
@@ -89,8 +90,9 @@ def test_evento_con_promemoria(page):
         # Vai alla vista "Events" per trovare l'evento più facilmente
         try:
             page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
-            page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
-            page.get_by_role("button", name="Eventi").click(force=True)
+            eventi_btn = page.locator('button[title="Eventi"], button[title="Événements"]').first
+            eventi_btn.wait_for(state="visible", timeout=5000)
+            eventi_btn.click(force=True)
             page.wait_for_timeout(8000)
         except Exception:
             pass
