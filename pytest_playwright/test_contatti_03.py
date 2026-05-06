@@ -27,7 +27,7 @@ def test_esporta_contatti(page):
 
     # Apertura rubrica
     page.locator("#contacts").click()
-    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
+    page.locator('button[title="Tutti i contatti"], button[title="Tous les contacts"]').first.wait_for(state="visible", timeout=10000)
 
     # Attendi il download
     with page.expect_download() as download_info:

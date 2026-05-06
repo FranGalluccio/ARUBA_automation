@@ -29,11 +29,11 @@ def test_messaggio_inoltrato(page):
     page.locator('div.frame-record-desktop').first.click()
 
     # Clicca su Inoltra
-    page.locator('aru-symbol[title="Inoltra"]').first.click()
+    page.locator('aru-symbol[title="Inoltra"], aru-symbol[title="Transférer"]').first.click()
 
     # Compila destinatario
     destinatario = config["destinatari"]["destinatario_principale"]
-    destinatario_input = page.locator("input[placeholder='Destinatari']")
+    destinatario_input = page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']")
     try:
         destinatario_input.fill(destinatario)
     except Exception:

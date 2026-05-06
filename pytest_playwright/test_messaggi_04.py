@@ -37,7 +37,7 @@ def test_messaggio_importato(page):
 
     # Intercetta il file chooser al click del bottone "Seleziona da dispositivo"
     with page.expect_file_chooser() as fc_info:
-        page.locator('button[title="Seleziona da dispositivo"], button[title*="appareil"], button[title*="Sélectionner"], button[title*="Choisir"]').first.click()
+        page.locator('button[title="Seleziona da dispositivo"], button[title*="appareil"], button[title*="Sélectionner"], button[title*="Choisir"]').first.click(force=True)
 
     file_chooser = fc_info.value
 

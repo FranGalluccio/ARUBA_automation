@@ -51,7 +51,9 @@ def test_messaggio_in_bozza(page):
     page.locator('span[title="Invia"], span[title="Envoyer"]').click()
 
     # Verifica toast di conferma invio
-    toast = page.locator("div.aru-toast__message").filter(has_text="Il messaggio è stato inviato").first
+    toast = page.locator("div.aru-toast__message").filter(has_text="Il messaggio è stato inviato").or_(
+        page.locator("div.aru-toast__message").filter(has_text="envoyé")
+    ).first
     expect(toast).to_be_visible()
 
     # Percorso screenshot dinamico

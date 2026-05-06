@@ -50,7 +50,7 @@ def test_messaggi_preferiti_pinnati(page):
 
     def _clicca_altro(page):
         """Clicca il pulsante Altro nella toolbar (attende visibilità)."""
-        altro_btn = page.locator('svg[title="Altro"]').first
+        altro_btn = page.locator('svg[title="Altro"], svg[title="Plus"], button[title="Altro"], button[title="Plus"]').first
         altro_btn.wait_for(state="visible", timeout=10000)
         altro_btn.click()
 

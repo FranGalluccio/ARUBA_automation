@@ -25,7 +25,12 @@ def test_regole_messaggi(page):
     dismiss_overlay(page)
     # Espandi l'accordion "Messaggi e scrittura" se necessario
     if not page.locator('button[title="Regole messaggi"], button[title="Règles des messages"]').is_visible():
-        page.locator('button[title="Messaggi e scrittura"], button[title="Messages et rédaction"]').first.click(force=True)
+        _accordion = page.locator(
+            'button[title="Messaggi e scrittura"], button[title="Messages et rédaction"]'
+        ).or_(page.locator('button').filter(has_text="Messaggi e scrittura")).or_(
+            page.locator('button').filter(has_text="Messages et")
+        ).first
+        _accordion.click(force=True)
         page.locator('button[title="Regole messaggi"], button[title="Règles des messages"]').first.wait_for(state="visible", timeout=8000)
     dismiss_overlay(page)
     page.locator('button[title="Regole messaggi"], button[title="Règles des messages"]').click(force=True)
@@ -43,10 +48,13 @@ def test_regole_messaggi(page):
 
     # Il form è aperto: verifica che siano presenti label o placeholder specifici del form regola
     form_visible = (
-        page.locator('[placeholder*="Nome regola"], [placeholder*="regola"], [label*="Nome regola"]').count() > 0 or
+        page.locator('[placeholder*="Nome regola"], [placeholder*="regola"], [placeholder*="Nom"], [placeholder*="règle"]').count() > 0 or
         page.get_by_text("Nome regola", exact=False).count() > 0 or
+        page.get_by_text("Nom de la règle", exact=False).count() > 0 or
         page.get_by_text("Condizioni", exact=False).count() > 0 or
-        page.get_by_text("Azioni", exact=False).count() > 0
+        page.get_by_text("Conditions", exact=False).count() > 0 or
+        page.get_by_text("Azioni", exact=False).count() > 0 or
+        page.get_by_text("Actions", exact=False).count() > 0
     )
 
     # Compila nome regola se c'è un input disponibile

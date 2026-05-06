@@ -41,7 +41,9 @@ def test_ricerca_nel_calendario(page):
         search = page.locator(
             'input[placeholder*="Cerca nel calendario"], '
             'input[placeholder*="Cerca calendario"], '
-            'input[placeholder*="Cerca"]'
+            'input[placeholder*="Cerca"], '
+            'input[placeholder*="Rechercher"], '
+            'input[placeholder*="Recherche"]'
         ).first
         search.wait_for(state="visible", timeout=5000)
         search.click()

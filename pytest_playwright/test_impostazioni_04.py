@@ -23,7 +23,12 @@ def test_risposta_automatica(page):
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
     # Espandi l'accordion "Messaggi e scrittura" se necessario
     if not page.locator('button[title="Avvisi e report"], button[title="Alertes et rapports"]').is_visible():
-        page.locator('button[title="Messaggi e scrittura"], button[title="Messages et rédaction"]').first.click(force=True)
+        _accordion = page.locator(
+            'button[title="Messaggi e scrittura"], button[title="Messages et rédaction"]'
+        ).or_(page.locator('button').filter(has_text="Messaggi e scrittura")).or_(
+            page.locator('button').filter(has_text="Messages et")
+        ).first
+        _accordion.click(force=True)
         page.locator('button[title="Avvisi e report"], button[title="Alertes et rapports"]').first.wait_for(state="visible", timeout=5000)
     page.locator('button[title="Avvisi e report"], button[title="Alertes et rapports"]').click(force=True)
 

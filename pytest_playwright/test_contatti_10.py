@@ -22,7 +22,7 @@ def test_elimina_gruppo(page):
     LoginPec(page).login_pec(config)
 
     page.click("#contacts")
-    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
+    page.locator('button[title="Tutti i contatti"], button[title="Tous les contacts"]').first.wait_for(state="visible", timeout=10000)
 
     # Crea un gruppo da eliminare
     group_name = f"Gruppo test {int(time.time())}"

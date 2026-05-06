@@ -31,16 +31,17 @@ def test_logout(page):
             pass  # BNL: nessun button con email nel title — Esci via JS click
 
     # Attendi che il bottone Esci sia visibile nel dropdown
+    _esci_sel = 'button[title="Esci"], button[title="Déconnexion"], button[title="Se déconnecter"]'
     try:
-        page.locator('button[title="Esci"]').wait_for(state="visible", timeout=5000)
+        page.locator(_esci_sel).first.wait_for(state="visible", timeout=5000)
     except Exception:
         pass
 
     # Clicca su Esci — usa JS eval per bypassare visibilità CSS (BNL: dentro dropdown chiuso)
     try:
-        page.locator('button[title="Esci"]').click(force=True)
+        page.locator(_esci_sel).first.click(force=True)
     except Exception:
-        page.locator('button[title="Esci"]').evaluate("el => el.click()")
+        page.locator(_esci_sel).first.evaluate("el => el.click()")
 
     # Aspetta che la navigazione verso la pagina di login completi
     page.wait_for_url(lambda url: "INBOX" not in url, timeout=15000)

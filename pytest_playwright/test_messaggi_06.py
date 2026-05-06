@@ -89,8 +89,27 @@ def test_ripristino_messaggi(page):
     sposta_btn.first.wait_for(state="visible", timeout=10000)
     sposta_btn.first.click()
 
-    # Sposta in arrivo
-    page.locator("aru-webmail-menu-item[webmailmenuopener]").locator("span:has-text('In arrivo'), span:has-text('Réception'), span:has-text('Boîte')").click()
+    # Sposta in arrivo (IT: "In arrivo", FR: "Réception" / "Boîte de réception")
+    inbox_item = (
+        page.locator("aru-webmail-menu-item").filter(has_text="In arrivo").or_(
+            page.locator("aru-webmail-menu-item").filter(has_text="Réception")
+        ).or_(
+            page.locator("aru-webmail-menu-item").filter(has_text="INBOX")
+        ).first
+    )
+    try:
+        inbox_item.wait_for(state="visible", timeout=5000)
+        inbox_item.click()
+    except Exception:
+        page.evaluate("""() => {
+            const items = document.querySelectorAll('aru-webmail-menu-item');
+            for (const item of items) {
+                const t = item.textContent.trim();
+                if (t.includes('In arrivo') || t.includes('Réception') || t.includes('INBOX')) {
+                    item.click(); break;
+                }
+            }
+        }""")
 
     # Verifica toast di conferma ripristino
     toast = page.locator("div.aru-toast__message").first

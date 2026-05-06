@@ -22,7 +22,12 @@ def test_impostazioni_cestino(page):
     # Vai alle impostazioni → Cestino (URL calcolato dopo il login per supportare prod-aruba)
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
     if not page.locator('button[title="Cestino"], button[title="Corbeille"]').is_visible():
-        page.locator('button[title="Messaggi e scrittura"], button[title="Messages et rédaction"]').click(force=True)
+        _accordion = page.locator(
+            'button[title="Messaggi e scrittura"], button[title="Messages et rédaction"]'
+        ).or_(page.locator('button').filter(has_text="Messaggi e scrittura")).or_(
+            page.locator('button').filter(has_text="Messages et")
+        ).first
+        _accordion.click(force=True)
         page.locator('button[title="Cestino"], button[title="Corbeille"]').first.wait_for(state="visible", timeout=5000)
     page.locator('button[title="Cestino"], button[title="Corbeille"]').click(force=True)
 

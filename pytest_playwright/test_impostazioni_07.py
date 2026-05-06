@@ -21,16 +21,29 @@ def test_storico_accessi(page):
 
     # Vai alle impostazioni → Storico accessi (URL calcolato dopo il login per supportare prod-aruba)
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
-    storico_sel = 'button[title="Storico accessi"], button[title="Historique des accès"], button[title="Historique des accès"], button[title="Historique de connexion"]'
-    if not page.locator(storico_sel).is_visible():
-        page.locator('button[title="Account e sicurezza"], button[title="Compte et sécurité"], button[title="Compte et sécurité"]').click(force=True)
-        page.locator(storico_sel).first.wait_for(state="visible", timeout=10000)
-    page.locator(storico_sel).click(force=True)
+    storico_sel = (
+        'button[title="Storico accessi"], button[title="Historique des accès"], '
+        'button[title="Historique de connexion"], button[title="Historique"]'
+    )
+    _storico_loc = page.locator(storico_sel).or_(
+        page.locator('button').filter(has_text="Storico accessi")
+    ).or_(
+        page.locator('button').filter(has_text="Historique")
+    )
+    if not _storico_loc.first.is_visible():
+        _account_loc = page.locator(
+            'button[title="Account e sicurezza"], button[title="Compte et sécurité"]'
+        ).or_(page.locator('button').filter(has_text="Account e sicurezza")).or_(
+            page.locator('button').filter(has_text="Compte et")
+        ).first
+        _account_loc.click(force=True)
+        _storico_loc.first.wait_for(state="visible", timeout=10000)
+    _storico_loc.first.click(force=True)
 
     # Storico accessi si apre in una nuova scheda/finestra (link esterno)
     # Verifica che il bottone/link sia visibile e cliccabile
-    storico_btn = page.locator(
-        f'{storico_sel}, a[title="Storico accessi"], button:has-text("Apri"), a:has-text("Apri"), button:has-text("Ouvrir")'
+    storico_btn = _storico_loc.or_(
+        page.locator('a[title="Storico accessi"], button:has-text("Apri"), a:has-text("Apri"), button:has-text("Ouvrir")')
     ).first
 
     # Screenshot

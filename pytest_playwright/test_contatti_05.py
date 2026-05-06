@@ -24,7 +24,7 @@ def test_modifica_contatto(page):
     LoginPec(page).login_pec(config)
 
     page.click("#contacts")
-    page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
+    page.locator('button[title="Tutti i contatti"], button[title="Tous les contacts"]').first.wait_for(state="visible", timeout=10000)
 
     # Crea un nuovo contatto da modificare
     unique_email = f"testmod_{int(time.time())}@{TEST_EMAIL_DOMAIN}"
@@ -115,8 +115,8 @@ def test_modifica_contatto(page):
         # Cleanup: seleziona tutti i contatti ed elimina
         try:
             page.click("#contacts")
-            page.locator('button[title="Tutti i contatti"]').first.wait_for(state="visible", timeout=10000)
-            page.locator('button[title="Tutti i contatti"]').first.click()
+            page.locator('button[title="Tutti i contatti"], button[title="Tous les contacts"]').first.wait_for(state="visible", timeout=10000)
+            page.locator('button[title="Tutti i contatti"], button[title="Tous les contacts"]').first.click()
             page.wait_for_timeout(2000)
             page.locator('span.aru-input-checkbox__checkmark').first.wait_for(state="visible", timeout=5000)
             page.locator('span.aru-input-checkbox__checkmark').first.click(force=True)
