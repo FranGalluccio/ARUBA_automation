@@ -35,14 +35,16 @@ def test_messaggio_importato(page):
     # Clicca su importa messaggi
     page.locator('button[title="Importa"], button[title="Importer"]').first.click()
 
-    # Intercetta il file chooser al click del bottone "Seleziona da dispositivo"
-    with page.expect_file_chooser() as fc_info:
-        page.locator('button[title="Seleziona da dispositivo"], button[title*="appareil"], button[title*="Sélectionner"], button[title*="Choisir"]').first.click(force=True)
-
-    file_chooser = fc_info.value
-
-    # Imposta il file da caricare
-    file_chooser.set_files(importa_messaggi)
+    # Imposta il file direttamente sull'input nascosto (bypass CDK overlay backdrop)
+    hidden = page.locator('#hidden_input, input[type="file"]').first
+    try:
+        hidden.set_input_files(importa_messaggi)
+    except Exception:
+        # Fallback: intercetta file chooser tramite click sul bottone
+        with page.expect_file_chooser() as fc_info:
+            page.locator('button[title="Seleziona da dispositivo"], button[title*="appareil"], button[title*="Sélectionner"], button[title*="Choisir"]').first.evaluate("el => el.click()")
+        file_chooser = fc_info.value
+        file_chooser.set_files(importa_messaggi)
 
     # Attendi caricamento allegato
     page.wait_for_timeout(2000)

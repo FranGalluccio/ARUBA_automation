@@ -84,5 +84,9 @@ def test_messaggio_con_allegato(page):
     attachment_loc.click()
 
     # Mostra anteprima
-    new_page.locator('text="Mostra anteprima", text="Aperçu", text="Afficher l\'aperçu"').first.click()
+    new_page.locator('button:has-text("Mostra anteprima"), button:has-text("Aperçu"), button:has-text("Afficher")').or_(
+        new_page.get_by_text("Mostra anteprima", exact=False)
+    ).or_(
+        new_page.get_by_text("Aperçu", exact=False)
+    ).first.click()
     new_page.wait_for_timeout(2000)

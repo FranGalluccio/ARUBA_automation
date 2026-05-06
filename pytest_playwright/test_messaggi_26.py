@@ -67,18 +67,19 @@ def test_selezione_multipla_batch(page):
             if cb.is_visible():
                 cb.click()
             else:
-                # Alcuni temi mostrano un div cliccabile come checkbox
-                row.locator('[class*="checkbox"], aru-checkbox').first.click(force=True)
+                # Aruba usa div.aru-input-checkbox come checkbox visivo
+                row.locator('div.aru-input-checkbox, [class*="checkbox"], aru-checkbox').first.click(force=True)
             page.wait_for_timeout(500)
         except Exception:
             pass
 
     # Verifica che almeno 2 messaggi siano selezionati o che appaia la toolbar
-    # (il titolo pagina cambia a "X messaggi selezionati" o appare un contatore)
     page.wait_for_timeout(1000)
     page_content = page.content().lower()
     batch_visible = (
         "selezionat" in page_content
+        or "sélectionné" in page_content
+        or "selected" in page_content
         or page.locator('button:has-text("Elimina"), button:has-text("Supprimer"), button:has-text("Segna"), button:has-text("Marquer")').count() > 0
     )
 

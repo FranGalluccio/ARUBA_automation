@@ -23,8 +23,8 @@ def test_sposta_messaggio_in_cartella(page):
 
     # Crea una cartella di destinazione
     nome_cartella = "Test sposta playwright"
-    page.locator('span[title="Crea nuova cartella"]').click()
-    folder_input = page.locator('input[placeholder="Nome cartella"]')
+    page.locator('span[title="Crea nuova cartella"], span[title="Nouveau dossier"], span[title*="Créer"]').first.click()
+    folder_input = page.locator('input[placeholder="Nome cartella"], input[placeholder*="dossier"], input[placeholder*="Nom"]').first
     folder_input.wait_for(state="visible", timeout=5000)
     folder_input.fill(nome_cartella)
     # Salva la cartella cliccando il pulsante "Salva" nel CDK overlay pane
@@ -63,7 +63,7 @@ def test_sposta_messaggio_in_cartella(page):
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Clicca Sposta
-    page.locator('aru-symbol[title="Sposta"]').first.click(force=True)
+    page.locator('aru-symbol[title="Sposta"], aru-symbol[title="Déplacer"]').first.click(force=True)
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_messaggi_15_sposta_{datetime.now():%H-%M-%S}.png"))
 
     # Clicca il pulsante della cartella nel dropdown (nth(1) = Content area = dropdown item)

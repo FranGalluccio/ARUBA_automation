@@ -50,14 +50,18 @@ def test_segna_come_letto_da_leggere(page):
     # Segna tutti come già letti (force perché il bottone può essere parzialmente fuori viewport)
     page.locator(
         'button:has(aru-symbol[title="Segna tutti come già letti"]), '
-        'aru-button:has(aru-symbol[title="Segna tutti come già letti"])'
+        'aru-button:has(aru-symbol[title="Segna tutti come già letti"]), '
+        'button:has(aru-symbol[title="Tout marquer comme lu"]), '
+        'aru-button:has(aru-symbol[title="Tout marquer comme lu"])'
     ).first.click(force=True)
     page.wait_for_timeout(2000)
 
     # Segna tutti come da leggere (attendi visibilità, prova sia button che aru-button)
     da_leggere = page.locator(
         'button:has(aru-symbol[title="Segna tutti come da leggere"]), '
-        'aru-button:has(aru-symbol[title="Segna tutti come da leggere"])'
+        'aru-button:has(aru-symbol[title="Segna tutti come da leggere"]), '
+        'button:has(aru-symbol[title="Tout marquer comme non lu"]), '
+        'aru-button:has(aru-symbol[title="Tout marquer comme non lu"])'
     )
     da_leggere.first.wait_for(state="visible", timeout=10000)
     da_leggere.first.click(force=True)

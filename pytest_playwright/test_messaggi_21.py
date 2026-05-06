@@ -58,7 +58,7 @@ def test_salva_e_usa_modello(page):
         pass
 
     # Apri la cartella Modelli e verifica che il modello sia presente
-    page.locator('button[title="Modelli"], button[title="Modèles"]').click()
+    page.locator('button[title="Modelli"], button[title="Modèles"]').first.evaluate("el => el.click()")
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     # Verifica che il modello salvato con il nome univoco sia visibile nella lista

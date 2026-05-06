@@ -31,8 +31,8 @@ def test_etichetta(page):
     # Compila nome etichetta
     page.locator("input[placeholder*='Lavoro'], input[placeholder*='Travail'], input[placeholder*='label'], input[placeholder*='tichetta']").first.wait_for(state="visible", timeout=5000)
     page.locator("input[placeholder*='Lavoro'], input[placeholder*='Travail'], input[placeholder*='label'], input[placeholder*='tichetta']").first.fill(nome_etichetta)
-    # Salva nuova etichetta
-    page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
+    # Salva nuova etichetta (scope al dialog per evitare "Enregistrer la recherche" disabilitato)
+    page.locator('.cdk-overlay-pane button:has-text("Salva"), .cdk-overlay-pane button:has-text("Enregistrer")').first.click(force=True)
 
     chiudi = page.locator('button:has-text("Chiudi"), button:has-text("Fermer")').first
 

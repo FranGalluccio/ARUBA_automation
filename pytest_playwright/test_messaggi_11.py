@@ -112,4 +112,4 @@ def test_risposta_messaggio(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert "Re:" in soggetto, f"Oggetto inatteso: {soggetto}"
+    assert "Re:" in soggetto or "Re :" in soggetto, f"Oggetto inatteso: {soggetto}"

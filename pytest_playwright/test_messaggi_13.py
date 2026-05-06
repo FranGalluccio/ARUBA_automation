@@ -113,4 +113,4 @@ def test_risposta_a_tutti(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert "Re:" in soggetto, f"Oggetto inatteso (manca 'Re:'): {soggetto}"
+    assert "Re:" in soggetto or "Re :" in soggetto, f"Oggetto inatteso (manca 'Re:' o 'Re :'): {soggetto}"

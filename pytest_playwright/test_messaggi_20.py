@@ -75,9 +75,13 @@ def test_scarica_allegato_ricevuto(page):
     attachment_btn.wait_for(state="visible", timeout=20000)
     attachment_btn.click()
 
-    # Scarica l'allegato
+    # Scarica l'allegato (IT: "Scarica", FR: "Télécharger")
     with new_page.expect_download() as download_info:
-        new_page.locator('text="Scarica"').first.click()
+        new_page.locator('button:has-text("Scarica"), button:has-text("Télécharger")').or_(
+            new_page.get_by_text("Scarica", exact=False)
+        ).or_(
+            new_page.get_by_text("Télécharger", exact=False)
+        ).first.click()
 
     download = download_info.value
     download_path = os.path.join(REPORT_FOLDER, f"allegato_scaricato_{datetime.now():%Y-%m-%d_%H-%M-%S}_{nome_file}")

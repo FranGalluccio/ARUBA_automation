@@ -23,8 +23,8 @@ def test_copia_messaggio_in_cartella(page):
 
     # Crea una cartella di destinazione
     nome_cartella = "Test copia playwright"
-    page.locator('span[title="Crea nuova cartella"]').click()
-    folder_input = page.locator('input[placeholder="Nome cartella"]')
+    page.locator('span[title="Crea nuova cartella"], span[title="Nouveau dossier"], span[title*="Créer"]').first.click()
+    folder_input = page.locator('input[placeholder="Nome cartella"], input[placeholder*="dossier"], input[placeholder*="Nom"]').first
     folder_input.wait_for(state="visible", timeout=5000)
     folder_input.fill(nome_cartella)
     # Salva la cartella cliccando il pulsante "Salva" nel CDK overlay pane
@@ -60,7 +60,7 @@ def test_copia_messaggio_in_cartella(page):
     page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
 
     # Clicca Copia
-    page.locator('aru-symbol[title="Copia"]').first.click(force=True)
+    page.locator('aru-symbol[title="Copia"], aru-symbol[title="Copier"]').first.click(force=True)
     page.wait_for_timeout(500)
 
     # Clicca il pulsante della cartella nel dropdown (nth(1) = Content area = dropdown item)
