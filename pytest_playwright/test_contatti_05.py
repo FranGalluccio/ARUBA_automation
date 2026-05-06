@@ -31,7 +31,8 @@ def test_modifica_contatto(page):
 
     try:
         page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
-        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.evaluate("el => el.click()")
+        page.wait_for_timeout(1000)
+        page.evaluate("() => { for (const b of document.querySelectorAll('button')) { if (['Procedi', 'Procéder', 'Continuer'].includes(b.textContent.trim())) { b.click(); return; } } }")
         page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first.fill("Contatto")
         page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first.fill("DaModificare")
         page.locator('input[placeholder*="email"]').first.fill(unique_email)

@@ -89,9 +89,5 @@ def test_messaggio_con_allegato(page):
     ).or_(new_page.get_by_text("Mostra anteprima", exact=False)).or_(
         new_page.get_by_text("Aperçu", exact=False)
     ).first
-    try:
-        _preview_btn.scroll_into_view_if_needed()
-    except Exception:
-        pass
-    _preview_btn.click(force=True)
+    _preview_btn.evaluate("el => el.click()")
     new_page.wait_for_timeout(2000)

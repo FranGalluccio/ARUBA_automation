@@ -28,15 +28,11 @@ def test_elimina_gruppo(page):
     group_name = f"Gruppo test {int(time.time())}"
 
     page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
-    # Seleziona "Gruppo" nel dialog
-    try:
-        page.locator("#group").check()
-    except Exception:
-        try:
-            page.locator('input[value="group"], label:has-text("Gruppo")').first.click()
-        except Exception:
-            pass
-    page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.evaluate("el => el.click()")
+    # Seleziona "Gruppo" nel dialog (via JS per evitare il locator handler CDK)
+    page.wait_for_timeout(500)
+    page.evaluate("() => { const g = document.querySelector('#group, input[value=\"group\"]'); if (g) { g.click(); return; } for (const l of document.querySelectorAll('label')) { if (l.textContent.includes('Gruppo') || l.textContent.includes('Groupe')) { l.click(); return; } } }")
+    page.wait_for_timeout(1000)
+    page.evaluate("() => { for (const b of document.querySelectorAll('button')) { if (['Procedi', 'Procéder', 'Continuer'].includes(b.textContent.trim())) { b.click(); return; } } }")
     page.get_by_role("textbox", name="input field").wait_for(state="visible", timeout=5000)
 
     # Inserisci il nome del gruppo

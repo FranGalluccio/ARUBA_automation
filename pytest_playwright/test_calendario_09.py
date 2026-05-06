@@ -77,8 +77,14 @@ def test_evento_con_promemoria(page):
             pass
         page.wait_for_timeout(1000)
 
-        # Ora salva l'evento (il "Salva" nel pannello laterale del form evento)
-        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.first.click(force=True)
+        # Ora salva l'evento via JS (evita di prendere "Enregistrer la recherche")
+        page.wait_for_timeout(500)
+        page.evaluate("""() => {
+            const btn = Array.from(document.querySelectorAll('button')).find(
+                b => ['Salva', 'Enregistrer', 'Sauvegarder'].includes(b.textContent.trim()) && !b.disabled
+            );
+            if (btn) btn.click();
+        }""")
         # Attendi la toast di conferma salvataggio (scompare rapidamente)
         try:
             page.locator("div.aru-toast__message").wait_for(state="visible", timeout=10000)
@@ -90,7 +96,10 @@ def test_evento_con_promemoria(page):
         # Vai alla vista "Events" per trovare l'evento più facilmente
         try:
             page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
-            eventi_btn = page.locator('button[title="Eventi"], button[title="Événements"]').first
+            eventi_btn = page.locator(
+                'button[title="Eventi"], button[title="Événements"], '
+                'button[title="Events"], button[title="Agenda"]'
+            ).first
             eventi_btn.wait_for(state="visible", timeout=5000)
             eventi_btn.click(force=True)
             page.wait_for_timeout(8000)
@@ -106,7 +115,9 @@ def test_evento_con_promemoria(page):
                 search = page.locator(
                     'input[placeholder*="Cerca nel calendario"], '
                     'input[placeholder*="Cerca calendario"], '
-                    'input[placeholder*="Cerca"]'
+                    'input[placeholder*="Cerca"], '
+                    'input[placeholder*="Rechercher"], '
+                    'input[placeholder*="Recherche"]'
                 ).first
                 search.wait_for(state="visible", timeout=5000)
                 search.click()

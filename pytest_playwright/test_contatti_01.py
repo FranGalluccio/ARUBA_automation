@@ -35,7 +35,8 @@ def test_aggiungere_nuovo_contatto(page):
 
     try:
         page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
-        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.evaluate("el => el.click()")
+        page.wait_for_timeout(1000)
+        page.evaluate("() => { for (const b of document.querySelectorAll('button')) { if (['Procedi', 'Procéder', 'Continuer'].includes(b.textContent.trim())) { b.click(); return; } } }")
         nome_input = page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first
         nome_input.click()
         nome_input.fill("Test")

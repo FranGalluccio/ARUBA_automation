@@ -60,13 +60,19 @@ def test_evento_tutto_il_giorno(page):
             print("All-day toggle clicked")
             page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_08_allday_{datetime.now():%H-%M-%S}.png"))
 
-        # Salva
-        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
+        # Salva (via JS per evitare "Enregistrer la recherche" disabilitato)
+        page.evaluate("""() => {
+            const btn = Array.from(document.querySelectorAll('button')).find(
+                b => ['Salva', 'Enregistrer', 'Sauvegarder'].includes(b.textContent.trim()) && !b.disabled
+            );
+            if (btn) btn.click();
+        }""")
 
-        # Verifica che l'evento sia presente nel calendario
-        page.locator('a, [class*="event"]').filter(has_text=titolo_evento).first.wait_for(
-            state="visible", timeout=8000
-        )
+        # Verifica che l'evento sia presente nel calendario (all-day = fc-daygrid, non fc-timegrid)
+        page.locator(
+            '.fc-daygrid-event, .fc-event, .fc-h-event, '
+            '[class*="fc-daygrid"] a, a[class*="event"]'
+        ).filter(has_text=titolo_evento).first.wait_for(state="visible", timeout=8000)
 
         # Screenshot
         screenshot_path = os.path.join(

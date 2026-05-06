@@ -42,12 +42,14 @@ def test_etichetta(page):
     except Exception:
         pass
 
-    # Seleziona i messaggi (hover per renderli visibili)
-    page.locator('div.frame-record-desktop').nth(0).hover()
+    # Aspetta che il dialog etichetta sia chiuso prima di hover
+    page.wait_for_timeout(2000)
+    # Seleziona i messaggi (hover via JS per bypassare il CDK overlay handler)
+    page.evaluate("() => { const el = document.querySelectorAll('div.frame-record-desktop')[0]; if (el) { el.dispatchEvent(new MouseEvent('mouseenter', {bubbles: true, cancelable: true})); el.dispatchEvent(new MouseEvent('mouseover', {bubbles: true, cancelable: true})); } }")
     page.wait_for_timeout(300)
     page.locator('div.aru-input-checkbox').nth(1).click(force=True)
     page.wait_for_timeout(500)
-    page.locator('div.frame-record-desktop').nth(1).hover()
+    page.evaluate("() => { const el = document.querySelectorAll('div.frame-record-desktop')[1]; if (el) { el.dispatchEvent(new MouseEvent('mouseenter', {bubbles: true, cancelable: true})); el.dispatchEvent(new MouseEvent('mouseover', {bubbles: true, cancelable: true})); } }")
     page.wait_for_timeout(300)
     page.locator('div.aru-input-checkbox').nth(2).click(force=True)
 

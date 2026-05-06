@@ -60,15 +60,19 @@ def test_segna_come_letto_da_leggere(page):
     }""")
     page.wait_for_timeout(2000)
 
-    # Segna tutti come da leggere (attendi visibilità, prova sia button che aru-button)
-    da_leggere = page.locator(
-        'button:has(aru-symbol[title="Segna tutti come da leggere"]), '
-        'aru-button:has(aru-symbol[title="Segna tutti come da leggere"]), '
-        'button:has(aru-symbol[title*="non lu"]), '
-        'aru-button:has(aru-symbol[title*="non lu"])'
-    )
-    da_leggere.first.wait_for(state="visible", timeout=10000)
-    da_leggere.first.click(force=True)
+    # Segna tutti come da leggere via JS (bypassa aria-hidden e locator handler)
+    page.wait_for_timeout(2000)
+    page.evaluate("""() => {
+        for (const btn of document.querySelectorAll('aru-button, button')) {
+            if (btn.getAttribute('aria-hidden') === 'true') continue;
+            const sym = btn.querySelector('aru-symbol');
+            if (!sym) continue;
+            const t = (sym.getAttribute('title') || '').toLowerCase();
+            if (t.includes('da leggere') || t.includes('non lu')) {
+                btn.click(); return;
+            }
+        }
+    }""")
     page.wait_for_timeout(1500)
 
     # Verifica che almeno un messaggio risulti non letto:

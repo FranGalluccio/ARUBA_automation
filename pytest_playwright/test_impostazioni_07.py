@@ -27,14 +27,6 @@ def test_storico_accessi(page):
     except Exception:
         pass
 
-    # Verifica che il bottone/link Storico accessi sia visibile
-    storico_btn = page.locator(
-        'button[title="Storico accessi"], button[title="Historique des accès"], '
-        'button[title="Historique de connexion"], a[title="Storico accessi"], '
-        'button:has-text("Apri"), a:has-text("Apri"), button:has-text("Ouvrir"), '
-        'aru-button, button'
-    ).first
-
     # Screenshot
     screenshot_path = os.path.join(
         REPORT_FOLDER,
@@ -42,4 +34,6 @@ def test_storico_accessi(page):
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    expect(storico_btn).to_be_visible()
+    # Verifica che la navigazione alla pagina Storico accessi sia riuscita
+    assert "access-history" in page.url or "account-security" in page.url, \
+        f"Pagina Storico accessi non raggiunta: {page.url}"
