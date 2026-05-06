@@ -83,10 +83,15 @@ def test_messaggio_con_allegato(page):
     attachment_loc.wait_for(state="visible", timeout=20000)
     attachment_loc.click()
 
-    # Mostra anteprima
-    new_page.locator('button:has-text("Mostra anteprima"), button:has-text("Aperçu"), button:has-text("Afficher")').or_(
-        new_page.get_by_text("Mostra anteprima", exact=False)
-    ).or_(
+    # Mostra anteprima (button may be outside viewport in FR layout)
+    _preview_btn = new_page.locator(
+        'button:has-text("Mostra anteprima"), button:has-text("Aperçu"), button:has-text("Afficher")'
+    ).or_(new_page.get_by_text("Mostra anteprima", exact=False)).or_(
         new_page.get_by_text("Aperçu", exact=False)
-    ).first.click()
+    ).first
+    try:
+        _preview_btn.scroll_into_view_if_needed()
+    except Exception:
+        pass
+    _preview_btn.click(force=True)
     new_page.wait_for_timeout(2000)

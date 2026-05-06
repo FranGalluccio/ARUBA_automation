@@ -38,7 +38,7 @@ def test_aggiungere_nuovo_gruppo(page):
     try:
         # Crea un contatto temporaneo da aggiungere al gruppo
         page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
-        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.evaluate("el => el.click()")
         page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first.fill(contact_name)
         page.locator('input[placeholder*="email"]').first.fill(f"gruppocontact_{ts}@{TEST_EMAIL_DOMAIN}")
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
@@ -47,7 +47,7 @@ def test_aggiungere_nuovo_gruppo(page):
         # Crea il gruppo
         page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
         page.locator("#group").check()
-        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.evaluate("el => el.click()")
         page.get_by_role("textbox", name="input field").click()
         page.get_by_role("textbox", name="input field").fill(group_name)
         page.get_by_role("textbox", name="input search").click()

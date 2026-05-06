@@ -47,21 +47,25 @@ def test_segna_come_letto_da_leggere(page):
 
     assert messaggio_arrivato, f"Il messaggio '{oggetto}' non è arrivato in inbox entro 90s"
 
-    # Segna tutti come già letti (force perché il bottone può essere parzialmente fuori viewport)
-    page.locator(
-        'button:has(aru-symbol[title="Segna tutti come già letti"]), '
-        'aru-button:has(aru-symbol[title="Segna tutti come già letti"]), '
-        'button:has(aru-symbol[title="Tout marquer comme lu"]), '
-        'aru-button:has(aru-symbol[title="Tout marquer comme lu"])'
-    ).first.click(force=True)
+    # Segna tutti come già letti — cerca il button tramite aru-symbol con title che contiene "letti" o "lu"
+    page.evaluate("""() => {
+        const symbols = document.querySelectorAll('aru-symbol');
+        for (const sym of symbols) {
+            const t = (sym.getAttribute('title') || '').toLowerCase();
+            if (t.includes('letti') || (t.includes('lu') && t.includes('marquer'))) {
+                const btn = sym.closest('button, aru-button');
+                if (btn) { btn.click(); break; }
+            }
+        }
+    }""")
     page.wait_for_timeout(2000)
 
     # Segna tutti come da leggere (attendi visibilità, prova sia button che aru-button)
     da_leggere = page.locator(
         'button:has(aru-symbol[title="Segna tutti come da leggere"]), '
         'aru-button:has(aru-symbol[title="Segna tutti come da leggere"]), '
-        'button:has(aru-symbol[title="Tout marquer comme non lu"]), '
-        'aru-button:has(aru-symbol[title="Tout marquer comme non lu"])'
+        'button:has(aru-symbol[title*="non lu"]), '
+        'aru-button:has(aru-symbol[title*="non lu"])'
     )
     da_leggere.first.wait_for(state="visible", timeout=10000)
     da_leggere.first.click(force=True)

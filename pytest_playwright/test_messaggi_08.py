@@ -51,8 +51,8 @@ def test_etichetta(page):
     page.wait_for_timeout(300)
     page.locator('div.aru-input-checkbox').nth(2).click(force=True)
 
-    # Clicca su etichetta
-    page.locator('button:has(aru-symbol[title="Etichetta"])').nth(0).click()
+    # Clicca su etichetta (IT: "Etichetta", FR: "Étiquette")
+    page.locator('button:has(aru-symbol[title="Etichetta"]), button:has(aru-symbol[title="Étiquette"])').nth(0).click()
     page.locator('aru-chosen-closed[inputgroupinputs*="Test etichetta lavoro"]').wait_for(state="visible", timeout=5000)
 
     # Seleziona etichetta lavoro

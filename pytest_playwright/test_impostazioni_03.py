@@ -20,23 +20,17 @@ def test_regole_messaggi(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    # Vai alle impostazioni → Regole messaggi (URL calcolato dopo il login per supportare prod-aruba)
-    page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
+    # Naviga direttamente alle Regole messaggi (URL stabile per IT e FR)
+    app_base = get_app_base_url(page)
+    page.goto(app_base + "/new/settings/messages-writing/message-rules", timeout=20000)
+    try:
+        page.wait_for_load_state("load", timeout=10000)
+    except Exception:
+        pass
     dismiss_overlay(page)
-    # Espandi l'accordion "Messaggi e scrittura" se necessario
-    if not page.locator('button[title="Regole messaggi"], button[title="Règles des messages"]').is_visible():
-        _accordion = page.locator(
-            'button[title="Messaggi e scrittura"], button[title="Messages et rédaction"]'
-        ).or_(page.locator('button').filter(has_text="Messaggi e scrittura")).or_(
-            page.locator('button').filter(has_text="Messages et")
-        ).first
-        _accordion.click(force=True)
-        page.locator('button[title="Regole messaggi"], button[title="Règles des messages"]').first.wait_for(state="visible", timeout=8000)
-    dismiss_overlay(page)
-    page.locator('button[title="Regole messaggi"], button[title="Règles des messages"]').click(force=True)
 
     # Verifica che la pagina Regole messaggi sia caricata
-    page.locator('h1, [class*="filter"], [class*="rule"]').first.wait_for(state="visible", timeout=8000)
+    page.locator('h1, [class*="filter"], [class*="rule"], aru-button').first.wait_for(state="visible", timeout=8000)
 
     # Clicca "Nuova regola" - cerchiamo tutti i pulsanti aru-button visibili
     create_btn = page.locator('aru-button[kind="solid"][skin="primary"]').first

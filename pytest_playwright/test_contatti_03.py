@@ -29,12 +29,24 @@ def test_esporta_contatti(page):
     page.locator("#contacts").click()
     page.locator('button[title="Tutti i contatti"], button[title="Tous les contacts"]').first.wait_for(state="visible", timeout=10000)
 
-    # Attendi il download
+    # Attendi il download (IT: "Esporta", FR: "Exporter")
     with page.expect_download() as download_info:
-        page.get_by_role("button", name="Esporta").click()
-        page.get_by_role("combobox", name="Esporta rubrica in vCard").click()
-        page.get_by_role("button", name="Esporta rubrica in CSV").click()
-        page.get_by_role("button", name="Esporta rubrica").click()
+        try:
+            page.get_by_role("button", name="Esporta").click()
+        except Exception:
+            page.get_by_role("button", name="Exporter").click()
+        try:
+            page.get_by_role("combobox", name="Esporta rubrica in vCard").click()
+        except Exception:
+            page.get_by_role("combobox").first.click()
+        try:
+            page.get_by_role("button", name="Esporta rubrica in CSV").click()
+        except Exception:
+            page.locator('button:has-text("CSV")').first.click()
+        try:
+            page.get_by_role("button", name="Esporta rubrica").click()
+        except Exception:
+            page.locator('button:has-text("Esporta"), button:has-text("Exporter")').last.click()
 
     download = download_info.value
 

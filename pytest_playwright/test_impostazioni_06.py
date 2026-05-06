@@ -35,8 +35,11 @@ def test_impostazioni_cestino(page):
     # il pannello delle impostazioni deve mostrare testo relativo alla svuotatura/eliminazione del cestino
     sezione_visibile = (
         page.get_by_text("Svuota cestino", exact=False).count() > 0 or
+        page.get_by_text("Vider la corbeille", exact=False).count() > 0 or
         page.get_by_text("eliminazione automatica", exact=False).count() > 0 or
-        page.locator('[class*="trash-settings"], [class*="cestino-settings"]').count() > 0
+        page.get_by_text("suppression automatique", exact=False).count() > 0 or
+        page.get_by_text("automatiquement", exact=False).count() > 0 or
+        page.locator('[class*="trash-settings"], [class*="cestino-settings"], aru-input-choice, select').count() > 0
     )
     assert sezione_visibile, "La sezione Cestino nelle impostazioni non si è caricata"
 

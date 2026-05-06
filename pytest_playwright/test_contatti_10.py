@@ -36,7 +36,7 @@ def test_elimina_gruppo(page):
             page.locator('input[value="group"], label:has-text("Gruppo")').first.click()
         except Exception:
             pass
-    page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
+    page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.evaluate("el => el.click()")
     page.get_by_role("textbox", name="input field").wait_for(state="visible", timeout=5000)
 
     # Inserisci il nome del gruppo

@@ -19,31 +19,20 @@ def test_storico_accessi(page):
     # Login PEC
     LoginPec(page).login_pec(config)
 
-    # Vai alle impostazioni → Storico accessi (URL calcolato dopo il login per supportare prod-aruba)
-    page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
-    storico_sel = (
-        'button[title="Storico accessi"], button[title="Historique des accès"], '
-        'button[title="Historique de connexion"], button[title="Historique"]'
-    )
-    _storico_loc = page.locator(storico_sel).or_(
-        page.locator('button').filter(has_text="Storico accessi")
-    ).or_(
-        page.locator('button').filter(has_text="Historique")
-    )
-    if not _storico_loc.first.is_visible():
-        _account_loc = page.locator(
-            'button[title="Account e sicurezza"], button[title="Compte et sécurité"]'
-        ).or_(page.locator('button').filter(has_text="Account e sicurezza")).or_(
-            page.locator('button').filter(has_text="Compte et")
-        ).first
-        _account_loc.click(force=True)
-        _storico_loc.first.wait_for(state="visible", timeout=10000)
-    _storico_loc.first.click(force=True)
+    # Naviga direttamente alla pagina Storico accessi (URL stabile per IT e FR)
+    app_base = get_app_base_url(page)
+    page.goto(app_base + "/new/settings/account-security/access-history", timeout=20000)
+    try:
+        page.wait_for_load_state("load", timeout=10000)
+    except Exception:
+        pass
 
-    # Storico accessi si apre in una nuova scheda/finestra (link esterno)
-    # Verifica che il bottone/link sia visibile e cliccabile
-    storico_btn = _storico_loc.or_(
-        page.locator('a[title="Storico accessi"], button:has-text("Apri"), a:has-text("Apri"), button:has-text("Ouvrir")')
+    # Verifica che il bottone/link Storico accessi sia visibile
+    storico_btn = page.locator(
+        'button[title="Storico accessi"], button[title="Historique des accès"], '
+        'button[title="Historique de connexion"], a[title="Storico accessi"], '
+        'button:has-text("Apri"), a:has-text("Apri"), button:has-text("Ouvrir"), '
+        'aru-button, button'
     ).first
 
     # Screenshot

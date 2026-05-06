@@ -33,7 +33,7 @@ def test_scrivi_email_da_contatto(page):
     try:
         # Crea un contatto con email per il test
         page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
-        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.click()
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer")').first.evaluate("el => el.click()")
         page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first.fill(nome_test)
         page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first.fill("Contact")
         page.locator('input[placeholder*="email"]').first.fill(email_contatto)
