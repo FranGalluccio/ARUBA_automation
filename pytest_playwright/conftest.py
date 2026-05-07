@@ -73,15 +73,17 @@ def dismiss_cdk_overlay(page):
     def _dismiss():
         try:
             page.evaluate("""() => {
-                const dismissTexts = ['Chiudi', 'Non ora', 'Ricordarmelo', 'Capito', 'Ho capito', 'Ok', 'Close'];
-                const pane = document.querySelector('.cdk-overlay-pane');
-                if (!pane) return;
-                const closeBtn = pane.querySelector(
-                    'button[aria-label="Chiudi"], button[title="Chiudi"]'
-                );
-                if (closeBtn) { closeBtn.click(); return; }
-                for (const btn of pane.querySelectorAll('button')) {
-                    if (dismissTexts.includes(btn.textContent.trim())) { btn.click(); return; }
+                const dismissTexts = ['Chiudi', 'Non ora', 'Ricordarmelo', 'Capito', 'Ho capito', 'Ok', 'Close', 'Fermer', 'Ignorer'];
+                // Controlla TUTTI i pane CDK, salta quelli con input (form di inserimento dati)
+                for (const pane of document.querySelectorAll('.cdk-overlay-pane')) {
+                    if (pane.querySelector('input[placeholder], textarea')) continue;
+                    const closeBtn = pane.querySelector(
+                        'button[aria-label="Chiudi"], button[title="Chiudi"]'
+                    );
+                    if (closeBtn) { closeBtn.click(); return; }
+                    for (const btn of pane.querySelectorAll('button')) {
+                        if (dismissTexts.includes(btn.textContent.trim())) { btn.click(); return; }
+                    }
                 }
             }""")
         except Exception:

@@ -38,28 +38,28 @@ def test_aggiungere_nuovo_gruppo(page):
     try:
         # Crea un contatto temporaneo da aggiungere al gruppo
         page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
+        page.wait_for_timeout(1500)
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer"), button:has-text("Suivant")').first.click(force=True)
         page.wait_for_timeout(1000)
-        page.evaluate("() => { for (const b of document.querySelectorAll('button')) { if (['Procedi', 'Procéder', 'Continuer'].includes(b.textContent.trim())) { b.click(); return; } } }")
-        page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first.fill(contact_name)
-        page.locator('input[placeholder*="email"]').first.fill(f"gruppocontact_{ts}@{TEST_EMAIL_DOMAIN}")
-        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
+        page.locator('input[placeholder*=" nome"], input[placeholder*="rénom"]').first.fill(contact_name, force=True)
+        page.locator('input[placeholder*="email"]').first.fill(f"gruppocontact_{ts}@{TEST_EMAIL_DOMAIN}", force=True)
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click(force=True)
         page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
         # Crea il gruppo
         page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
+        page.wait_for_timeout(1500)
+        page.locator('#group, input[value="group"]').first.click(force=True)
         page.wait_for_timeout(500)
-        page.evaluate("() => { const g = document.querySelector('#group, input[value=\"group\"]'); if (g) g.click(); }")
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer"), button:has-text("Suivant")').first.click(force=True)
         page.wait_for_timeout(1000)
-        page.evaluate("() => { for (const b of document.querySelectorAll('button')) { if (['Procedi', 'Procéder', 'Continuer'].includes(b.textContent.trim())) { b.click(); return; } } }")
-        page.get_by_role("textbox", name="input field").click()
-        page.get_by_role("textbox", name="input field").fill(group_name)
-        page.get_by_role("textbox", name="input search").click()
-        page.get_by_role("textbox", name="input search").fill(contact_name)
+        page.get_by_role("textbox", name="input field").fill(group_name, force=True)
+        page.get_by_role("textbox", name="input search").fill(contact_name, force=True)
         page.get_by_role("checkbox", name=contact_name).first.wait_for(state="visible", timeout=5000)
-        page.get_by_role("checkbox", name=contact_name).first.click()
-        page.locator('button:has-text("Aggiungi contatti"), button:has-text("Ajouter des contacts")').first.click()
+        page.get_by_role("checkbox", name=contact_name).first.click(force=True)
+        page.locator('button:has-text("Aggiungi contatti"), button:has-text("Ajouter des contacts")').first.click(force=True)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.wait_for(state="visible", timeout=5000)
-        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click(force=True)
 
         # Percorso screenshot dinamico
         screenshot_path = os.path.join(

@@ -33,12 +33,13 @@ def test_scrivi_email_da_contatto(page):
     try:
         # Crea un contatto con email per il test
         page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
+        page.wait_for_timeout(1500)
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer"), button:has-text("Suivant")').first.click(force=True)
         page.wait_for_timeout(1000)
-        page.evaluate("() => { for (const b of document.querySelectorAll('button')) { if (['Procedi', 'Procéder', 'Continuer'].includes(b.textContent.trim())) { b.click(); return; } } }")
-        page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first.fill(nome_test)
-        page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first.fill("Contact")
-        page.locator('input[placeholder*="email"]').first.fill(email_contatto)
-        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
+        page.locator('input[placeholder*=" nome"], input[placeholder*="rénom"]').first.fill(nome_test, force=True)
+        page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first.fill("Contact", force=True)
+        page.locator('input[placeholder*="email"]').first.fill(email_contatto, force=True)
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click(force=True)
 
         # Cerca il contatto
         search = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="contacts"]').first
@@ -53,43 +54,71 @@ def test_scrivi_email_da_contatto(page):
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_contatti_09_hover_{datetime.now():%H-%M-%S}.png"))
 
         def compose_open():
-            try:
-                crea_dialog = page.locator('text="Crea contatto, gruppo, rubrica"').first
-                if crea_dialog.is_visible():
-                    page.keyboard.press("Escape")
-                    page.wait_for_timeout(500)
-            except Exception:
-                pass
-            return page.locator('span[title="Invia"], span[title="Envoyer"]').count() > 0
+            page.wait_for_timeout(1000)
+            return page.evaluate("""() => {
+                if (document.querySelector('span[title="Invia"], span[title="Envoyer"]')) return true;
+                for (const btn of document.querySelectorAll('button')) {
+                    const t = btn.textContent.trim();
+                    if (t === 'Envoyer' || t === 'Invia') return true;
+                }
+                const html = document.body.innerHTML || '';
+                if (html.includes('Nouveau message') || html.includes('Nuovo messaggio')) return true;
+                for (const el of document.querySelectorAll('*')) {
+                    if (el.shadowRoot) {
+                        const sh = el.shadowRoot;
+                        if (sh.innerHTML.includes('Nouveau message') || sh.innerHTML.includes('Nuovo messaggio')) return true;
+                        for (const b of sh.querySelectorAll('button')) {
+                            const t = b.textContent.trim();
+                            if (t === 'Envoyer' || t === 'Invia') return true;
+                        }
+                    }
+                }
+                return false;
+            }""")
 
         email_clicked = False
 
-        mailto_link = row.locator('a[href*="mailto"], a[href*="pec"]').first
+        # Attempt 1: click the first action icon (envelope) visible on row hover
+        row.hover()
+        page.wait_for_timeout(500)
         try:
-            if mailto_link.count() > 0:
-                mailto_link.click(force=True)
-                page.wait_for_timeout(1000)
-                email_clicked = compose_open()
+            action_icon = row.locator('aru-button, button').filter(
+                has=page.locator('aru-symbol')
+            ).first
+            action_icon.click(force=True)
+            page.wait_for_timeout(2000)
+            email_clicked = compose_open()
         except Exception:
             pass
+
+        # Attempt 2: iterate webmail-actions-buttons or generic action buttons
         if not email_clicked:
-            action_btns = row.locator('webmail-actions-buttons aru-button').all()
-            for btn in action_btns:
+            for btn_sel in ['webmail-actions-buttons aru-button', 'aru-button']:
                 try:
-                    btn.click(force=True)
-                    page.wait_for_timeout(1000)
-                    if compose_open():
-                        email_clicked = True
+                    btns = row.locator(btn_sel).all()
+                    for btn in btns[:4]:
+                        btn.click(force=True)
+                        page.wait_for_timeout(2000)
+                        if compose_open():
+                            email_clicked = True
+                            break
+                    if email_clicked:
                         break
                 except Exception:
                     pass
+
+        # Attempt 3: mailto link
         if not email_clicked:
             try:
-                page.locator('button[title="Scrivi email"], button[title*="email"], button[title*="mail"]').first.click(timeout=3000)
-                page.wait_for_timeout(1000)
-                email_clicked = compose_open()
+                mailto_link = row.locator('a[href*="mailto"], a[href*="pec"]').first
+                if mailto_link.count() > 0:
+                    mailto_link.click(force=True)
+                    page.wait_for_timeout(2000)
+                    email_clicked = compose_open()
             except Exception:
                 pass
+
+        # Attempt 4: toolbar button after checkbox selection
         if not email_clicked:
             try:
                 row.hover()
@@ -100,6 +129,11 @@ def test_scrivi_email_da_contatto(page):
                 email_clicked = compose_open()
             except Exception:
                 pass
+
+        # Final check after longer wait (compose might open slowly)
+        if not email_clicked:
+            page.wait_for_timeout(3000)
+            email_clicked = compose_open()
 
         screenshot_path = os.path.join(
             REPORT_FOLDER,

@@ -35,18 +35,13 @@ def test_aggiungere_nuovo_contatto(page):
 
     try:
         page.locator('button:has-text("Nuovo"), button:has-text("Nouveau")').first.click()
+        page.wait_for_timeout(1500)
+        page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer"), button:has-text("Suivant")').first.click(force=True)
         page.wait_for_timeout(1000)
-        page.evaluate("() => { for (const b of document.querySelectorAll('button')) { if (['Procedi', 'Procéder', 'Continuer'].includes(b.textContent.trim())) { b.click(); return; } } }")
-        nome_input = page.locator('input[placeholder*=" nome"], input[placeholder*="prénom"]').first
-        nome_input.click()
-        nome_input.fill("Test")
-        cognome_input = page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first
-        cognome_input.click()
-        cognome_input.fill("Automatico")
-        email_input = page.locator('input[placeholder*="email"]').first
-        email_input.click()
-        email_input.fill(unique_email)
-        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
+        page.locator('input[placeholder*=" nome"], input[placeholder*="rénom"]').first.fill("Test", force=True)
+        page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first.fill("Automatico", force=True)
+        page.locator('input[placeholder*="email"]').first.fill(unique_email, force=True)
+        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click(force=True)
 
         # Verifica che il contatto sia stato creato (cerca per email univoca)
         search = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="contacts"]').first
