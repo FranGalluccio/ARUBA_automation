@@ -73,16 +73,43 @@ def test_messaggio_con_allegato(page):
     # Verifica pagina esterna
     assert "external-message" in new_page.url
 
-    # Aspetta che il bottone allegato sia visibile (selettori multipli per versioni diverse)
+    # Clicca il chip allegato — selettori multipli + fallback get_by_text + JS coords
     nome_allegato = os.path.basename(file_allegato)
-    attachment_loc = new_page.locator(
-        f'[title="{nome_allegato}"], '
-        f'button:has-text("{nome_allegato}"), '
-        f'[aria-label="{nome_allegato}"], '
-        f'span:has-text("{nome_allegato}")'
-    ).first
-    attachment_loc.wait_for(state="visible", timeout=30000)
-    attachment_loc.click()
+
+    def _find_attachment(target_page, name):
+        # Ordine originale: NON modificare, altrimenti .first cambia elemento
+        loc = target_page.locator(
+            f'[title="{name}"], '
+            f'button:has-text("{name}"), '
+            f'[aria-label="{name}"], '
+            f'span:has-text("{name}")'
+        ).first
+        try:
+            loc.wait_for(state="visible", timeout=30000)
+            loc.click(force=True)
+            return
+        except Exception:
+            pass
+        # Fallback per Italian CI: selettori aggiuntivi, provati uno alla volta
+        for sel in [
+            f'a:has-text("{name}")',
+            f'aru-chips-item:has-text("{name}")',
+            f'[class*="chips"]:has-text("{name}")',
+        ]:
+            try:
+                item = target_page.locator(sel).first
+                if item.count() > 0 and item.is_visible():
+                    item.click(force=True)
+                    return
+            except Exception:
+                pass
+        # Ultimo fallback: accessibility tree (closed shadow DOM)
+        try:
+            target_page.get_by_text(name, exact=True).first.click(force=True)
+        except Exception:
+            raise Exception(f"Allegato '{name}' non trovato nella pagina")
+
+    _find_attachment(new_page, nome_allegato)
 
     # Mostra anteprima (button may be outside viewport in FR layout)
     _preview_btn = new_page.locator(

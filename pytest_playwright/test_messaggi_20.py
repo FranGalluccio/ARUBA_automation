@@ -65,16 +65,43 @@ def test_scarica_allegato_ricevuto(page):
     new_page.wait_for_load_state("load")
     assert "external-message" in new_page.url
 
-    # Clicca sull'allegato (selettori multipli per versioni diverse)
+    # Clicca il chip allegato — selettori multipli + fallback get_by_text + JS coords
     nome_file = os.path.basename(file_allegato)
-    attachment_btn = new_page.locator(
-        f'[title="{nome_file}"], '
-        f'button:has-text("{nome_file}"), '
-        f'[aria-label="{nome_file}"], '
-        f'span:has-text("{nome_file}")'
-    ).first
-    attachment_btn.wait_for(state="visible", timeout=30000)
-    attachment_btn.click(force=True)
+
+    def _click_attachment_chip(target_page, name):
+        # Ordine originale: NON modificare, altrimenti .first cambia elemento
+        loc = target_page.locator(
+            f'[title="{name}"], '
+            f'button:has-text("{name}"), '
+            f'[aria-label="{name}"], '
+            f'span:has-text("{name}")'
+        ).first
+        try:
+            loc.wait_for(state="visible", timeout=30000)
+            loc.click(force=True)
+            return
+        except Exception:
+            pass
+        # Fallback per Italian CI: selettori aggiuntivi, provati uno alla volta
+        for sel in [
+            f'a:has-text("{name}")',
+            f'aru-chips-item:has-text("{name}")',
+            f'[class*="chips"]:has-text("{name}")',
+        ]:
+            try:
+                item = target_page.locator(sel).first
+                if item.count() > 0 and item.is_visible():
+                    item.click(force=True)
+                    return
+            except Exception:
+                pass
+        # Ultimo fallback: accessibility tree (closed shadow DOM)
+        try:
+            target_page.get_by_text(name, exact=True).first.click(force=True)
+        except Exception:
+            raise Exception(f"Allegato '{name}' non trovato nella pagina")
+
+    _click_attachment_chip(new_page, nome_file)
     new_page.wait_for_timeout(1000)
 
     # Scarica l'allegato — IT: "Scarica" / FR: "Télécharger"
@@ -93,20 +120,28 @@ def test_scarica_allegato_ricevuto(page):
         else:
             route.continue_()
 
-    # Find the dropdown/overlay panel position via JS (regular DOM, no shadow piercing needed)
+    # Find the download dropdown — cerca prima il pane che contiene il testo download
     coords = new_page.evaluate("""() => {
-        // Look for CDK overlay pane or dropdown menu that opened
-        const selectors = ['.cdk-overlay-pane', '[role="menu"]', '[role="listbox"]', '.dropdown-menu'];
-        for (const sel of selectors) {
+        const downloadKeywords = ['Scarica', 'Télécharger', 'Download', 'Téléch'];
+        // 1) Cerca CDK pane che contiene il testo download
+        for (const sel of ['.cdk-overlay-pane', '[role="menu"]', '[role="listbox"]']) {
             for (const el of document.querySelectorAll(sel)) {
+                const text = el.textContent || '';
+                const hasDownload = downloadKeywords.some(k => text.includes(k));
                 const rect = el.getBoundingClientRect();
-                if (rect.width > 50 && rect.height > 30 && rect.y >= 0 && rect.y < window.innerHeight) {
-                    // Click on the first item (Télécharger/Scarica) — top 30% of panel
+                if (hasDownload && rect.width > 30 && rect.height > 20 && rect.y >= 0 && rect.y < window.innerHeight) {
                     return {x: rect.x + rect.width / 2, y: rect.y + rect.height * 0.3};
                 }
             }
         }
-        // Fallback: first visible aru-button element
+        // 2) Qualsiasi CDK overlay pane sufficientemente grande
+        for (const el of document.querySelectorAll('.cdk-overlay-pane')) {
+            const rect = el.getBoundingClientRect();
+            if (rect.width > 80 && rect.height > 40 && rect.y >= 0 && rect.y < window.innerHeight) {
+                return {x: rect.x + rect.width / 2, y: rect.y + rect.height * 0.3};
+            }
+        }
+        // 3) Fallback: primo aru-button visibile
         for (const el of document.querySelectorAll('aru-button')) {
             const rect = el.getBoundingClientRect();
             if (rect.width > 10 && rect.height > 10 && rect.y > 0 && rect.y < window.innerHeight) {
