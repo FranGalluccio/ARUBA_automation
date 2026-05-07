@@ -42,7 +42,7 @@ def test_creazione_evento_ricorrente(page):
         page.get_by_role("combobox", name="Non ripetere").click()
     except Exception:
         page.get_by_role("combobox", name="Ne pas répéter").click()
-    page.locator('button:has-text("Personalizza"), button:has-text("Personnaliser")').first.click()
+    page.locator('.cdk-overlay-pane button:has-text("Personalizza"), .cdk-overlay-pane button:has-text("Personnaliser")').first.click()
     try:
         page.get_by_role("radio", name="Dopo").check()
     except Exception:

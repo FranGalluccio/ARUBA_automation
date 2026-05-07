@@ -60,13 +60,11 @@ def test_evento_tutto_il_giorno(page):
             print("All-day toggle clicked")
             page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_08_allday_{datetime.now():%H-%M-%S}.png"))
 
-        # Salva (via JS per evitare "Enregistrer la recherche" disabilitato)
-        page.evaluate("""() => {
-            const btn = Array.from(document.querySelectorAll('button')).find(
-                b => ['Salva', 'Enregistrer', 'Sauvegarder'].includes(b.textContent.trim()) && !b.disabled
-            );
-            if (btn) btn.click();
-        }""")
+        # Salva con click trusted (JS evaluate produce eventi non trusted ignorati da Angular)
+        try:
+            page.get_by_role("button", name="Salva", exact=True).first.click()
+        except Exception:
+            page.get_by_role("button", name="Enregistrer", exact=True).first.click()
 
         # Verifica che l'evento sia presente nel calendario (all-day = fc-daygrid, non fc-timegrid)
         page.locator(

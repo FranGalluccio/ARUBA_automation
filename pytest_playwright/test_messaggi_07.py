@@ -49,37 +49,67 @@ def test_messaggi_preferiti_pinnati(page):
             page.wait_for_timeout(600)
 
     def _clicca_altro(page):
-        """Clicca il pulsante Altro nella toolbar (attende visibilità)."""
-        altro_btn = page.locator('svg[title="Altro"], svg[title="Plus"], button[title="Altro"], button[title="Plus"]').first
-        altro_btn.wait_for(state="visible", timeout=10000)
-        altro_btn.click()
+        """Clicca il pulsante '...' nella toolbar; Escape prima per chiudere overlay residui."""
+        page.keyboard.press("Escape")
+        page.wait_for_timeout(300)
+        for sel in [
+            'button:has(aru-symbol[title="Altro"])',
+            'button:has(aru-symbol[title="Plus"])',
+            'button[title="Altro"]',
+            'button[title="Plus"]',
+            'svg[title="Altro"]',
+            'svg[title="Plus"]',
+        ]:
+            try:
+                loc = page.locator(sel).first
+                if loc.count() > 0 and loc.is_visible():
+                    loc.click(force=True)
+                    return
+            except Exception:
+                pass
+        raise Exception("Pulsante Altro/Plus non trovato")
+
+    def _click_menu_item(nth):
+        """Clicca l'nth menu item nel pannello Altro (slot o CDK overlay)."""
+        page.wait_for_timeout(1000)
+        for sel in [
+            'aru-menu[slot="panelNoDropdown"] >> aru-menu-item',
+            '.cdk-overlay-container aru-menu-item',
+            '.cdk-overlay-pane aru-menu-item',
+            '[role="menuitem"]',
+        ]:
+            try:
+                loc = page.locator(sel)
+                if loc.count() > nth and loc.nth(nth).is_visible():
+                    loc.nth(nth).click(force=True)
+                    return
+            except Exception:
+                pass
+        page.screenshot(path=os.path.join(REPORT_FOLDER, f"debug_menu_{nth}_{datetime.now():%H-%M-%S}.png"))
+        raise Exception(f"Menu item {nth} non trovato/visibile")
 
     # Seleziona e aggiungi ai preferiti
     _seleziona_prime_due(page)
     _clicca_altro(page)
-    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).wait_for(state="visible", timeout=5000)
-    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).click()
+    _click_menu_item(0)
     page.wait_for_timeout(1000)
 
     # Seleziona e rimuovi dai preferiti
     _seleziona_prime_due(page)
     _clicca_altro(page)
-    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).wait_for(state="visible", timeout=5000)
-    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(0).click()
+    _click_menu_item(0)
     page.wait_for_timeout(1000)
 
     # Seleziona e aggiungi in evidenza
     _seleziona_prime_due(page)
     _clicca_altro(page)
-    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).wait_for(state="visible", timeout=5000)
-    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
+    _click_menu_item(1)
     page.wait_for_timeout(1000)
 
     # Seleziona e rimuovi da in evidenza
     _seleziona_prime_due(page)
     _clicca_altro(page)
-    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).wait_for(state="visible", timeout=5000)
-    page.locator('aru-menu[slot="panelNoDropdown"] >> aru-menu-item').nth(1).click()
+    _click_menu_item(1)
 
     # Verifica toast di conferma che i messaggi non sono più in evidenza
     toast = page.locator("div.aru-toast__message").filter(has_text="in evidenza").or_(

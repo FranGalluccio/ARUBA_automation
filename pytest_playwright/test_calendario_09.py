@@ -77,14 +77,12 @@ def test_evento_con_promemoria(page):
             pass
         page.wait_for_timeout(1000)
 
-        # Ora salva l'evento via JS (evita di prendere "Enregistrer la recherche")
+        # Salva con click trusted (JS evaluate produce eventi non trusted ignorati da Angular)
         page.wait_for_timeout(500)
-        page.evaluate("""() => {
-            const btn = Array.from(document.querySelectorAll('button')).find(
-                b => ['Salva', 'Enregistrer', 'Sauvegarder'].includes(b.textContent.trim()) && !b.disabled
-            );
-            if (btn) btn.click();
-        }""")
+        try:
+            page.get_by_role("button", name="Salva", exact=True).first.click()
+        except Exception:
+            page.get_by_role("button", name="Enregistrer", exact=True).first.click()
         # Attendi la toast di conferma salvataggio (scompare rapidamente)
         try:
             page.locator("div.aru-toast__message").wait_for(state="visible", timeout=10000)

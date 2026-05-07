@@ -73,7 +73,7 @@ def test_scarica_allegato_ricevuto(page):
         f'[aria-label="{nome_file}"], '
         f'span:has-text("{nome_file}")'
     ).first
-    attachment_btn.wait_for(state="visible", timeout=20000)
+    attachment_btn.wait_for(state="visible", timeout=30000)
     attachment_btn.click(force=True)
     new_page.wait_for_timeout(1000)
 

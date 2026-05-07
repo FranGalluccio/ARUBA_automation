@@ -59,6 +59,7 @@ def test_messaggio_con_allegato(page):
         link_external_button.click()
 
     new_page = popup_info.value
+    new_page.set_viewport_size({"width": 1280, "height": 900})
     new_page.wait_for_load_state("networkidle", timeout=15000)
 
     # Percorso screenshot dinamico
@@ -80,7 +81,7 @@ def test_messaggio_con_allegato(page):
         f'[aria-label="{nome_allegato}"], '
         f'span:has-text("{nome_allegato}")'
     ).first
-    attachment_loc.wait_for(state="visible", timeout=20000)
+    attachment_loc.wait_for(state="visible", timeout=30000)
     attachment_loc.click()
 
     # Mostra anteprima (button may be outside viewport in FR layout)

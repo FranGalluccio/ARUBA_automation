@@ -29,20 +29,23 @@ def test_esporta_contatti(page):
     page.locator("#contacts").click()
     page.locator('button[title="Tutti i contatti"], button[title="Tous les contacts"]').first.wait_for(state="visible", timeout=10000)
 
-    # Attendi il download (IT: "Esporta", FR: "Exporter")
-    # Usa page.evaluate() per tutte le interazioni col dialog per evitare il CDK locator handler
+    # Apri dialog esporta con click trusted
+    try:
+        page.get_by_role("button", name="Esporta").click()
+    except Exception:
+        page.get_by_role("button", name="Exporter").click()
+
+    # Aspetta che il dialog "Esporta rubrica" sia aperto
+    page.locator('.cdk-overlay-pane').last.wait_for(state="visible", timeout=8000)
+    page.wait_for_timeout(500)
+
+    # Click diretto su "Esporta rubrica" per avviare il download (no combobox format, non esiste)
     with page.expect_download() as download_info:
-        try:
-            page.get_by_role("button", name="Esporta").click()
-        except Exception:
-            page.get_by_role("button", name="Exporter").click()
-        # Aspetta che il dialog si apra, poi naviga via JS (bypassa il locator handler)
-        page.wait_for_timeout(1000)
-        page.evaluate("() => { for (const c of document.querySelectorAll('[role=\"combobox\"]')) { if (c.offsetParent) { c.click(); return; } } }")
-        page.wait_for_timeout(500)
-        page.evaluate("() => { for (const el of document.querySelectorAll('button, li, [role=\"option\"], aru-menu-item')) { if (el.textContent.includes('CSV') && el.offsetParent) { el.click(); return; } } }")
-        page.wait_for_timeout(500)
-        page.evaluate("() => { const btns = Array.from(document.querySelectorAll('button')); const b = btns.find(b => (b.textContent.includes('Esporta') || b.textContent.includes('Exporter') || b.textContent.includes('Export')) && b.offsetParent && !b.disabled); if (b) b.click(); }")
+        page.locator('.cdk-overlay-pane').last.locator(
+            'button:has-text("Esporta rubrica"), '
+            'button:has-text("Exporter le carnet"), '
+            'button:has-text("Exporter")'
+        ).first.click(force=True)
 
     download = download_info.value
 
