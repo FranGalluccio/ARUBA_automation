@@ -60,6 +60,7 @@ def test_scarica_allegato_ricevuto(page):
         link_external_button.click()
 
     new_page = popup_info.value
+    new_page.set_viewport_size({"width": 1280, "height": 900})
     new_page.wait_for_load_state("domcontentloaded")
     new_page.wait_for_load_state("load")
     assert "external-message" in new_page.url
@@ -73,19 +74,60 @@ def test_scarica_allegato_ricevuto(page):
         f'span:has-text("{nome_file}")'
     ).first
     attachment_btn.wait_for(state="visible", timeout=20000)
-    attachment_btn.click()
+    attachment_btn.click(force=True)
+    new_page.wait_for_timeout(1000)
 
-    # Scarica l'allegato (IT: "Scarica", FR: "Télécharger")
-    with new_page.expect_download() as download_info:
-        new_page.locator('button:has-text("Scarica"), button:has-text("Télécharger")').or_(
-            new_page.get_by_text("Scarica", exact=False)
-        ).or_(
-            new_page.get_by_text("Télécharger", exact=False)
-        ).first.click()
-
-    download = download_info.value
+    # Scarica l'allegato — IT: "Scarica" / FR: "Télécharger"
+    # The download button is in a CDK overlay dropdown. The inner shadow DOM button has wrong
+    # bounding box coords, so we locate the CDK pane (regular DOM) and click via mouse.click().
+    # Route interception forces Content-Disposition: attachment so Chrome downloads the PDF.
     download_path = os.path.join(REPORT_FOLDER, f"allegato_scaricato_{datetime.now():%Y-%m-%d_%H-%M-%S}_{nome_file}")
-    download.save_as(download_path)
+
+    def _force_attachment(route):
+        url = route.request.url.lower()
+        if any(k in url for k in ['.pdf', 'download', 'attach', 'allegat', '/file']):
+            resp = route.fetch()
+            headers = dict(resp.headers)
+            headers['content-disposition'] = f'attachment; filename="{nome_file}"'
+            route.fulfill(response=resp, headers=headers)
+        else:
+            route.continue_()
+
+    # Find the dropdown/overlay panel position via JS (regular DOM, no shadow piercing needed)
+    coords = new_page.evaluate("""() => {
+        // Look for CDK overlay pane or dropdown menu that opened
+        const selectors = ['.cdk-overlay-pane', '[role="menu"]', '[role="listbox"]', '.dropdown-menu'];
+        for (const sel of selectors) {
+            for (const el of document.querySelectorAll(sel)) {
+                const rect = el.getBoundingClientRect();
+                if (rect.width > 50 && rect.height > 30 && rect.y >= 0 && rect.y < window.innerHeight) {
+                    // Click on the first item (Télécharger/Scarica) — top 30% of panel
+                    return {x: rect.x + rect.width / 2, y: rect.y + rect.height * 0.3};
+                }
+            }
+        }
+        // Fallback: first visible aru-button element
+        for (const el of document.querySelectorAll('aru-button')) {
+            const rect = el.getBoundingClientRect();
+            if (rect.width > 10 && rect.height > 10 && rect.y > 0 && rect.y < window.innerHeight) {
+                return {x: rect.x + rect.width / 2, y: rect.y + rect.height / 2};
+            }
+        }
+        return null;
+    }""")
+    print(f"Download button coords via overlay: {coords}")
+
+    new_page.route('**', _force_attachment)
+    try:
+        with new_page.expect_download(timeout=30000) as download_info:
+            if coords:
+                new_page.mouse.click(coords['x'], coords['y'])
+            else:
+                new_page.locator('button[title="Scarica"], button[title="Télécharger"]').first.click(force=True)
+        download = download_info.value
+        download.save_as(download_path)
+    finally:
+        new_page.unroute('**', _force_attachment)
 
     # Screenshot
     screenshot_path = os.path.join(

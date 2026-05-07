@@ -36,12 +36,15 @@ def test_ricevuta_accettazione(page):
     page.locator("#messages").locator('[aria-label="Messaggi"], [aria-label="Messages"]').first.first.click()
     page.wait_for_timeout(5000)
 
-    # Mostra le ricevute se il banner è presente
+    # Mostra le ricevute — obbligatorio, senza questo le ricevute non compaiono mai
+    # IT: "Mostra ricevute" / FR: "Afficher les reçus"
     try:
-        mostra_btn = page.locator('button:has-text("Mostra ricevute"), button:has-text("Afficher")').first
-        if mostra_btn.is_visible():
-            mostra_btn.click()
-            page.wait_for_timeout(2000)
+        mostra_btn = page.get_by_text("Mostra ricevute", exact=True).or_(
+            page.get_by_text("Afficher les reçus", exact=True)
+        ).first
+        mostra_btn.wait_for(state="visible", timeout=5000)
+        mostra_btn.click(force=True)
+        page.wait_for_timeout(2000)
     except Exception:
         pass
 
@@ -53,10 +56,12 @@ def test_ricevuta_accettazione(page):
         page.wait_for_timeout(2000)
         # Riprova mostra ricevute se necessario
         try:
-            mostra_btn = page.locator('button:has-text("Mostra ricevute"), button:has-text("Afficher")').first
-            if mostra_btn.is_visible():
-                mostra_btn.click()
-                page.wait_for_timeout(1000)
+            mostra_btn = page.get_by_text("Mostra ricevute", exact=True).or_(
+                page.get_by_text("Afficher les reçus", exact=True)
+            ).first
+            mostra_btn.wait_for(state="visible", timeout=1000)
+            mostra_btn.click(force=True)
+            page.wait_for_timeout(1000)
         except Exception:
             pass
         if page.locator(
@@ -95,18 +100,21 @@ def test_ricevuta_accettazione(page):
         )
 
     # Nascondi nuovamente le ricevute per non interferire con i test successivi
+    # IT: "Nascondi ricevute" / FR: "Masquer les accusés"
     try:
-        nascondi_btn = page.locator('button:has-text("Nascondi ricevute"), button:has-text("Masquer")').first
-        if nascondi_btn.is_visible():
-            nascondi_btn.click()
-            page.wait_for_timeout(1000)
+        nascondi_btn = page.get_by_text("Nascondi ricevute", exact=True).or_(
+            page.get_by_text("Masquer les accusés", exact=True)
+        ).first
+        nascondi_btn.wait_for(state="visible", timeout=3000)
+        nascondi_btn.click(force=True)
+        page.wait_for_timeout(1000)
     except Exception:
         pass
 
     screenshot_path = os.path.join(
         REPORT_FOLDER, f"test_messaggi_23___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
-    page.screenshot(path=screenshot_path, full_page=True)
+    page.screenshot(path=screenshot_path)
 
     assert found_ra, (
         f"Ricevuta di Accettazione (RA) non trovata dopo invio messaggio '{oggetto}'. "

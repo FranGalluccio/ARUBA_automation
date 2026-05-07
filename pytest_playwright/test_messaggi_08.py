@@ -33,14 +33,21 @@ def test_etichetta(page):
     page.locator("input[placeholder*='Lavoro'], input[placeholder*='Travail'], input[placeholder*='label'], input[placeholder*='tichetta']").first.fill(nome_etichetta)
     # Salva nuova etichetta (scope al dialog per evitare "Enregistrer la recherche" disabilitato)
     page.locator('.cdk-overlay-pane button:has-text("Salva"), .cdk-overlay-pane button:has-text("Enregistrer")').first.click(force=True)
+    page.wait_for_timeout(1000)
 
-    chiudi = page.locator('button:has-text("Chiudi"), button:has-text("Fermer")').first
-
+    # Chiudi il dialog (italiano: auto-close; francese: rimane aperto → Annuler o Escape)
     try:
-        chiudi.wait_for(state="visible", timeout=3000)
-        chiudi.click()
+        chiudi = page.locator('button:has-text("Chiudi"), button:has-text("Fermer")').first
+        chiudi.wait_for(state="visible", timeout=2000)
+        chiudi.click(force=True)
     except Exception:
-        pass
+        try:
+            page.locator('.cdk-overlay-pane button:has-text("Annuler"), .cdk-overlay-pane button:has-text("Annulla")').first.click(force=True)
+        except Exception:
+            try:
+                page.keyboard.press("Escape")
+            except Exception:
+                pass
 
     # Aspetta che il dialog etichetta sia chiuso prima di hover
     page.wait_for_timeout(2000)
@@ -54,7 +61,7 @@ def test_etichetta(page):
     page.locator('div.aru-input-checkbox').nth(2).click(force=True)
 
     # Clicca su etichetta (IT: "Etichetta", FR: "Étiquette")
-    page.locator('button:has(aru-symbol[title="Etichetta"]), button:has(aru-symbol[title="Étiquette"])').nth(0).click()
+    page.locator('button:has(aru-symbol[title="Etichetta"]), button:has(aru-symbol[title="Étiquette"])').nth(0).click(force=True)
     page.locator('aru-chosen-closed[inputgroupinputs*="Test etichetta lavoro"]').wait_for(state="visible", timeout=5000)
 
     # Seleziona etichetta lavoro
