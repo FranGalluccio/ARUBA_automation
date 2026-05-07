@@ -69,6 +69,12 @@ def test_scarica_allegato_ricevuto(page):
     nome_file = os.path.basename(file_allegato)
 
     def _click_attachment_chip(target_page, name):
+        # Screenshot pre-ricerca per diagnosticare CI
+        target_page.wait_for_timeout(1500)
+        target_page.screenshot(path=os.path.join(
+            REPORT_FOLDER, f"debug_chip_pre_{datetime.now():%H-%M-%S}.png"
+        ))
+
         # Ordine originale: NON modificare, altrimenti .first cambia elemento
         loc = target_page.locator(
             f'[title="{name}"], '
@@ -77,16 +83,18 @@ def test_scarica_allegato_ricevuto(page):
             f'span:has-text("{name}")'
         ).first
         try:
-            loc.wait_for(state="visible", timeout=30000)
+            loc.wait_for(state="visible", timeout=5000)
             loc.click(force=True)
             return
         except Exception:
             pass
-        # Fallback per Italian CI: selettori aggiuntivi, provati uno alla volta
+
+        # Fallback sequenziali per nome file
         for sel in [
             f'a:has-text("{name}")',
             f'aru-chips-item:has-text("{name}")',
             f'[class*="chips"]:has-text("{name}")',
+            f'[class*="attachment"]:has-text("{name}")',
         ]:
             try:
                 item = target_page.locator(sel).first
@@ -95,11 +103,70 @@ def test_scarica_allegato_ricevuto(page):
                     return
             except Exception:
                 pass
-        # Ultimo fallback: accessibility tree (closed shadow DOM)
-        try:
-            target_page.get_by_text(name, exact=True).first.click(force=True)
-        except Exception:
-            raise Exception(f"Allegato '{name}' non trovato nella pagina")
+
+        # Fallback generico: qualsiasi chip/allegato visibile (1 solo allegato nel msg)
+        for sel in ['aru-chips-item', '[class*="chip"]', 'aru-attachment', '[class*="attachment"]']:
+            try:
+                item = target_page.locator(sel).first
+                if item.count() > 0 and item.is_visible():
+                    item.click(force=True)
+                    return
+            except Exception:
+                pass
+
+        # get_by_role fallback
+        for role in ["button", "link", "listitem"]:
+            try:
+                el = target_page.get_by_role(role, name=name)
+                if el.count() > 0:
+                    el.first.click(force=True)
+                    return
+            except Exception:
+                pass
+
+        # get_by_text (parziale e esatto)
+        stem = os.path.splitext(name)[0]
+        for exact in [False, True]:
+            for txt in ([name, stem] if not exact else [name]):
+                try:
+                    target_page.get_by_text(txt, exact=exact).first.click(force=True)
+                    return
+                except Exception:
+                    pass
+
+        # Scansione JS: tutti gli elementi del DOM per testo/title/aria-label
+        import json as _json
+        coords = target_page.evaluate(f"""() => {{
+            const name = {_json.dumps(name)};
+            const stem = name.replace(/\\.[^.]+$/, '');
+            function matches(el) {{
+                const text = (el.textContent || '').trim();
+                const title = el.getAttribute('title') || '';
+                const aria = el.getAttribute('aria-label') || '';
+                return text === name || text.includes(stem) ||
+                       title === name || aria === name;
+            }}
+            const candidates = [];
+            for (const el of document.querySelectorAll('*')) {{
+                if (matches(el)) {{
+                    const rect = el.getBoundingClientRect();
+                    if (rect.width > 5 && rect.height > 5 && rect.y >= 0 && rect.y < window.innerHeight) {{
+                        candidates.push({{x: rect.x + rect.width / 2, y: rect.y + rect.height / 2, area: rect.width * rect.height}});
+                    }}
+                }}
+            }}
+            candidates.sort((a, b) => a.area - b.area);
+            return candidates.length > 0 ? candidates[0] : null;
+        }}""")
+        if coords:
+            print(f"Allegato trovato via JS scan: {coords}")
+            target_page.mouse.click(coords['x'], coords['y'])
+            return
+
+        target_page.screenshot(path=os.path.join(
+            REPORT_FOLDER, f"debug_chip_fail_{datetime.now():%H-%M-%S}.png"
+        ))
+        raise Exception(f"Allegato '{name}' non trovato nella pagina")
 
     _click_attachment_chip(new_page, nome_file)
     new_page.wait_for_timeout(1000)
