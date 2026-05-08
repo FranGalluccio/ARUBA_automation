@@ -80,7 +80,17 @@ def test_messaggio_con_allegato(page):
     nome_allegato = os.path.basename(file_allegato)
 
     def _find_attachment(target_page, name):
-        # Ordine originale: NON modificare, altrimenti .first cambia elemento
+        # Il chip allegato è ARU-BUTTON-MENU con classe "attachment-chip".
+        # Il testo del filename è in shadow DOM chiuso: has-text NON funziona.
+        for sel in ['aru-button-menu[class*="attachment-chip"]', '[class*="attachment-chip"]']:
+            try:
+                item = target_page.locator(sel).first
+                item.wait_for(state="visible", timeout=8000)
+                item.click(force=True)
+                return True
+            except Exception:
+                pass
+        # Fallback per nome file (struttura alternativa)
         loc = target_page.locator(
             f'[title="{name}"], '
             f'button:has-text("{name}"), '
@@ -88,7 +98,7 @@ def test_messaggio_con_allegato(page):
             f'span:has-text("{name}")'
         ).first
         try:
-            loc.wait_for(state="visible", timeout=30000)
+            loc.wait_for(state="visible", timeout=5000)
             loc.click(force=True)
             return True
         except Exception:

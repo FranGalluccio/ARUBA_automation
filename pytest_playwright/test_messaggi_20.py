@@ -75,7 +75,19 @@ def test_scarica_allegato_ricevuto(page):
             REPORT_FOLDER, f"debug_chip_pre_{datetime.now():%H-%M-%S}.png"
         ))
 
-        # Ordine originale: NON modificare, altrimenti .first cambia elemento
+        # Selettore specifico per il chip allegato (ARU-BUTTON-MENU con classe attachment-chip):
+        # il testo del filename è nel shadow DOM chiuso, quindi ha-text NON funziona.
+        # Il chip si riconosce per la classe CSS, non per il testo.
+        for sel in ['aru-button-menu[class*="attachment-chip"]', '[class*="attachment-chip"]']:
+            try:
+                item = target_page.locator(sel).first
+                item.wait_for(state="visible", timeout=8000)
+                item.click(force=True)
+                return
+            except Exception:
+                pass
+
+        # Fallback per nome file (in caso di struttura diversa per versione FR/IT)
         loc = target_page.locator(
             f'[title="{name}"], '
             f'button:has-text("{name}"), '
