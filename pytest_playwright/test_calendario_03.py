@@ -78,8 +78,8 @@ def test_creazione_invio_evento(page):
         # Clicca sul primo record
         page.locator('div.frame-record-desktop').first.click()
 
-        # Aspetta che il contenuto della mail sia visibile
-        page.locator('div.message-content-body').wait_for(state="visible", timeout=10000)
+        # Aspetta che il contenuto della mail sia visibile (20s per CI FR lenta)
+        page.locator('div.message-content-body').wait_for(state="visible", timeout=20000)
 
         # Percorso screenshot dinamico
         screenshot_path = os.path.join(

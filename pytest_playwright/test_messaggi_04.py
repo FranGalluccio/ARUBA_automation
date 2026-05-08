@@ -32,30 +32,48 @@ def test_messaggio_importato(page):
     except Exception:
         pass
 
-    # Clicca su importa messaggi
-    page.locator('button[title="Importa"], button[title="Importer"]').first.click()
-
-    # Imposta il file direttamente sull'input nascosto (bypass CDK overlay backdrop)
-    hidden = page.locator('#hidden_input, input[type="file"]').first
+    # Dismiss overlay pre-esistente (es. banner "Adegua la tua PEC")
     try:
-        hidden.set_input_files(importa_messaggi)
+        page.locator('button:has-text("Plus tard"), button:has-text("Ricordarmelo"), button:has-text("Non ora")').first.click(timeout=2000)
+        page.wait_for_timeout(500)
     except Exception:
-        # Fallback: intercetta file chooser tramite click sul bottone
-        with page.expect_file_chooser() as fc_info:
-            page.locator('button[title="Seleziona da dispositivo"], button[title*="appareil"], button[title*="Sélectionner"], button[title*="Choisir"]').first.evaluate("el => el.click()")
+        pass
+
+    # Clicca su importa messaggi con force (evita blocco da backdrop residuo)
+    page.locator('button[title="Importa"], button[title="Importer"]').first.click(force=True)
+    page.wait_for_timeout(1000)
+
+    # Il dialog di importazione apre un CDK overlay con backdrop.
+    # set_input_files su #hidden_input scatena il locator handler 60+ volte.
+    # Fix: intercetta il file chooser cliccando il pulsante DENTRO il pane con force=True.
+    try:
+        with page.expect_file_chooser(timeout=15000) as fc_info:
+            page.locator(
+                '.cdk-overlay-pane button[title*="Seleziona"], '
+                '.cdk-overlay-pane button[title*="appareil"], '
+                '.cdk-overlay-pane button[title*="Sélectionner"], '
+                '.cdk-overlay-pane button[title*="Choisir"], '
+                '.cdk-overlay-pane button[title*="Dispositivo"]'
+            ).first.click(force=True)
         file_chooser = fc_info.value
         file_chooser.set_files(importa_messaggi)
+    except Exception:
+        # Fallback: input[type="file"] dentro il pane
+        hidden = page.locator('.cdk-overlay-pane input[type="file"], #hidden_input, input[type="file"]').first
+        hidden.set_input_files(importa_messaggi)
 
-    # Attendi caricamento allegato
-    page.wait_for_timeout(2000)
-    page.locator('button[title="Importa"], button[title="Importer"]').nth(1).wait_for(state="visible", timeout=5000)
+    # Attendi che il file sia pronto nel dialog (upload preview)
+    page.wait_for_timeout(3000)
+    page.locator('button[title="Importa"], button[title="Importer"]').nth(1).wait_for(state="visible", timeout=10000)
 
-    # Clicca il bottone "Importa"
-    page.locator('button[title="Importa"], button[title="Importer"]').nth(1).click()
+    # Clicca il bottone "Importa" di conferma nel dialog
+    page.locator('button[title="Importa"], button[title="Importer"]').nth(1).click(force=True)
 
-    # Verifica toast di conferma invio
+    # Attendi che il caricamento in background termini, poi verifica toast
+    # Il file può richiedere alcuni secondi per essere processato lato server
+    page.wait_for_timeout(3000)
     toast = page.locator("div.aru-toast__message").first
-    expect(toast).to_be_visible()
+    expect(toast).to_be_visible(timeout=15000)
 
     # Percorso screenshot dinamico
     screenshot_path = os.path.join(

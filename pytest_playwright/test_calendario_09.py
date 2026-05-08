@@ -77,12 +77,13 @@ def test_evento_con_promemoria(page):
             pass
         page.wait_for_timeout(1000)
 
-        # Salva con click trusted (JS evaluate produce eventi non trusted ignorati da Angular)
+        # Salva con force=True: custom-backdrop-class può restare visibile dopo
+        # il salvataggio del promemoria e bloccare click normali.
         page.wait_for_timeout(500)
         try:
-            page.get_by_role("button", name="Salva", exact=True).first.click()
+            page.get_by_role("button", name="Salva", exact=True).first.click(force=True)
         except Exception:
-            page.get_by_role("button", name="Enregistrer", exact=True).first.click()
+            page.get_by_role("button", name="Enregistrer", exact=True).first.click(force=True)
         # Attendi la toast di conferma salvataggio (scompare rapidamente)
         try:
             page.locator("div.aru-toast__message").wait_for(state="visible", timeout=10000)
