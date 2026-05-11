@@ -258,9 +258,20 @@ def elimina_evento_pec(page, testo: str, max_iter: int = 20):
                     break
             except Exception:
                 break
-        page.get_by_role("button", name="Calendario", exact=True).click()
-        page.get_by_role("button", name="Eventi").wait_for(state="visible", timeout=5000)
-        page.get_by_role("button", name="Eventi").click(force=True)
+        for cal_name in ["Calendario", "Calendrier"]:
+            try:
+                page.get_by_role("button", name=cal_name, exact=True).click(timeout=3000)
+                break
+            except Exception:
+                pass
+        for ev_name in ["Eventi", "Événements", "Agenda", "Events"]:
+            try:
+                btn = page.get_by_role("button", name=ev_name)
+                btn.wait_for(state="visible", timeout=3000)
+                btn.click(force=True)
+                break
+            except Exception:
+                pass
         page.wait_for_timeout(1500)
         for _ in range(max_iter):
             ev = page.get_by_text(testo, exact=False).first
@@ -274,20 +285,33 @@ def elimina_evento_pec(page, testo: str, max_iter: int = 20):
             except Exception:
                 pass
             try:
-                page.locator('button[title="Annulla evento"]').first.click(timeout=3000)
+                page.locator(
+                    'button[title="Annulla evento"], button[title="Annuler l\'événement"], '
+                    'button[title="Supprimer l\'événement"]'
+                ).first.click(timeout=3000)
                 page.wait_for_timeout(500)
             except Exception:
                 pass
             # Gestione eventi ricorrenti: seleziona "Tutti gli eventi" → Ok
             try:
-                page.get_by_role("radio", name="Tutti gli eventi").check(timeout=2000)
+                for radio_name in ["Tutti gli eventi", "Tous les événements", "All events"]:
+                    try:
+                        page.get_by_role("radio", name=radio_name).check(timeout=1000)
+                        break
+                    except Exception:
+                        pass
                 page.wait_for_timeout(300)
                 page.get_by_role("button", name="Ok").first.click(timeout=2000)
                 page.wait_for_timeout(500)
             except Exception:
                 pass
             try:
-                page.get_by_role("button", name="Elimina").first.click(timeout=3000)
+                for del_name in ["Elimina", "Supprimer", "Delete"]:
+                    try:
+                        page.get_by_role("button", name=del_name).first.click(timeout=2000)
+                        break
+                    except Exception:
+                        pass
                 page.wait_for_timeout(1500)
             except Exception:
                 pass
@@ -296,7 +320,14 @@ def elimina_evento_pec(page, testo: str, max_iter: int = 20):
                 page.wait_for_timeout(300)
             except Exception:
                 pass
-            page.get_by_role("button", name="Eventi").click(force=True)
+            for ev_name in ["Eventi", "Événements", "Agenda", "Events"]:
+                try:
+                    btn = page.get_by_role("button", name=ev_name)
+                    if btn.count() > 0 and btn.first.is_visible():
+                        btn.first.click(force=True)
+                        break
+                except Exception:
+                    pass
             page.wait_for_timeout(1500)
     except Exception:
         pass

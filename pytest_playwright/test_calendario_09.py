@@ -54,7 +54,7 @@ def test_evento_con_promemoria(page):
 
         # Inserisci l'email nel campo "Invia email a"
         try:
-            page.locator('input[placeholder="Indirizzo email"]').first.fill(config["pec"]["username"])
+            page.locator('input[placeholder="Indirizzo email"], input[placeholder="Adresse email"]').first.fill(config["pec"]["username"])
             page.wait_for_timeout(300)
         except Exception:
             pass
@@ -64,26 +64,35 @@ def test_evento_con_promemoria(page):
         dialog_salva = page.locator('.cdk-overlay-pane').last.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first
         try:
             dialog_salva.wait_for(state="visible", timeout=5000)
-            dialog_salva.click()
+            dialog_salva.click(force=True)
         except Exception:
             page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').last.click(force=True)
         page.wait_for_timeout(500)
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_after_dialog_save_{datetime.now():%H-%M-%S}.png"))
 
-        # Aspetta che il dialog si chiuda
+        # Aspetta che il dialog Rappel si chiuda
         try:
             page.locator('.cdk-overlay-backdrop').wait_for(state="hidden", timeout=8000)
         except Exception:
             pass
         page.wait_for_timeout(1000)
 
-        # Salva con force=True: custom-backdrop-class può restare visibile dopo
-        # il salvataggio del promemoria e bloccare click normali.
+        # Salva evento principale con force=True
         page.wait_for_timeout(500)
         try:
             page.get_by_role("button", name="Salva", exact=True).first.click(force=True)
         except Exception:
             page.get_by_role("button", name="Enregistrer", exact=True).first.click(force=True)
+
+        # FR: dialog "Enregistrer les modifications" può apparire come conferma salvataggio
+        page.wait_for_timeout(1000)
+        try:
+            if page.get_by_text("Enregistrer les modifications", exact=False).count() > 0:
+                page.locator('.cdk-overlay-pane').last.get_by_role("button", name="Enregistrer").first.click(force=True)
+                page.wait_for_timeout(500)
+        except Exception:
+            pass
+
         # Attendi la toast di conferma salvataggio (scompare rapidamente)
         try:
             page.locator("div.aru-toast__message").wait_for(state="visible", timeout=10000)
