@@ -92,37 +92,53 @@ def test_evento_con_promemoria(page):
         page.wait_for_timeout(3000)
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_09_after_event_save_{datetime.now():%H-%M-%S}.png"))
 
-        # Vai alla vista "Events" per trovare l'evento più facilmente
+        # Vai alla vista lista eventi (IT: "Eventi", FR: "Événements"/"Agenda")
+        # Usa get_by_role per piercing shadow DOM + title come fallback
         try:
-            page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
-            eventi_btn = page.locator(
-                'button[title="Eventi"], button[title="Événements"], '
-                'button[title="Events"], button[title="Agenda"]'
-            ).first
-            eventi_btn.wait_for(state="visible", timeout=5000)
-            eventi_btn.click(force=True)
-            page.wait_for_timeout(8000)
+            for cal_name in ["Calendario", "Calendrier", "Calendar"]:
+                try:
+                    page.get_by_role("button", name=cal_name, exact=True).click(timeout=3000)
+                    break
+                except Exception:
+                    pass
+            page.wait_for_timeout(1000)
+            for ev_name in ["Eventi", "Événements", "Events", "Agenda"]:
+                try:
+                    btn = page.get_by_role("button", name=ev_name)
+                    if btn.count() > 0 and btn.first.is_visible():
+                        btn.first.click(force=True)
+                        page.wait_for_timeout(3000)
+                        break
+                except Exception:
+                    pass
+            else:
+                # Fallback title
+                page.locator(
+                    'button[title="Eventi"], button[title="Événements"], '
+                    'button[title="Events"], button[title="Agenda"]'
+                ).first.click(force=True)
+                page.wait_for_timeout(3000)
         except Exception:
             pass
 
-        # Verifica che l'evento sia presente nella vista Events
+        # Verifica che l'evento sia presente
         evento_trovato = page.get_by_text(titolo_evento, exact=False).count() > 0
 
-        # Fallback: cerca via barra di ricerca del calendario
+        # Fallback: barra di ricerca del calendario
         if not evento_trovato:
             try:
                 search = page.locator(
                     'input[placeholder*="Cerca nel calendario"], '
                     'input[placeholder*="Cerca calendario"], '
-                    'input[placeholder*="Cerca"], '
                     'input[placeholder*="Rechercher"], '
-                    'input[placeholder*="Recherche"]'
+                    'input[placeholder*="Recherche"], '
+                    'input[placeholder*="Cerca"]'
                 ).first
                 search.wait_for(state="visible", timeout=5000)
                 search.click()
                 search.fill(titolo_evento)
                 page.keyboard.press("Enter")
-                for _ in range(10):
+                for _ in range(15):
                     if page.get_by_text(titolo_evento, exact=False).count() > 0:
                         evento_trovato = True
                         break
