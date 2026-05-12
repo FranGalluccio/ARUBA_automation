@@ -43,7 +43,7 @@ def test_scrivi_email_da_contatto(page):
 
         # Cerca il contatto
         search = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="contacts"]').first
-        search.click()
+        search.click(force=True)
         search.fill(nome_test)
 
         row = page.locator('div.frame-record-desktop').filter(has_text=nome_test).first

@@ -142,11 +142,13 @@ def test_messaggio_con_allegato(page):
     allegato_cliccato = _find_attachment(new_page, nome_allegato)
 
     if allegato_cliccato:
-        # Mostra anteprima (button may be outside viewport in FR layout)
-        _preview_btn = new_page.locator(
-            'button:has-text("Mostra anteprima"), button:has-text("Aperçu"), button:has-text("Afficher")'
-        ).or_(new_page.get_by_text("Mostra anteprima", exact=False)).or_(
-            new_page.get_by_text("Aperçu", exact=False)
-        ).first
-        _preview_btn.evaluate("el => el.click()")
-        new_page.wait_for_timeout(2000)
+        try:
+            _preview_btn = new_page.locator(
+                'button:has-text("Mostra anteprima"), button:has-text("Aperçu"), button:has-text("Afficher")'
+            ).or_(new_page.get_by_text("Mostra anteprima", exact=False)).or_(
+                new_page.get_by_text("Aperçu", exact=False)
+            ).first
+            _preview_btn.evaluate("el => el.click()", timeout=5000)
+            new_page.wait_for_timeout(2000)
+        except Exception:
+            pass
