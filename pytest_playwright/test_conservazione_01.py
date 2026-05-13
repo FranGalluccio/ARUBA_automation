@@ -31,7 +31,9 @@ def test_cartella_da_conservare(page):
 
     # --- Verifica disponibilità feature ---
     btn_conservazione = page.locator('button[title="Da conservare"], button[title="À conserver"]').first
-    if not btn_conservazione.is_visible():
+    try:
+        btn_conservazione.wait_for(state="visible", timeout=5000)
+    except Exception:
         pytest.skip("Feature 'Da conservare' non disponibile in questo ambiente")
 
     # --- Clicca "Da conservare" nella sidebar ---

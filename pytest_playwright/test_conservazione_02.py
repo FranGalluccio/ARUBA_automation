@@ -85,7 +85,9 @@ def test_conservazione_waffle_menu(page):
             'aru-menu-item:has-text("Conservazione"), button:has-text("Conservation"), [role="menuitem"]:has-text("Conservazione"), button:has-text("Conservation")'
         ).first
 
-        if not conservazione_item.is_visible():
+        try:
+            conservazione_item.wait_for(state="visible", timeout=5000)
+        except Exception:
             pytest.skip("Voce 'Conservazione' non trovata nel waffle menu di questo ambiente")
 
         page.screenshot(path=os.path.join(
