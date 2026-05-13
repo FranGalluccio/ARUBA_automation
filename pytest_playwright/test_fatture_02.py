@@ -30,16 +30,15 @@ def test_leggi_fatture_settings(page):
     page.wait_for_load_state("load", timeout=15000)
 
     # Espandi accordion "Account e sicurezza" se necessario
-    try:
-        if not page.locator('button[title="Leggi fatture"]').is_visible():
-            page.locator('button[title="Account e sicurezza"], button[title="Compte et sécurité"]').first.click(force=True)
-            page.locator('button[title="Leggi fatture"]').first.wait_for(state="visible", timeout=5000)
-    except Exception:
-        pass
-
     leggi_fatture_btn = page.locator('button[title="Leggi fatture"]').first
-    if not leggi_fatture_btn.is_visible():
-        pytest.skip("Feature 'Leggi fatture' non disponibile in questo ambiente")
+    try:
+        leggi_fatture_btn.wait_for(state="visible", timeout=5000)
+    except Exception:
+        try:
+            page.locator('button[title="Account e sicurezza"], button[title="Compte et sécurité"]').first.click(force=True)
+            leggi_fatture_btn.wait_for(state="visible", timeout=5000)
+        except Exception:
+            pytest.skip("Feature 'Leggi fatture' non disponibile in questo ambiente")
 
     # --- Naviga alla pagina Leggi fatture ---
     dismiss_overlay(page)

@@ -30,16 +30,15 @@ def test_form_multiutente_pec(page):
     page.goto(app_base + "/new/settings/home", timeout=20000)
     page.wait_for_load_state("load", timeout=15000)
 
-    try:
-        if not page.locator('button[title="Accessi altri account"], button[title="Accès autres comptes"]').is_visible():
-            page.locator('button[title="Account e sicurezza"], button[title="Compte et sécurité"]').first.click(force=True)
-            page.locator('button[title="Accessi altri account"], button[title="Accès autres comptes"]').first.wait_for(state="visible", timeout=5000)
-    except Exception:
-        pass
-
     accessi_btn = page.locator('button[title="Accessi altri account"], button[title="Accès autres comptes"]').first
-    if not accessi_btn.is_visible():
-        pytest.skip("Feature 'Accessi altri account' non disponibile in questo ambiente")
+    try:
+        accessi_btn.wait_for(state="visible", timeout=5000)
+    except Exception:
+        try:
+            page.locator('button[title="Account e sicurezza"], button[title="Compte et sécurité"]').first.click(force=True)
+            accessi_btn.wait_for(state="visible", timeout=5000)
+        except Exception:
+            pytest.skip("Feature 'Accessi altri account' non disponibile in questo ambiente")
 
     # --- Naviga alla panoramica tramite click sul bottone (goto diretto reindirizza a INBOX) ---
     accessi_btn.click(force=True)
@@ -55,7 +54,9 @@ def test_form_multiutente_pec(page):
         multiutente_nav.click(force=True)
     else:
         gestisci_btn = page.locator('button:has-text("Gestisci"), aru-button:has-text("Gestisci")').first
-        if not gestisci_btn.is_visible():
+        try:
+            gestisci_btn.wait_for(state="visible", timeout=5000)
+        except Exception:
             pytest.skip("Nessun percorso verso Multiutente PEC trovato")
         gestisci_btn.click(force=True)
 

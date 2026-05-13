@@ -43,7 +43,9 @@ def test_import_fattura_ricevute(page):
 
     # --- Verifica disponibilità feature ---
     fatture_btn = page.locator('button[title="Fatture ricevute"], button[title="Factures reçues"]').first
-    if not fatture_btn.is_visible():
+    try:
+        fatture_btn.wait_for(state="visible", timeout=5000)
+    except Exception:
         pytest.skip("Feature 'Fatture ricevute' non disponibile in questo ambiente")
 
     # --- Naviga in Fatture ricevute e conta messaggi prima dell'import ---
