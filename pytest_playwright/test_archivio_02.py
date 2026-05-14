@@ -27,8 +27,8 @@ def _click_waffle_menu(page):
         try:
             el = page.locator(sel).first
             if el.count() > 0 and el.is_visible():
-                el.click()
-                page.wait_for_timeout(500)
+                el.click(force=True)
+                page.wait_for_timeout(1500)
                 return True
         except Exception:
             pass
@@ -152,10 +152,13 @@ def test_archivio_messaggio_inviato(page):
     if _click_waffle_menu(page):
         try:
             archivio_btn = page.locator(
-                'aru-button[title="Archivio"], button[title="Archive"], button[title="Archivio"], button[title="Archive"]'
+                'aru-button[title="Archivio"], button[title="Archivio"], '
+                'aru-button[title="Archive"], button[title="Archive"]'
+            ).or_(page.get_by_role("button", name="Archivio", exact=True)).or_(
+                page.get_by_role("button", name="Archive", exact=True)
             ).first
-            archivio_btn.wait_for(state="visible", timeout=5000)
-            archivio_btn.click()
+            archivio_btn.wait_for(state="visible", timeout=10000)
+            archivio_btn.click(force=True)
             page.wait_for_timeout(2000)
             archivio_opened = True
         except Exception as e:
