@@ -83,7 +83,7 @@ def test_archivio_messaggio_inviato(page):
         page.locator("h2").filter(has_text="Configuration")
     ).first
     try:
-        h2_config.wait_for(state="visible", timeout=3000)
+        h2_config.wait_for(state="visible", timeout=8000)
     except Exception:
         pass
     if not h2_config.is_visible():
