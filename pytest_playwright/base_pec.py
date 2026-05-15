@@ -91,10 +91,20 @@ class LoginPec:
                 self.page.wait_for_timeout(5000)
 
     # Compila username
-        self.page.locator("input[name='username'], input#username, input[type='email']").first.fill(username)
+        _user_loc = self.page.locator("input[name='username'], input#username, input[type='email']").first
+        try:
+            _user_loc.fill(username)
+        except Exception:
+            _user_loc.scroll_into_view_if_needed()
+            _user_loc.fill(username, force=True)
 
     # Compila password
-        self.page.locator("input[name='password'], input#password, input[type='password']").first.fill(password)
+        _pass_loc = self.page.locator("input[name='password'], input#password, input[type='password']").first
+        try:
+            _pass_loc.fill(password)
+        except Exception:
+            _pass_loc.scroll_into_view_if_needed()
+            _pass_loc.fill(password, force=True)
 
     # Clicca login
         self.page.locator("button[type='submit'], button:has-text('Login')").first.click()
