@@ -79,7 +79,7 @@ page.add_locator_handler(
 ```
 
 ### Multi-environment robustness
-If the environment has 300+ messages in inbox; tests that naively use `.first` open the wrong message. All inbox interactions use `filter(has_text=oggetto)` + polling:
+If the environment has a lot of messages in inbox; tests that naively use `.first` open the wrong message. All inbox interactions use `filter(has_text=oggetto)` + polling:
 ```python
 msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto)
 for _ in range(20):
