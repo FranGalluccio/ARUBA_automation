@@ -31,7 +31,7 @@ def test_creazione_invio_evento(page):
 
     try:
         # Crea nuovo evento
-        page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
+        page.locator('#calendar, [aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
         page.locator('button:has-text("Nuovo evento"), button:has-text("Nouvel événement")').first.click()
         titolo_input = page.locator('input[placeholder*=" titolo"], input[placeholder*=" titre"]').first
         titolo_input.wait_for(state="visible", timeout=8000)

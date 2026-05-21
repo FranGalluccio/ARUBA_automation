@@ -268,7 +268,7 @@ def elimina_evento_pec(page, testo: str, max_iter: int = 20):
                     break
             except Exception:
                 break
-        for cal_name in ["Calendario", "Calendrier"]:
+        for cal_name in ["Calendario", "Calendrier", "Agenda"]:
             try:
                 page.get_by_role("button", name=cal_name, exact=True).click(timeout=3000)
                 break

@@ -42,7 +42,7 @@ def test_aggiungere_nuovo_gruppo(page):
         page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer"), button:has-text("Suivant")').first.click(force=True)
         page.wait_for_timeout(1000)
         page.locator('input[placeholder*=" nome"], input[placeholder*="rénom"]').first.fill(contact_name, force=True)
-        page.locator('input[placeholder*="email"]').first.fill(f"gruppocontact_{ts}@{TEST_EMAIL_DOMAIN}", force=True)
+        page.locator('input[placeholder*="email"], input[placeholder*="courriel"]').first.fill(f"gruppocontact_{ts}@{TEST_EMAIL_DOMAIN}", force=True)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click(force=True)
         page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 

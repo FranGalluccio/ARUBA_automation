@@ -35,8 +35,8 @@ def test_modifica_contatto(page):
         page.locator('button:has-text("Procedi"), button:has-text("Procéder"), button:has-text("Continuer"), button:has-text("Suivant")').first.click(force=True)
         page.wait_for_timeout(1000)
         page.locator('input[placeholder*=" nome"], input[placeholder*="rénom"]').first.fill("Contatto", force=True)
-        page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first.fill("DaModificare", force=True)
-        page.locator('input[placeholder*="email"]').first.fill(unique_email, force=True)
+        page.locator('input[placeholder*="cognome"], input[placeholder*="un nom"]').first.fill("DaModificare", force=True)
+        page.locator('input[placeholder*="email"], input[placeholder*="courriel"]').first.fill(unique_email, force=True)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click(force=True)
 
         # Attendi che il salvataggio si completi (toast o chiusura form)
@@ -64,7 +64,7 @@ def test_modifica_contatto(page):
         row.click()
         page.wait_for_timeout(1200)
 
-        cognome_input = page.locator('input[placeholder*="cognome"], input[placeholder*="famille"]').first
+        cognome_input = page.locator('input[placeholder*="cognome"], input[placeholder*="un nom"]').first
 
         # Step 2: il pannello dettaglio si è aperto → clicca il pulsante "Modifica"
         # Usa filter(has_text=) che attraversa lo shadow DOM di aru-button.

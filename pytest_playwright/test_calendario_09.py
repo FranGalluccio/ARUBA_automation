@@ -25,7 +25,7 @@ def test_evento_con_promemoria(page):
     titolo_evento = f"evento con promemoria playwright {ts}"
 
     try:
-        page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
+        page.locator('#calendar, [aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
 
         # Crea nuovo evento
         page.locator('button:has-text("Nuovo evento"), button:has-text("Nouvel événement")').first.click()

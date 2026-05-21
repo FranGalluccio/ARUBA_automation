@@ -26,7 +26,7 @@ def test_ricerca_nel_calendario(page):
     titolo_evento = f"evento ricerca playwright {int(time.time())}"
 
     try:
-        page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
+        page.locator('#calendar, [aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
 
         # Crea un evento con titolo univoco
         page.locator('button:has-text("Nuovo evento"), button:has-text("Nouvel événement")').first.click()

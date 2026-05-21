@@ -26,8 +26,8 @@ def test_creazione_calendario(page):
     LoginPec(page).login_pec(config)
 
     # Crea nuovo calendario
-    page.locator('[aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
-    page.locator('button:has-text("Nuovo calendario"), button:has-text("Nouveau calendrier")').first.click()
+    page.locator('#calendar, [aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
+    page.locator('button:has-text("Nuovo calendario"), button:has-text("Nouveau calendrier"), button:has-text("Nouvel agenda")').first.click()
     page.get_by_role("textbox", name="input field").wait_for(state="visible", timeout=5000)
     page.get_by_role("textbox", name="input field").click()
     page.get_by_role("textbox", name="input field").fill("Lavoro")
@@ -46,7 +46,9 @@ def test_creazione_calendario(page):
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
     toast_text = toast.text_content()
-    assert "Il calendario è stato creato." in toast_text or "calendrier" in toast_text.lower(), \
+    assert ("Il calendario è stato creato." in toast_text
+            or "calendrier" in toast_text.lower()
+            or "agenda" in toast_text.lower()), \
         f"Toast calendario creato non trovato: {toast_text!r}"
 
     # Cleanup: elimina calendario creato
