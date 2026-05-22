@@ -77,12 +77,15 @@ def test_risposta_messaggio(page):
     oggetto_reply = f"Re: {oggetto}"
     page.wait_for_timeout(2000)
     try:
-        page.locator('button[title="Inviati"], button[title="Messages envoyés"]').first.click(timeout=5000)
+        page.locator('button[title="Inviati"], button[title="Envoyés"], button[title="Messages envoyés"]').first.click(timeout=5000)
     except Exception:
         try:
             page.get_by_label("Inviati").first.click()
         except Exception:
-            page.get_by_label("Messages envoyés").first.click()
+            try:
+                page.get_by_label("Envoyés").first.click()
+            except Exception:
+                page.get_by_label("Messages envoyés").first.click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=10000)
 
     # Cerca prima "Re: {oggetto}", poi "{oggetto}" come fallback

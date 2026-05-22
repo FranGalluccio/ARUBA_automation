@@ -36,7 +36,7 @@ def test_invio_messaggio_con_cc(page):
     to_input.press("Enter")
 
     # Aggiungi CC
-    page.locator('button[title="CC"]').click()
+    page.locator('button[title="CC"], button[title="Cc"]').first.click()
     page.wait_for_timeout(1000)
     cc_destinatario = config["destinatari"].get("destinatario_secondario", destinatario)
     cc_inputs = page.locator("input[placeholder='Destinatari'], input[placeholder='Destinataires']").all()

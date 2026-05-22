@@ -40,7 +40,7 @@ def test_verifica_cartella_inviati(page):
         f"Toast di conferma invio non rilevato: {toast_text}"
 
     # Apri cartella Inviati
-    page.locator('button[title="Inviati"], button[title="Messages envoyés"]').click()
+    page.locator('button[title="Inviati"], button[title="Envoyés"], button[title="Messages envoyés"]').click()
 
     # Verifica che ci siano messaggi nella cartella Inviati
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
