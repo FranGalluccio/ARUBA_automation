@@ -33,9 +33,7 @@ def test_messaggio_in_bozza(page):
     
     # Chiudi finestra messaggio
     page.locator('#message-dialog aru-symbol[symbol="close"]').click(force=True)
-    
-    # Gestisci popup di conferma chiusura senza salvataggio
-    page.locator('button[title="Si"], button[title="Oui"]').click()
+    page.wait_for_timeout(1000)
 
     # Apri bozze
     page.locator('button[title="Bozze"], button[title="Brouillons"]').click()
