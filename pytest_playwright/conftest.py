@@ -75,8 +75,10 @@ def dismiss_cdk_overlay(page):
             page.evaluate("""() => {
                 const dismissTexts = ['Chiudi', 'Non ora', 'Ricordarmelo', 'Capito', 'Ho capito', 'Ok', 'Close', 'Fermer', 'Ignorer'];
                 // Controlla TUTTI i pane CDK, salta quelli con input (form di inserimento dati)
+                // oppure con >= 2 aru-button (dialog di conferma tipo Si/No — gestiti dal test)
                 for (const pane of document.querySelectorAll('.cdk-overlay-pane')) {
                     if (pane.querySelector('input[placeholder], textarea')) continue;
+                    if (pane.querySelectorAll('aru-button').length >= 2) continue;
                     const closeBtn = pane.querySelector(
                         'button[aria-label="Chiudi"], button[title="Chiudi"]'
                     );

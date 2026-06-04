@@ -17,6 +17,7 @@ on:
           - test2
           - test-bnl
           - test-fr
+          - prod-pocfr
           - prod-buffetti
           - prod-aruba
       runner:
@@ -47,7 +48,7 @@ jobs:
           if (-not $amb) { $amb = "test1 (default - push automatico)" }
           Write-Host "========================================" -ForegroundColor Cyan
           Write-Host "  AMBIENTE: $amb" -ForegroundColor Yellow
-          Write-Host "  URL: ${{ inputs.ambiente == 'test2' && 'https://webmail-test1.test.pec.aruba.it/' || inputs.ambiente == 'test-bnl' && 'https://webmailbnl.test.pec.aruba.it/' || inputs.ambiente == 'test-fr' && 'https://webmail-test1.test.pec.aruba.it/' || inputs.ambiente == 'prod-buffetti' && 'https://webmail.pec.buffetti.it/' || inputs.ambiente == 'prod-aruba' && 'https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth' || 'https://webmail.test.pec.aruba.it/' }}" -ForegroundColor Yellow
+          Write-Host "  URL: ${{ inputs.ambiente == 'test2' && 'https://webmail-test1.test.pec.aruba.it/' || inputs.ambiente == 'test-bnl' && 'https://webmailbnl.test.pec.aruba.it/' || inputs.ambiente == 'test-fr' && 'https://webmail-test1.test.pec.aruba.it/' || inputs.ambiente == 'prod-pocfr' && 'https://webmail.pocfr.it/' || inputs.ambiente == 'prod-buffetti' && 'https://webmail.pec.buffetti.it/' || inputs.ambiente == 'prod-aruba' && 'https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth' || 'https://webmail.test.pec.aruba.it/' }}" -ForegroundColor Yellow
           Write-Host "========================================" -ForegroundColor Cyan
 
       - name: Mostra ambiente selezionato (lorenzo)
@@ -83,6 +84,7 @@ jobs:
             ${{ inputs.ambiente == 'test2'         && 'https://webmail-test1.test.pec.aruba.it/'
              || inputs.ambiente == 'test-bnl'      && 'https://webmailbnl.test.pec.aruba.it/'
              || inputs.ambiente == 'test-fr'       && 'https://webmail-test1.test.pec.aruba.it/'
+             || inputs.ambiente == 'prod-pocfr'    && 'https://webmail.pocfr.it/'
              || inputs.ambiente == 'prod-buffetti' && 'https://webmail.pec.buffetti.it/'
              || inputs.ambiente == 'prod-aruba'    && 'https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth'
              || 'https://webmail.test.pec.aruba.it/' }}
@@ -91,16 +93,19 @@ jobs:
           PEC_USERNAME: >-
             ${{ inputs.ambiente == 'test-bnl'      && secrets.BNL_PEC_USERNAME
              || inputs.ambiente == 'test-fr'       && secrets.FR_PEC_USERNAME
+             || inputs.ambiente == 'prod-pocfr'    && secrets.POCFR_PEC_USERNAME
              || (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba') && secrets.PROD_PEC_USERNAME
              || secrets.TEST_PEC_USERNAME }}
           PEC_PASSWORD: >-
             ${{ inputs.ambiente == 'test-bnl'      && secrets.BNL_PEC_PASSWORD
              || inputs.ambiente == 'test-fr'       && secrets.FR_PEC_PASSWORD
+             || inputs.ambiente == 'prod-pocfr'    && secrets.POCFR_PEC_PASSWORD
              || (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba') && secrets.PROD_PEC_PASSWORD
              || secrets.TEST_PEC_PASSWORD }}
           PEC_DESTINATARIO_SECONDARIO: >-
             ${{ inputs.ambiente == 'test-bnl'      && secrets.BNL_PEC_DESTINATARIO_SECONDARIO
              || inputs.ambiente == 'test-fr'       && secrets.FR_PEC_DESTINATARIO_SECONDARIO
+             || inputs.ambiente == 'prod-pocfr'    && secrets.POCFR_PEC_DESTINATARIO_SECONDARIO
              || (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba') && secrets.PROD_PEC_DESTINATARIO_SECONDARIO
              || secrets.TEST_PEC_DESTINATARIO_SECONDARIO }}
         run: |
@@ -126,6 +131,7 @@ jobs:
             ${{ inputs.ambiente == 'test2'         && 'https://webmail-test1.test.pec.aruba.it/'
              || inputs.ambiente == 'test-bnl'      && 'https://webmailbnl.test.pec.aruba.it/'
              || inputs.ambiente == 'test-fr'       && 'https://webmail-test1.test.pec.aruba.it/'
+             || inputs.ambiente == 'prod-pocfr'    && 'https://webmail.pocfr.it/'
              || inputs.ambiente == 'prod-buffetti' && 'https://webmail.pec.buffetti.it/'
              || inputs.ambiente == 'prod-aruba'    && 'https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth'
              || 'https://webmail.test.pec.aruba.it/' }}
@@ -134,16 +140,19 @@ jobs:
           PEC_USERNAME: >-
             ${{ inputs.ambiente == 'test-bnl'      && secrets.BNL_PEC_USERNAME
              || inputs.ambiente == 'test-fr'       && secrets.FR_PEC_USERNAME
+             || inputs.ambiente == 'prod-pocfr'    && secrets.POCFR_PEC_USERNAME
              || (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba') && secrets.PROD_PEC_USERNAME
              || secrets.TEST_PEC_USERNAME }}
           PEC_PASSWORD: >-
             ${{ inputs.ambiente == 'test-bnl'      && secrets.BNL_PEC_PASSWORD
              || inputs.ambiente == 'test-fr'       && secrets.FR_PEC_PASSWORD
+             || inputs.ambiente == 'prod-pocfr'    && secrets.POCFR_PEC_PASSWORD
              || (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba') && secrets.PROD_PEC_PASSWORD
              || secrets.TEST_PEC_PASSWORD }}
           PEC_DESTINATARIO_SECONDARIO: >-
             ${{ inputs.ambiente == 'test-bnl'      && secrets.BNL_PEC_DESTINATARIO_SECONDARIO
              || inputs.ambiente == 'test-fr'       && secrets.FR_PEC_DESTINATARIO_SECONDARIO
+             || inputs.ambiente == 'prod-pocfr'    && secrets.POCFR_PEC_DESTINATARIO_SECONDARIO
              || (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba') && secrets.PROD_PEC_DESTINATARIO_SECONDARIO
              || secrets.TEST_PEC_DESTINATARIO_SECONDARIO }}
         run: |

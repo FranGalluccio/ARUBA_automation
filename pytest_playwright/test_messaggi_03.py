@@ -33,10 +33,33 @@ def test_messaggio_in_bozza(page):
     
     # Chiudi finestra messaggio
     page.locator('#message-dialog aru-symbol[symbol="close"]').click(force=True)
-    page.wait_for_timeout(1000)
 
-    # Apri bozze
-    page.locator('button[title="Bozze"], button[title="Brouillons"]').click()
+    # Gestisci popup "Salva in bozze?" — usa evaluate() per bypassare il locator handler.
+    # I testi Si/No sono nel shadow template (light DOM vuoto), ordine: [0]=X, [1]=Si, [2]=No.
+    page.wait_for_selector('.cdk-overlay-pane:has-text("Salva in bozze"), .cdk-overlay-pane:has-text("Sauvegarder")', timeout=8000)
+    page.evaluate("""() => {
+        for (const pane of document.querySelectorAll('.cdk-overlay-pane')) {
+            if (!pane.textContent.includes('Salva in bozze') && !pane.textContent.includes('Sauvegarder')) continue;
+            const aruBtns = pane.querySelectorAll('aru-button');
+            const siBtn = aruBtns[1];
+            if (!siBtn) return;
+            const inner = siBtn.shadowRoot && siBtn.shadowRoot.querySelector('button');
+            if (inner) {
+                inner.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, composed: true}));
+            } else {
+                siBtn.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
+            }
+            return;
+        }
+    }""")
+    # Attendi chiusura compose + backdrop
+    try:
+        page.wait_for_function("!document.querySelector('.cdk-overlay-backdrop-showing')", timeout=8000)
+    except Exception:
+        page.wait_for_timeout(2000)
+
+    # Apri bozze (force=True per bypassare eventuale backdrop residuo)
+    page.locator('button[title="Bozze"], button[title="Brouillons"]').click(force=True)
     
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=15000)
