@@ -138,8 +138,34 @@ page.mouse.up()
 │   ├── python-tests.yml        # PEC Desktop (auto on push + manual)
 │   ├── python-tests-mobile.yml # PEC Mobile (manual only)
 │   └── python-tests-pel.yml    # PEL Staff (auto on push + manual)
+├── genera_excel_suite.py       # Generates suite_test_pec.xlsx (testbook)
+├── genera_excel_suite_mobile.py# Generates suite_test_pec_mobile.xlsx
+├── genera_excel_suite_pel.py   # Generates suite_test_pel.xlsx
+├── suite_test_pec.xlsx         # Testbook: PEC Desktop
+├── suite_test_pec_mobile.xlsx  # Testbook: PEC Mobile
+├── suite_test_pel.xlsx         # Testbook: PEL Staff
 ├── pytest.ini
 └── requirements.txt
+```
+
+---
+
+## Testbook
+
+Each suite has a companion **Excel testbook** — one row per test case (module, file, function, description, numbered steps, expected result), meant for manual QA review and non-technical stakeholders rather than for running tests. It's generated from a Python data structure, not hand-edited in Excel, so it can't drift into a spreadsheet-only description of behaviour the code no longer has:
+
+| Generator | Output | Suite |
+|-----------|--------|-------|
+| `genera_excel_suite.py` | `suite_test_pec.xlsx` | PEC Desktop (65 rows) |
+| `genera_excel_suite_mobile.py` | `suite_test_pec_mobile.xlsx` | PEC Mobile (10 rows) |
+| `genera_excel_suite_pel.py` | `suite_test_pel.xlsx` | PEL Staff (17 rows) |
+
+Whenever a test's behaviour changes (new assertion, new step, different expected result), update the corresponding tuple in the generator script and regenerate:
+
+```bash
+python genera_excel_suite.py
+python genera_excel_suite_mobile.py
+python genera_excel_suite_pel.py
 ```
 
 ---
