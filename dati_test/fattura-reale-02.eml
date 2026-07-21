@@ -1,0 +1,150 @@
+X-Fattura-PA: Yes
+Return-Path: <sdi20@pec.fatturapa.it>
+Delivered-To: aziendatest@pec.it
+Received: from mxpecrm03.pec.ad.aruba.it (localhost [127.0.0.1])
+	by mxpecrm03.pec.ad.aruba.it (lmtpd) with LMTP id 0000.001;
+	Fri, 15 Mar 2024 10:30:00 +0100 (CET)
+Received: from mx.pec.aruba.it (localhost [127.0.0.1])
+	by mx.pec.aruba.it (Postfix) with ESMTP id 00000000000z0000000
+	for <aziendatest@pec.it>; Fri, 15 Mar 2024 10:30:00 +0100 (CET)
+Date: Fri, 15 Mar 2024 10:30:00 +0100
+Reply-To: sdi20@pec.fatturapa.it
+Subject: POSTA CERTIFICATA: Invio File 000000000
+X-Riferimento-Message-ID: <0000000000000000.0000000000000@pec.fatturapa.it>
+X-Tiporicevuta: breve
+From: "Per conto di: sdi20@pec.fatturapa.it" <posta-certificata@pcert.sogei.it>
+To: aziendatest@pec.it
+X-Trasporto: posta-certificata
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg="sha-256"; boundary="----FICTBOUNDARY0000000000000000"
+Message-ID: <opec288.20240315103000.00000.00.1.00@pcert.sogei.it>
+
+This is an S/MIME signed message
+
+------FICTBOUNDARY0000000000000000
+Content-Type: multipart/mixed; boundary="----------=_0000000000-00000-000"
+Content-Transfer-Encoding: binary
+MIME-Version: 1.0
+
+------------=_0000000000-00000-000
+Content-Type: multipart/alternative;
+ boundary="----------=_0000000000-00000-001"
+Content-Transfer-Encoding: binary
+
+------------=_0000000000-00000-001
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+--Questo =E8 un Messaggio di Posta Certificata (dati fittizi per test)--
+
+Il giorno 15/03/2024 alle ore 10:30:00 (+0100) il messaggio con Oggetto
+"Invio File 000000000" =E8 stato inviato dal mittente "sdi20@pec.fatturapa.=
+it"
+e indirizzato a:
+aziendatest@pec.it
+Il messaggio originale =E8 incluso in allegato, per aprirlo cliccare sul fi=
+le "postacert.eml".
+L'allegato daticert.xml contiene informazioni di servizio sulla trasmissione.
+L'identificativo univoco di questo messaggio =E8: opec288.20240315103000.00=
+000.00.1.00@pcert.sogei.it
+
+------------=_0000000000-00000-001
+Content-Type: text/html; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head><title>Messaggio di posta certificata (dati fittizi)</title></head>
+<body>
+<h3>Messaggio di posta certificata</h3>
+<hr><br>
+Il giorno 15/03/2024 alle ore 10:30:00 (+0100) il messaggio<br>
+&quot;Invio File 000000000&quot; &egrave; stato inviato da &quot;sdi20@pec.=
+fatturapa.it&quot;<br>
+indirizzato a:<br>
+aziendatest@pec.it<br>
+Il messaggio originale &egrave; incluso in allegato.<br>
+Identificativo messaggio: opec288.20240315103000.00000.00.1.00@pcert.sogei.=
+it<br>
+</body>
+</html>
+
+------------=_0000000000-00000-001--
+
+------------=_0000000000-00000-000
+Content-Type: application/xml; name="daticert.xml"
+Content-Disposition: inline; filename="daticert.xml"
+Content-Transfer-Encoding: base64
+
+PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHBvc3RhY2VydCB0aXBvPSJw
+b3N0YS1jZXJ0aWZpY2F0YSIgZXJyb3JlPSJuZXNzdW5vIj4KICAgIDxpbnRlc3RhemlvbmU+CiAg
+ICAgICAgPG1pdHRlbnRlPnNkaTIwQHBlYy5mYXR0dXJhcGEuaXQ8L21pdHRlbnRlPgogICAgICAg
+IDxkZXN0aW5hdGFyaSB0aXBvPSJjZXJ0aWZpY2F0byI+YXppZW5kYXRlc3RAcGVjLml0PC9kZXN0
+aW5hdGFyaT4KICAgICAgICA8cmlzcG9zdGU+c2RpMjBAcGVjLmZhdHR1cmFwYS5pdDwvcmlzcG9z
+dGU+CiAgICAgICAgPG9nZ2V0dG8+SW52aW8gRmlsZSAwMDAwMDAwMDA8L29nZ2V0dG8+CiAgICA8
+L2ludGVzdGF6aW9uZT4KICAgIDxkYXRpPgogICAgICAgIDxnZXN0b3JlLWVtaXR0ZW50ZT5Tb2dl
+aSBTcEE8L2dlc3RvcmUtZW1pdHRlbnRlPgogICAgICAgIDxkYXRhIHpvbmE9IiswMTAwIj4KICAg
+ICAgICAgICAgPGdpb3Jubz4xNS8wMy8yMDI0PC9naW9ybm8+CiAgICAgICAgICAgIDxvcmE+MTA6
+MzA6MDA8L29yYT4KICAgICAgICA8L2RhdGE+CiAgICAgICAgPGlkZW50aWZpY2F0aXZvPm9wZWMy
+ODguMjAyNDAzMTUxMDMwMDAuMDAwMDAuMDAuMS4wMEBwY2VydC5zb2dlaS5pdDwvaWRlbnRpZmlj
+YXRpdm8+CiAgICAgICAgPG1zZ2lkPiZsdDswMDAwMDAwMDAwMDAwMDAwLjAwMDAwMDAwMDAwMDBA
+cGVjLmZhdHR1cmFwYS5pdCZndDs8L21zZ2lkPgogICAgICAgIDxyaWNldnV0YSB0aXBvPSJicmV2
+ZSIgLz4KICAgIDwvZGF0aT4KPC9wb3N0YWNlcnQ+Cg==
+
+------------=_0000000000-00000-000
+Content-Type: message/rfc822; name="postacert.eml"
+Content-Disposition: inline; filename="postacert.eml"
+Content-Transfer-Encoding: 7bit
+
+Received: from fittizio.test.local (fittizio [127.0.0.1])
+	by sendmail.pec.fatturapa.it (Postfix) with ESMTPSA id 00000000000
+	for <aziendatest@pec.it>; Fri, 15 Mar 2024 10:30:00 +0100 (CET)
+From: sdi20@pec.fatturapa.it
+To: aziendatest@pec.it
+Subject: Invio File 000000000
+Date: Fri, 15 Mar 2024 10:30:00 +0100
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="----------=_0000000000-00000-002"
+
+------------=_0000000000-00000-002
+Content-Type: text/plain; charset="utf-8"
+
+Fattura elettronica di test (dati interamente fittizi).
+
+------------=_0000000000-00000-002
+Content-Type: application/xml; name="IT00000000000_00001.xml"
+Content-Disposition: attachment; filename="IT00000000000_00001.xml"
+Content-Transfer-Encoding: base64
+
+PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHA6RmF0dHVyYUVsZXR0cm9u
+aWNhIHhtbG5zOnA9Imh0dHA6Ly9pdmFzZXJ2aXppLmFnZW56aWFlbnRyYXRlLmdvdi5pdC9kb2Nz
+L3hzZC9mYXR0dXJlL3YxLjIiIHZlcnNpb25lPSJGUFIxMiI+CjxGYXR0dXJhRWxldHRyb25pY2FI
+ZWFkZXI+CjxDZWRlbnRlUHJlc3RhdG9yZT4KPERhdGlBbmFncmFmaWNpPgo8SWRGaXNjYWxlSVZB
+PjxJZFBhZXNlPklUPC9JZFBhZXNlPjxJZENvZGljZT4wMDAwMDAwMDAwMDwvSWRDb2RpY2U+PC9J
+ZEZpc2NhbGVJVkE+CjxDb2RpY2VGaXNjYWxlPjAwMDAwMDAwMDAwPC9Db2RpY2VGaXNjYWxlPgo8
+QW5hZ3JhZmljYT48RGVub21pbmF6aW9uZT5BQ01FIEZPUk5JVFVSRSBJTkRVU1RSSUFMSSBTUkw8
+L0Rlbm9taW5hemlvbmU+PC9BbmFncmFmaWNhPgo8L0RhdGlBbmFncmFmaWNpPgo8L0NlZGVudGVQ
+cmVzdGF0b3JlPgo8Q2Vzc2lvbmFyaW9Db21taXR0ZW50ZT4KPERhdGlBbmFncmFmaWNpPgo8Q29k
+aWNlRmlzY2FsZT5SU1NNUkE4MEEwMUg1MDFVPC9Db2RpY2VGaXNjYWxlPgo8QW5hZ3JhZmljYT48
+RGVub21pbmF6aW9uZT5BWklFTkRBIFRFU1QgU1JMPC9EZW5vbWluYXppb25lPjwvQW5hZ3JhZmlj
+YT4KPC9EYXRpQW5hZ3JhZmljaT4KPC9DZXNzaW9uYXJpb0NvbW1pdHRlbnRlPgo8L0ZhdHR1cmFF
+bGV0dHJvbmljYUhlYWRlcj4KPEZhdHR1cmFFbGV0dHJvbmljYUJvZHk+CjxEYXRpR2VuZXJhbGk+
+PERhdGlHZW5lcmFsaURvY3VtZW50bz4KPFRpcG9Eb2N1bWVudG8+VEQwMTwvVGlwb0RvY3VtZW50
+bz4KPERpdmlzYT5FVVI8L0RpdmlzYT4KPERhdGE+MjAyNC0wMy0xNTwvRGF0YT4KPE51bWVybz4w
+MDAwMDAxPC9OdW1lcm8+CjxJbXBvcnRvVG90YWxlRG9jdW1lbnRvPjEwMC4wMDwvSW1wb3J0b1Rv
+dGFsZURvY3VtZW50bz4KPC9EYXRpR2VuZXJhbGlEb2N1bWVudG8+PC9EYXRpR2VuZXJhbGk+CjxE
+YXRpQmVuaVNlcnZpemk+CjxEZXR0YWdsaW9MaW5lZT4KPE51bWVyb0xpbmVhPjE8L051bWVyb0xp
+bmVhPgo8RGVzY3JpemlvbmU+UHJvZG90dG8vc2Vydml6aW8gZGkgdGVzdDwvRGVzY3JpemlvbmU+
+CjxRdWFudGl0YT4xLjAwPC9RdWFudGl0YT4KPFByZXp6b1VuaXRhcmlvPjEwMC4wMDwvUHJlenpv
+VW5pdGFyaW8+CjxQcmV6em9Ub3RhbGU+MTAwLjAwPC9QcmV6em9Ub3RhbGU+CjxBbGlxdW90YUlW
+QT4yMi4wMDwvQWxpcXVvdGFJVkE+CjwvRGV0dGFnbGlvTGluZWU+CjxEYXRpUmllcGlsb2dvPgo8
+QWxpcXVvdGFJVkE+MjIuMDA8L0FsaXF1b3RhSVZBPgo8SW1wb25pYmlsZUltcG9ydG8+MTAwLjAw
+PC9JbXBvbmliaWxlSW1wb3J0bz4KPEltcG9zdGE+MjIuMDA8L0ltcG9zdGE+CjwvRGF0aVJpZXBp
+bG9nbz4KPC9EYXRpQmVuaVNlcnZpemk+CjwvRmF0dHVyYUVsZXR0cm9uaWNhQm9keT4KPC9wOkZh
+dHR1cmFFbGV0dHJvbmljYT4K
+
+------------=_0000000000-00000-002--
+
+------------=_0000000000-00000-000--
+------FICTBOUNDARY0000000000000000--
