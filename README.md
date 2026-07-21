@@ -10,8 +10,8 @@ Comprehensive end-to-end test automation framework for **Aruba Webmail PEC** (Ce
 |-------|-------|------|-------------|
 | PEC Desktop | 65 | Playwright + pytest | Chromium |
 | PEC Mobile | 10 | Playwright (iPhone 14) | WebKit |
-| PEL Staff | 15 | Playwright + pytest | Chromium |
-| **Total** | **90** | | |
+| PEL Staff | 17 | Playwright + pytest | Chromium |
+| **Total** | **92** | | |
 
 The suite runs on **self-hosted GitHub Actions runners** and supports multiple target environments (test, staging, production) selectable at workflow dispatch time.
 
@@ -39,8 +39,8 @@ The suite runs on **self-hosted GitHub Actions runners** and supports multiple t
 | Archivio | 2 | Archive configuration, message archiving |
 | Calendario | 10 | Create/edit/delete events, recurring events, reminders, all-day events, import/export, navigation, search, invite delivery to a secondary recipient account |
 | Conservazione | 2 | Conservation settings, folder navigation |
-| Contatti | 8 | Add/edit/delete contacts, search, favourites, group import/export |
-| Fatture | 3 | Invoice reception, visualisation, download |
+| Contatti | 10 | Add/edit/delete contacts, search, favourites, group import/export |
+| Fatture | 2 | Invoice reception, visualisation, download |
 | Impostazioni | 7 | Signature, out-of-office, filters, display settings |
 | Messaggi | 27 | Send/receive, attachments, reply/reply-all, forward, drafts, labels, move, delete/restore, read/unread, high-priority, search, PEC receipts (RA/RD) |
 
@@ -51,8 +51,8 @@ The suite runs on **self-hosted GitHub Actions runners** and supports multiple t
 
 ### PEL Staff (`pytest_pel/`)
 
-15 tests for the Aruba Staff Calendar Portal:
-- Login
+17 tests for the Aruba Staff Calendar Portal:
+- 2 login tests
 - 13 calendar tests: create/edit/delete events, recurring events, reminders, invitees, drag-and-drop, view switching, conflict detection, all-day events, import/export
 - 2 settings tests
 
@@ -128,7 +128,7 @@ page.mouse.up()
 │       ├── conftest.py
 │       ├── base_mobile.py
 │       └── test_*.py
-├── pytest_pel/                 # PEL Staff suite (15 tests)
+├── pytest_pel/                 # PEL Staff suite (17 tests)
 │   ├── conftest.py
 │   ├── base_pel.py
 │   ├── config.example.json
