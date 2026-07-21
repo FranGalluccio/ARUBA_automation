@@ -52,7 +52,8 @@ def test_creazione_modifica_evento(page):
     toast = page.locator("div.aru-toast__message").first
     toast.wait_for(state="visible", timeout=8000)
     toast_text = toast.text_content()
-    assert "evento è stato salvato" in toast_text.lower() or "enregistr" in toast_text.lower(), \
+    assert "evento è stato salvato" in toast_text.lower() or "evento è stato modificato" in toast_text.lower() \
+        or "enregistr" in toast_text.lower(), \
         f"Toast di conferma salvataggio evento non trovato: {toast_text!r}"
 
     try:

@@ -22,6 +22,12 @@ if _pec_url:
             "destinatario_principale": os.environ.get("PEC_USERNAME", "").strip(),
             "destinatario_secondario": os.environ.get("PEC_DESTINATARIO_SECONDARIO", "").strip(),
         },
+        "pec_secondario": {
+            "url": _pec_url.strip(),
+            "username": os.environ.get("PEC_DESTINATARIO_SECONDARIO", "").strip(),
+            "password": os.environ.get("PEC_DESTINATARIO_SECONDARIO_PASSWORD", "").strip(),
+            "inbox_url_pattern": _inbox_pattern.strip(),
+        },
         "test_folder": "pytest_playwright",
         "report_folder": "pytest_playwright/test-results",
         "file_allegato": "dati_test/allegato-test.pdf",

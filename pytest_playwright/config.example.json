@@ -4,6 +4,12 @@
     "username": "utente@pec.it",
     "password": "password"
   },
+  "pec_secondario": {
+    "url": "https://webmail.test.pec.aruba.it/",
+    "username": "altro@pec.it",
+    "password": "password",
+    "inbox_url_pattern": "INBOX"
+  },
   "destinatari": {
     "destinatario_principale": "utente@pec.it",
     "destinatario_secondario": "altro@pec.it"

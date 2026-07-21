@@ -22,7 +22,7 @@ _raw = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 file_allegato = os.path.normpath(os.path.join(_GIT_ROOT, _raw)) if _raw and not os.path.isabs(_raw) else _raw
 
 
-def test_creazione_invio_evento(page):
+def test_creazione_invio_evento(page, browser):
     # Login PEC
     LoginPec(page).login_pec(config)
 
@@ -42,17 +42,27 @@ def test_creazione_invio_evento(page):
         # Modifica evento
         page.locator('button:has-text("Modifica"), button:has-text("Modifier")').first.wait_for(state="visible", timeout=5000)
         page.locator('button:has-text("Modifica"), button:has-text("Modifier")').first.click()
-        page.locator('input[aria-label="input chosen"]').nth(1).wait_for(state="visible", timeout=5000)
-        page.locator('input[aria-label="input chosen"]').nth(1).fill(config["destinatari"]["destinatario_principale"])
-        page.get_by_role("textbox", name="input chosen").press("Enter")
+        invitati_input = page.locator('input[placeholder*="nvitat"], input[placeholder*="nvité"]').first
+        invitati_input.wait_for(state="visible", timeout=5000)
+        invitati_input.fill(config["destinatari"]["destinatario_principale"])
+        page.keyboard.press("Enter")
         page.wait_for_timeout(1000)
+
+        # Invita anche il partecipante secondario (se diverso dal principale)
+        destinatario_secondario = config["destinatari"].get("destinatario_secondario")
+        if destinatario_secondario and destinatario_secondario != config["destinatari"]["destinatario_principale"]:
+            invitati_input.fill(destinatario_secondario)
+            page.keyboard.press("Enter")
+            page.wait_for_timeout(1000)
+
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
         # Verifica toast di conferma salvataggio evento
         toast = page.locator("div.aru-toast__message").first
         toast.wait_for(state="visible", timeout=8000)
         toast_text = toast.text_content()
-        assert "evento è stato salvato" in toast_text.lower() or "enregistr" in toast_text.lower(), \
+        assert "evento è stato salvato" in toast_text.lower() or "evento è stato modificato" in toast_text.lower() \
+            or "enregistr" in toast_text.lower(), \
             f"Toast di conferma salvataggio evento non trovato: {toast_text!r}"
 
         page.wait_for_timeout(1000)
@@ -88,6 +98,37 @@ def test_creazione_invio_evento(page):
 
         # Aspetta che il contenuto della mail sia visibile (20s per CI FR lenta)
         page.locator('div.message-content-body').wait_for(state="visible", timeout=20000)
+
+        # --- Verifica lato destinatario: seconda pagina con account separato (cliente07) ---
+        pec_secondario_config = config.get("pec_secondario") or {}
+        if destinatario_secondario and pec_secondario_config.get("password"):
+            context2 = browser.new_context(viewport={"width": 1920, "height": 1080}, ignore_https_errors=True)
+            page2 = context2.new_page()
+            try:
+                config_secondario = {**config, "pec": config["pec_secondario"]}
+                LoginPec(page2).login_pec(config_secondario)
+                inbox_url_2 = get_app_base_url(page2) + "/new/messages/INBOX"
+                page2.goto(inbox_url_2, wait_until="domcontentloaded", timeout=30000)
+                page2.wait_for_timeout(3000)
+
+                # L'email di invito può impiegare qualche secondo ad arrivare: polling con refresh
+                invito_arrivato = False
+                for _ in range(6):
+                    page2.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+                    page2.wait_for_timeout(5000)
+                    if page2.get_by_text(titolo_evento, exact=False).count() > 0:
+                        invito_arrivato = True
+                        break
+                assert invito_arrivato, \
+                    f"Invito all'evento '{titolo_evento}' non arrivato nella inbox del destinatario secondario"
+
+                page2.screenshot(
+                    path=os.path.join(REPORT_FOLDER, f"test_calendario_03_destinatario___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"),
+                    full_page=True
+                )
+                print("Invito all'evento trovato nella inbox del destinatario secondario")
+            finally:
+                context2.close()
 
         # Percorso screenshot dinamico
         screenshot_path = os.path.join(

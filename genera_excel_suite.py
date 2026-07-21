@@ -420,9 +420,10 @@ TESTS = [
      "4. Inserire titolo e dettagli dell'evento.\n"
      "5. Abilitare la ricorrenza e configurare la regola (es. settimanale).\n"
      "6. Salvare l'evento.\n"
-     "7. Verificare la presenza dell'evento ricorrente nel calendario.\n"
-     "8. Scattare screenshot.\n"
-     "9. Eliminare l'evento (singolo o tutti, cleanup).",
+     "7. Verificare la comparsa e il testo del toast di conferma salvataggio (assert).\n"
+     "8. Verificare la presenza dell'evento ricorrente nel calendario.\n"
+     "9. Scattare screenshot.\n"
+     "10. Eliminare l'evento (singolo o tutti, cleanup).",
      "L'evento ricorrente è creato e visibile nel calendario. Al momento dell'eliminazione è possibile scegliere di eliminare il singolo evento o tutti gli eventi della serie."),
 
     (31, "Calendario", "test_calendario_02.py", "test_creazione_modifica_evento",
@@ -435,22 +436,27 @@ TESTS = [
      "6. Aprire l'evento appena creato.\n"
      "7. Modificare il titolo con uno nuovo.\n"
      "8. Salvare la modifica.\n"
-     "9. Verificare che il nuovo titolo sia visibile nel calendario.\n"
-     "10. Scattare screenshot.\n"
-     "11. Eliminare l'evento (cleanup).",
+     "9. Verificare la comparsa e il testo del toast di conferma salvataggio (assert).\n"
+     "10. Verificare che il nuovo titolo sia visibile nel calendario.\n"
+     "11. Scattare screenshot.\n"
+     "12. Eliminare l'evento (cleanup).",
      "L'evento è creato con il titolo originale. Dopo la modifica, il calendario mostra il nuovo titolo. L'eliminazione completa il cleanup."),
 
     (32, "Calendario", "test_calendario_03.py", "test_creazione_invio_evento",
-     "Verifica la creazione di un evento con invito a partecipanti e il ricevimento dell'invito.",
-     "1. Accedere con credenziali valide.\n"
+     "Verifica la creazione di un evento con invito al partecipante principale e secondario, il ricevimento dell'invito lato organizzatore e la ricezione effettiva lato destinatario secondario (secondo account, seconda pagina browser).",
+     "1. Accedere con credenziali valide (account organizzatore).\n"
      "2. Navigare nella sezione Calendario.\n"
      "3. Creare un nuovo evento.\n"
-     "4. Aggiungere un partecipante come invitato.\n"
-     "5. Salvare e inviare l'invito.\n"
-     "6. Navigare in In arrivo messaggi.\n"
-     "7. Scattare screenshot.\n"
-     "8. Verificare l'arrivo dell'invito come messaggio PEC (assert).",
-     "L'evento è creato e l'invito viene inviato come messaggio PEC al partecipante. L'invito è visibile in In arrivo."),
+     "4. Aggiungere il partecipante principale come invitato.\n"
+     "5. Aggiungere anche il partecipante secondario come invitato (se distinto dal principale).\n"
+     "6. Verificare il toast di conferma salvataggio evento (assert su testo IT/FR).\n"
+     "7. Salvare e inviare l'invito.\n"
+     "8. Navigare in In arrivo messaggi (account organizzatore) e verificare la ricevuta (assert).\n"
+     "9. Aprire una seconda pagina/contesto browser, accedere con le credenziali del destinatario secondario.\n"
+     "10. Navigare in In arrivo del destinatario secondario e attendere (polling) l'arrivo dell'email di invito.\n"
+     "11. Verificare che l'invito sia effettivamente arrivato nella inbox del destinatario secondario (assert).\n"
+     "12. Eliminare l'evento (cleanup lato organizzatore).",
+     "L'evento è creato con entrambi i partecipanti invitati. L'invito viene inviato come messaggio PEC ed è visibile sia nella ricevuta dell'organizzatore sia, effettivamente, nella inbox del destinatario secondario tramite un secondo account/pagina browser."),
 
     (33, "Calendario", "test_calendario_04.py", "test_import_export_calendario",
      "Verifica l'importazione di un calendario da file ICS e il tentativo di esportazione.",
@@ -536,12 +542,13 @@ TESTS = [
      "2. Navigare nella sezione Calendario.\n"
      "3. Creare un evento con titolo univoco.\n"
      "4. Salvare l'evento.\n"
-     "5. Aprire la barra di ricerca nel calendario.\n"
-     "6. Inserire il titolo univoco dell'evento.\n"
-     "7. Avviare la ricerca.\n"
-     "8. Verificare che l'evento sia trovato nei risultati.\n"
-     "9. Scattare screenshot.\n"
-     "10. Eliminare l'evento (cleanup).",
+     "5. Verificare la comparsa e il testo del toast di conferma salvataggio (assert).\n"
+     "6. Aprire la barra di ricerca nel calendario.\n"
+     "7. Inserire il titolo univoco dell'evento.\n"
+     "8. Avviare la ricerca.\n"
+     "9. Verificare che l'evento sia trovato nei risultati.\n"
+     "10. Scattare screenshot.\n"
+     "11. Eliminare l'evento (cleanup).",
      "L'evento con il titolo univoco è trovato e visualizzato nei risultati di ricerca del calendario."),
 
     # ══════════════════════════════════════════════════════════════════════════

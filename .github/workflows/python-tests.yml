@@ -108,6 +108,12 @@ jobs:
              || inputs.ambiente == 'prod-pocfr'    && secrets.POCFR_PEC_DESTINATARIO_SECONDARIO
              || (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba') && secrets.PROD_PEC_DESTINATARIO_SECONDARIO
              || secrets.TEST_PEC_DESTINATARIO_SECONDARIO }}
+          PEC_DESTINATARIO_SECONDARIO_PASSWORD: >-
+            ${{ inputs.ambiente == 'test-bnl'      && secrets.BNL_PEC_DESTINATARIO_SECONDARIO_PASSWORD
+             || inputs.ambiente == 'test-fr'       && secrets.FR_PEC_DESTINATARIO_SECONDARIO_PASSWORD
+             || inputs.ambiente == 'prod-pocfr'    && secrets.POCFR_PEC_DESTINATARIO_SECONDARIO_PASSWORD
+             || (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba') && secrets.PROD_PEC_DESTINATARIO_SECONDARIO_PASSWORD
+             || secrets.TEST_PEC_DESTINATARIO_SECONDARIO_PASSWORD }}
         run: |
           $reportDir = "pytest_playwright/test-results"
           if (!(Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
@@ -155,6 +161,12 @@ jobs:
              || inputs.ambiente == 'prod-pocfr'    && secrets.POCFR_PEC_DESTINATARIO_SECONDARIO
              || (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba') && secrets.PROD_PEC_DESTINATARIO_SECONDARIO
              || secrets.TEST_PEC_DESTINATARIO_SECONDARIO }}
+          PEC_DESTINATARIO_SECONDARIO_PASSWORD: >-
+            ${{ inputs.ambiente == 'test-bnl'      && secrets.BNL_PEC_DESTINATARIO_SECONDARIO_PASSWORD
+             || inputs.ambiente == 'test-fr'       && secrets.FR_PEC_DESTINATARIO_SECONDARIO_PASSWORD
+             || inputs.ambiente == 'prod-pocfr'    && secrets.POCFR_PEC_DESTINATARIO_SECONDARIO_PASSWORD
+             || (inputs.ambiente == 'prod-buffetti' || inputs.ambiente == 'prod-aruba') && secrets.PROD_PEC_DESTINATARIO_SECONDARIO_PASSWORD
+             || secrets.TEST_PEC_DESTINATARIO_SECONDARIO_PASSWORD }}
         run: |
           reportDir="pytest_playwright/test-results"
           mkdir -p "$reportDir"
