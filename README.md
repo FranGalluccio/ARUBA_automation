@@ -37,7 +37,7 @@ The suite runs on **self-hosted GitHub Actions runners** and supports multiple t
 | Login | 2 | Successful login, invalid credentials |
 | Accessi | 3 | Access management, Supervisor360 card, navigation |
 | Archivio | 2 | Archive configuration, message archiving |
-| Calendario | 10 | Create/edit/delete events, recurring events, reminders, all-day events, import/export, navigation, search |
+| Calendario | 10 | Create/edit/delete events, recurring events, reminders, all-day events, import/export, navigation, search, invite delivery to a secondary recipient account |
 | Conservazione | 2 | Conservation settings, folder navigation |
 | Contatti | 8 | Add/edit/delete contacts, search, favourites, group import/export |
 | Fatture | 3 | Invoice reception, visualisation, download |
@@ -86,6 +86,19 @@ for _ in range(20):
     page.wait_for_timeout(4000)
     page.locator('aru-symbol[title="Aggiorna"]').click()
     if msg.count() > 0:
+        break
+```
+
+### Multi-account recipient verification
+Some flows (e.g. sending a calendar invite) can't be verified from the sender's session alone. `test_calendario_03.py` opens a second, independent `BrowserContext` logged in as a separate recipient account and polls that account's own inbox until the invite email actually arrives — proving end-to-end delivery, not just that the sender's UI reported success:
+```python
+context2 = browser.new_context(viewport={"width": 1920, "height": 1080}, ignore_https_errors=True)
+page2 = context2.new_page()
+LoginPec(page2).login_pec(config_secondario)
+for _ in range(6):
+    page2.locator('aru-symbol[title="Aggiorna"]').click()
+    page2.wait_for_timeout(5000)
+    if page2.get_by_text(titolo_evento, exact=False).count() > 0:
         break
 ```
 
@@ -181,19 +194,30 @@ pytest pytest_pel/ --browser chromium -v
 
 ## CI/CD (GitHub Actions)
 
-All credentials are stored as **GitHub Secrets** — the `conftest.py` in each suite reads them from environment variables and writes `config.json` at runtime.
+All credentials are stored as **GitHub Secrets** — the `conftest.py` in each suite reads them from environment variables and writes `config.json` at runtime. The target URL itself is *not* a secret: it's selected inline in the workflow from the `ambiente` input.
 
 ### Required Secrets
 
-| Secret | Used by |
+Each workflow picks a secret set based on the `ambiente` selected at dispatch time (falls back to `TEST_*` on plain `push`). Every secret below needs one variant per prefix actually in use.
+
+**PEC Desktop + Mobile** (`python-tests.yml`, `python-tests-mobile.yml`) — prefixes `TEST_` (default), `BNL_`, `FR_`, `POCFR_` (Desktop only), `PROD_`:
+
+| Secret (per prefix) | Purpose |
 |--------|---------|
-| `TEST_PEC_URL` | PEC Desktop + Mobile |
-| `TEST_PEC_USERNAME` | PEC Desktop + Mobile |
-| `TEST_PEC_PASSWORD` | PEC Desktop + Mobile |
-| `TEST_PEC_DESTINATARIO_SECONDARIO` | PEC Desktop |
-| `TEST_PEL_URL` | PEL Staff |
-| `TEST_PEL_USERNAME` | PEL Staff |
-| `TEST_PEL_PASSWORD` | PEL Staff |
+| `<PREFIX>_PEC_USERNAME` | Login account under test |
+| `<PREFIX>_PEC_PASSWORD` | Login account under test |
+| `<PREFIX>_PEC_DESTINATARIO_SECONDARIO` | Email address invited/CC'd as a secondary recipient |
+| `<PREFIX>_PEC_DESTINATARIO_SECONDARIO_PASSWORD` | Password to log into that secondary account, to verify calendar invite delivery end-to-end (`test_calendario_03.py`) |
+
+**PEL Staff** (`python-tests-pel.yml`) — prefixes `TEST_` (default), `PROD_STAFF_`:
+
+| Secret (per prefix) | Purpose |
+|--------|---------|
+| `<PREFIX>_PEL_USERNAME` | Login account under test |
+| `<PREFIX>_PEL_PASSWORD` | Login account under test |
+| `<PREFIX>_PEL_DESTINATARIO_SECONDARIO` | Secondary recipient email address |
+
+> If a `*_DESTINATARIO_SECONDARIO_PASSWORD` secret isn't configured for an environment, the affected test skips only the recipient-side verification step instead of failing.
 
 ### Trigger
 
