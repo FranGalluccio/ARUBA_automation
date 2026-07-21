@@ -51,6 +51,11 @@ def test_creazione_evento_ricorrente(page):
 
     page.get_by_role("button", name="Salva").click()
 
+    # Verifica toast di conferma salvataggio evento
+    toast = page.locator("div.aru-toast__message").first
+    toast.wait_for(state="visible", timeout=8000)
+    assert toast.is_visible(), "Nessun toast di conferma dopo il salvataggio dell'evento ricorrente"
+
     try:
         page.wait_for_timeout(1000)
         screenshot_path = os.path.join(

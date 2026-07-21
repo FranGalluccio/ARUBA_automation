@@ -34,6 +34,14 @@ def test_ricerca_nel_calendario(page):
         titolo_input.wait_for(state="visible", timeout=8000)
         titolo_input.fill(titolo_evento)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
+
+        # Verifica toast di conferma salvataggio evento
+        toast = page.locator("div.aru-toast__message").first
+        toast.wait_for(state="visible", timeout=8000)
+        toast_text = toast.text_content()
+        assert "evento è stato salvato" in toast_text.lower() or "enregistr" in toast_text.lower(), \
+            f"Toast di conferma salvataggio evento non trovato: {toast_text!r}"
+
         page.wait_for_timeout(5000)
 
         # Usa la barra di ricerca del calendario

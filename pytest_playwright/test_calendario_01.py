@@ -53,6 +53,13 @@ def test_creazione_evento_ricorrente(page):
     page.wait_for_timeout(500)
     page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
 
+    # Verifica toast di conferma salvataggio evento
+    toast = page.locator("div.aru-toast__message").first
+    toast.wait_for(state="visible", timeout=8000)
+    toast_text = toast.text_content()
+    assert "evento è stato salvato" in toast_text.lower() or "enregistr" in toast_text.lower(), \
+        f"Toast di conferma salvataggio evento non trovato: {toast_text!r}"
+
     try:
         page.wait_for_timeout(1000)
         screenshot_path = os.path.join(
