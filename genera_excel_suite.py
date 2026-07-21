@@ -443,7 +443,7 @@ TESTS = [
      "L'evento è creato con il titolo originale. Dopo la modifica, il calendario mostra il nuovo titolo. L'eliminazione completa il cleanup."),
 
     (32, "Calendario", "test_calendario_03.py", "test_creazione_invio_evento",
-     "Verifica la creazione di un evento con invito al partecipante principale e secondario, il ricevimento dell'invito lato organizzatore e la ricezione effettiva lato destinatario secondario (secondo account, seconda pagina browser).",
+     "Verifica la creazione di un evento con invito al partecipante principale e secondario, il ricevimento dell'invito lato organizzatore, la ricezione effettiva lato destinatario secondario (secondo account, seconda pagina browser), l'accettazione dell'invito da parte del destinatario, la presenza dell'evento corretto nel calendario del destinatario e la conseguente notifica di accettazione ricevuta dall'organizzatore. Le due pagine browser restano aperte contemporaneamente per tutta la verifica incrociata.",
      "1. Accedere con credenziali valide (account organizzatore).\n"
      "2. Navigare nella sezione Calendario.\n"
      "3. Creare un nuovo evento.\n"
@@ -452,11 +452,15 @@ TESTS = [
      "6. Verificare il toast di conferma salvataggio evento (assert su testo IT/FR).\n"
      "7. Salvare e inviare l'invito.\n"
      "8. Navigare in In arrivo messaggi (account organizzatore) e verificare la ricevuta (assert).\n"
-     "9. Aprire una seconda pagina/contesto browser, accedere con le credenziali del destinatario secondario.\n"
+     "9. Aprire una seconda pagina/contesto browser (senza chiudere la prima), accedere con le credenziali del destinatario secondario.\n"
      "10. Navigare in In arrivo del destinatario secondario e attendere (polling) l'arrivo dell'email di invito.\n"
      "11. Verificare che l'invito sia effettivamente arrivato nella inbox del destinatario secondario (assert).\n"
-     "12. Eliminare l'evento (cleanup lato organizzatore).",
-     "L'evento è creato con entrambi i partecipanti invitati. L'invito viene inviato come messaggio PEC ed è visibile sia nella ricevuta dell'organizzatore sia, effettivamente, nella inbox del destinatario secondario tramite un secondo account/pagina browser."),
+     "12. Aprire l'email di invito e cliccare 'Sì' per accettare la partecipazione.\n"
+     "13. Navigare nel Calendario del destinatario secondario (vista Eventi), aprire l'evento con lo stesso titolo e verificare che l'organizzatore sia presente tra i partecipanti (assert), confermando che sia l'evento corretto e non un titolo omonimo.\n"
+     "14. Con entrambe le pagine ancora aperte, tornare sulla pagina dell'organizzatore e attendere (polling) l'email di notifica 'Accettato: ...'.\n"
+     "15. Verificare che la mail di accettazione sia arrivata nella inbox dell'organizzatore (assert).\n"
+     "16. Chiudere la seconda pagina/contesto ed eliminare l'evento (cleanup lato organizzatore).",
+     "L'evento è creato con entrambi i partecipanti invitati. L'invito viene inviato come messaggio PEC ed è visibile sia nella ricevuta dell'organizzatore sia nella inbox del destinatario secondario. Dopo l'accettazione, l'evento corretto compare nel calendario del destinatario (con l'organizzatore tra i partecipanti) e l'organizzatore riceve una mail di notifica 'Accettato: ...' prima che l'evento venga eliminato."),
 
     (33, "Calendario", "test_calendario_04.py", "test_import_export_calendario",
      "Verifica l'importazione di un calendario da file ICS e il tentativo di esportazione.",

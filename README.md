@@ -90,7 +90,7 @@ for _ in range(20):
 ```
 
 ### Multi-account recipient verification
-Some flows (e.g. sending a calendar invite) can't be verified from the sender's session alone. `test_calendario_03.py` opens a second, independent `BrowserContext` logged in as a separate recipient account and polls that account's own inbox until the invite email actually arrives — proving end-to-end delivery, not just that the sender's UI reported success:
+Some flows (e.g. sending a calendar invite) can't be verified from the sender's session alone. `test_calendario_03.py` opens a second, independent `BrowserContext` logged in as a separate recipient account and polls that account's own inbox until the invite email actually arrives — proving end-to-end delivery, not just that the sender's UI reported success. Both `page` (organizer) and `page2` (recipient) are kept open at the same time for the whole cross-check, rather than closing one before opening the other:
 ```python
 context2 = browser.new_context(viewport={"width": 1920, "height": 1080}, ignore_https_errors=True)
 page2 = context2.new_page()
@@ -101,6 +101,7 @@ for _ in range(6):
     if page2.get_by_text(titolo_evento, exact=False).count() > 0:
         break
 ```
+The test then goes further than delivery: it opens the invite email on `page2` and clicks the RSVP "Sì" button (`aru-button[aru-id="msg-dtl-body-event-current-btn-0"]` — a stable, language-independent selector since the visible label changes between IT/FR), checks the event shows up correctly in the recipient's own Calendario (organizer listed among the attendees, not just a same-titled stray event), and — still without closing `context2` — switches back to `page` to poll the organizer's inbox for the "Accettato: ..." notification before any cleanup happens.
 
 ### FullCalendar drag-and-drop
 Reliable drag requires slow incremental mouse movement (25 steps × 30 ms):

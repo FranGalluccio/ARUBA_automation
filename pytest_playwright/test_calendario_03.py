@@ -127,6 +127,49 @@ def test_creazione_invio_evento(page, browser):
                     full_page=True
                 )
                 print("Invito all'evento trovato nella inbox del destinatario secondario")
+
+                # Apri l'invito e accetta (riquadro "Parteciperai?" -> Si/Forse/No, primo bottone = Si)
+                page2.get_by_text(titolo_evento, exact=False).first.click()
+                page2.locator('div.message-content-body').wait_for(state="visible", timeout=20000)
+                page2.locator('aru-button[aru-id="msg-dtl-body-event-current-btn-0"]').first.click(timeout=5000)
+                page2.wait_for_timeout(3000)
+                print("Invito accettato dal destinatario secondario")
+
+                # Verifica che l'evento sia quello corretto nel Calendario del destinatario secondario
+                # (stesso titolo e organizzatore tra i partecipanti, non solo un titolo omonimo)
+                page2.locator('#calendar, [aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
+                page2.wait_for_timeout(2000)
+                for ev_name in ["Eventi", "Événements", "Agenda", "Events"]:
+                    try:
+                        btn = page2.get_by_role("button", name=ev_name)
+                        btn.wait_for(state="visible", timeout=3000)
+                        btn.click(force=True)
+                        break
+                    except Exception:
+                        pass
+                page2.wait_for_timeout(2000)
+                evento_calendario = page2.get_by_text(titolo_evento, exact=False).first
+                evento_calendario.wait_for(state="visible", timeout=10000)
+                evento_calendario.click()
+                page2.wait_for_timeout(1500)
+                expect(page2.get_by_text(config["pec"]["username"], exact=False).first).to_be_visible(timeout=8000)
+                print("Evento corretto trovato nel calendario del destinatario secondario (organizzatore verificato tra i partecipanti)")
+                page2.keyboard.press("Escape")
+                page2.wait_for_timeout(500)
+
+                # Verifica lato organizzatore (page resta aperta insieme a page2): deve arrivare
+                # la mail di notifica accettazione prima di chiudere il secondo contesto.
+                accettazione_arrivata = False
+                for _ in range(6):
+                    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+                    page.wait_for_timeout(5000)
+                    righe = page.locator('div.frame-record-desktop').all_inner_texts()
+                    if any(titolo_evento in r and ("ccettat" in r.lower() or "accepté" in r.lower()) for r in righe):
+                        accettazione_arrivata = True
+                        break
+                assert accettazione_arrivata, \
+                    f"Mail di accettazione dell'evento '{titolo_evento}' non arrivata nella inbox dell'organizzatore"
+                print("Mail di accettazione ricevuta dall'organizzatore")
             finally:
                 context2.close()
 
