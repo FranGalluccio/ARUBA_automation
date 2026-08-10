@@ -24,6 +24,7 @@ on:
           - LAPTOP-7AQM6PC9
           - michela
           - lorenzo
+          - lorenzo01
 
 jobs:
   test:
