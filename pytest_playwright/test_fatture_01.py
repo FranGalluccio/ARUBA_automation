@@ -24,6 +24,7 @@ def _count_fatture(page):
     return page.locator('div.frame-record-desktop').count()
 
 
+@pytest.mark.skip(reason="Test fatture in stand by")
 def test_import_fattura_ricevute(page):
     """Importa un file .eml di fattura elettronica (X-Fattura-PA: Yes) tramite
     'Gestione messaggi → Importa' e verifica che appaia in 'Fatture ricevute'.

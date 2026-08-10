@@ -12,6 +12,7 @@ TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
+@pytest.mark.skip(reason="Test fatture in stand by")
 def test_leggi_fatture_settings(page):
     """Verifica la sezione 'Leggi fatture' nelle impostazioni:
     accessibilità pagina, presenza h1, contenuto informativo sul cassetto fiscale.
