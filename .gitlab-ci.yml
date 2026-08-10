@@ -4,41 +4,29 @@ stages:
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
+default:
+  image: mcr.microsoft.com/playwright/python:v1.49.0-jammy
+  tags:
+    - lorenzo01
+  before_script:
+    - pip install -r requirements.txt
+    - playwright install chromium
+  after_script:
+    - echo "Test completati - ambiente ${ENV_NAME}"
+
 cache:
   paths:
     - .cache/pip
 
-# ─── Template riutilizzabile ────────────────────────────────────────────────
-.test-template:
+# NB: config.json per ogni suite viene generato automaticamente da
+# pytest_playwright/conftest.py e pytest_pel/conftest.py a partire dalle
+# variabili d'ambiente sotto (PEC_*, PEL_*) — non serve scriverlo qui.
+
+# ─── Template PEC Desktop (pytest_playwright/, esclude mobile/) ────────────
+.pec-desktop:
   stage: test
-  image: mcr.microsoft.com/playwright/python:v1.49.0-jammy
-  before_script:
-    - pip install -r requirements.txt
-    - playwright install chromium
-    - |
-      cat > pytest_playwright/config.json << CONF
-      {
-        "pec": {
-          "url": "${PEC_URL}",
-          "username": "${PEC_USERNAME}",
-          "password": "${PEC_PASSWORD}"
-        },
-        "destinatari": {
-          "destinatario_principale": "${PEC_USERNAME}",
-          "destinatario_secondario": "${PEC_DESTINATARIO_SECONDARIO}"
-        },
-        "test_folder": "pytest_playwright",
-        "report_folder": "pytest_playwright/test-results",
-        "file_allegato": "dati_test/allegato-test.pdf",
-        "importa_messaggi": "dati_test/messaggio importato automation playwright.eml",
-        "rubrica_import": "dati_test/rubrica.csv",
-        "calendario_import": "dati_test/calendario-test.ics"
-      }
-      CONF
   script:
-    - python -m pytest pytest_playwright/ -v --browser chromium
-  after_script:
-    - echo "Test completati - ambiente ${ENV_NAME}"
+    - python -m pytest pytest_playwright/ --ignore=pytest_playwright/mobile -v --browser chromium
   artifacts:
     when: always
     paths:
@@ -47,28 +35,98 @@ cache:
     expire_in: 2 weeks
   timeout: 90 minutes
 
-# ─── Ambiente TEST 1 (webmail.test.pec.aruba.it) ────────────────────────────
-# Gira automaticamente su push a main
-test-env-test1:
-  extends: .test-template
+# ─── Template PEC Mobile (pytest_playwright/mobile/, emulazione iPhone 14) ─
+.pec-mobile:
+  stage: test
+  script:
+    - python -m pytest pytest_playwright/mobile/ -v --browser chromium
+  artifacts:
+    when: always
+    paths:
+      - report.html
+      - pytest_playwright/test-results/
+    expire_in: 2 weeks
+  timeout: 45 minutes
+
+# ─── Template PEL Staff (pytest_pel/) ───────────────────────────────────────
+.pel-staff:
+  stage: test
+  script:
+    - python -m pytest pytest_pel/ -v --browser chromium
+  artifacts:
+    when: always
+    paths:
+      - report.html
+      - pytest_pel/test-results/
+    expire_in: 2 weeks
+  timeout: 60 minutes
+
+# ══════════════════════════ PEC Desktop (65 test) ═══════════════════════════
+
+# Ambiente TEST 1 (webmail.test.pec.aruba.it) — gira automaticamente su push a main
+pec-desktop-test1:
+  extends: .pec-desktop
   variables:
     ENV_NAME: "test1"
     PEC_URL: "https://webmail.test.pec.aruba.it/"
     PEC_USERNAME: "${TEST_PEC_USERNAME}"
     PEC_PASSWORD: "${TEST_PEC_PASSWORD}"
     PEC_DESTINATARIO_SECONDARIO: "${TEST_PEC_DESTINATARIO_SECONDARIO}"
+    PEC_DESTINATARIO_SECONDARIO_PASSWORD: "${TEST_PEC_DESTINATARIO_SECONDARIO_PASSWORD}"
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
     - if: '$CI_PIPELINE_SOURCE == "web"'
       when: manual
 
-# ─── Ambiente TEST 2 (webmail-test1.test.pec.aruba.it) ──────────────────────
-# Solo manuale (env aggiuntivo)
-test-env-test2:
-  extends: .test-template
+# Ambiente TEST 2 (webmail-test1.test.pec.aruba.it) — solo manuale
+pec-desktop-test2:
+  extends: .pec-desktop
   variables:
     ENV_NAME: "test2"
     PEC_URL: "https://webmail-test1.test.pec.aruba.it/"
+    PEC_USERNAME: "${TEST_PEC_USERNAME}"
+    PEC_PASSWORD: "${TEST_PEC_PASSWORD}"
+    PEC_DESTINATARIO_SECONDARIO: "${TEST_PEC_DESTINATARIO_SECONDARIO}"
+    PEC_DESTINATARIO_SECONDARIO_PASSWORD: "${TEST_PEC_DESTINATARIO_SECONDARIO_PASSWORD}"
+  rules:
+    - when: manual
+  allow_failure: true
+
+# Ambiente PROD - Buffetti (webmail.pec.buffetti.it) — solo manuale
+pec-desktop-prod-buffetti:
+  extends: .pec-desktop
+  variables:
+    ENV_NAME: "prod-buffetti"
+    PEC_URL: "https://webmail.pec.buffetti.it/"
+    PEC_USERNAME: "${PROD_PEC_USERNAME}"
+    PEC_PASSWORD: "${PROD_PEC_PASSWORD}"
+    PEC_DESTINATARIO_SECONDARIO: "${PROD_PEC_DESTINATARIO_SECONDARIO}"
+    PEC_DESTINATARIO_SECONDARIO_PASSWORD: "${PROD_PEC_DESTINATARIO_SECONDARIO_PASSWORD}"
+  rules:
+    - when: manual
+  allow_failure: true
+
+# Ambiente PROD - Aruba (login.aruba.it Keycloak) — solo manuale
+pec-desktop-prod-aruba:
+  extends: .pec-desktop
+  variables:
+    ENV_NAME: "prod-aruba"
+    PEC_URL: "https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth"
+    PEC_USERNAME: "${PROD_PEC_USERNAME}"
+    PEC_PASSWORD: "${PROD_PEC_PASSWORD}"
+    PEC_DESTINATARIO_SECONDARIO: "${PROD_PEC_DESTINATARIO_SECONDARIO}"
+    PEC_DESTINATARIO_SECONDARIO_PASSWORD: "${PROD_PEC_DESTINATARIO_SECONDARIO_PASSWORD}"
+  rules:
+    - when: manual
+  allow_failure: true
+
+# ═══════════════════════ PEC Mobile (10 test, iPhone 14) ════════════════════
+# Solo manuale, come su GitHub Actions
+pec-mobile-test1:
+  extends: .pec-mobile
+  variables:
+    ENV_NAME: "mobile-test1"
+    PEC_URL: "https://webmail.test.pec.aruba.it/"
     PEC_USERNAME: "${TEST_PEC_USERNAME}"
     PEC_PASSWORD: "${TEST_PEC_PASSWORD}"
     PEC_DESTINATARIO_SECONDARIO: "${TEST_PEC_DESTINATARIO_SECONDARIO}"
@@ -76,30 +134,33 @@ test-env-test2:
     - when: manual
   allow_failure: true
 
-# ─── Ambiente PROD - Buffetti (webmail.pec.buffetti.it) ─────────────────────
-# Solo manuale
-test-prod-buffetti:
-  extends: .test-template
-  variables:
-    ENV_NAME: "prod-buffetti"
-    PEC_URL: "https://webmail.pec.buffetti.it/"
-    PEC_USERNAME: "${PROD_PEC_USERNAME}"
-    PEC_PASSWORD: "${PROD_PEC_PASSWORD}"
-    PEC_DESTINATARIO_SECONDARIO: "${PROD_PEC_DESTINATARIO_SECONDARIO}"
-  rules:
-    - when: manual
-  allow_failure: true
+# ═══════════════════════════ PEL Staff (17 test) ════════════════════════════
 
-# ─── Ambiente PROD - Aruba (login.aruba.it Keycloak) ────────────────────────
-# Solo manuale
-test-prod-aruba:
-  extends: .test-template
+# Ambiente TEST (webmailstafftest.aruba.it) — gira automaticamente su push a main
+pel-staff-test:
+  extends: .pel-staff
   variables:
-    ENV_NAME: "prod-aruba"
-    PEC_URL: "https://login.aruba.it/auth/realms/pec/protocol/openid-connect/auth"
-    PEC_USERNAME: "${PROD_PEC_USERNAME}"
-    PEC_PASSWORD: "${PROD_PEC_PASSWORD}"
-    PEC_DESTINATARIO_SECONDARIO: "${PROD_PEC_DESTINATARIO_SECONDARIO}"
+    ENV_NAME: "test-staff"
+    PEL_URL: "https://webmailstafftest.aruba.it/new/auth/login"
+    PEL_INBOX_URL_PATTERN: "INBOX|management|messages"
+    PEL_USERNAME: "${TEST_PEL_USERNAME}"
+    PEL_PASSWORD: "${TEST_PEL_PASSWORD}"
+    PEL_DESTINATARIO_SECONDARIO: "${TEST_PEL_DESTINATARIO_SECONDARIO}"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: manual
+
+# Ambiente PROD (webmail.aruba.it) — solo manuale
+pel-staff-prod:
+  extends: .pel-staff
+  variables:
+    ENV_NAME: "prod-staff"
+    PEL_URL: "https://webmail.aruba.it/new/auth/login"
+    PEL_INBOX_URL_PATTERN: "INBOX|management|messages"
+    PEL_USERNAME: "${PROD_STAFF_PEL_USERNAME}"
+    PEL_PASSWORD: "${PROD_STAFF_PEL_PASSWORD}"
+    PEL_DESTINATARIO_SECONDARIO: "${PROD_STAFF_PEL_DESTINATARIO_SECONDARIO}"
   rules:
     - when: manual
   allow_failure: true
