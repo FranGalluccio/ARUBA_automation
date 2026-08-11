@@ -113,7 +113,7 @@ def test_creazione_invio_evento(page, browser):
 
                 # L'email di invito può impiegare qualche secondo ad arrivare: polling con refresh
                 invito_arrivato = False
-                for _ in range(6):
+                for _ in range(12):
                     page2.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
                     page2.wait_for_timeout(5000)
                     if page2.get_by_text(titolo_evento, exact=False).count() > 0:
