@@ -53,15 +53,18 @@ def test_form_supervisore360(page):
             page.wait_for_load_state("load", timeout=5000)
         except Exception:
             pass
-    page.wait_for_timeout(1500)
-
     # --- Verifica che Supervisore360 sia presente nella panoramica ---
-    supervisore_in_overview = (
-        page.get_by_text("Supervisore360", exact=False).count() > 0 or
-        page.get_by_text("Supervisore 360", exact=False).count() > 0 or
-        page.locator('[title*="Supervisore"]').count() > 0 or
-        page.locator('[aria-label*="Supervisore"]').count() > 0
+    supervisore_locator = (
+        page.get_by_text("Supervisore360", exact=False)
+        .or_(page.get_by_text("Supervisore 360", exact=False))
+        .or_(page.locator('[title*="Supervisore"]'))
+        .or_(page.locator('[aria-label*="Supervisore"]'))
     )
+    try:
+        supervisore_locator.first.wait_for(state="visible", timeout=8000)
+        supervisore_in_overview = True
+    except Exception:
+        supervisore_in_overview = False
     if not supervisore_in_overview:
         if "bnl" in page.url.lower():
             pytest.skip("Feature 'Supervisore360' non disponibile su BNL")
