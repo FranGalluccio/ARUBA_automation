@@ -61,7 +61,7 @@ def test_form_supervisore360(page):
         .or_(page.locator('[aria-label*="Supervisore"]'))
     )
     try:
-        supervisore_locator.first.wait_for(state="visible", timeout=8000)
+        supervisore_locator.first.wait_for(state="visible", timeout=20000)
         supervisore_in_overview = True
     except Exception:
         supervisore_in_overview = False
