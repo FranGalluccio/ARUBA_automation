@@ -41,6 +41,14 @@ if _pec_url:
         json.dump(_config, _f, indent=2)
 
 
+def pytest_collection_modifyitems(items):
+    """Esegue prima tutti i test della suite 'messaggi', poi il resto
+    (l'ordine relativo all'interno dei due gruppi resta invariato)."""
+    messaggi = [item for item in items if "test_messaggi" in item.nodeid]
+    altri = [item for item in items if "test_messaggi" not in item.nodeid]
+    items[:] = messaggi + altri
+
+
 @pytest.fixture(autouse=True)
 def dismiss_cookiebot(page):
     """Auto-dismisses CybotCookiebotDialog whenever it intercepts pointer events.
