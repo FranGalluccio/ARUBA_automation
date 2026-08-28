@@ -24,10 +24,10 @@ def test_posta_indesiderata(page):
 
     # Vai alle impostazioni → Posta indesiderata (URL calcolato dopo il login per supportare prod-aruba)
     page.goto(get_app_base_url(page) + "/new/settings/home", timeout=20000)
-    if not page.locator('button[title="Posta indesiderata"], button[title="Courrier indésirable"], [title="Posta indesiderata"], [title="Courrier indésirable"]').is_visible():
+    if not page.locator('button[title="Posta indesiderata"], button[title="Courrier indésirable"], [title="Posta indesiderata"], [title="Courrier indésirable"]').first.is_visible():
         page.locator('button[title="Account e sicurezza"], button[title="Compte et sécurité"]').click(force=True)
         page.locator('button[title="Posta indesiderata"], button[title="Courrier indésirable"], [title="Posta indesiderata"], [title="Courrier indésirable"]').first.wait_for(state="visible", timeout=5000)
-    page.locator('button[title="Posta indesiderata"], button[title="Courrier indésirable"], [title="Posta indesiderata"], [title="Courrier indésirable"]').click(force=True)
+    page.locator('button[title="Posta indesiderata"], button[title="Courrier indésirable"], [title="Posta indesiderata"], [title="Courrier indésirable"]').first.click(force=True)
 
     # Screenshot
     screenshot_path = os.path.join(
