@@ -45,7 +45,7 @@ def test_scarica_allegato_ricevuto(page):
     msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto)
     for _ in range(40):
         page.wait_for_timeout(3000)
-        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
         page.wait_for_timeout(1000)
         if msg.count() > 0:
             break

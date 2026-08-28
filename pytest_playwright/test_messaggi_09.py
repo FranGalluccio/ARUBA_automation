@@ -39,7 +39,7 @@ def test_segna_come_letto_da_leggere(page):
     messaggio_arrivato = False
     for _ in range(22):
         page.wait_for_timeout(4000)
-        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
         page.wait_for_timeout(1000)
         if page.locator('div.frame-record-desktop').filter(has_text=oggetto).count() > 0:
             messaggio_arrivato = True

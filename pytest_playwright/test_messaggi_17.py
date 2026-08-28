@@ -33,7 +33,7 @@ def test_ricerca_messaggi(page):
 
     # Aspetta consegna (CI può essere più lento)
     page.wait_for_timeout(15000)
-    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
     page.wait_for_timeout(2000)
 
     # Usa la barra di ricerca (input con classe aru-input-search__chosen__input-editable)

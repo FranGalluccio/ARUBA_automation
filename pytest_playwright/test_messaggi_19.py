@@ -57,7 +57,7 @@ def test_invio_messaggio_con_cc(page):
 
     # Aspetta ricezione, aggiorna e apri il primo messaggio
     page.wait_for_timeout(10000)
-    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
     page.wait_for_timeout(2000)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
     page.locator('div.frame-record-desktop').first.click()

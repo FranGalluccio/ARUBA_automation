@@ -52,7 +52,7 @@ def test_sposta_messaggio_in_cartella(page):
 
     # Aspetta consegna
     page.wait_for_timeout(10000)
-    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click(force=True)
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click(force=True)
 
     # Screenshot diagnostico
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_messaggi_15_inbox_{datetime.now():%H-%M-%S}.png"))

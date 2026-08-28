@@ -95,5 +95,5 @@ def test_invio_allegati_multipli(page):
     page.wait_for_timeout(5000)
 
     # Verifica che il messaggio sia stato inviato (naviga agli inviati)
-    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
     page.wait_for_timeout(2000)

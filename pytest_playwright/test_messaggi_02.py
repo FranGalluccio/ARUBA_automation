@@ -51,7 +51,7 @@ def test_messaggio_inoltrato(page):
     msg = page.locator('div.frame-record-desktop').filter(has_text=oggetto_inoltro)
     for _ in range(30):
         page.wait_for_timeout(4000)
-        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
         page.wait_for_timeout(1000)
         if msg.count() > 0:
             break

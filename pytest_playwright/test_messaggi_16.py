@@ -52,7 +52,7 @@ def test_copia_messaggio_in_cartella(page):
 
     # Aspetta consegna
     page.wait_for_timeout(10000)
-    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click(force=True)
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click(force=True)
 
     # Apri il messaggio
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)

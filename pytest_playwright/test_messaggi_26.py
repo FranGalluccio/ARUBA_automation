@@ -52,7 +52,7 @@ def test_selezione_multipla_batch(page):
             except Exception:
                 break
 
-    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
     page.wait_for_timeout(3000)
 
     # Hover sul primo messaggio per rendere visibile il checkbox, poi clicca

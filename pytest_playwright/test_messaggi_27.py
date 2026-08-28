@@ -76,7 +76,7 @@ def test_anomalia_invio_non_pec(page):
     # Altrimenti controlla la inbox: la ricevuta di anomalia arriva come messaggio
     page.locator("#messages").locator('[aria-label="Messaggi"], [aria-label="Messages"]').first.click()
     page.wait_for_timeout(3000)
-    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
     page.wait_for_timeout(3000)
 
     frames = page.locator('div.frame-record-desktop').all()

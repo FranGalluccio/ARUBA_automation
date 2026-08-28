@@ -48,6 +48,7 @@ Thumbs.db
 diag_*.py
 diag_*.png
 debug_*.png
+pytest_playwright/crea_cartelle_random.py
 
 # Claude Code
 .claude/

@@ -88,7 +88,7 @@ def test_creazione_invio_evento(page, browser):
         except Exception:
             pass
         # Aggiorna la posta
-        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
         page.wait_for_timeout(5000)
         # Aspetta che almeno un record sia visibile
         page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=15000)
@@ -114,7 +114,7 @@ def test_creazione_invio_evento(page, browser):
                 # L'email di invito può impiegare qualche secondo ad arrivare: polling con refresh
                 invito_arrivato = False
                 for _ in range(12):
-                    page2.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+                    page2.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
                     page2.wait_for_timeout(5000)
                     if page2.get_by_text(titolo_evento, exact=False).count() > 0:
                         invito_arrivato = True
@@ -161,7 +161,7 @@ def test_creazione_invio_evento(page, browser):
                 # la mail di notifica accettazione prima di chiudere il secondo contesto.
                 accettazione_arrivata = False
                 for _ in range(6):
-                    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+                    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
                     page.wait_for_timeout(5000)
                     righe = page.locator('div.frame-record-desktop').all_inner_texts()
                     if any(titolo_evento in r and ("ccettat" in r.lower() or "accepté" in r.lower()) for r in righe):

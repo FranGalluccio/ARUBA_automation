@@ -45,7 +45,7 @@ def test_risposta_a_tutti(page):
     )
     for _ in range(20):
         page.wait_for_timeout(4000)
-        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
         page.wait_for_timeout(1000)
         if msg_orig.count() > 0:
             break
@@ -98,7 +98,7 @@ def test_risposta_a_tutti(page):
             if msg.count() > 0:
                 found_msg = msg
                 break
-            page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+            page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
             page.wait_for_timeout(2000)
         if found_msg is not None:
             break

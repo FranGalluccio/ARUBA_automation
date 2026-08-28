@@ -32,7 +32,7 @@ def test_messaggi_preferiti_pinnati(page):
         )
         page.locator('span[title="Invia"], span[title="Envoyer"]').click()
         page.wait_for_timeout(4000)
-    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     count = page.locator('div.frame-record-desktop').count()

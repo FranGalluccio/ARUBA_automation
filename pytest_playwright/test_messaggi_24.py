@@ -52,7 +52,7 @@ def test_ricevuta_consegna(page):
     found_rd = False
     for _ in range(20):
         page.wait_for_timeout(6000)
-        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"]').click()
+        page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
         page.wait_for_timeout(2000)
         # Riprova mostra ricevute se necessario
         try:
