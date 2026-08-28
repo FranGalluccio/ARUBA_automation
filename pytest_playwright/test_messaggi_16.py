@@ -64,8 +64,8 @@ def test_copia_messaggio_in_cartella(page):
     page.wait_for_timeout(500)
 
     # Clicca il pulsante della cartella nel dropdown (nth(1) = Content area = dropdown item)
-    page.locator(f'button[title="{nome_cartella}"]').nth(1).wait_for(state="visible", timeout=5000)
-    page.locator(f'button[title="{nome_cartella}"]').nth(1).click(force=True)
+    page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').nth(1).wait_for(state="visible", timeout=5000)
+    page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').nth(1).click(force=True)
     page.wait_for_timeout(500)
 
     # Verifica toast (non bloccante)
@@ -77,7 +77,7 @@ def test_copia_messaggio_in_cartella(page):
         pass
 
     # Verifica: il messaggio è presente nella cartella di destinazione
-    page.locator(f'button[title="{nome_cartella}"]').first.click(force=True)
+    page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').first.click(force=True)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     # Screenshot
@@ -90,11 +90,11 @@ def test_copia_messaggio_in_cartella(page):
     assert page.locator('div.frame-record-desktop').count() > 0, "La copia del messaggio non è stata trovata nella cartella"
 
     # Verifica: il messaggio è ancora presente in In arrivo (non rimosso)
-    page.locator('button[title="In arrivo"], button[title="Boîte de réception"], button[title="Boîte de réception"]').click()
+    page.locator('button[title="In arrivo"], button[title="Boîte de réception"], button[title="Boîte de réception"], [title="In arrivo"], [title="Boîte de réception"]').click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=5000)
 
     # Cleanup: elimina la cartella
-    page.locator(f'button[title="{nome_cartella}"]').first.click(button="right")
+    page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').first.click(button="right")
     page.locator('button:has-text("Elimina cartella"), button:has-text("Supprimer le dossier")').wait_for(state="visible", timeout=5000)
     page.locator('button:has-text("Elimina cartella"), button:has-text("Supprimer le dossier")').click()
     page.locator('span[title="Elimina"], span[title="Supprimer"]').click()

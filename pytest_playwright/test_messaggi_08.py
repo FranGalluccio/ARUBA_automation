@@ -74,7 +74,7 @@ def test_etichetta(page):
 }''')
 
     # Clicca con tasto destro sull'etichetta creata
-    page.locator(f'button[title="{nome_etichetta}"]').click(button="right")
+    page.locator(f'button[title="{nome_etichetta}"], [title="{nome_etichetta}"]').click(button="right")
 
     # Elimina etichetta
     page.locator('button:has-text("Elimina etichetta"), button:has-text("Supprimer l\'étiquette")').wait_for(state="visible", timeout=5000)

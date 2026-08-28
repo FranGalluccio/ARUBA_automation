@@ -40,7 +40,7 @@ def test_messaggio_importato(page):
         pass
 
     # Clicca su importa messaggi con force (evita blocco da backdrop residuo)
-    page.locator('button[title="Importa"], button[title="Importer"]').first.click(force=True)
+    page.locator('button[title="Importa"], button[title="Importer"], [title="Importa"], [title="Importer"]').first.click(force=True)
     page.wait_for_timeout(1000)
 
     # Il dialog di importazione apre un CDK overlay con backdrop.
@@ -64,10 +64,10 @@ def test_messaggio_importato(page):
 
     # Attendi che il file sia pronto nel dialog (upload preview)
     page.wait_for_timeout(3000)
-    page.locator('button[title="Importa"], button[title="Importer"]').nth(1).wait_for(state="visible", timeout=10000)
+    page.locator('button[title="Importa"], button[title="Importer"], [title="Importa"], [title="Importer"]').nth(1).wait_for(state="visible", timeout=10000)
 
     # Clicca il bottone "Importa" di conferma nel dialog
-    page.locator('button[title="Importa"], button[title="Importer"]').nth(1).click(force=True)
+    page.locator('button[title="Importa"], button[title="Importer"], [title="Importa"], [title="Importer"]').nth(1).click(force=True)
 
     # Attendi che il caricamento in background termini, poi verifica toast
     # Il file può richiedere alcuni secondi per essere processato lato server

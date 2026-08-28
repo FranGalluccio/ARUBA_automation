@@ -68,7 +68,7 @@ def test_ripristino_messaggi(page):
         pass
 
     # Apri cestino
-    page.locator('button[title="Cestino"], button[title="Corbeille"]').click()
+    page.locator('button[title="Cestino"], button[title="Corbeille"], [title="Cestino"], [title="Corbeille"]').click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     count = page.locator('div.frame-record-desktop').count()

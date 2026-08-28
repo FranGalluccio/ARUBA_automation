@@ -45,8 +45,8 @@ def test_cartella(page):
             f"Toast creazione cartella non trovato: {_toast_text_creata!r}"
 
         # Rinomina cartella via tasto destro
-        page.locator(f'button[title="{nome_cartella}"]').wait_for(state="visible", timeout=5000)
-        page.locator(f'button[title="{nome_cartella}"]').click(button="right")
+        page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').wait_for(state="visible", timeout=5000)
+        page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').click(button="right")
         page.locator('button:has-text("Modifica cartella"), button:has-text("Modifier le dossier")').wait_for(state="visible", timeout=5000)
         page.locator('button:has-text("Modifica cartella"), button:has-text("Modifier le dossier")').click()
 
@@ -78,7 +78,7 @@ def test_cartella(page):
         # Cleanup: elimina la cartella (con nome originale o modificato)
         for nome in [nuovo_nome_cartella, nome_cartella]:
             try:
-                btn = page.locator(f'button[title="{nome}"]').first
+                btn = page.locator(f'button[title="{nome}"], [title="{nome}"]').first
                 if btn.count() > 0 and btn.is_visible():
                     btn.click(button="right")
                     page.locator('button:has-text("Elimina cartella"), button:has-text("Supprimer le dossier")').wait_for(state="visible", timeout=3000)

@@ -59,7 +59,7 @@ def test_messaggio_in_bozza(page):
         page.wait_for_timeout(2000)
 
     # Apri bozze (force=True per bypassare eventuale backdrop residuo)
-    page.locator('button[title="Bozze"], button[title="Brouillons"]').click(force=True)
+    page.locator('button[title="Bozze"], button[title="Brouillons"], [title="Bozze"], [title="Brouillons"]').click(force=True)
     
     # Aspetta che almeno un record sia visibile
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=15000)

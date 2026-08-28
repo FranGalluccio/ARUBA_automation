@@ -67,8 +67,8 @@ def test_sposta_messaggio_in_cartella(page):
     page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_messaggi_15_sposta_{datetime.now():%H-%M-%S}.png"))
 
     # Clicca il pulsante della cartella nel dropdown (nth(1) = Content area = dropdown item)
-    page.locator(f'button[title="{nome_cartella}"]').nth(1).wait_for(state="visible", timeout=5000)
-    page.locator(f'button[title="{nome_cartella}"]').nth(1).click(force=True)
+    page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').nth(1).wait_for(state="visible", timeout=5000)
+    page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').nth(1).click(force=True)
     page.wait_for_timeout(500)
 
     # Verifica toast (non bloccante)
@@ -80,7 +80,7 @@ def test_sposta_messaggio_in_cartella(page):
         pass
 
     # Verifica: apri la cartella e controlla che il messaggio sia presente
-    page.locator(f'button[title="{nome_cartella}"]').first.click(force=True)
+    page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').first.click(force=True)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     # Screenshot
@@ -93,7 +93,7 @@ def test_sposta_messaggio_in_cartella(page):
     assert page.locator('div.frame-record-desktop').count() > 0, "Il messaggio non è stato trovato nella cartella di destinazione"
 
     # Cleanup: elimina la cartella
-    page.locator(f'button[title="{nome_cartella}"]').first.click(button="right")
+    page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').first.click(button="right")
     page.locator('button:has-text("Elimina cartella"), button:has-text("Supprimer le dossier")').wait_for(state="visible", timeout=5000)
     page.locator('button:has-text("Elimina cartella"), button:has-text("Supprimer le dossier")').click()
     page.locator('span[title="Elimina"], span[title="Supprimer"]').click()

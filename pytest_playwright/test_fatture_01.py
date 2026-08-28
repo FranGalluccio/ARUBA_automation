@@ -76,7 +76,7 @@ def test_import_fattura_ricevute(page):
         pass
 
     # Clicca "Importa"
-    importa_btn = page.locator('button[title="Importa"], button[title="Importer"]').first
+    importa_btn = page.locator('button[title="Importa"], button[title="Importer"], [title="Importa"], [title="Importer"]').first
     try:
         importa_btn.wait_for(state="visible", timeout=4000)
         importa_btn.click()

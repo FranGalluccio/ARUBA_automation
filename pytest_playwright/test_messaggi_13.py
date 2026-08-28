@@ -78,7 +78,7 @@ def test_risposta_a_tutti(page):
     page.wait_for_timeout(2000)
     # Naviga a Inviati
     try:
-        page.locator('button[title="Inviati"], button[title="Envoyés"], button[title="Messages envoyés"]').first.click(timeout=5000)
+        page.locator('button[title="Inviati"], button[title="Envoyés"], button[title="Messages envoyés"], [title="Inviati"], [title="Envoyés"], [title="Messages envoyés"]').first.click(timeout=5000)
     except Exception:
         try:
             page.get_by_label("Inviati").first.click()

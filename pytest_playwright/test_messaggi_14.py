@@ -50,7 +50,7 @@ def test_elimina_messaggio(page):
     page.wait_for_timeout(2000)
 
     # Verifica: il messaggio eliminato è nel Cestino (cerca per oggetto specifico)
-    page.locator('button[title="Cestino"], button[title="Corbeille"]').click()
+    page.locator('button[title="Cestino"], button[title="Corbeille"], [title="Cestino"], [title="Corbeille"]').click()
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
     msg_cestino = page.locator('div.frame-record-desktop').filter(has_text=oggetto_msg)
     testo_primo = msg_cestino.first.inner_text() if msg_cestino.count() > 0 else ""
