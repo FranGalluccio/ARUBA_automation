@@ -157,6 +157,14 @@ class LoginPec:
                 self.page.goto(inbox_url, timeout=60_000, wait_until="domcontentloaded")
                 self.page.wait_for_timeout(3000)
 
+    # Gestisci redirect authentipec.php (hop OAuth intermedio che a volte non prosegue da solo)
+        if "authentipec.php" in self.page.url:
+            self.page.wait_for_timeout(3000)
+            if "authentipec.php" in self.page.url:
+                inbox_url = get_app_base_url(self.page) + "/new/messages/INBOX"
+                self.page.goto(inbox_url, timeout=60_000, wait_until="domcontentloaded")
+                self.page.wait_for_timeout(3000)
+
     # Verifica login riuscito (pattern URL configurabile per ambienti diversi)
         url_pattern = config["pec"].get("inbox_url_pattern", "INBOX")
         expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=30_000)
