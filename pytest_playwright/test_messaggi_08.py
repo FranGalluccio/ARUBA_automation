@@ -51,14 +51,17 @@ def test_etichetta(page):
 
     # Aspetta che il dialog etichetta sia chiuso prima di hover
     page.wait_for_timeout(2000)
-    # Seleziona i messaggi (hover via JS per bypassare il CDK overlay handler)
-    page.evaluate("() => { const el = document.querySelectorAll('div.frame-record-desktop')[0]; if (el) { el.dispatchEvent(new MouseEvent('mouseenter', {bubbles: true, cancelable: true})); el.dispatchEvent(new MouseEvent('mouseover', {bubbles: true, cancelable: true})); } }")
+    # Seleziona i messaggi (hover reale + checkbox scoped alla riga: un indice
+    # globale su tutte le checkbox della pagina non è affidabile)
+    riga0 = page.locator('div.frame-record-desktop').nth(0)
+    riga0.hover()
     page.wait_for_timeout(300)
-    page.locator('div.aru-input-checkbox').nth(1).click(force=True)
+    riga0.locator('div.aru-input-checkbox').first.click(force=True)
     page.wait_for_timeout(500)
-    page.evaluate("() => { const el = document.querySelectorAll('div.frame-record-desktop')[1]; if (el) { el.dispatchEvent(new MouseEvent('mouseenter', {bubbles: true, cancelable: true})); el.dispatchEvent(new MouseEvent('mouseover', {bubbles: true, cancelable: true})); } }")
+    riga1 = page.locator('div.frame-record-desktop').nth(1)
+    riga1.hover()
     page.wait_for_timeout(300)
-    page.locator('div.aru-input-checkbox').nth(2).click(force=True)
+    riga1.locator('div.aru-input-checkbox').first.click(force=True)
 
     # Clicca su etichetta (IT: "Etichetta", FR: "Étiquette")
     page.locator('button:has(aru-symbol[title="Etichetta"]), button:has(aru-symbol[title="Étiquette"])').nth(0).click(force=True)
