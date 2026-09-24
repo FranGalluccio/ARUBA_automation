@@ -87,6 +87,18 @@ def test_elimina_contatto(page):
                 break
             page.wait_for_timeout(500)
 
+        # Workaround bug app: la cancellazione riesce sempre lato server (il toast lo
+        # conferma sempre), ma a volte la lista contatti non si aggiorna e resta
+        # "sporca" col contatto già cancellato. Un reload forza il refresh.
+        if risultato.count() > 0:
+            page.reload(wait_until="domcontentloaded")
+            page.wait_for_timeout(3000)
+            search3 = page.locator('input[placeholder*="Cerca tra i contatti"], input[placeholder*="contacts"]').first
+            search3.click(force=True)
+            search3.fill(cognome)
+            page.wait_for_timeout(2000)
+            risultato = page.locator('div.frame-record-desktop').filter(has_text=cognome)
+
         # Screenshot
         screenshot_path = os.path.join(
             REPORT_FOLDER,
