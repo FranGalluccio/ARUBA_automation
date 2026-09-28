@@ -2,7 +2,7 @@ import os
 import json
 from datetime import datetime
 import time
-from base_pec import LoginPec, Helper, get_app_base_url
+from base_pec import LoginPec, Helper, get_app_base_url, trova_cartella_sidebar
 from playwright.sync_api import expect
 
 
@@ -80,7 +80,8 @@ def test_sposta_messaggio_in_cartella(page):
         pass
 
     # Verifica: apri la cartella e controlla che il messaggio sia presente
-    page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').first.click(force=True)
+    # (sidebar a virtual-scroll: serve scroll reale per trovare la cartella nel DOM)
+    trova_cartella_sidebar(page, nome_cartella).first.click(force=True)
     page.locator('div.frame-record-desktop').first.wait_for(state="visible", timeout=8000)
 
     # Screenshot
@@ -93,7 +94,7 @@ def test_sposta_messaggio_in_cartella(page):
     assert page.locator('div.frame-record-desktop').count() > 0, "Il messaggio non è stato trovato nella cartella di destinazione"
 
     # Cleanup: elimina la cartella
-    page.locator(f'button[title="{nome_cartella}"], [title="{nome_cartella}"]').first.click(button="right")
+    trova_cartella_sidebar(page, nome_cartella).first.click(button="right")
     page.locator('button:has-text("Elimina cartella"), button:has-text("Supprimer le dossier")').wait_for(state="visible", timeout=5000)
     page.locator('button:has-text("Elimina cartella"), button:has-text("Supprimer le dossier")').click()
     page.locator('span[title="Elimina"], span[title="Supprimer"]').click()

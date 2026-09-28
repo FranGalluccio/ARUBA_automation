@@ -62,6 +62,37 @@ def get_app_base_url(page: Page) -> str:
     return f"{parsed.scheme}://{parsed.netloc}"
 
 
+def trova_cartella_sidebar(page: Page, nome_cartella: str, max_scroll: int = 25):
+    """Cerca una cartella per titolo nella sidebar 'Le mie cartelle', scrollando
+    con eventi reali del mouse. La lista è a virtual-scroll (Angular CDK): con
+    molte cartelle nell'account, solo una finestra attorno alla posizione di
+    scroll corrente è presente nel DOM. Impostare scrollTop via JS non basta a
+    far ricalcolare la viewport — serve un vero evento di scroll (mouse.wheel).
+    Restituisce il locator della cartella trovata (count() > 0), o l'ultimo
+    locator provato se non trovata entro max_scroll tentativi."""
+    selettore = f'button[title="{nome_cartella}"], [title="{nome_cartella}"]'
+    loc = page.locator(selettore)
+    if loc.count() > 0:
+        return loc
+
+    nav = page.locator("nav.folders-container").first
+    box = nav.bounding_box()
+    if not box:
+        return loc
+    page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+
+    # Scrolla dall'alto: azzera lo scroll, poi scende gradualmente
+    page.evaluate("() => { const n = document.querySelector('nav.folders-container'); if (n) n.scrollTop = 0; }")
+    page.wait_for_timeout(200)
+    for _ in range(max_scroll):
+        loc = page.locator(selettore)
+        if loc.count() > 0:
+            return loc
+        page.mouse.wheel(0, 300)
+        page.wait_for_timeout(150)
+    return page.locator(selettore)
+
+
 def _resolve_path(raw):
     """Risolve un path relativo rispetto alla root del repo Git_automation/."""
     if raw and not os.path.isabs(raw):
