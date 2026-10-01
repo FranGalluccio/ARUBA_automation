@@ -3,7 +3,7 @@ import json
 import time
 from datetime import datetime
 
-from base_pec import LoginPec, Helper, trova_cartella_sidebar
+from base_pel import LoginPel, HelperPel, trova_cartella_sidebar
 from playwright.sync_api import expect
 
 
@@ -23,8 +23,8 @@ def test_cartella(page):
     nome_cartella = f"Test cartella playwright {ts}"
     nuovo_nome_cartella = f"Test cartella playwright modificata {ts}"
 
-    # Login PEC
-    LoginPec(page).login_pec(config)
+    # Login PEL
+    LoginPel(page).login_pel(config)
 
     try:
         # Clicca su nuova cartella
