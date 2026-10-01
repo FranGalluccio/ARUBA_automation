@@ -19,6 +19,40 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
 
+def dismiss_overlay(page: Page):
+    """Chiude qualsiasi CDK overlay backdrop attivo (welcome wizard, dialog).
+    Da chiamare prima di click force=True su elementi potenzialmente bloccati."""
+    for _ in range(5):
+        try:
+            page.wait_for_function(
+                "!document.querySelector('.cdk-overlay-backdrop-showing')",
+                timeout=500,
+            )
+            break
+        except Exception:
+            pass
+        try:
+            page.evaluate("""() => {
+                const dismissTexts = ['Chiudi', 'Non ora', 'Ricordarmelo', 'Capito', 'Ho capito', 'Ok'];
+                const pane = document.querySelector('.cdk-overlay-pane');
+                if (!pane) { return; }
+                const closeBtn = pane.querySelector(
+                    'button[aria-label="Chiudi"], button[title="Chiudi"]'
+                );
+                if (closeBtn) { closeBtn.click(); return; }
+                for (const btn of pane.querySelectorAll('button')) {
+                    if (dismissTexts.includes(btn.textContent.trim())) { btn.click(); return; }
+                }
+            }""")
+        except Exception:
+            pass
+        try:
+            page.keyboard.press("Escape")
+        except Exception:
+            pass
+        page.wait_for_timeout(500)
+
+
 def get_app_base_url(page: Page) -> str:
     """Restituisce schema+host dell'app webmail dalla pagina corrente."""
     parsed = urlparse(page.url)
