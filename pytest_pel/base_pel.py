@@ -23,30 +23,50 @@ class LoginPel:
         self.page = page
 
     def login_pel(self, config):
-        self.page.goto(config["pel"]["url"], timeout=30_000)
-
         username = config["pel"]["username"]
         password = config["pel"]["password"]
-
-        # Accetta cookie prima che blocchi il form
-        try:
-            self.page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=5000)
-        except Exception:
-            pass
-
-        # Aspetta che il campo username sia visibile (caricamento asincrono)
-        # Il form PEL usa name='text' per l'username (non 'username' o 'email')
-        username_input = self.page.locator("input[name='text'], input[name='username'], input#username, input[type='email']").first
-        username_input.wait_for(state="visible", timeout=15_000)
-        username_input.fill(username)
-        self.page.locator("input[name='password'], input#password, input[type='password']").first.fill(password)
-        self.page.locator("button[type='submit'], button:has-text('Login'), aru-button[skin='primary']").first.click()
-
-        self.page.wait_for_load_state("load", timeout=20_000)
-
-        # Accetta sia INBOX/messages sia management/home come destinazione post-login
         url_pattern = config["pel"].get("inbox_url_pattern", "INBOX|management|messages")
-        expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=20_000)
+
+        # Il login a due step (dominio "Aruba Mail" generico) a volte non va a buon
+        # fine al primo tentativo (torna alla pagina di login senza errore visibile):
+        # ritenta l'intero flusso da capo invece di solo l'ultimo click.
+        for _attempt in range(3):
+            self.page.goto(config["pel"]["url"], timeout=30_000)
+
+            # Aspetta che il campo username sia visibile (caricamento asincrono)
+            # Il form PEL usa name='text' per l'username (non 'username' o 'email')
+            username_input = self.page.locator("input[name='text'], input[name='username'], input#username, input[type='email']").first
+            username_input.wait_for(state="visible", timeout=15_000)
+            username_input.fill(username)
+            self.page.wait_for_timeout(500)
+
+            # Login a due step: email + "Prosegui", il campo password appare solo
+            # dopo. Se già presente, è un form a step unico.
+            password_input = self.page.locator("input[name='password'], input#password, input[type='password']")
+            if password_input.count() == 0:
+                prosegui_btn = self.page.locator('button:has-text("Prosegui"), button:has-text("Continua")').first
+                prosegui_btn.click()
+                password_input.first.wait_for(state="visible", timeout=15_000)
+
+            password_input.first.fill(password)
+            self.page.wait_for_timeout(300)
+
+            # Selettore specifico sul title: button[type='submit']/has-text generici
+            # possono fare match su un bottone diverso prima di quello giusto nel DOM.
+            accedi_btn = self.page.locator("button[title='Accedi']").first
+            if accedi_btn.count() == 0:
+                accedi_btn = self.page.locator("button[type='submit'], button:has-text('Login'), button:has-text('Accedi'), aru-button[skin='primary']").first
+            accedi_btn.click()
+
+            self.page.wait_for_load_state("load", timeout=20_000)
+
+            try:
+                expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=10_000)
+                break
+            except Exception:
+                if _attempt == 2:
+                    raise
+                self.page.wait_for_timeout(2000)
 
         # Se atterrati su management/home, naviga esplicitamente all'inbox PEL
         if "management" in self.page.url:

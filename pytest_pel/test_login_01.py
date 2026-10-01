@@ -52,7 +52,7 @@ def test_logout(page):
 
     # Verifica che il campo username sia visibile (siamo tornati al login)
     # Il form PEL usa name='text' per il campo username
-    login_field = page.locator("input[name='text'], input[name='username'], input#username").first
+    login_field = page.locator("input[name='text'], input[name='username'], input#username, input[type='email']").first
     login_field.wait_for(state="visible", timeout=15000)
 
     # Screenshot
