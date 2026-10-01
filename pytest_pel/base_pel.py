@@ -2,6 +2,7 @@ import os
 import time
 import re
 import json
+from urllib.parse import urlparse
 from playwright.sync_api import Page, expect
 
 # --- Leggi config.json ---
@@ -16,6 +17,12 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 
 # --- Percorso allegato dinamico ---
 file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
+
+
+def get_app_base_url(page: Page) -> str:
+    """Restituisce schema+host dell'app webmail dalla pagina corrente."""
+    parsed = urlparse(page.url)
+    return f"{parsed.scheme}://{parsed.netloc}"
 
 
 def trova_cartella_sidebar(page: Page, nome_cartella: str, max_scroll: int = 25):
