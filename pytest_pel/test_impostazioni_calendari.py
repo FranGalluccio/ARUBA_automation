@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-from base_pel import LoginPel
+from base_pel import LoginPel, get_app_base_url
 
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
@@ -11,24 +11,27 @@ with open(CONFIG_FILE, encoding="utf-8") as f:
 REPORT_FOLDER = config.get("report_folder", os.path.join(os.path.dirname(os.path.abspath(__file__)), "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
 
-# Ricava la base URL dell'app (es. "https://host/new") a partire dall'URL di login
-_login_url = config["pel"]["url"].rstrip("/")
-APP_BASE_URL = _login_url.split("/auth/")[0] if "/auth/" in _login_url else _login_url
-
 
 def _vai_a_impostazioni_calendari(page):
     """Naviga alla pagina Impostazioni > Calendari via URL diretto.
 
     NB: tutte le pagine impostazioni PEL richiedono il prefisso /new/
     (es. /new/settings/...); l'URL senza prefisso restituisce 404.
+    La base URL va ricavata da get_app_base_url(page) DOPO il login
+    (schema+host dalla pagina corrente): calcolarla staticamente da
+    config["pel"]["url"] è fragile, perché quell'URL ha forma diversa
+    in locale (host nudo) e in CI (include già /new/auth/login, nel
+    qual caso un prefisso /new/ aggiunto a mano produce /new/new/...
+    e un redirect a INBOX).
     """
-    settings_url = f"{APP_BASE_URL}/new/settings/calendars/customization"
+    app_base = get_app_base_url(page)
+    settings_url = f"{app_base}/new/settings/calendars/customization"
     page.goto(settings_url)
     page.wait_for_load_state("load")
     page.wait_for_timeout(2000)
     # Se ha rediretto fuori dalle impostazioni, prova /new/settings/calendars
     if "/messages" in page.url or "/calendar" in page.url:
-        page.goto(f"{APP_BASE_URL}/new/settings/calendars")
+        page.goto(f"{app_base}/new/settings/calendars")
         page.wait_for_load_state("load")
         page.wait_for_timeout(2000)
 

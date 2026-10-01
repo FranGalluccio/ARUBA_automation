@@ -35,8 +35,17 @@ def test_login_credenziali_errate(page):
     # Compila username con valore errato
     username_input.fill(TEST_NONEXISTENT_EMAIL)
 
+    # Login a due step su domini "Aruba Mail" generici: il campo password
+    # appare solo dopo aver cliccato "Prosegui"/"Continua" sul solo username
+    # (stesso comportamento gestito in base_pel.LoginPel.login_pel).
+    password_input = page.locator("input[name='password'], input[type='password']")
+    if password_input.count() == 0:
+        prosegui_btn = page.locator('button:has-text("Prosegui"), button:has-text("Continua")').first
+        prosegui_btn.click()
+        password_input.first.wait_for(state="visible", timeout=15_000)
+
     # Compila password con valore errato
-    page.locator("input[name='password'], input[type='password']").first.fill(TEST_INVALID_PASSWORD)
+    password_input.first.fill(TEST_INVALID_PASSWORD)
 
     # Clicca login (il bottone è un web component aru-button, non un button standard)
     page.locator("aru-button[skin='primary']").first.click()
@@ -48,8 +57,11 @@ def test_login_credenziali_errate(page):
     assert "INBOX" not in page.url, \
         f"Il login con credenziali errate ha avuto successo inaspettatamente. URL: {page.url}"
 
-    # Verifica che il form di login sia ancora visibile (siamo rimasti sulla pagina di login)
-    login_form = page.locator("input[name='text'], input[name='username']").first
+    # Verifica che il form di login sia ancora visibile (siamo rimasti sulla pagina di login).
+    # Dopo credenziali errate l'app torna allo step 1 (solo email): stesso
+    # selettore completo usato per username_input, altrimenti il campo
+    # email (type='email', senza name='text'/'username') non viene trovato.
+    login_form = page.locator("input[name='text'], input[name='username'], input#username, input[type='email']").first
     login_form.wait_for(state="visible", timeout=10000)
 
     # Screenshot
