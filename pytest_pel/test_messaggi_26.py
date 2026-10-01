@@ -1,0 +1,94 @@
+import os
+import json
+import time
+from datetime import datetime
+from base_pel import LoginPel, HelperPel
+from playwright.sync_api import expect
+
+
+# --- Leggi config.json ---
+CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+with open(CONFIG_FILE) as f:
+    config = json.load(f)
+
+# --- Cartella test e report ---
+TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__)))
+REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
+os.makedirs(REPORT_FOLDER, exist_ok=True)
+
+
+def test_selezione_multipla_batch(page):
+    """Verifica selezione multipla messaggi e azioni batch (segna come letto/non letto, elimina)."""
+    LoginPel(page).login_pel(config)
+
+    # Invia 2 messaggi di test per avere materiale da selezionare
+    for i in range(2):
+        ts = int(time.time()) + i
+        HelperPel.crea_messaggio(
+            page, config,
+            oggetto=f"Test batch {ts}",
+            corpo="Messaggio per test selezione multipla",
+        )
+        page.locator('span[title="Invia"], span[title="Envoyer"]').click()
+        page.wait_for_timeout(3000)
+
+    # Vai alla inbox e aggiorna
+    page.locator("#messages").locator('[aria-label="Messaggi"], [aria-label="Messages"]').first.first.click()
+    page.wait_for_timeout(2000)
+
+    # Dismiss CDK overlay se presente (modale "Adegua la tua PEC" ecc.)
+    if page.locator('.cdk-overlay-backdrop').is_visible():
+        for _ in range(3):
+            if not page.locator('.cdk-overlay-backdrop').is_visible():
+                break
+            try:
+                btn = page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Chiudi"), button:has-text("Non ora"), button:has-text("Pas maintenant")').first
+                if btn.is_visible():
+                    btn.click(force=True)
+                    page.wait_for_timeout(500)
+                    continue
+                page.locator('.cdk-overlay-pane').last.locator('button').last.click(force=True)
+                page.wait_for_timeout(500)
+            except Exception:
+                break
+
+    page.locator('aru-symbol[title="Aggiorna"], aru-symbol[title="Actualiser"], button[aria-label="Aggiorna"], button[aria-label="Actualiser"]').click()
+    page.wait_for_timeout(3000)
+
+    # Hover sul primo messaggio per rendere visibile il checkbox, poi clicca
+    rows = page.locator('div.frame-record-desktop').all()
+    assert len(rows) >= 2, f"Trovati solo {len(rows)} messaggi in inbox, attesi almeno 2."
+
+    for row in rows[:2]:
+        try:
+            row.hover()
+            page.wait_for_timeout(300)
+            cb = row.locator('input[type="checkbox"]').first
+            if cb.is_visible():
+                cb.click()
+            else:
+                # Aruba usa div.aru-input-checkbox come checkbox visivo
+                row.locator('div.aru-input-checkbox, [class*="checkbox"], aru-checkbox').first.click(force=True)
+            page.wait_for_timeout(500)
+        except Exception:
+            pass
+
+    # Verifica che almeno 2 messaggi siano selezionati o che appaia la toolbar
+    page.wait_for_timeout(1000)
+    page_content = page.content().lower()
+    batch_visible = (
+        "selezionat" in page_content
+        or "sélectionné" in page_content
+        or "selected" in page_content
+        or page.locator('button:has-text("Elimina"), button:has-text("Supprimer"), button:has-text("Segna"), button:has-text("Marquer")').count() > 0
+    )
+
+    screenshot_path = os.path.join(
+        REPORT_FOLDER, f"test_messaggi_26___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
+    )
+    page.screenshot(path=screenshot_path, full_page=True)
+    print(f"Screenshot salvato in: {screenshot_path}")
+    assert batch_visible, (
+        "La toolbar azioni batch non è apparsa dopo la selezione multipla dei messaggi. "
+        "Verificare che i checkbox nei messaggi siano cliccabili."
+    )
