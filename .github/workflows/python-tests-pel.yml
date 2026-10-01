@@ -83,13 +83,13 @@ jobs:
           PEL_INBOX_URL_PATTERN: "INBOX|management|messages"
           PEL_USERNAME: >-
             ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_USERNAME
-             || secrets.TEST_PEL_USERNAME }}
+             || secrets.TEST_STAFF_PEL_USERNAME }}
           PEL_PASSWORD: >-
             ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_PASSWORD
-             || secrets.TEST_PEL_PASSWORD }}
+             || secrets.TEST_STAFF_PEL_PASSWORD }}
           PEL_DESTINATARIO_SECONDARIO: >-
             ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_DESTINATARIO_SECONDARIO
-             || secrets.TEST_PEL_DESTINATARIO_SECONDARIO }}
+             || secrets.TEST_STAFF_PEL_DESTINATARIO_SECONDARIO }}
         run: |
           $reportDir = "pytest_pel/test-results"
           if (!(Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
@@ -114,13 +114,13 @@ jobs:
           PEL_INBOX_URL_PATTERN: "INBOX|management|messages"
           PEL_USERNAME: >-
             ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_USERNAME
-             || secrets.TEST_PEL_USERNAME }}
+             || secrets.TEST_STAFF_PEL_USERNAME }}
           PEL_PASSWORD: >-
             ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_PASSWORD
-             || secrets.TEST_PEL_PASSWORD }}
+             || secrets.TEST_STAFF_PEL_PASSWORD }}
           PEL_DESTINATARIO_SECONDARIO: >-
             ${{ inputs.ambiente == 'prod-staff' && secrets.PROD_STAFF_PEL_DESTINATARIO_SECONDARIO
-             || secrets.TEST_PEL_DESTINATARIO_SECONDARIO }}
+             || secrets.TEST_STAFF_PEL_DESTINATARIO_SECONDARIO }}
         run: |
           reportDir="pytest_pel/test-results"
           mkdir -p "$reportDir"
