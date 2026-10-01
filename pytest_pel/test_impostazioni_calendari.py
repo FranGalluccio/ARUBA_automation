@@ -17,14 +17,18 @@ APP_BASE_URL = _login_url.split("/auth/")[0] if "/auth/" in _login_url else _log
 
 
 def _vai_a_impostazioni_calendari(page):
-    """Naviga alla pagina Impostazioni > Calendari via URL diretto."""
-    settings_url = f"{APP_BASE_URL}/settings/calendars/customization"
+    """Naviga alla pagina Impostazioni > Calendari via URL diretto.
+
+    NB: tutte le pagine impostazioni PEL richiedono il prefisso /new/
+    (es. /new/settings/...); l'URL senza prefisso restituisce 404.
+    """
+    settings_url = f"{APP_BASE_URL}/new/settings/calendars/customization"
     page.goto(settings_url)
     page.wait_for_load_state("load")
     page.wait_for_timeout(2000)
-    # Se ha rediretto fuori dalle impostazioni, prova /settings/calendars
+    # Se ha rediretto fuori dalle impostazioni, prova /new/settings/calendars
     if "/messages" in page.url or "/calendar" in page.url:
-        page.goto(f"{APP_BASE_URL}/settings/calendars")
+        page.goto(f"{APP_BASE_URL}/new/settings/calendars")
         page.wait_for_load_state("load")
         page.wait_for_timeout(2000)
 

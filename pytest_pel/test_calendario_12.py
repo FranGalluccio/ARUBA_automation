@@ -28,7 +28,7 @@ def _apri_evento_in_modifica(page, titolo):
     Clicca sull'evento in calendario per aprire il popup/form di modifica.
     Espande a fullscreen se necessario. Restituisce True se aperto.
     """
-    evento = page.locator(".fc-event").filter(has_text=titolo).first
+    evento = page.locator("[class*='event']").filter(has_text=titolo).first
     evento.wait_for(state="visible", timeout=8000)
     evento.click()
     page.wait_for_timeout(1000)
@@ -195,7 +195,7 @@ def test_invitati_aggiungi_rimuovi(page):
         # ------------------------------------------------------------------ #
         page.get_by_role("button", name="Calendario", exact=True).click()
         page.wait_for_timeout(1500)
-        page.locator(".fc-event").filter(has_text=titolo).first.wait_for(state="visible", timeout=8000)
+        page.locator("[class*='event']").filter(has_text=titolo).first.wait_for(state="visible", timeout=8000)
 
         aperto = _apri_evento_in_modifica(page, titolo)
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_12_modifica_{datetime.now():%H-%M-%S}.png"))

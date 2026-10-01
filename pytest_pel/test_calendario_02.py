@@ -30,10 +30,10 @@ def test_creazione_modifica_evento(page):
         page.wait_for_timeout(1500)
 
         # Apri l'evento appena creato
-        page.locator(".fc-event").filter(has_text=titolo_base).first.wait_for(
+        page.locator("[class*='event']").filter(has_text=titolo_base).first.wait_for(
             state="visible", timeout=8000
         )
-        page.locator(".fc-event").filter(has_text=titolo_base).first.click()
+        page.locator("[class*='event']").filter(has_text=titolo_base).first.click()
         page.get_by_role("button", name="Modifica").wait_for(state="visible", timeout=5000)
         page.get_by_role("button", name="Modifica").click()
 
@@ -45,7 +45,7 @@ def test_creazione_modifica_evento(page):
         page.wait_for_timeout(1500)
 
         # Verifica che il titolo aggiornato sia visibile
-        page.locator(".fc-event").filter(has_text=titolo_modificato).first.wait_for(
+        page.locator("[class*='event']").filter(has_text=titolo_modificato).first.wait_for(
             state="visible", timeout=8000
         )
 

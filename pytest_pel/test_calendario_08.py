@@ -91,6 +91,27 @@ def test_disponibilita_libero(page):
             time_inputs.nth(1).fill(ora_fine)
             page.wait_for_timeout(200)
 
+        # Disattiva 'Mostrati come occupato' anche per l'evento B: se il dialog
+        # "Salva le modifiche" compare aprendo la pianificazione e viene
+        # confermato, l'evento B verrebbe salvato con occupato=ON di default,
+        # inquinando il controllo disponibilità con un falso positivo
+        # (l'evento stesso occuperebbe lo slot che si sta verificando).
+        try:
+            page.locator('[title*="schermo"], [title*="Schermo"], [title="Full screen"]').first.click(timeout=3000)
+            page.wait_for_timeout(500)
+        except Exception:
+            pass
+        try:
+            toggle_label_b = page.locator('label:has-text("Mostrati come occupato"), label:has-text("Mostrati")').first
+            if toggle_label_b.count() > 0 and toggle_label_b.is_checked():
+                toggle_label_b.click()
+                page.wait_for_timeout(400)
+                if toggle_label_b.is_checked():
+                    toggle_label_b.click(force=True)
+                    page.wait_for_timeout(300)
+        except Exception:
+            pass
+
         # Aggiungi se stesso come invitato
         try:
             invitati = page.locator("input[placeholder*='invitat'], input[aria-label*='invitat']").first
@@ -99,6 +120,11 @@ def test_disponibilita_libero(page):
             page.wait_for_timeout(800)
             page.keyboard.press("Enter")
             page.wait_for_timeout(500)
+            # Blur esplicito del campo invitati: lascia il tempo all'app di
+            # completare il controllo stato-modificato prima di navigare alla
+            # pianificazione, riducendo il dialog intermittente "Salva le modifiche".
+            page.keyboard.press("Tab")
+            page.wait_for_timeout(800)
         except Exception:
             pass
 
@@ -114,10 +140,28 @@ def test_disponibilita_libero(page):
                 pass
         page.wait_for_timeout(2500)
 
+        # L'apertura della pianificazione con l'evento B non ancora salvato può
+        # far comparire, in modo intermittente, un dialog "Vuoi salvare le
+        # modifiche apportate all'evento?" sovrapposto alla vista
+        # pianificazione: lo confermiamo per far sparire l'overlay e perché
+        # il cleanup nel finally si aspetta che l'evento B esista.
+        try:
+            conferma = page.get_by_text("Vuoi salvare le modifiche apportate all'evento?", exact=False)
+            if conferma.count() > 0 and conferma.first.is_visible():
+                dialog_pane = page.locator('.cdk-overlay-pane').last
+                dialog_pane.get_by_text("Salva", exact=True).first.click(timeout=3000)
+                page.wait_for_timeout(1000)
+        except Exception:
+            pass
+
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_08_planning_{datetime.now():%H-%M-%S}.png"))
 
         # Verifica che lo slot NON risulti "Occupato".
         # Usa exact=True per evitare falsi positivi da titoli eventi come "evento occupato A".
+        # NB: la classe CSS letterale "unavailable" NON indica "Occupato" — è usata anche
+        # per lo stato "Nessuna informazione disponibile" (sempre presente in legenda,
+        # indipendentemente dallo stato reale dello slot): includerla nel selettore
+        # produce un falso positivo sistematico, per questo è esclusa qui.
         overlay_panes = page.locator(".cdk-overlay-pane").all()
         occupato_visibile = False
         for pane in overlay_panes:
@@ -125,7 +169,7 @@ def test_disponibilita_libero(page):
                 if pane.get_by_text("Occupato", exact=True).count() > 0:
                     occupato_visibile = True
                     break
-                if pane.locator("[class*='busy'], [class*='occupied'], [class*='unavailable']").count() > 0:
+                if pane.locator("[class*='busy'], [class*='occupied']").count() > 0:
                     occupato_visibile = True
                     break
             except Exception:

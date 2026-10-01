@@ -71,8 +71,8 @@ def test_disponibilita_occupato(page):
         page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_calendario_07_creato_{datetime.now():%H-%M-%S}.png"))
 
         # Riapri evento A per verificare che il toggle "Mostrati come occupato" sia ON
-        page.locator(".fc-event").filter(has_text=titolo_a).first.wait_for(state="visible", timeout=8000)
-        page.locator(".fc-event").filter(has_text=titolo_a).first.click()
+        page.locator("[class*='event']").filter(has_text=titolo_a).first.wait_for(state="visible", timeout=8000)
+        page.locator("[class*='event']").filter(has_text=titolo_a).first.click()
         page.wait_for_timeout(1000)
 
         page.get_by_role("button", name="Modifica").wait_for(state="visible", timeout=5000)

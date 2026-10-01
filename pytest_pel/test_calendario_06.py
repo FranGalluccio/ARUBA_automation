@@ -71,7 +71,7 @@ def test_evento_con_promemoria(page):
         page.wait_for_timeout(1000)
 
         # Verifica che l'evento sia visibile
-        page.locator(".fc-event").filter(has_text=titolo).first.wait_for(
+        page.locator("[class*='event']").filter(has_text=titolo).first.wait_for(
             state="visible", timeout=8000
         )
 

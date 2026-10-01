@@ -69,16 +69,16 @@ def _drag_evento(page, titolo, target_date_str):
     Restituisce True se l'operazione ha avuto successo (nessuna eccezione).
     """
     # Trova l'evento nella griglia del calendario
-    evento = page.locator(".fc-event").filter(has_text=titolo).first
+    evento = page.locator("[class*='event']").filter(has_text=titolo).first
     evento.wait_for(state="visible", timeout=8000)
     src_box = evento.bounding_box()
     assert src_box, f"Impossibile ottenere il bounding box dell'evento '{titolo}'"
 
-    # Trova la colonna di destinazione
-    tgt_col = page.locator(f".fc-timegrid-col[data-date='{target_date_str}']").first
-    if tgt_col.count() == 0:
-        # Fallback: day-grid
-        tgt_col = page.locator(f".fc-day[data-date='{target_date_str}']").first
+    # Trova la colonna di destinazione. Le classi FullCalendar sono offuscate
+    # (build hashata), ma l'attributo data-date resta stabile: si esclude la
+    # cella header (classe letterale "dayHeaderClass") per puntare al corpo
+    # della colonna/griglia, utile per il drop.
+    tgt_col = page.locator(f"[data-date='{target_date_str}']:not([class*='dayHeaderClass'])").first
     tgt_col.wait_for(state="visible", timeout=5000)
     tgt_box = tgt_col.bounding_box()
     assert tgt_box, f"Impossibile trovare la colonna per la data '{target_date_str}'"
@@ -115,7 +115,7 @@ def _evento_nella_colonna(page, titolo, target_date_str):
     Verifica che l'evento sia nella colonna del giorno target.
     Controlla che il bounding box dell'evento sia sovrapposto alla colonna target.
     """
-    evento = page.locator(".fc-event").filter(has_text=titolo).first
+    evento = page.locator("[class*='event']").filter(has_text=titolo).first
     if evento.count() == 0:
         return False, "Evento non trovato nel calendario"
 
@@ -123,9 +123,7 @@ def _evento_nella_colonna(page, titolo, target_date_str):
     if not evento_box:
         return False, "Bounding box evento non disponibile"
 
-    tgt_col = page.locator(f".fc-timegrid-col[data-date='{target_date_str}']").first
-    if tgt_col.count() == 0:
-        tgt_col = page.locator(f".fc-day[data-date='{target_date_str}']").first
+    tgt_col = page.locator(f"[data-date='{target_date_str}']:not([class*='dayHeaderClass'])").first
     if tgt_col.count() == 0:
         return False, f"Colonna target '{target_date_str}' non trovata"
 
@@ -186,7 +184,7 @@ def test_sposta_evento_drag(page):
         _naviga_vista_settimana(page)
         page.wait_for_timeout(1000)
 
-        evento = page.locator(".fc-event").filter(has_text=titolo).first
+        evento = page.locator("[class*='event']").filter(has_text=titolo).first
         evento.wait_for(state="visible", timeout=8000)
 
         page.screenshot(path=os.path.join(REPORT_FOLDER,
