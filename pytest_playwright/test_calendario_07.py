@@ -22,24 +22,32 @@ def test_naviga_periodi_calendario(page):
 
     page.locator('#calendar, [aria-label="Calendario"], [aria-label="Calendrier"], button[title="Calendario"], button[title="Calendrier"]').first.click()
 
-    # Leggi il testo dell'header corrente dal mini-calendar sidebar ("Marzo 2026")
-    header = page.locator('div.vanilla-calendar-header__content').first
-    header.wait_for(state="visible", timeout=5000)
-    header_iniziale = header.inner_text().strip()
+    # Leggi il testo dell'header corrente dal mini-calendar sidebar ("Ottobre 2026").
+    # Il mini-calendario usa una libreria con classi "vc-*" (es. "vc-month",
+    # "vc-year"): non esiste un unico elemento testuale con mese+anno, va
+    # composto leggendo i due bottoni separatamente. I bottoni di
+    # navigazione usano aria-label ("Previous month"/"Next month"), non title.
+    def leggi_header():
+        mese = page.locator('[class*="vc-month"]').first.inner_text().strip()
+        anno = page.locator('[class*="vc-year"]').first.inner_text().strip()
+        return f"{mese} {anno}"
+
+    page.locator('[class*="vc-month"]').first.wait_for(state="visible", timeout=5000)
+    header_iniziale = leggi_header()
     print(f"Header iniziale: '{header_iniziale}'")
 
     # Naviga al mese/periodo successivo
-    page.locator('button[title="Next"]').click()
+    page.locator('[aria-label="Next month"]').click()
     page.wait_for_timeout(500)
-    header_successivo = header.inner_text().strip()
+    header_successivo = leggi_header()
     print(f"Header dopo Next: '{header_successivo}'")
     assert header_iniziale != header_successivo, \
         f"L'header non è cambiato dopo click su Next: '{header_iniziale}' vs '{header_successivo}'"
 
     # Naviga indietro
-    page.locator('button[title="Prev"]').click()
+    page.locator('[aria-label="Previous month"]').click()
     page.wait_for_timeout(500)
-    header_tornato = header.inner_text().strip()
+    header_tornato = leggi_header()
     print(f"Header dopo Prev: '{header_tornato}'")
 
     # Vai alla settimana corrente con "Oggi" (può essere disabilitato se già su oggi)

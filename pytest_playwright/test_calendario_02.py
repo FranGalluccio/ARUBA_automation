@@ -37,8 +37,8 @@ def test_creazione_modifica_evento(page):
     titolo_input.wait_for(state="visible", timeout=8000)
     titolo_input.fill(titolo_base)
     page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
-    page.locator("a").filter(has_text=titolo_base).filter(has_not_text="modificato").first.wait_for(state="visible", timeout=8000)
-    page.locator("a").filter(has_text=titolo_base).filter(has_not_text="modificato").first.click()
+    page.locator("a, [class*='event']").filter(has_text=titolo_base).filter(has_not_text="modificato").first.wait_for(state="visible", timeout=8000)
+    page.locator("a, [class*='event']").filter(has_text=titolo_base).filter(has_not_text="modificato").first.click()
     page.locator('button:has-text("Modifica"), button:has-text("Modifier")').first.wait_for(state="visible", timeout=5000)
     page.locator('button:has-text("Modifica"), button:has-text("Modifier")').first.click()
     titolo_input = page.locator('input[placeholder*=" titolo"], input[placeholder*=" titre"]').first

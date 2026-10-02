@@ -69,7 +69,7 @@ def test_evento_tutto_il_giorno(page):
         # Verifica che l'evento sia presente nel calendario (all-day = fc-daygrid, non fc-timegrid)
         page.locator(
             '.fc-daygrid-event, .fc-event, .fc-h-event, '
-            '[class*="fc-daygrid"] a, a[class*="event"]'
+            '[class*="fc-daygrid"] a, a[class*="event"], [class*="event"]'
         ).filter(has_text=titolo_evento).first.wait_for(state="visible", timeout=8000)
 
         # Screenshot

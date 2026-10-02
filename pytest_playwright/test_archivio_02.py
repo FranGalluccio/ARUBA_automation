@@ -194,35 +194,28 @@ def test_archivio_messaggio_inviato(page):
     ))
 
     # --- Step 5: verifica presenza del messaggio ---
+    # La ricerca porta su un URL dedicato (.../archive/advanced-search?...mail_text=...):
+    # dopo la prima ricerca il campo 'input[placeholder="Cerca messaggio..."]' può non
+    # esistere più su quella pagina risultati, quindi un retry che prova a ri-digitarci
+    # fallisce silenziosamente (count=0) e non riprova mai la ricerca per davvero,
+    # mascherando la vera causa (latenza di archiviazione, non un problema di ricerca).
+    # Il retry naviga quindi direttamente allo stesso URL di ricerca via page.goto(),
+    # che funziona indipendentemente da quali elementi siano presenti sulla pagina.
+    ricerca_url = archivio_page.url
+
     def _messaggio_trovato():
-        # Controlla assenza di "Non sono presenti messaggi" nella lista risultati
-        # (get_by_text sull'intera pagina matcherebbe anche il chip della barra di ricerca)
         no_results = archivio_page.get_by_text("Non sono presenti messaggi", exact=False).count() > 0
         return not no_results
 
     found = _messaggio_trovato()
-    if not found:
-        # Latenza archivio: riprova dopo 20s — cancella chip e cerca di nuovo
-        page.wait_for_timeout(20000)
-        # Cancella il chip/filtro attivo cliccando la ×
-        try:
-            archivio_page.locator('button[aria-label="Rimuovi filtro"], [title="Rimuovi filtro"], button.chip-remove').first.click(timeout=2000)
-        except Exception:
-            pass
-        # Ri-cerca dalla barra principale
-        search_box2 = archivio_page.locator('input[placeholder="Cerca messaggio..."]').first
-        try:
-            search_box2.wait_for(state="visible", timeout=10000)
-            search_box2.click()
-            archivio_page.keyboard.type(oggetto_univoco, delay=50)
-            try:
-                archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
-            except Exception:
-                archivio_page.keyboard.press("Enter")
-            page.wait_for_timeout(3000)
-        except Exception:
-            pass
+    tentativi_retry = 0
+    while not found and tentativi_retry < 4:
+        tentativi_retry += 1
+        page.wait_for_timeout(10000)
+        archivio_page.goto(ricerca_url, timeout=20000)
+        page.wait_for_timeout(2000)
         found = _messaggio_trovato()
+        print(f"Retry ricerca {tentativi_retry}: trovato={found}")
 
     # Screenshot finale
     screenshot_path = os.path.join(

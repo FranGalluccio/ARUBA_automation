@@ -37,8 +37,8 @@ def test_creazione_invio_evento(page, browser):
         titolo_input.wait_for(state="visible", timeout=8000)
         titolo_input.fill(titolo_evento)
         page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.click()
-        page.locator("a").filter(has_text=titolo_evento).first.wait_for(state="visible", timeout=15000)
-        page.locator("a").filter(has_text=titolo_evento).first.click()
+        page.locator("a, [class*='event']").filter(has_text=titolo_evento).first.wait_for(state="visible", timeout=15000)
+        page.locator("a, [class*='event']").filter(has_text=titolo_evento).first.click()
         # Modifica evento
         page.locator('button:has-text("Modifica"), button:has-text("Modifier")').first.wait_for(state="visible", timeout=5000)
         page.locator('button:has-text("Modifica"), button:has-text("Modifier")').first.click()
