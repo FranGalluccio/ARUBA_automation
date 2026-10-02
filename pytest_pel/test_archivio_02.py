@@ -1,9 +1,8 @@
 import os
 import json
-import time
 import pytest
 from datetime import datetime
-from base_pel import LoginPel, HelperPel, get_app_base_url
+from base_pel import LoginPel
 from playwright.sync_api import expect
 
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
@@ -13,6 +12,7 @@ with open(CONFIG_FILE) as f:
 TEST_FOLDER = config.get("test_folder", os.path.dirname(os.path.abspath(__file__)))
 REPORT_FOLDER = config.get("report_folder", os.path.join(TEST_FOLDER, "test-results"))
 os.makedirs(REPORT_FOLDER, exist_ok=True)
+
 
 def _click_waffle_menu(page):
     """Apre il menu a 9 punti (waffle / servizi) nell'header."""
@@ -35,204 +35,44 @@ def _click_waffle_menu(page):
     return False
 
 
-def test_archivio_messaggio_inviato(page):
-    """Verifica che i messaggi inviati/ricevuti vengano archiviati secondo
-    la configurazione impostata: imposta 'Archivia tutti', invia un messaggio
-    a se stesso, poi apre la sezione Archivio e verifica la presenza del messaggio."""
+def test_filtro_archivio(page):
+    """Verifica il filtro 'Letti' nella cartella Archivio (tab aru-chip,
+    stesso componente già usato in In arrivo — vedi test_messaggi_18).
 
+    Sostituisce il precedente test_archivio_messaggio_inviato, che
+    presupponeva di poter configurare 'Archivia tutti i messaggi' da
+    Impostazioni > Archivio: pagina che non esiste su PEL Domini e che su
+    PEL Staff risultava comunque non attiva sull'account di test (skip
+    sistematico, nessuna copertura reale). L'archivio su PEL Domini è in
+    sola lettura ("L'archivio in scrittura non è abilitato"): non si può
+    quindi verificare l'arrivo di un messaggio appena inviato, ma si può
+    verificare che l'interfaccia della cartella (filtri) funzioni
+    correttamente sui messaggi già presenti."""
     LoginPel(page).login_pel(config)
-    app_base = get_app_base_url(page)
 
-    # --- Verifica disponibilità + Step 1: naviga all'URL archivio ---
-    # (button[title="Archivio"], button[title="Archive"] è sempre hidden; la feature è confermata
-    #  dal caricamento dell'h1 sulla pagina di configurazione)
-    page.goto(app_base + "/new/settings/archive", timeout=20000)
-    page.wait_for_load_state("load", timeout=15000)
+    assert _click_waffle_menu(page), "Impossibile aprire il menu a 9 puntini (Servizi)"
 
-    # Chiudi cookie banner se presente (può bloccare h1 e pulsante Salva)
+    archivio_btn = page.get_by_text("Archivio", exact=True).first
     try:
-        page.locator("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll").click(timeout=3000)
-        page.wait_for_timeout(500)
+        archivio_btn.wait_for(state="visible", timeout=5000)
     except Exception:
-        pass
+        pytest.skip("Feature 'Archivio' non disponibile su questa casella")
+    archivio_btn.click(force=True)
+    page.wait_for_timeout(2500)
 
-    # Attendi che eventuali overlay CDK spariscano (incluso custom-backdrop-class)
-    try:
-        page.wait_for_function(
-            """() => {
-                const bs = document.querySelectorAll('.cdk-overlay-backdrop');
-                return [...bs].every(b => {
-                    const s = window.getComputedStyle(b);
-                    return s.opacity === '0' || s.display === 'none' || s.visibility === 'hidden';
-                });
-            }""",
-            timeout=10000,
-        )
-    except Exception:
-        pass
+    filtro_letti = page.locator('.aru-chip:has-text("Letti"), [class*="chip"]:has-text("Letti")').first
+    assert filtro_letti.is_visible(), "Il filtro 'Letti' non è visibile nella cartella Archivio"
 
-    try:
-        page.locator("h1").filter(has_text="Archivio").or_(
-            page.locator("h1").filter(has_text="Archive")
-        ).first.wait_for(state="visible", timeout=10000)
-    except Exception:
-        pytest.skip("Feature 'Archivio' non disponibile in questo ambiente")
-
-    # Verifica che la configurazione sia attiva (non solo la pagina marketing)
-    h2_config = page.locator("h2").filter(has_text="Configurazione Archivio").or_(
-        page.locator("h2").filter(has_text="Configuration")
-    ).first
-    try:
-        h2_config.wait_for(state="visible", timeout=8000)
-    except Exception:
-        pass
-    if not h2_config.is_visible():
-        pytest.skip("Feature 'Archivio' non attiva su questo account — configurazione non disponibile")
-
-    # Seleziona "Archivia tutti i messaggi ricevuti o inviati" cercando per testo della label
-    try:
-        page.get_by_text("Archivia tutti i messaggi ricevuti o inviati", exact=False).first.click()
-    except Exception:
-        try:
-            page.locator("input[type='radio']").first.click()
-        except Exception:
-            page.locator("input[type='radio']").first.click(force=True)
-
-    # Salva
-    try:
-        salva = page.locator('aru-button[skin="primary"]').first
-        salva.wait_for(state="visible", timeout=10000)
-        salva.click()
-    except Exception:
-        page.locator('button:has-text("Salva"), button:has-text("Enregistrer")').first.first.click(timeout=15000)
-
-    page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_config_{datetime.now():%H-%M-%S}.png"))
-
-    # --- Step 2: torna a INBOX prima di creare il messaggio ---
-    page.goto(app_base + "/new/messages/INBOX", timeout=20000)
+    filtro_letti.click(force=True)
     page.wait_for_timeout(1500)
 
-    oggetto_univoco = f"Test archivio playwright {int(time.time())}"
-    # Invia sempre a se stessi (indirizzo PEC dell'account corrente) per garantire l'archiviazione
-    config_self = {**config, "destinatari": {"destinatario_principale": config["pel"]["username"]}}
-    HelperPel.crea_messaggio(
-        page, config_self,
-        oggetto=oggetto_univoco,
-        corpo="Messaggio di test per verifica archiviazione automatica."
-    )
-
-    # Invia il messaggio (stesso pattern usato negli altri test)
-    page.locator('span[title="Invia"], span[title="Envoyer"]').click()
-    page.wait_for_timeout(2000)
-
-    page.screenshot(path=os.path.join(REPORT_FOLDER, f"test_archivio_02_inviato_{datetime.now():%H-%M-%S}.png"))
-    print(f"Messaggio inviato con oggetto: {oggetto_univoco}")
-
-    # Attesa per il recapito del messaggio (operazione server-side)
-    page.wait_for_timeout(10000)
-
-    # --- Step 3: apri sezione Archivio (mailbox, non impostazioni) ---
-    # Torna a INBOX per avere il nav pulito
-    page.goto(app_base + "/new/messages/INBOX", timeout=20000)
-    page.wait_for_timeout(1500)
-
-    # Dismetti eventuale overlay
-    try:
-        page.locator('button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button:has-text("Non ora"), button:has-text("Pas maintenant"), button[aria-label="Chiudi"], [aria-label="Fermer"]').first.click(timeout=2000)
-    except Exception:
-        pass
-
-    # Apri Archivio: prima prova il link diretto nel top-nav,
-    # poi waffle menu (stesso tab, NON nuova tab)
-    archivio_page = page  # di default lavoriamo sulla stessa pagina
-
-    archivio_opened = False
-
-    # Apri waffle menu (symbol="services2"), poi clicca Archivio (diventa visibile dopo apertura)
-    if _click_waffle_menu(page):
-        try:
-            archivio_btn = page.locator(
-                'aru-button[title="Archivio"], button[title="Archivio"], '
-                'aru-button[title="Archive"], button[title="Archive"]'
-            ).or_(page.get_by_role("button", name="Archivio", exact=True)).or_(
-                page.get_by_role("button", name="Archive", exact=True)
-            ).first
-            archivio_btn.wait_for(state="visible", timeout=10000)
-            archivio_btn.click(force=True)
-            page.wait_for_timeout(2000)
-            archivio_opened = True
-        except Exception as e:
-            print(f"Click Archivio da waffle fallito: {e}")
-
-    assert archivio_opened, "Impossibile aprire la sezione Archivio dal waffle menu"
-
-    archivio_page.screenshot(path=os.path.join(
-        REPORT_FOLDER, f"test_archivio_02_archivio_{datetime.now():%H-%M-%S}.png"
-    ))
-
-    # --- Step 4: cerca il messaggio nella barra di ricerca dell'archivio ---
-    # Dismetti eventuale overlay/cookie
-    try:
-        archivio_page.locator('button:has-text("Accetta tutti"), button:has-text("Accepter tout"), button:has-text("Ricordarmelo"), button:has-text("Plus tard"), button[aria-label="Chiudi"], [aria-label="Fermer"]').first.click(timeout=2000)
-    except Exception:
-        pass
-
-    search_box = archivio_page.locator('input[placeholder="Cerca messaggio..."]').first
-    search_box.wait_for(state="visible", timeout=15000)
-    search_box.click()
-    # Usa keyboard.type per digitare carattere per carattere (fill fallisce sul shadow DOM)
-    archivio_page.keyboard.type(oggetto_univoco, delay=50)
-    # Clicca "Cerca" per eseguire la ricerca
-    try:
-        archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
-    except Exception:
-        archivio_page.keyboard.press("Enter")
-    page.wait_for_timeout(3000)
-
-    archivio_page.screenshot(path=os.path.join(
-        REPORT_FOLDER, f"test_archivio_02_ricerca_{datetime.now():%H-%M-%S}.png"
-    ))
-
-    # --- Step 5: verifica presenza del messaggio ---
-    def _messaggio_trovato():
-        # Controlla assenza di "Non sono presenti messaggi" nella lista risultati
-        # (get_by_text sull'intera pagina matcherebbe anche il chip della barra di ricerca)
-        no_results = archivio_page.get_by_text("Non sono presenti messaggi", exact=False).count() > 0
-        return not no_results
-
-    found = _messaggio_trovato()
-    if not found:
-        # Latenza archivio: riprova dopo 20s — cancella chip e cerca di nuovo
-        page.wait_for_timeout(20000)
-        # Cancella il chip/filtro attivo cliccando la ×
-        try:
-            archivio_page.locator('button[aria-label="Rimuovi filtro"], [title="Rimuovi filtro"], button.chip-remove').first.click(timeout=2000)
-        except Exception:
-            pass
-        # Ri-cerca dalla barra principale
-        search_box2 = archivio_page.locator('input[placeholder="Cerca messaggio..."]').first
-        try:
-            search_box2.wait_for(state="visible", timeout=10000)
-            search_box2.click()
-            archivio_page.keyboard.type(oggetto_univoco, delay=50)
-            try:
-                archivio_page.locator('button:has-text("Cerca"), aru-button:has-text("Cerca")').last.click(timeout=3000)
-            except Exception:
-                archivio_page.keyboard.press("Enter")
-            page.wait_for_timeout(3000)
-        except Exception:
-            pass
-        found = _messaggio_trovato()
-
-    # Screenshot finale
     screenshot_path = os.path.join(
         REPORT_FOLDER,
         f"test_archivio_02___{datetime.now():%Y-%m-%d_%H-%M-%S}.png"
     )
     page.screenshot(path=screenshot_path, full_page=True)
     print(f"Screenshot salvato in: {screenshot_path}")
-    assert found, (
-        f"Messaggio '{oggetto_univoco}' non trovato nell'Archivio. "
-        "Verificare che la configurazione 'Archivia tutti' sia attiva e che il messaggio sia stato recapitato."
+
+    assert "mail_quickFilter" in page.url, (
+        f"Il filtro 'Letti' non risulta applicato nell'Archivio (URL: {page.url})"
     )
-    print(f"Messaggio trovato in Archivio: {oggetto_univoco}")
