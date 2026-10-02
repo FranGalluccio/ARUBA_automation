@@ -41,6 +41,40 @@ def browser_context_args(browser_context_args):
 
 
 # ---------------------------------------------------------------------------
+# Account "primo accesso assoluto" (tipico di PEL Domini, mai usati prima —
+# gli account PEL Staff già usati ripetutamente di norma non li mostrano più)
+# mostrano, alla prima visita di OGNI sezione (non solo al login), un modal
+# di benvenuto a carosello e un toast "Attiva la verifica in 2 passaggi"
+# (Popover API nativa, con comparsa asincrona). Entrambi bloccano i click
+# successivi tramite il loro backdrop/overlay.
+#
+# NB: setInterval, requestAnimationFrame e MutationObserver registrati da
+# uno script iniettato con page.add_init_script() NON scattano mai più di
+# una volta in questo ambiente headless (verificato con un contatore
+# indipendente: resta fermo a 1 anche con la pagina attiva per 6+ secondi).
+# Il polling va quindi guidato da Python — page.evaluate() chiamato a
+# intervalli da wait_for_timeout(), non da timer lato JS — e ripetuto dopo
+# ogni navigazione, perché il modal può comparire alla prima visita di
+# qualsiasi sezione, non solo subito dopo il login.
+# ---------------------------------------------------------------------------
+from base_pel import dismiss_onboarding  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def _dismiss_onboarding(page):
+    """Chiude gli elementi di onboarding dopo ogni page.goto() del test."""
+    original_goto = page.goto
+
+    def patched_goto(url, **kwargs):
+        result = original_goto(url, **kwargs)
+        dismiss_onboarding(page, rounds=3, interval_ms=400)
+        return result
+
+    page.goto = patched_goto
+    yield
+
+
+# ---------------------------------------------------------------------------
 # Screenshot automatico + contesto diagnostico su ogni test fallito.
 # ---------------------------------------------------------------------------
 @pytest.fixture(autouse=True)

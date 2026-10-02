@@ -47,8 +47,13 @@ def test_login_credenziali_errate(page):
     # Compila password con valore errato
     password_input.first.fill(TEST_INVALID_PASSWORD)
 
-    # Clicca login (il bottone è un web component aru-button, non un button standard)
-    page.locator("aru-button[skin='primary']").first.click()
+    # Clicca login. Selettore allineato a base_pel.LoginPel.login_pel: su PEL
+    # Domini (SSO/Keycloak, form a step unico) il bottone "Accedi" non è un
+    # aru-button[skin='primary'] come su PEL Staff, serve il fallback.
+    accedi_btn = page.locator("button[title='Accedi']").first
+    if accedi_btn.count() == 0:
+        accedi_btn = page.locator("button[type='submit'], button:has-text('Login'), button:has-text('Accedi'), aru-button[skin='primary']").first
+    accedi_btn.click()
 
     # Aspetta risposta del server
     page.wait_for_timeout(3000)

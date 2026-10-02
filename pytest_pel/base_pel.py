@@ -19,6 +19,67 @@ os.makedirs(REPORT_FOLDER, exist_ok=True)
 file_allegato = os.environ.get("FILE_ALLEGATO", config.get("file_allegato"))
 
 
+_DISMISS_ONBOARDING_JS = """
+() => {
+    // Gli elementi di onboarding vivono spesso nello shadow DOM dei web
+    // component aru-*: querySelectorAll piatto non li trova, serve
+    // attraversare ricorsivamente anche gli shadow root.
+    function allShadow(root, sel) {
+        const found = [];
+        function t(r) {
+            r.querySelectorAll(sel).forEach(e => found.push(e));
+            r.querySelectorAll('*').forEach(e => { if (e.shadowRoot) t(e.shadowRoot); });
+        }
+        t(root);
+        return found;
+    }
+    const popovers = allShadow(document, '[popover]').filter(p => {
+        try { return p.matches(':popover-open') || getComputedStyle(p).display !== 'none'; }
+        catch (e) { return false; }
+    });
+    let chiusi = 0;
+    popovers.forEach(p => {
+        // Preferisci cliccare il vero bottone di chiusura (lascia che l'app
+        // pulisca correttamente backdrop/overlay associati): rimuovere il
+        // nodo a forza con .remove() orfanizza il backdrop CDK del modal di
+        // benvenuto, che resta a intercettare i click successivi.
+        const dismissBtn = allShadow(p, 'button').find(b => {
+            const label = (b.getAttribute('aria-label') || b.getAttribute('title') || b.textContent || '').trim();
+            return ['Chiudi', 'Non ora', 'Chiedimelo più tardi'].includes(label);
+        });
+        if (dismissBtn) {
+            try { dismissBtn.click(); chiusi++; return; } catch (e) {}
+        }
+        try { if (p.hidePopover) p.hidePopover(); } catch (e) {}
+        try { p.remove(); chiusi++; } catch (e) {}
+    });
+    return chiusi;
+}
+"""
+
+
+def dismiss_onboarding(page: Page, rounds: int = 6, interval_ms: int = 500):
+    """Chiude gli elementi di onboarding mostrati al primo accesso assoluto
+    di un account (tipico di account PEL Domini mai usati prima — gli
+    account PEL Staff di test, già usati ripetutamente, di norma non li
+    mostrano più): il modal carosello "Ti diamo il benvenuto nella tua
+    casella di posta" e il toast "Attiva la verifica in 2 passaggi"
+    (entrambi basati sulla Popover API nativa, con comparsa asincrona —
+    possono comparire alla prima visita di qualsiasi sezione, non solo
+    subito dopo il login). Il polling è guidato da Python: i timer JS
+    (setInterval/requestAnimationFrame) e i MutationObserver registrati
+    da uno script iniettato via add_init_script non scattano mai più di
+    una volta in ambiente headless (verificato empiricamente). No-op
+    silenzioso se non c'è nulla da chiudere."""
+    for _ in range(rounds):
+        try:
+            if page.evaluate(_DISMISS_ONBOARDING_JS):
+                page.wait_for_timeout(300)
+        except Exception:
+            pass
+        page.wait_for_timeout(interval_ms)
+
+
 def dismiss_overlay(page: Page):
     """Chiude qualsiasi CDK overlay backdrop attivo (welcome wizard, dialog).
     Da chiamare prima di click force=True su elementi potenzialmente bloccati."""
@@ -132,6 +193,29 @@ class LoginPel:
 
             self.page.wait_for_load_state("load", timeout=20_000)
 
+            # Alcuni ambienti (es. PEL Domini, autenticazione via SSO/Keycloak su
+            # loginpel.*) mostrano dopo il login un prompt "Vuoi attivare
+            # l'accesso automatico?" che blocca il flusso finché non viene
+            # chiuso. Si sceglie sempre "Chiedimelo più tardi" per non abilitare
+            # un accesso automatico persistente sull'account di test condiviso.
+            try:
+                chiedi_dopo = self.page.get_by_text("Chiedimelo più tardi", exact=False).first
+                if chiedi_dopo.count() > 0 and chiedi_dopo.is_visible():
+                    chiedi_dopo.click()
+                    self.page.wait_for_timeout(1000)
+            except Exception:
+                pass
+
+            try:
+                cookie_btn = self.page.locator(
+                    'button:has-text("Accetta tutti"), button:has-text("Rifiuta tutti")'
+                ).first
+                if cookie_btn.count() > 0 and cookie_btn.is_visible():
+                    cookie_btn.click()
+                    self.page.wait_for_timeout(500)
+            except Exception:
+                pass
+
             try:
                 expect(self.page).to_have_url(re.compile(f".*({url_pattern}).*"), timeout=10_000)
                 break
@@ -139,6 +223,11 @@ class LoginPel:
                 if _attempt == 2:
                     raise
                 self.page.wait_for_timeout(2000)
+
+        # Il toast "Attiva la verifica in 2 passaggi" (primo accesso assoluto
+        # dell'account) compare con un ritardo asincrono di alcuni secondi
+        # dopo l'arrivo in inbox: lo si attende e chiude qui.
+        dismiss_onboarding(self.page)
 
         # Se atterrati su management/home, naviga esplicitamente all'inbox PEL
         if "management" in self.page.url:
