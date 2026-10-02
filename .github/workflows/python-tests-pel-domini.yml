@@ -1,0 +1,161 @@
+name: Python Playwright Tests - PEL Domini
+
+on:
+  workflow_dispatch:
+    inputs:
+      ambiente:
+        description: "Ambiente da testare"
+        required: true
+        default: "test-domini"
+        type: choice
+        options:
+          - test-domini
+          - prod-domini
+      runner:
+        description: "Runner da usare"
+        required: true
+        default: "LAPTOP-7AQM6PC9"
+        type: choice
+        options:
+          - LAPTOP-7AQM6PC9
+          - michela
+          - lorenzo
+          - lorenzo01
+
+jobs:
+  test:
+    runs-on: ${{ inputs.runner || 'self-hosted' }}
+    environment: test
+    if: github.repository == 'FranGalluccio/ARUBA_automation'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Mostra ambiente selezionato
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $amb = "${{ inputs.ambiente }}"
+          if (-not $amb) { $amb = "test-domini (default - push automatico)" }
+          Write-Host "========================================" -ForegroundColor Cyan
+          Write-Host "  SUITE: PEL Domini" -ForegroundColor Yellow
+          Write-Host "  AMBIENTE: $amb" -ForegroundColor Yellow
+          Write-Host "========================================" -ForegroundColor Cyan
+
+      - name: Mostra ambiente selezionato (lorenzo)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          amb="${{ inputs.ambiente }}"
+          if [ -z "$amb" ]; then amb="test-domini (default - push automatico)"; fi
+          echo "========================================"
+          echo "  SUITE: PEL Domini"
+          echo "  AMBIENTE: $amb"
+          echo "========================================"
+
+      - name: Install dependencies
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          python -m pip install -r requirements.txt
+          python -m playwright install chromium
+
+      - name: Install dependencies (lorenzo)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          python3 -m pip install -r requirements.txt
+          python3 -m playwright install chromium
+
+      - name: Run tests
+        if: runner.os == 'Windows'
+        shell: powershell
+        continue-on-error: true
+        env:
+          PEL_URL: >-
+            ${{ inputs.ambiente == 'prod-domini' && 'https://webmail.aruba.it/new/auth/login'
+             || 'https://webmail.pe-pd.testops.aruba.it/new/auth/login' }}
+          PEL_INBOX_URL_PATTERN: "INBOX|management|messages"
+          PEL_USERNAME: >-
+            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_USERNAME
+             || secrets.TEST_DOMINI_PEL_USERNAME }}
+          PEL_PASSWORD: >-
+            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_PASSWORD
+             || secrets.TEST_DOMINI_PEL_PASSWORD }}
+          PEL_DESTINATARIO_SECONDARIO: >-
+            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_DESTINATARIO_SECONDARIO
+             || secrets.TEST_DOMINI_PEL_DESTINATARIO_SECONDARIO }}
+        run: |
+          $reportDir = "pytest_pel/test-results"
+          if (!(Test-Path $reportDir)) { New-Item -ItemType Directory -Path $reportDir }
+
+          python -m pytest pytest_pel/ `
+            --junitxml=$reportDir/report.xml `
+            --html=$reportDir/report.html `
+            --self-contained-html `
+            --capture=tee-sys `
+            --tb=short `
+            --color=yes `
+            --browser chromium
+
+      - name: Run tests (lorenzo)
+        if: runner.os != 'Windows'
+        shell: bash
+        continue-on-error: true
+        env:
+          PEL_URL: >-
+            ${{ inputs.ambiente == 'prod-domini' && 'https://webmail.aruba.it/new/auth/login'
+             || 'https://webmail.pe-pd.testops.aruba.it/new/auth/login' }}
+          PEL_INBOX_URL_PATTERN: "INBOX|management|messages"
+          PEL_USERNAME: >-
+            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_USERNAME
+             || secrets.TEST_DOMINI_PEL_USERNAME }}
+          PEL_PASSWORD: >-
+            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_PASSWORD
+             || secrets.TEST_DOMINI_PEL_PASSWORD }}
+          PEL_DESTINATARIO_SECONDARIO: >-
+            ${{ inputs.ambiente == 'prod-domini' && secrets.PROD_DOMINI_PEL_DESTINATARIO_SECONDARIO
+             || secrets.TEST_DOMINI_PEL_DESTINATARIO_SECONDARIO }}
+        run: |
+          reportDir="pytest_pel/test-results"
+          mkdir -p "$reportDir"
+
+          python3 -m pytest pytest_pel/ \
+            --junitxml="$reportDir/report.xml" \
+            --html="$reportDir/report.html" \
+            --self-contained-html \
+            --capture=tee-sys \
+            --tb=short \
+            --color=yes \
+            --browser chromium
+
+      - name: Upload JUnit XML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-report-pel-domini
+          path: pytest_pel/test-results/report.xml
+          retention-days: 30
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report-pel-domini
+          path: pytest_pel/test-results/report.html
+          retention-days: 30
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-pel-domini
+          path: pytest_pel/test-results/**/*.png
+          retention-days: 30
+
+      - name: Upload failure diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failures-pel-domini
+          path: pytest_pel/test-results/failures/
+          if-no-files-found: ignore
+          retention-days: 30
